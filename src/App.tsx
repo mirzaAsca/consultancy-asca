@@ -1,15 +1,23 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 
 const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
 const SCORECARD_PDF = '/pilot-to-production-scorecard-board-ready-edition.pdf'
 const PRIMARY_CTA = 'Apply for the AI Portfolio Reality Scan'
+const MECHANISM_CTA = 'See how the office works'
 
 const painPoints = [
   'AI pilots exist, but production impact is still unclear.',
   'Governance, security, and legal reviews arrive late and slow delivery.',
   'Business units, IT, and risk teams move on different clocks.',
   'Leadership wants measured value, not another experimentation cycle.',
+]
+
+const stallReasons = [
+  'No portfolio logic for clear scale-or-stop decisions.',
+  'No clear decision rights across business, IT, security, and risk.',
+  'No production readiness gate before release into critical workflows.',
+  'No adoption system to turn usage into sustained outcomes.',
 ]
 
 const installBlocks = [
@@ -19,11 +27,11 @@ const installBlocks = [
   },
   {
     title: 'Decision Cadence',
-    detail: 'Stage gates, executive reviews, and explicit decision rights across business, IT, and risk.',
+    detail: 'Stage gates, executive reviews, and clear decision rights across business, IT, and risk.',
   },
   {
     title: 'Delivery Oversight',
-    detail: 'Production readiness, adoption telemetry, and disciplined scale, stop, or redesign decisions.',
+    detail: 'Production readiness, adoption tracking, and disciplined scale, stop, or redesign decisions.',
   },
 ]
 
@@ -32,7 +40,7 @@ const firstMonthDeliverables = [
   'Prioritized scale, stop, and sequence decisions.',
   'Governance charter draft with decision-rights map.',
   'KPI baseline and value-tracking plan.',
-  'Ninety-day execution roadmap for business, IT, and risk alignment.',
+  '90-day execution roadmap for business, IT, and risk alignment.',
 ]
 
 const timeline = [
@@ -42,7 +50,7 @@ const timeline = [
   },
   {
     title: 'First 90 Days',
-    detail: 'Governance artifacts active and 1-2 production pathways set with measurable movement.',
+    detail: 'Governance artifacts active and 1-2 production pathways defined with measurable progress.',
   },
   {
     title: '6 Months',
@@ -63,15 +71,30 @@ const proofArtifacts = [
   'Board-ready executive briefing outline',
 ]
 
+const proofVisuals = [
+  {
+    title: 'Portfolio control dashboard',
+    src: '/proof-portfolio-dashboard.svg',
+  },
+  {
+    title: 'Governance charter and decision map',
+    src: '/proof-governance-charter.svg',
+  },
+  {
+    title: 'KPI tree and value baseline',
+    src: '/proof-kpi-tree.svg',
+  },
+]
+
 const fitFor = [
   'Complex enterprises with active AI initiatives and executive urgency.',
-  'Teams willing to redesign workflows, not just add tools.',
+  'Teams willing to redesign workflows, not just add more tools.',
   'Sponsors ready to align business, IT, risk, and vendors in one cadence.',
 ]
 
 const fitNotFor = [
   'Buyers seeking an AI idea workshop without ownership.',
-  'Teams shopping only for a chatbot build vendor.',
+  'Teams looking only for a chatbot build vendor.',
   'Organizations unwilling to enforce governance and decision rights.',
 ]
 
@@ -126,7 +149,7 @@ function buildMailto(form: FormState): string {
       `Role/title: ${form.roleTitle}`,
       `Company: ${form.company}`,
       `Executive sponsor: ${form.executiveSponsor}`,
-      `Current AI initiatives count: ${form.aiInitiativeCount}`,
+      `Number of active AI initiatives: ${form.aiInitiativeCount}`,
       `Top workflows/functions in focus: ${form.focusWorkflows}`,
       `Biggest blocker today: ${form.biggestBlocker}`,
       `Compliance/security constraints: ${form.complianceConstraints}`,
@@ -149,7 +172,7 @@ export default function App() {
   const [errors, setErrors] = useState<ErrorState>({})
   const [submitted, setSubmitted] = useState(false)
 
-  const ctaHref = useMemo(() => '#apply', [])
+  const ctaHref = '#apply'
 
   function updateField(field: Field, value: string) {
     setForm((previous) => ({ ...previous, [field]: value }))
@@ -186,7 +209,9 @@ export default function App() {
     }
 
     setSubmitted(true)
-    window.location.href = buildMailto(form)
+    window.setTimeout(() => {
+      window.location.href = buildMailto(form)
+    }, 80)
   }
 
   return (
@@ -199,16 +224,11 @@ export default function App() {
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">ASCA TRANSFORMATION OFFICE</p>
-              <p className="mt-2 text-sm text-slate-600">Enterprise AI portfolio governance and production oversight</p>
+              <p className="mt-2 text-sm text-slate-600">
+                Enterprise AI portfolio governance and production oversight for complex enterprises.
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <a
-                href={SCORECARD_PDF}
-                download
-                className="inline-flex items-center justify-center border border-slate-300 bg-white/85 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-500 hover:text-slate-900"
-              >
-                Download Pilot-to-Production Scorecard
-              </a>
               <a
                 href={ctaHref}
                 className="inline-flex items-center justify-center border border-slate-900 bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
@@ -220,16 +240,13 @@ export default function App() {
 
           <nav className="mt-6 flex flex-wrap gap-4 text-xs font-medium uppercase tracking-[0.12em] text-slate-600">
             <a href="#overview" className="transition-colors hover:text-slate-900">
-              Overview
+              Home
             </a>
             <a href="#mechanism" className="transition-colors hover:text-slate-900">
-              What We Install
+              Transformation Office
             </a>
             <a href="#proof" className="transition-colors hover:text-slate-900">
               Proof
-            </a>
-            <a href="#diagnostic" className="transition-colors hover:text-slate-900">
-              Reality Scan
             </a>
             <a href="#apply" className="transition-colors hover:text-slate-900">
               Apply
@@ -244,9 +261,9 @@ export default function App() {
               Turn AI activity into a board-governed production portfolio.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-slate-700">
-              We install the executive control plane that aligns business, IT, and risk around one portfolio, one
-              cadence, and one source of truth. The result is measurable operating impact, governed scale, and
-              decision-ready visibility.
+              We install the Enterprise AI Transformation Office. It aligns business, IT, and risk around one
+              portfolio, one cadence, and one source of truth. AI starts shipping measurable results instead of
+              multiplying pilots.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <a
@@ -256,15 +273,14 @@ export default function App() {
                 {PRIMARY_CTA}
               </a>
               <a
-                href={SCORECARD_PDF}
-                download
+                href="#mechanism"
                 className="inline-flex items-center justify-center border border-slate-300 bg-white/85 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-500 hover:text-slate-900"
               >
-                Download Pilot-to-Production Scorecard
+                {MECHANISM_CTA}
               </a>
             </div>
             <p className="mt-4 text-sm text-slate-600">
-              For complex enterprises with active AI initiatives, executive urgency, and accountability to prove value.
+              For complex enterprises with active AI initiatives, executive urgency, and clear pressure to prove value.
             </p>
           </div>
 
@@ -275,12 +291,11 @@ export default function App() {
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">AI PORTFOLIO REALITY SCAN</p>
             <p className="mt-4 text-4xl font-semibold leading-none tracking-[-0.03em]">2-3 weeks</p>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              Board-ready portfolio baseline, scale or stop decisions, governance priorities, and a ninety-day execution
-              plan.
+              Get a board-ready baseline, scale-or-stop decisions, governance priorities, and a 90-day execution plan.
             </p>
             <div className="mt-7 space-y-3 border-t border-slate-200 pt-5 text-sm text-slate-700">
-              <p>Portfolio register + decision rights map</p>
-              <p>KPI baseline + value-tracking model</p>
+              <p>Portfolio register with clear decision rights map</p>
+              <p>KPI baseline and value-tracking model</p>
               <p>Decision Pack Guarantee (with stakeholder participation)</p>
             </div>
           </aside>
@@ -298,12 +313,34 @@ export default function App() {
               </article>
             ))}
           </div>
+
+          <div className="mt-8 border border-slate-300 bg-slate-900/95 p-5 text-slate-100">
+            <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.2em] text-slate-300">STAKES AND COST OF INACTION</p>
+            <p className="mt-3 text-sm leading-relaxed text-slate-200">
+              Leadership pressure is rising because many firms still cannot prove AI returns. EU AI obligations are
+              phased, and August 2, 2026 is a major milestone.
+            </p>
+          </div>
         </section>
 
-        <section id="mechanism" className="reveal delay-3 border-b border-[var(--line)] py-14">
+        <section className="reveal delay-3 border-b border-[var(--line)] py-14">
+          <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">WHY MOST EFFORTS STALL</p>
+          <h2 className="mt-4 max-w-[24ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
+            Tools and pilots are not enough. You need an operating mechanism.
+          </h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {stallReasons.map((item) => (
+              <article key={item} className="border border-slate-300 bg-white/85 p-5">
+                <p className="text-sm leading-relaxed text-slate-700">{item}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="mechanism" className="reveal delay-4 border-b border-[var(--line)] py-14">
           <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">WHAT WE INSTALL</p>
           <h2 className="mt-4 max-w-[22ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-            Executive control plane: portfolio governance, production readiness, value realization.
+            Executive control plane for portfolio governance, production readiness, and value realization.
           </h2>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -322,17 +359,17 @@ export default function App() {
           <div className="mt-8 border border-slate-300 bg-white/85 p-6">
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.2em] text-slate-600">MECHANISM FLOW</p>
             <p className="mt-3 text-sm leading-relaxed text-slate-700">
-              Intake to prioritize to govern to oversee delivery to measure to scale or retire.
+              Intake, prioritize, govern, oversee delivery, measure, then scale or retire.
             </p>
           </div>
         </section>
 
-        <section className="reveal delay-4 grid gap-10 border-b border-[var(--line)] py-14 lg:grid-cols-[1.35fr_1fr]">
+        <section className="reveal grid gap-10 border-b border-[var(--line)] py-14 lg:grid-cols-[1.35fr_1fr]">
           <div>
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">FIRST 30 DAYS</p>
-            <h2 className="mt-4 max-w-[23ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-              Start with decision-grade clarity before scale complexity grows.
-            </h2>
+          <h2 className="mt-4 max-w-[23ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
+            Get decision-grade clarity before complexity grows.
+          </h2>
             <ul className="mt-7 space-y-3 text-sm leading-relaxed text-slate-700">
               {firstMonthDeliverables.map((item) => (
                 <li key={item} className="border border-slate-300 bg-white/80 px-4 py-3">
@@ -361,10 +398,18 @@ export default function App() {
             Evidence assets, framework alignment, and measurable reporting.
           </h2>
           <p className="mt-5 max-w-4xl text-base leading-relaxed text-slate-700">
-            We emphasize artifacts and controls over hype. Delivery aligns to NIST AI RMF, ISO/IEC 42001, OWASP LLM
-            risk categories, and EU AI Act readiness expectations, including the August 2, 2026 applicability
-            milestone.
+            We show artifacts and controls, not hype. We align delivery to NIST AI RMF, ISO/IEC 42001, OWASP LLM risk
+            categories, and EU AI Act readiness, including the August 2, 2026 milestone.
           </p>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {proofVisuals.map((item) => (
+              <article key={item.title} className="overflow-hidden border border-slate-300 bg-white/90">
+                <img src={item.src} alt={item.title} className="h-auto w-full" loading="lazy" />
+                <p className="border-t border-slate-200 px-4 py-3 text-sm leading-relaxed text-slate-700">{item.title}</p>
+              </article>
+            ))}
+          </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {proofArtifacts.map((item) => (
@@ -407,22 +452,25 @@ export default function App() {
               AI Portfolio Reality Scan: your first commercial yes.
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-              In 2-3 weeks, you get a board-ready view of current AI activity, a prioritized scale or stop sequence,
-              governance priorities, and a ninety-day execution plan.
+              In 2-3 weeks, you get a board-ready view of current AI activity, scale-or-stop priorities, governance
+              priorities, and a 90-day execution plan.
+            </p>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
+              You leave with the decision pack, whether or not we continue together.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href={ctaHref}
-                className="inline-flex items-center justify-center border border-slate-900 bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
-              >
-                {PRIMARY_CTA}
-              </a>
               <a
                 href={SCORECARD_PDF}
                 download
                 className="inline-flex items-center justify-center border border-slate-300 bg-white/85 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-500 hover:text-slate-900"
               >
                 Download Pilot-to-Production Scorecard
+              </a>
+              <a
+                href={ctaHref}
+                className="inline-flex items-center justify-center border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-900"
+              >
+                Continue to the application form
               </a>
             </div>
           </div>
@@ -447,8 +495,8 @@ export default function App() {
                 Apply for the AI Portfolio Reality Scan
               </h2>
               <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-                This form is for organizations with active AI work, executive urgency, and need for measured production
-                impact. Qualified applications receive next-step coordination within 48 business hours.
+                This form is for teams with active AI work, executive urgency, and a need for measured production
+                impact. Qualified applications get next-step coordination within 48 business hours.
               </p>
 
               <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
@@ -513,7 +561,7 @@ export default function App() {
                   </label>
 
                   <label className="text-sm font-medium text-slate-700">
-                    Current AI initiatives count
+                    Number of active AI initiatives
                     <input
                       className={inputClass(Boolean(errors.aiInitiativeCount))}
                       value={form.aiInitiativeCount}
@@ -608,23 +656,49 @@ export default function App() {
                   >
                     {PRIMARY_CTA}
                   </button>
-                  <a
-                    href={SCORECARD_PDF}
-                    download
-                    className="inline-flex items-center justify-center border border-slate-300 bg-white/85 px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-500 hover:text-slate-900"
-                  >
-                    Download Pilot-to-Production Scorecard
-                  </a>
                 </div>
 
                 {submitted ? (
-                  <p className="text-sm text-slate-600">
-                    If your email client did not open, send your application details to{' '}
-                    <a className="font-medium text-slate-900" href={`mailto:${PRIMARY_EMAIL}`}>
-                      {PRIMARY_EMAIL}
+                  <div className="space-y-4 border border-slate-300 bg-white/90 p-5">
+                    <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-900">Application received</h3>
+                    <p className="text-sm leading-relaxed text-slate-700">
+                      Your email draft is ready. If it did not open, use the link below. We respond within 48 business
+                      hours.
+                    </p>
+                    <a
+                      href={buildMailto(form)}
+                      className="inline-flex items-center justify-center border border-slate-900 bg-slate-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+                    >
+                      Open email draft again
                     </a>
-                    .
-                  </p>
+                    <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
+                      <div className="border border-slate-200 p-3">
+                        <p className="font-medium uppercase tracking-[0.08em] text-slate-500">Within 48 hours</p>
+                        <p className="mt-2">Fit review and reply.</p>
+                      </div>
+                      <div className="border border-slate-200 p-3">
+                        <p className="font-medium uppercase tracking-[0.08em] text-slate-500">Week one</p>
+                        <p className="mt-2">Scope call and access checklist.</p>
+                      </div>
+                      <div className="border border-slate-200 p-3">
+                        <p className="font-medium uppercase tracking-[0.08em] text-slate-500">Weeks two to three</p>
+                        <p className="mt-2">Reality Scan and decision pack.</p>
+                      </div>
+                    </div>
+                    <div className="border border-slate-200 p-3 text-sm leading-relaxed text-slate-700">
+                      Prepare your initiative list, owners, top workflows, and baseline KPI reports.
+                    </div>
+                    <a
+                      href={SCORECARD_PDF}
+                      download
+                      className="inline-flex items-center justify-center border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-500 hover:text-slate-900"
+                    >
+                      Download Pilot-to-Production Scorecard
+                    </a>
+                    <p className="text-sm text-slate-600">
+                      Support: <a className="font-medium text-slate-900" href={`mailto:${PRIMARY_EMAIL}`}>{PRIMARY_EMAIL}</a>
+                    </p>
+                  </div>
                 ) : null}
               </form>
             </div>
