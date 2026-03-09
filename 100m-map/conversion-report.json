@@ -1,0 +1,41 @@
+{
+  "schema": "books_to_md_summaries_progress.v1",
+  "chunk_page_size": 3,
+  "books": [
+    {
+      "book_id": "BOOK_OFFERS",
+      "title": "100M Offers",
+      "source_file": "100m-offers.pdf",
+      "pages_in_pdf": 138,
+      "pages_with_extractable_text_gt50chars": 98,
+      "chunks_created": 46,
+      "sha256": "85b8977f107aabe505fda1e9efc1a16fbe62cbf3e53ac9949d2c26f53ee037d6"
+    },
+    {
+      "book_id": "BOOK_LEADS",
+      "title": "100M Leads",
+      "source_file": "100m-leads.pdf",
+      "pages_in_pdf": 385,
+      "pages_with_extractable_text_gt50chars": 372,
+      "chunks_created": 129,
+      "sha256": "a77877c52fb94430da623806b15f5e13f22c48379b74097900841e3953c7639a"
+    },
+    {
+      "book_id": "BOOK_MONEY_MODELS",
+      "title": "100M Money Models",
+      "source_file": "100m-money-models.pdf",
+      "pages_in_pdf": 163,
+      "pages_with_extractable_text_gt50chars": 151,
+      "chunks_created": 55,
+      "sha256": "cdec4d05f538548389d8f340dd0e62eb22711b0676e3f52756d1c1cafd23316d"
+    }
+  ],
+  "output_files": [
+    "offers.summary.md",
+    "leads.summary.md",
+    "money-models.summary.md",
+    "book_chunks.jsonl",
+    "conversion-progress.json"
+  ],
+  "notes": "These MD files contain chunk summaries and headings, not full book text. Use chunk_id + page ranges to retrieve from the original PDFs."
+}

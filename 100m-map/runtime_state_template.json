@@ -1,0 +1,89 @@
+{
+  "offer": {
+    "market": null,
+    "niche": null,
+    "value_equation": {
+      "dream_outcome": null,
+      "perceived_likelihood": null,
+      "time_delay": null,
+      "effort_and_sacrifice": null
+    },
+    "dream_outcome": null,
+    "obstacles": [],
+    "deliverables": [],
+    "delivery_vehicles": [],
+    "trim_and_stack": null,
+    "grand_slam_stack": {
+      "promotion": null,
+      "unmatchable_value": null,
+      "premium_price": null,
+      "guarantee": null,
+      "payment_terms": null
+    },
+    "enhancers": {
+      "scarcity": [],
+      "urgency": [],
+      "bonuses": [],
+      "guarantees": []
+    },
+    "name_magic": {
+      "magnet": null,
+      "avatar": null,
+      "goal": null,
+      "interval": null,
+      "container": null
+    },
+    "iteration_notes": []
+  },
+  "leads_engine": {
+    "score_definition": {
+      "lead": null,
+      "engaged_lead": null
+    },
+    "engagement_vehicle": null,
+    "lead_magnet": {
+      "quality_4": [],
+      "build_steps_7": [],
+      "type": null,
+      "delivery_options": [],
+      "testing_priority": []
+    },
+    "core_four_lane": null,
+    "commitment_mode": null,
+    "one_page_daily_checklist": [],
+    "measurement": {
+      "engaged_leads_day": null,
+      "engaged_leads_hour": null,
+      "conversion_rates": {},
+      "cac": null,
+      "ltgp": null,
+      "ltgp_to_cac": null
+    },
+    "iteration_loop": {
+      "more": null,
+      "better": null,
+      "new": null
+    },
+    "leverage": {
+      "lead_getters": {
+        "referrals": null,
+        "employees": null,
+        "agencies": null,
+        "affiliates": null
+      }
+    }
+  },
+  "money_model": {
+    "stage_I_attraction_offer": null,
+    "stage_II_upsell_offer": null,
+    "stage_II_downsell_offer": null,
+    "stage_III_continuity_offer": null,
+    "rules": []
+  },
+  "progress": {
+    "current_node_id": "SEQ",
+    "visited_node_ids": [],
+    "decisions": [],
+    "metrics": {}
+  }
+}

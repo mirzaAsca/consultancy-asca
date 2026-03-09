@@ -1,0 +1,6576 @@
+{
+  "schema": "flow_graph",
+  "entry_node_id": "SEQ",
+  "charts": [
+    {
+      "chart_id": "CHART_MASTER",
+      "title": "Master sequence",
+      "primary_book": "BOOK_META"
+    },
+    {
+      "chart_id": "CHART_MONEY_MODELS",
+      "title": "100m-money-models",
+      "primary_book": "BOOK_MONEY_MODELS"
+    },
+    {
+      "chart_id": "CHART_OFFERS",
+      "title": "100m-offers",
+      "primary_book": "BOOK_OFFERS"
+    },
+    {
+      "chart_id": "CHART_LEADS",
+      "title": "100m-leads",
+      "primary_book": "BOOK_LEADS"
+    }
+  ],
+  "groups": [
+    {
+      "id": "LD_C1",
+      "title": "MEASURE",
+      "parent": "LEADS",
+      "members": [
+        "LD_C_CONV",
+        "LD_C_ELPD",
+        "LD_C_ELPH",
+        "LD_C_REVERSE"
+      ]
+    },
+    {
+      "id": "LD_C2",
+      "title": "COLD OUTREACH",
+      "parent": "LEADS",
+      "members": [
+        "LD_C_CAC_SHOW",
+        "LD_C_COST_SHOW",
+        "LD_C_DM",
+        "LD_C_EMAIL",
+        "LD_C_PHONE",
+        "LD_C_RETURN"
+      ]
+    },
+    {
+      "id": "LD_C3",
+      "title": "UNIT ECONOMICS (WORKS ACROSS ALL CHANNELS)",
+      "parent": "LEADS",
+      "members": [
+        "LD_C_GP",
+        "LD_C_LTGP",
+        "LD_C_RATIO",
+        "LD_C_SANITY"
+      ]
+    },
+    {
+      "id": "LD_C4",
+      "title": "PAID ADS",
+      "parent": "LEADS",
+      "members": [
+        "LD_C_AD_PAD",
+        "LD_C_AD_REVERSE",
+        "LD_C_AD_TEST",
+        "LD_C_CFA",
+        "LD_C_UPSELL"
+      ]
+    },
+    {
+      "id": "LD_C5",
+      "title": "REFERRALS",
+      "parent": "LEADS",
+      "members": [
+        "LD_C_CHURN",
+        "LD_C_REF_EQ",
+        "LD_C_REF_PAY1",
+        "LD_C_REF_PAY2",
+        "LD_C_REF_PCT"
+      ]
+    },
+    {
+      "id": "LD_C6",
+      "title": "EMPLOYEES",
+      "parent": "LEADS",
+      "members": [
+        "LD_C_CPEL",
+        "LD_C_ELCUST",
+        "LD_C_EMP_CAC"
+      ]
+    },
+    {
+      "id": "LD_C7",
+      "title": "AFFILIATES",
+      "parent": "LEADS",
+      "members": [
+        "LD_C_AFF_COGS",
+        "LD_C_AFF_GP",
+        "LD_C_AFF_PAYOUT",
+        "LD_C_AFF_RETURN",
+        "LD_C_AFF_SALES"
+      ]
+    },
+    {
+      "id": "LD_CALCPANEL",
+      "title": "CALCULATIONS PANEL (Use + Example Use-Case)",
+      "parent": "LEADS",
+      "members": [
+        "LD_C1",
+        "LD_C2",
+        "LD_C3",
+        "LD_C4",
+        "LD_C5",
+        "LD_C6",
+        "LD_C7"
+      ]
+    },
+    {
+      "id": "LEADS",
+      "title": "100M LEADS — Leads Operating System (Output = Engaged Leads)",
+      "parent": null,
+      "members": [
+        "LD_AF0",
+        "LD_AFF",
+        "LD_AF_INT",
+        "LD_AF_LAUNCH",
+        "LD_AF_PAY",
+        "LD_AG1",
+        "LD_AGEN",
+        "LD_BETTER",
+        "LD_C1",
+        "LD_C2",
+        "LD_C3",
+        "LD_C4",
+        "LD_C5",
+        "LD_C6",
+        "LD_C7",
+        "LD_CF_FRAME",
+        "LD_CF_PICK",
+        "LD_CO1",
+        "LD_COLD",
+        "LD_COMMIT",
+        "LD_CONSTR",
+        "LD_CONT",
+        "LD_C_AD_PAD",
+        "LD_C_AD_REVERSE",
+        "LD_C_AD_TEST",
+        "LD_C_AFF_COGS",
+        "LD_C_AFF_GP",
+        "LD_C_AFF_PAYOUT",
+        "LD_C_AFF_RETURN",
+        "LD_C_AFF_SALES",
+        "LD_C_CAC_SHOW",
+        "LD_C_CFA",
+        "LD_C_CHURN",
+        "LD_C_CONV",
+        "LD_C_COST_SHOW",
+        "LD_C_CPEL",
+        "LD_C_DM",
+        "LD_C_ELCUST",
+        "LD_C_ELPD",
+        "LD_C_ELPH",
+        "LD_C_EMAIL",
+        "LD_C_EMP_CAC",
+        "LD_C_GP",
+        "LD_C_LTGP",
+        "LD_C_PHONE",
+        "LD_C_RATIO",
+        "LD_C_REF_EQ",
+        "LD_C_REF_PAY1",
+        "LD_C_REF_PAY2",
+        "LD_C_REF_PCT",
+        "LD_C_RETURN",
+        "LD_C_REVERSE",
+        "LD_C_SANITY",
+        "LD_C_UPSELL",
+        "LD_DEF",
+        "LD_EMP",
+        "LD_EMP1",
+        "LD_EMP2",
+        "LD_HIT",
+        "LD_L1",
+        "LD_L2",
+        "LD_L3",
+        "LD_L4",
+        "LD_L5",
+        "LD_L6",
+        "LD_L7",
+        "LD_LADDER",
+        "LD_LG",
+        "LD_LG_PICK",
+        "LD_LM0",
+        "LD_LM_DELIV",
+        "LD_LM_Q",
+        "LD_LM_STEPS",
+        "LD_LM_TEST",
+        "LD_LM_TYPES",
+        "LD_LVLS",
+        "LD_MBN",
+        "LD_MEASURE",
+        "LD_MORE",
+        "LD_NEW",
+        "LD_ONEPAGE",
+        "LD_OTG",
+        "LD_PAID",
+        "LD_Q10X",
+        "LD_R100",
+        "LD_REF",
+        "LD_REF1",
+        "LD_REF2",
+        "LD_ROOT",
+        "LD_TIME",
+        "LD_VEH",
+        "LD_WARM"
+      ]
+    },
+    {
+      "id": "MONEY_MODELS",
+      "title": "100M MONEY MODELS — Money Model = deliberate sequence of offers",
+      "parent": null,
+      "members": [
+        "MM_AO",
+        "MM_AO_G",
+        "MM_AO_N",
+        "MM_AO_O",
+        "MM_AO_T",
+        "MM_CALC_30DAY",
+        "MM_CALC_AO_COVER",
+        "MM_CALC_BONUSONLY",
+        "MM_CALC_CANCEL",
+        "MM_CALC_EXTEND",
+        "MM_CALC_PAYLESS",
+        "MM_CALC_PROCESS",
+        "MM_CALC_ROLLOVER",
+        "MM_CALC_STANDALONE",
+        "MM_CALC_WAIVEDFEE",
+        "MM_CALC_WEEKLY",
+        "MM_CO",
+        "MM_CO_G",
+        "MM_CO_N",
+        "MM_CO_O",
+        "MM_CO_T",
+        "MM_DO",
+        "MM_DO_G",
+        "MM_DO_O",
+        "MM_DO_T",
+        "MM_EXIT",
+        "MM_LATER",
+        "MM_MM",
+        "MM_NURTURE",
+        "MM_R1",
+        "MM_R2",
+        "MM_R3",
+        "MM_R4",
+        "MM_RECUR",
+        "MM_RULES",
+        "MM_S1",
+        "MM_S2",
+        "MM_S3",
+        "MM_UO",
+        "MM_UO_G",
+        "MM_UO_O",
+        "MM_UO_P",
+        "MM_UO_T"
+      ]
+    },
+    {
+      "id": "OFFERS",
+      "title": "100M OFFERS — Build the Grand Slam Offer (Category of One)",
+      "parent": null,
+      "members": [
+        "OF_C_CASHMULT",
+        "OF_C_GUAR",
+        "OF_C_PAYLESS",
+        "OF_C_PPLAN",
+        "OF_C_ROLLOVER",
+        "OF_C_SCALEMATH",
+        "OF_C_VAL",
+        "OF_C_WYMB",
+        "OF_O",
+        "OF_S1A",
+        "OF_S1B",
+        "OF_S2A",
+        "OF_S2B",
+        "OF_S2C",
+        "OF_S2D",
+        "OF_S2E",
+        "OF_S3A",
+        "OF_S3B",
+        "OF_S3C",
+        "OF_S3D",
+        "OF_S3E",
+        "OF_S4A",
+        "OF_S4B",
+        "OF_S4C",
+        "OF_S4D",
+        "OF_S4E",
+        "OF_S5A",
+        "OF_S5B",
+        "OF_S5C",
+        "OF_S5D",
+        "OF_S6A",
+        "OF_S7A",
+        "OF_S7B"
+      ]
+    },
+    {
+      "id": "OF_STEP1",
+      "title": "STEP 1 - MARKET (Starving Crowd)",
+      "parent": "OFFERS",
+      "members": [
+        "OF_S1A",
+        "OF_S1B"
+      ]
+    },
+    {
+      "id": "OF_STEP2",
+      "title": "STEP 2 - VALUE EQUATION",
+      "parent": "OFFERS",
+      "members": [
+        "OF_S2A",
+        "OF_S2B",
+        "OF_S2C",
+        "OF_S2D",
+        "OF_S2E"
+      ]
+    },
+    {
+      "id": "OF_STEP3",
+      "title": "STEP 3 - BUILD THE OFFER",
+      "parent": "OFFERS",
+      "members": [
+        "OF_S3A",
+        "OF_S3B",
+        "OF_S3C",
+        "OF_S3D",
+        "OF_S3E"
+      ]
+    },
+    {
+      "id": "OF_STEP4",
+      "title": "STEP 4 - GRAND SLAM STACK (5)",
+      "parent": "OFFERS",
+      "members": [
+        "OF_S4A",
+        "OF_S4B",
+        "OF_S4C",
+        "OF_S4D",
+        "OF_S4E"
+      ]
+    },
+    {
+      "id": "OF_STEP5",
+      "title": "STEP 5 - OFFER ENHANCERS",
+      "parent": "OFFERS",
+      "members": [
+        "OF_S5A",
+        "OF_S5B",
+        "OF_S5C",
+        "OF_S5D"
+      ]
+    },
+    {
+      "id": "OF_STEP6",
+      "title": "STEP 6 - NAMING (MAGIC)",
+      "parent": "OFFERS",
+      "members": [
+        "OF_S6A"
+      ]
+    },
+    {
+      "id": "OF_STEP7",
+      "title": "STEP 7 - EXECUTE AND ITERATE",
+      "parent": "OFFERS",
+      "members": [
+        "OF_S7A",
+        "OF_S7B"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "LD_AF0",
+      "label": "Affiliate system (6 steps)\nFind -> Offer -> Qualify\nPay -> Launch -> Integrate",
+      "label_raw": "Affiliate system (6 steps)<br>Find -&gt; Offer -&gt; Qualify<br>Pay -&gt; Launch -&gt; Integrate",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_af0",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_AFF",
+      "label": "D) Affiliates/Partners",
+      "label_raw": "D) Affiliates/Partners",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_aff",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_AF_INT",
+      "label": "Integration (keep advertising)\n1 Give your lead magnet with their purchase\n2 Sell your lead magnet separately\n3 Sell your core offer directly",
+      "label_raw": "Integration (keep advertising)<br>1 Give your lead magnet with their purchase<br>2 Sell your lead magnet separately<br>3 Sell your core offer directly",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_af_int",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_AF_LAUNCH",
+      "label": "Launch (Whisper -> Tease -> Shout)",
+      "label_raw": "Launch (Whisper -> Tease -> Shout)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_af_launch",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_AF_PAY",
+      "label": "Pay (tiered)\nAnchor to allowable CAC\nTiered payouts improve blended CAC",
+      "label_raw": "Pay (tiered)<br>Anchor to allowable CAC<br>Tiered payouts improve blended CAC",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_af_pay",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_AG1",
+      "label": "Agency use\nAccelerate learning with a deadline\nBuild internal capability",
+      "label_raw": "Agency use<br>Accelerate learning with a deadline<br>Build internal capability",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_ag1",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_AGEN",
+      "label": "C) Agencies",
+      "label_raw": "C) Agencies",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_agen",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_BETTER",
+      "label": "BETTER\nTest to improve conversion/efficiency",
+      "label_raw": "BETTER<br>Test to improve conversion/efficiency",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_upsell"
+      ],
+      "meta": {},
+      "slug": "ld_better",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C1",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {},
+      "slug": "ld_c1",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_C2",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {},
+      "slug": "ld_c2",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_C3",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {},
+      "slug": "ld_c3",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_C4",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {},
+      "slug": "ld_c4",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_C5",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {},
+      "slug": "ld_c5",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_C6",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {},
+      "slug": "ld_c6",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_C7",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {},
+      "slug": "ld_c7",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_CF_FRAME",
+      "label": "2) Core Four frame\nWarm vs Cold audiences\nPrivate (1:1) vs Public (1:Many)\n(Start with ONE lane)",
+      "label_raw": "2) Core Four frame<br>Warm vs Cold audiences<br>Private (1:1) vs Public (1:Many)<br>(Start with ONE lane)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_attraction"
+      ],
+      "meta": {},
+      "slug": "ld_cf_frame",
+      "concept_keys": [
+        "core_four"
+      ]
+    },
+    {
+      "id": "LD_CF_PICK",
+      "label": "Pick ONE Core Four method to run daily",
+      "label_raw": "Pick ONE Core Four method to run daily",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_attraction"
+      ],
+      "meta": {},
+      "slug": "ld_cf_pick",
+      "concept_keys": [
+        "core_four"
+      ]
+    },
+    {
+      "id": "LD_CO1",
+      "label": "Advertise Core Offer first\nDirect path to engagement/sale",
+      "label_raw": "Advertise Core Offer first<br>Direct path to engagement/sale",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_co1",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_COLD",
+      "label": "Cold Outreach\nLists -> Personalize -> Big/Fast value -> Volume",
+      "label_raw": "Cold Outreach<br>Lists -&gt; Personalize -&gt; Big/Fast value -&gt; Volume",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_attraction"
+      ],
+      "meta": {},
+      "slug": "ld_cold",
+      "concept_keys": [
+        "core_four"
+      ]
+    },
+    {
+      "id": "LD_COMMIT",
+      "label": "3) Choose commitment mode",
+      "label_raw": "3) Choose commitment mode",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_continuity"
+      ],
+      "meta": {},
+      "slug": "ld_commit",
+      "concept_keys": [
+        "commitment_modes"
+      ]
+    },
+    {
+      "id": "LD_CONSTR",
+      "label": "Constraint loop\nDo more until it breaks\nTest until constraint frees\nKeep volume up",
+      "label_raw": "Constraint loop<br>Do more until it breaks<br>Test until constraint frees<br>Keep volume up",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_upsell"
+      ],
+      "meta": {},
+      "slug": "ld_constr",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_CONT",
+      "label": "Free Content\nHook -> Retain -> Reward\nGive until they ask",
+      "label_raw": "Free Content<br>Hook -&gt; Retain -&gt; Reward<br>Give until they ask",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_attraction"
+      ],
+      "meta": {},
+      "slug": "ld_cont",
+      "concept_keys": [
+        "core_four"
+      ]
+    },
+    {
+      "id": "LD_C_AD_PAD",
+      "label": "☁️ Scale padding\nFormula: PaddedMonthly = MonthlyAdSpend * 1.2\nDaily = PaddedMonthly / 30\nUsed for: realistic scale budgeting\nExample use: avoid underfunding when you raise spend",
+      "label_raw": "☁️ Scale padding<br>Formula: PaddedMonthly = MonthlyAdSpend * 1.2<br>Daily = PaddedMonthly / 30<br>Used for: realistic scale budgeting<br>Example use: avoid underfunding when you raise spend",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ad_pad",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_AD_REVERSE",
+      "label": "☁️ Reverse budget from goal\nFormula: MonthlyAdSpend = TargetCustomers * CAC\nUsed for: budget planning from bookings goal\nExample use: set seasonal promo spend based on required bookings",
+      "label_raw": "☁️ Reverse budget from goal<br>Formula: MonthlyAdSpend = TargetCustomers * CAC<br>Used for: budget planning from bookings goal<br>Example use: set seasonal promo spend based on required bookings",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ad_reverse",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_AD_TEST",
+      "label": "☁️ Test budget cap (rule of thumb)\nFormula: MaxTestSpend ~ 2x 30-day cash collected\nUsed for: controlling test risk\nExample use: stop overspending before proof of engagement exists",
+      "label_raw": "☁️ Test budget cap (rule of thumb)<br>Formula: MaxTestSpend ~ 2x 30-day cash collected<br>Used for: controlling test risk<br>Example use: stop overspending before proof of engagement exists",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ad_test",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_AFF_COGS",
+      "label": "☁️ Affiliate COGS estimate\nFormula: COGS = TotalSales * COGS_percent\nUsed for: margin planning before commissions\nExample use: avoid overpaying when fulfillment costs rise",
+      "label_raw": "☁️ Affiliate COGS estimate<br>Formula: COGS = TotalSales * COGS_percent<br>Used for: margin planning before commissions<br>Example use: avoid overpaying when fulfillment costs rise",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_aff_cogs",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_AFF_GP",
+      "label": "☁️ Affiliate gross profit estimate\nFormula: GP = TotalSales - COGS\nUsed for: commission headroom\nExample use: set tiered payouts that stay profitable across packages",
+      "label_raw": "☁️ Affiliate gross profit estimate<br>Formula: GP = TotalSales - COGS<br>Used for: commission headroom<br>Example use: set tiered payouts that stay profitable across packages",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_aff_gp",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_AFF_PAYOUT",
+      "label": "☁️ Affiliate payout estimate\nFormula: Payout = GP * Payout_percent\nUsed for: designing tiered commissions under CAC limits\nExample use: increase payout only when volume/quality stays strong",
+      "label_raw": "☁️ Affiliate payout estimate<br>Formula: Payout = GP * Payout_percent<br>Used for: designing tiered commissions under CAC limits<br>Example use: increase payout only when volume/quality stays strong",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_aff_payout",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_AFF_RETURN",
+      "label": "☁️ Affiliate net return check\nFormula: NetReturn = GP_from_aff_customers - Cost_to_get_affiliate\nUsed for: deciding if a partner is worth recruiting\nExample use: compare sponsoring partner vs spending same on ads",
+      "label_raw": "☁️ Affiliate net return check<br>Formula: NetReturn = GP_from_aff_customers - Cost_to_get_affiliate<br>Used for: deciding if a partner is worth recruiting<br>Example use: compare sponsoring partner vs spending same on ads",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_aff_return",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_AFF_SALES",
+      "label": "☁️ Affiliate total sales forecast\nFormula: TotalSales = MonthlySales * MonthsActive\nUsed for: estimating partner long-term value\nExample use: prioritize support for highest expected output",
+      "label_raw": "☁️ Affiliate total sales forecast<br>Formula: TotalSales = MonthlySales * MonthsActive<br>Used for: estimating partner long-term value<br>Example use: prioritize support for highest expected output",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_aff_sales",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_CAC_SHOW",
+      "label": "☁️ CAC from shows\nFormula: CAC = CostPerShow / CloseRate\nUsed for: setting max cost per booked call\nExample use: decide if improving sales close rate beats buying more leads",
+      "label_raw": "☁️ CAC from shows<br>Formula: CAC = CostPerShow / CloseRate<br>Used for: setting max cost per booked call<br>Example use: decide if improving sales close rate beats buying more leads",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_cac_show",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_CFA",
+      "label": "☁️ Client-Financed Acquisition (CFA)\nGoal: 30DayGP >= CAC\nFormula: 30DayGP = 30DayRevenue - 30DayDeliveryCosts\nUsed for: scaling without cashflow stress\nExample use: ensure deposits/near-term GP covers acquisition",
+      "label_raw": "☁️ Client-Financed Acquisition (CFA)<br>Goal: 30DayGP &gt;= CAC<br>Formula: 30DayGP = 30DayRevenue - 30DayDeliveryCosts<br>Used for: scaling without cashflow stress<br>Example use: ensure deposits/near-term GP covers acquisition",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_cfa",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_CHURN",
+      "label": "☁️ Churn rate\nFormula: ChurnRate = Churned / TotalCustomers\nUsed for: retention health check\nExample use: decide if delivery/onboarding is causing drop-off",
+      "label_raw": "☁️ Churn rate<br>Formula: ChurnRate = Churned / TotalCustomers<br>Used for: retention health check<br>Example use: decide if delivery/onboarding is causing drop-off",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_churn",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_CONV",
+      "label": "☁️ Conversion rate (any step)\nFormula: CR = Outcomes / Inputs\nUsed for: finding bottlenecks\nExample use: identify if drop is from hook, page, or follow-up",
+      "label_raw": "☁️ Conversion rate (any step)<br>Formula: CR = Outcomes / Inputs<br>Used for: finding bottlenecks<br>Example use: identify if drop is from hook, page, or follow-up",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_conv",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_COST_SHOW",
+      "label": "☁️ Cost per show (appointment)\nFormula: CostPerShow = TotalCost / Shows\nUsed for: pricing the setter engine\nExample use: compare in-house setter vs agency cost per show",
+      "label_raw": "☁️ Cost per show (appointment)<br>Formula: CostPerShow = TotalCost / Shows<br>Used for: pricing the setter engine<br>Example use: compare in-house setter vs agency cost per show",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_cost_show",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_CPEL",
+      "label": "☁️ Cost per engaged lead (employees)\nFormula: CPEL = TotalPayroll / TotalEngagedLeads\nUsed for: efficiency + hiring decisions\nExample use: decide to hire another setter vs improve training/tools",
+      "label_raw": "☁️ Cost per engaged lead (employees)<br>Formula: CPEL = TotalPayroll / TotalEngagedLeads<br>Used for: efficiency + hiring decisions<br>Example use: decide to hire another setter vs improve training/tools",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_cpel",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_DM",
+      "label": "☁️ DMs -> engaged leads\nFormula: EL = DMs * ReplyRate\nUsed for: daily DM targets + script testing\nExample use: compare DM scripts by reply rate",
+      "label_raw": "☁️ DMs -&gt; engaged leads<br>Formula: EL = DMs * ReplyRate<br>Used for: daily DM targets + script testing<br>Example use: compare DM scripts by reply rate",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_dm",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_ELCUST",
+      "label": "☁️ Engaged leads per customer\nFormula: EL_per_customer = 1 / Engaged_to_Customer_CR\nUsed for: translating leads into customers\nExample use: check if lead volume supports the revenue target",
+      "label_raw": "☁️ Engaged leads per customer<br>Formula: EL_per_customer = 1 / Engaged_to_Customer_CR<br>Used for: translating leads into customers<br>Example use: check if lead volume supports the revenue target",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_elcust",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_ELPD",
+      "label": "☁️ Engaged leads/day\nFormula: EL_day = count of engaged leads today\nUsed for: daily output tracking\nExample use: compare which campaign produced more engaged leads",
+      "label_raw": "☁️ Engaged leads/day<br>Formula: EL_day = count of engaged leads today<br>Used for: daily output tracking<br>Example use: compare which campaign produced more engaged leads",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_elpd",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_ELPH",
+      "label": "☁️ Engaged leads/hour\nFormula: EL_hr = EngagedLeads / HoursWorked\nUsed for: productivity benchmarking\nExample use: check whether a new script/tool increased throughput",
+      "label_raw": "☁️ Engaged leads/hour<br>Formula: EL_hr = EngagedLeads / HoursWorked<br>Used for: productivity benchmarking<br>Example use: check whether a new script/tool increased throughput",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_elph",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_EMAIL",
+      "label": "☁️ Cold email -> engaged leads\nFormula: EL = Sends * OpenRate * ReplyRate\nUsed for: choosing what to test\nExample use: low opens -> test subject; low replies -> test offer/CTA",
+      "label_raw": "☁️ Cold email -&gt; engaged leads<br>Formula: EL = Sends * OpenRate * ReplyRate<br>Used for: choosing what to test<br>Example use: low opens -&gt; test subject; low replies -&gt; test offer/CTA",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_email",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_EMP_CAC",
+      "label": "☁️ CAC from employees\nFormula: CAC = CPEL * EL_per_customer\nUsed for: compare hiring vs ads\nExample use: pick the cheaper/cleaner growth path",
+      "label_raw": "☁️ CAC from employees<br>Formula: CAC = CPEL * EL_per_customer<br>Used for: compare hiring vs ads<br>Example use: pick the cheaper/cleaner growth path",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_emp_cac",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_GP",
+      "label": "☁️ Gross profit (unit)\nFormula: GP = Price - DeliveryCost\nUsed for: safe CAC/reward limits\nExample use: cap referral reward so fulfillment stays profitable",
+      "label_raw": "☁️ Gross profit (unit)<br>Formula: GP = Price - DeliveryCost<br>Used for: safe CAC/reward limits<br>Example use: cap referral reward so fulfillment stays profitable",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_gp",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_LTGP",
+      "label": "☁️ LTGP (Lifetime Gross Profit)\nFormula: LTGP = LifetimeRevenue - LifetimeDeliveryCosts\nUsed for: deciding max allowable CAC\nExample use: justify higher CAC for repeat clients or retainers",
+      "label_raw": "☁️ LTGP (Lifetime Gross Profit)<br>Formula: LTGP = LifetimeRevenue - LifetimeDeliveryCosts<br>Used for: deciding max allowable CAC<br>Example use: justify higher CAC for repeat clients or retainers",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ltgp",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_PHONE",
+      "label": "☁️ Cold calls -> engaged leads\nFormula: EL = Calls * PickupRate * TakeRate\nUsed for: forecasting call volume\nExample use: decide if you should improve list quality or opener",
+      "label_raw": "☁️ Cold calls -&gt; engaged leads<br>Formula: EL = Calls * PickupRate * TakeRate<br>Used for: forecasting call volume<br>Example use: decide if you should improve list quality or opener",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_phone",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_RATIO",
+      "label": "☁️ LTGP:CAC efficiency\nFormula: LTGP_to_CAC = LTGP / CAC\nUsed for: scale readiness (scale vs fix)\nExample use: decide to scale ads or improve retention/onboarding first",
+      "label_raw": "☁️ LTGP:CAC efficiency<br>Formula: LTGP_to_CAC = LTGP / CAC<br>Used for: scale readiness (scale vs fix)<br>Example use: decide to scale ads or improve retention/onboarding first",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ratio",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_REF_EQ",
+      "label": "☁️ Referral growth equation\nFormula: NetReferralGrowth = Referrals(in) - Churn(out)\nUsed for: knowing if referrals compound growth\nExample use: if net is flat, fix churn or referral ask timing",
+      "label_raw": "☁️ Referral growth equation<br>Formula: NetReferralGrowth = Referrals(in) - Churn(out)<br>Used for: knowing if referrals compound growth<br>Example use: if net is flat, fix churn or referral ask timing",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ref_eq",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_REF_PAY1",
+      "label": "☁️ Referral payout anchor (one-sided)\nRule: IncentiveMax ~ allowable CAC\nUsed for: safe reward sizing\nExample use: choose cash vs credit without breaking margins",
+      "label_raw": "☁️ Referral payout anchor (one-sided)<br>Rule: IncentiveMax ~ allowable CAC<br>Used for: safe reward sizing<br>Example use: choose cash vs credit without breaking margins",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ref_pay1",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_REF_PAY2",
+      "label": "☁️ Referral payout anchor (two-sided)\nRule: each side ~ allowable CAC / 2\nUsed for: structuring friend + referrer incentives\nExample use: reward both sides while keeping total under CAC",
+      "label_raw": "☁️ Referral payout anchor (two-sided)<br>Rule: each side ~ allowable CAC / 2<br>Used for: structuring friend + referrer incentives<br>Example use: reward both sides while keeping total under CAC",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ref_pay2",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_REF_PCT",
+      "label": "☁️ Referral rate\nFormula: ReferralRate = ReferredNew / TotalNew\nUsed for: tracking referral goal progress\nExample use: see whether a new referral prompt increased share",
+      "label_raw": "☁️ Referral rate<br>Formula: ReferralRate = ReferredNew / TotalNew<br>Used for: tracking referral goal progress<br>Example use: see whether a new referral prompt increased share",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_ref_pct",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_RETURN",
+      "label": "☁️ Return multiple (simple)\nFormula: Return = ProfitPerSale / CAC\nUsed for: choosing what to scale\nExample use: prioritize the channel with best return + lowest ops pain",
+      "label_raw": "☁️ Return multiple (simple)<br>Formula: Return = ProfitPerSale / CAC<br>Used for: choosing what to scale<br>Example use: prioritize the channel with best return + lowest ops pain",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_return",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_REVERSE",
+      "label": "☁️ Reverse engineer volume\nFormula: InputsNeeded = TargetOutcomes / ConversionRate\nUsed for: turning goals into activity targets\nExample use: set daily outreach/content quotas from monthly goal",
+      "label_raw": "☁️ Reverse engineer volume<br>Formula: InputsNeeded = TargetOutcomes / ConversionRate<br>Used for: turning goals into activity targets<br>Example use: set daily outreach/content quotas from monthly goal",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_reverse",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_SANITY",
+      "label": "☁️ CAC sanity check vs market\nRule: if CAC <= 3x market avg -> improve LTGP\nif CAC > 3x market avg -> fix CAC\nUsed for: pick the right lever first\nExample use: decide if targeting/offer is the real issue",
+      "label_raw": "☁️ CAC sanity check vs market<br>Rule: if CAC &lt;= 3x market avg -&gt; improve LTGP<br>if CAC &gt; 3x market avg -&gt; fix CAC<br>Used for: pick the right lever first<br>Example use: decide if targeting/offer is the real issue",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_sanity",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_C_UPSELL",
+      "label": "☁️ Avg upsell profit per customer\nFormula: AvgUpsell = UpsellProfit * TakeRate\nUsed for: improving payback window\nExample use: add premium add-ons to raise short-term GP safely",
+      "label_raw": "☁️ Avg upsell profit per customer<br>Formula: AvgUpsell = UpsellProfit * TakeRate<br>Used for: improving payback window<br>Example use: add premium add-ons to raise short-term GP safely",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_calc"
+      ],
+      "meta": {},
+      "slug": "ld_c_upsell",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_DEF",
+      "label": "0) Define the score\nLead = person you can contact\nEngaged lead = shows interest (reply/opt-in/DM/call/etc.)",
+      "label_raw": "0) Define the score<br>Lead = person you can contact<br>Engaged lead = shows interest (reply/opt-in/DM/call/etc.)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_def",
+      "concept_keys": [
+        "lead_definition"
+      ]
+    },
+    {
+      "id": "LD_EMP",
+      "label": "B) Employees",
+      "label_raw": "B) Employees",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_emp",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_EMP1",
+      "label": "Internal Core Four (recruiting)\nWarm network / Cold recruiting\nContent job posts / Paid job ads\nReferrals / Associations / Staffing",
+      "label_raw": "Internal Core Four (recruiting)<br>Warm network / Cold recruiting<br>Content job posts / Paid job ads<br>Referrals / Associations / Staffing",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_emp1",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_EMP2",
+      "label": "Train with 3Ds\nDocument -> Demonstrate -> Duplicate\n(fix checklist, not the person)",
+      "label_raw": "Train with 3Ds<br>Document -&gt; Demonstrate -&gt; Duplicate<br>(fix checklist, not the person)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_emp2",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_HIT",
+      "label": "Hitting target output?",
+      "label_raw": "Hitting target output?",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_hit",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_L1",
+      "label": "Level 1\nOne offer / one avatar / one platform\nPrimary: Warm outreach",
+      "label_raw": "Level 1<br>One offer / one avatar / one platform<br>Primary: Warm outreach",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_l1",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_L2",
+      "label": "Level 2\nKnown inputs -> consistent customers\nPrimary: Warm outreach + Content",
+      "label_raw": "Level 2<br>Known inputs -&gt; consistent customers<br>Primary: Warm outreach + Content",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_l2",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_L3",
+      "label": "Level 3\nHire employees to do more advertising",
+      "label_raw": "Level 3<br>Hire employees to do more advertising",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_l3",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_L4",
+      "label": "Level 4\nConsistent referrals\nTarget ~25%+ from referrals",
+      "label_raw": "Level 4<br>Consistent referrals<br>Target ~25%+ from referrals",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_l4",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_L5",
+      "label": "Level 5\nMore places/ways/people\nAdd platforms + lead getters",
+      "label_raw": "Level 5<br>More places/ways/people<br>Add platforms + lead getters",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_l5",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_L6",
+      "label": "Level 6\nHire experienced execs to run growth",
+      "label_raw": "Level 6<br>Hire experienced execs to run growth",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_l6",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_L7",
+      "label": "Level 7\nReality is messy\nRun combos long enough to know",
+      "label_raw": "Level 7<br>Reality is messy<br>Run combos long enough to know",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_l7",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_LADDER",
+      "label": "Leverage ladder\n1 You do it\n2 One lead getter\n3 Many lead getters\n4 Lead getter who gets lead getters",
+      "label_raw": "Leverage ladder<br>1 You do it<br>2 One lead getter<br>3 Many lead getters<br>4 Lead getter who gets lead getters",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_ladder",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_LG",
+      "label": "6) Add Lead Getters (leverage)\nYou do Core Four to get them\nThen they do Core Four for you",
+      "label_raw": "6) Add Lead Getters (leverage)<br>You do Core Four to get them<br>Then they do Core Four for you",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_lg",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_LG_PICK",
+      "label": "Which Lead Getter next?",
+      "label_raw": "Which Lead Getter next?",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_lg_pick",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_LM0",
+      "label": "Use Lead Magnet when more proof is needed\n(bridge to core offer)",
+      "label_raw": "Use Lead Magnet when more proof is needed<br>(bridge to core offer)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_lm0",
+      "concept_keys": [
+        "lead_magnet_build_steps",
+        "lead_magnet_quality"
+      ]
+    },
+    {
+      "id": "LD_LM_DELIV",
+      "label": "Delivery options\nSoftware-tool / Information / Service / Physical product\n(Make variants + rotate)",
+      "label_raw": "Delivery options<br>Software-tool / Information / Service / Physical product<br>(Make variants + rotate)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_lm_deliv",
+      "concept_keys": [
+        "lead_magnet_build_steps",
+        "lead_magnet_quality"
+      ]
+    },
+    {
+      "id": "LD_LM_Q",
+      "label": "Lead Magnet quality (must hit all 4)\nEngages ideal buyers\nOutperforms core-offer-only\nValuable enough to consume\nMakes right people more likely to buy",
+      "label_raw": "Lead Magnet quality (must hit all 4)<br>Engages ideal buyers<br>Outperforms core-offer-only<br>Valuable enough to consume<br>Makes right people more likely to buy",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_lm_q",
+      "concept_keys": [
+        "lead_magnet_build_steps",
+        "lead_magnet_quality"
+      ]
+    },
+    {
+      "id": "LD_LM_STEPS",
+      "label": "Lead Magnet build (7 steps)\n1 Problem + Who\n2 Solve\n3 Deliver\n4 Name test\n5 Easy consume\n6 Darn good\n7 Easy 'want more' step",
+      "label_raw": "Lead Magnet build (7 steps)<br>1 Problem + Who<br>2 Solve<br>3 Deliver<br>4 Name test<br>5 Easy consume<br>6 Darn good<br>7 Easy 'want more' step",
+      "shape": "meta",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [],
+      "meta": {
+        "label": "Lead Magnet build (7 steps)<br>1 Problem + Who<br>2 Solve<br>3 Deliver<br>4 Name test<br>5 Easy consume<br>6 Darn good<br>7 Easy 'want more' step",
+        "shape": "rect"
+      },
+      "slug": "ld_lm_steps",
+      "concept_keys": [
+        "lead_magnet_build_steps",
+        "lead_magnet_quality"
+      ]
+    },
+    {
+      "id": "LD_LM_TEST",
+      "label": "Testing priority\nHeadline -> Image(s) -> Subheadline",
+      "label_raw": "Testing priority<br>Headline -&gt; Image(s) -&gt; Subheadline",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_lm_test",
+      "concept_keys": [
+        "lead_magnet_build_steps",
+        "lead_magnet_quality"
+      ]
+    },
+    {
+      "id": "LD_LM_TYPES",
+      "label": "Lead Magnet type\nReveal problem / Sample-Trial / One step of multi-step",
+      "label_raw": "Lead Magnet type<br>Reveal problem / Sample-Trial / One step of multi-step",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_lm_types",
+      "concept_keys": [
+        "lead_magnet_build_steps",
+        "lead_magnet_quality"
+      ]
+    },
+    {
+      "id": "LD_LVLS",
+      "label": "7) Roadmap: Seven levels (operator map)",
+      "label_raw": "7) Roadmap: Seven levels (operator map)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_lvls",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_MBN",
+      "label": "Fix via More -> Better -> New",
+      "label_raw": "Fix via More -> Better -> New",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_upsell"
+      ],
+      "meta": {},
+      "slug": "ld_mbn",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_MEASURE",
+      "label": "5) Measure (track counts + rates)\nEngaged leads/day\nEngaged leads per hour\nConversion rates per step\nCost per engaged lead / CAC / LTGP:CAC",
+      "label_raw": "5) Measure (track counts + rates)<br>Engaged leads/day<br>Engaged leads per hour<br>Conversion rates per step<br>Cost per engaged lead / CAC / LTGP:CAC",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_measure",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_MORE",
+      "label": "MORE\nIncrease volume of the same method",
+      "label_raw": "MORE<br>Increase volume of the same method",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_upsell"
+      ],
+      "meta": {},
+      "slug": "ld_more",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_NEW",
+      "label": "NEW (after More/Better)\nOrder: New placement -> New platform -> New Core Four lane",
+      "label_raw": "NEW (after More/Better)<br>Order: New placement -&gt; New platform -&gt; New Core Four lane",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_upsell"
+      ],
+      "meta": {},
+      "slug": "ld_new",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_ONEPAGE",
+      "label": "4) One-page daily checklist (5 steps)\n1 Pick engaged lead type (Customers/Affiliates/Employees/Agencies)\n2 Pick Rule of 100 or Open-To-Goal\n3 Fill checklist for ONE daily action\n4 Do it daily until you can pay someone else\n5 Go back to #1 (often next = Employees)",
+      "label_raw": "4) One-page daily checklist (5 steps)<br>1 Pick engaged lead type (Customers/Affiliates/Employees/Agencies)<br>2 Pick Rule of 100 or Open-To-Goal<br>3 Fill checklist for ONE daily action<br>4 Do it daily until you can pay someone else<br>5 Go back to #1 (often next = Employees)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_continuity"
+      ],
+      "meta": {},
+      "slug": "ld_onepage",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_OTG",
+      "label": "Open-To-Goal\nWork until outcome is hit",
+      "label_raw": "Open-To-Goal<br>Work until outcome is hit",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_continuity"
+      ],
+      "meta": {},
+      "slug": "ld_otg",
+      "concept_keys": [
+        "commitment_modes"
+      ]
+    },
+    {
+      "id": "LD_PAID",
+      "label": "Paid Ads\nTargeting -> Callouts\nWhat-Who-When -> CTA\nClient-financed goal",
+      "label_raw": "Paid Ads<br>Targeting -&gt; Callouts<br>What-Who-When -&gt; CTA<br>Client-financed goal",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_attraction"
+      ],
+      "meta": {},
+      "slug": "ld_paid",
+      "concept_keys": [
+        "core_four"
+      ]
+    },
+    {
+      "id": "LD_Q10X",
+      "label": "10x question\nWhat stops 10x volume?\nSolve that first",
+      "label_raw": "10x question<br>What stops 10x volume?<br>Solve that first",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_upsell"
+      ],
+      "meta": {},
+      "slug": "ld_q10x",
+      "concept_keys": [
+        "measure_and_optimize"
+      ]
+    },
+    {
+      "id": "LD_R100",
+      "label": "Rule of 100\n100 primary actions/day\nfor 100 days",
+      "label_raw": "Rule of 100<br>100 primary actions/day<br>for 100 days",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_continuity"
+      ],
+      "meta": {},
+      "slug": "ld_r100",
+      "concept_keys": [
+        "commitment_modes"
+      ]
+    },
+    {
+      "id": "LD_REF",
+      "label": "A) Referrals (Customers)",
+      "label_raw": "A) Referrals (Customers)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_ref",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_REF1",
+      "label": "Referrals why\nWorth more (higher LTGP) + cost less (lower CAC)",
+      "label_raw": "Referrals why<br>Worth more (higher LTGP) + cost less (lower CAC)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_ref1",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_REF2",
+      "label": "Referral growth equation\nReferrals (in) - churned customers (out)",
+      "label_raw": "Referral growth equation<br>Referrals (in) - churned customers (out)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_downsell"
+      ],
+      "meta": {},
+      "slug": "ld_ref2",
+      "concept_keys": [
+        "lead_getters"
+      ]
+    },
+    {
+      "id": "LD_ROOT",
+      "label": "Leads Operating System\nOutput = Engaged Leads",
+      "label_raw": "Leads Operating System<br>Output = Engaged Leads",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_money"
+      ],
+      "meta": {},
+      "slug": "ld_root",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_TIME",
+      "label": "Time-constrained?",
+      "label_raw": "Time-constrained?",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_time",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_VEH",
+      "label": "1) Pick engagement vehicle",
+      "label_raw": "1) Pick engagement vehicle",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_core"
+      ],
+      "meta": {},
+      "slug": "ld_veh",
+      "concept_keys": []
+    },
+    {
+      "id": "LD_WARM",
+      "label": "Warm Outreach\nAsk people who know you",
+      "label_raw": "Warm Outreach<br>Ask people who know you",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_LEADS",
+      "chart_id": "CHART_LEADS",
+      "classes": [
+        "ld_attraction"
+      ],
+      "meta": {},
+      "slug": "ld_warm",
+      "concept_keys": [
+        "core_four"
+      ]
+    },
+    {
+      "id": "MM_AO",
+      "label": "Attraction Offer\nTurns strangers into customers",
+      "label_raw": "Attraction Offer<br/>Turns strangers into customers",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_attraction"
+      ],
+      "meta": {},
+      "slug": "mm_ao",
+      "concept_keys": [
+        "money_model_definition",
+        "money_model_stages"
+      ]
+    },
+    {
+      "id": "MM_AO_G",
+      "label": "Goal:\nTurn strangers into customers and get more cash up front\n(cover customer cost + delivery cost, ideally multiple times over)",
+      "label_raw": "Goal:<br/>Turn strangers into customers and get more cash up front<br/>(cover customer cost + delivery cost, ideally multiple times over)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_ao_g",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_AO_N",
+      "label": "Note:\nOften free or discounted",
+      "label_raw": "Note:<br/>Often free or discounted",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_ao_n",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_AO_O",
+      "label": "Decision:\nDo they buy?",
+      "label_raw": "Decision:<br/>Do they buy?",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_ao_o",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_AO_T",
+      "label": "Common Attraction Offers:\nWin Your Money Back | Giveaways | Decoy Offer | Buy X Get Y Free | Pay Less Now Pay More Later",
+      "label_raw": "Common Attraction Offers:<br/>Win Your Money Back | Giveaways | Decoy Offer | Buy X Get Y Free | Pay Less Now Pay More Later",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_ao_t",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_30DAY",
+      "label": "CALC\n30-Day Profits ≫ Customer Acquisition Cost + Delivery Cost\n\nUsed for: validate Upsell profitability inside the 30-day window.\nExample use case: choosing the next-step add-on that pushes profit above acquisition + fulfillment.",
+      "label_raw": "CALC<br/>30-Day Profits ≫ Customer Acquisition Cost + Delivery Cost<br/><br/>Used for: validate Upsell profitability inside the 30-day window.<br/>Example use case: choosing the next-step add-on that pushes profit above acquisition + fulfillment.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_30day",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_AO_COVER",
+      "label": "CALC\nCash Collected Up Front ≥ Customer Acquisition Cost + Delivery Cost\n\nUsed for: ensure Attraction Offer “covers our costs.”\nExample use case: setting an intro package price so ads + delivery are covered.",
+      "label_raw": "CALC<br/>Cash Collected Up Front ≥ Customer Acquisition Cost + Delivery Cost<br/><br/>Used for: ensure Attraction Offer “covers our costs.”<br/>Example use case: setting an intro package price so ads + delivery are covered.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_ao_cover",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_BONUSONLY",
+      "label": "CALC\nBonus-Only Offer Price = (First Month of Continuity+Bonus Offer Price) × Bonus-Only Offer Multiplier\nBonus-Only Offer Multiplier ∈ [1.33, 2.66]\n\nUsed for: separate “bonuses only” (up-front cash) from continuity+bonuses (recurring).\nExample use case: selling bonuses standalone to raise cash while still stacking recurring revenue.",
+      "label_raw": "CALC<br/>Bonus-Only Offer Price = (First Month of Continuity+Bonus Offer Price) × Bonus-Only Offer Multiplier<br/>Bonus-Only Offer Multiplier ∈ [1.33, 2.66]<br/><br/>Used for: separate “bonuses only” (up-front cash) from continuity+bonuses (recurring).<br/>Example use case: selling bonuses standalone to raise cash while still stacking recurring revenue.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_bonusonly",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_CANCEL",
+      "label": "CALC\nCancellation Fee = Discount They Agreed To Get (With Their Commitment)\n\nUsed for: set cancellation terms that return customer to the month-to-month rate logic.\nExample use case: charging back the saved discount if they break commitment early.",
+      "label_raw": "CALC<br/>Cancellation Fee = Discount They Agreed To Get (With Their Commitment)<br/><br/>Used for: set cancellation terms that return customer to the month-to-month rate logic.<br/>Example use case: charging back the saved discount if they break commitment early.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_cancel",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_EXTEND",
+      "label": "CALC\nTotal Term Length = Paid Term Length + Free Term Length\n(Extend the term, don’t eat into the term.)\n\nUsed for: design continuity discounts as extra time, not reduced paid months.\nExample use case: adding free time *after* the paid term ends.",
+      "label_raw": "CALC<br/>Total Term Length = Paid Term Length + Free Term Length<br/>(Extend the term, don’t eat into the term.)<br/><br/>Used for: design continuity discounts as extra time, not reduced paid months.<br/>Example use case: adding free time *after* the paid term ends.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_extend",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_PAYLESS",
+      "label": "CALC\nPay Now Options Discount Percentage ∈ [20%, 50%]\n\nUsed for: structure the Pay Less Now / Pay More Later follow-up offer.\nExample use case: offering a “pay-now” upgrade with a hefty discount + better bonuses.",
+      "label_raw": "CALC<br/>Pay Now Options Discount Percentage ∈ [20%, 50%]<br/><br/>Used for: structure the Pay Less Now / Pay More Later follow-up offer.<br/>Example use case: offering a “pay-now” upgrade with a hefty discount + better bonuses.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_payless",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_PROCESS",
+      "label": "CALC\nTotal Charged = Base Price + (Base Price × 3% Processing Fee)\n\nUsed for: add processing fee to raise topline without changing delivery.\nExample use case: charging a processing fee on card-based payments.",
+      "label_raw": "CALC<br/>Total Charged = Base Price + (Base Price × 3% Processing Fee)<br/><br/>Used for: add processing fee to raise topline without changing delivery.<br/>Example use case: charging a processing fee on card-based payments.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_process",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_ROLLOVER",
+      "label": "CALC\nRollover Upsell Credit = (Some or All of Previous Purchases) Applied Toward Next Offer\n\nUsed for: convert prior spend into commitment toward the next offer (credit mechanic).\nExample use case: applying past payments as a credit toward a longer agreement / higher tier.",
+      "label_raw": "CALC<br/>Rollover Upsell Credit = (Some or All of Previous Purchases) Applied Toward Next Offer<br/><br/>Used for: convert prior spend into commitment toward the next offer (credit mechanic).<br/>Example use case: applying past payments as a credit toward a longer agreement / higher tier.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_rollover",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_STANDALONE",
+      "label": "CALC\nStandalone Offer Price = Continuity Monthly Price × Standalone Offer Multiplier\nStandalone Offer Multiplier ∈ {1.33, 1.66, 2.00, 2.33, 2.66}\n\nUsed for: control what share chooses continuity vs standalone.\nExample use case: setting a one-time option high enough that more buyers choose membership.",
+      "label_raw": "CALC<br/>Standalone Offer Price = Continuity Monthly Price × Standalone Offer Multiplier<br/>Standalone Offer Multiplier ∈ {1.33, 1.66, 2.00, 2.33, 2.66}<br/><br/>Used for: control what share chooses continuity vs standalone.<br/>Example use case: setting a one-time option high enough that more buyers choose membership.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_standalone",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_WAIVEDFEE",
+      "label": "CALC\nStartup Fee (Typical) = Monthly Rate × (3 to 5)\nStartup Fee (If you want more up-front cash) = Monthly Rate × (1.5 to 3)\n\nUsed for: Waived Fee Offer mechanics (month-to-month pays a big fee; commitment waives it).\nExample use case: offering “month-to-month with fee” vs “annual commitment with fee waived.”",
+      "label_raw": "CALC<br/>Startup Fee (Typical) = Monthly Rate × (3 to 5)<br/>Startup Fee (If you want more up-front cash) = Monthly Rate × (1.5 to 3)<br/><br/>Used for: Waived Fee Offer mechanics (month-to-month pays a big fee; commitment waives it).<br/>Example use case: offering “month-to-month with fee” vs “annual commitment with fee waived.”",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_waivedfee",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CALC_WEEKLY",
+      "label": "CALC\nAnnual Cycles (Every Four Weeks) = 13\nAnnual Months (Monthly) = 12\nDifference = 8.3% More Annually (Every Four Weeks vs Monthly)\n\nUsed for: choose billing cadence that increases annual take without changing work.\nExample use case: billing every four weeks instead of monthly for the same offer.",
+      "label_raw": "CALC<br/>Annual Cycles (Every Four Weeks) = 13<br/>Annual Months (Monthly) = 12<br/>Difference = 8.3% More Annually (Every Four Weeks vs Monthly)<br/><br/>Used for: choose billing cadence that increases annual take without changing work.<br/>Example use case: billing every four weeks instead of monthly for the same offer.",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_calc"
+      ],
+      "meta": {},
+      "slug": "mm_calc_weekly",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CO",
+      "label": "Continuity Offer\nOngoing value for ongoing payments",
+      "label_raw": "Continuity Offer<br/>Ongoing value for ongoing payments",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_continuity"
+      ],
+      "meta": {},
+      "slug": "mm_co",
+      "concept_keys": [
+        "money_model_definition",
+        "money_model_stages"
+      ]
+    },
+    {
+      "id": "MM_CO_G",
+      "label": "Goal:\nRecurring cash (timing matters)",
+      "label_raw": "Goal:<br/>Recurring cash (timing matters)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_co_g",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CO_N",
+      "label": "Timing note:\nBetter to make the offer at the right time than force it",
+      "label_raw": "Timing note:<br/>Better to make the offer at the right time than force it",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_co_n",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CO_O",
+      "label": "Decision:\nKeep buying?",
+      "label_raw": "Decision:<br/>Keep buying?",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_co_o",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_CO_T",
+      "label": "Continuity offers (book):\nContinuity Bonus | Continuity Discount | Waived Fee Offer",
+      "label_raw": "Continuity offers (book):<br/>Continuity Bonus | Continuity Discount | Waived Fee Offer",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_co_t",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_DO",
+      "label": "Downsell Offer\n(Whatever you offer after they say NO)",
+      "label_raw": "Downsell Offer<br/>(Whatever you offer after they say NO)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_downsell"
+      ],
+      "meta": {},
+      "slug": "mm_do",
+      "concept_keys": [
+        "money_model_definition",
+        "money_model_stages"
+      ]
+    },
+    {
+      "id": "MM_DO_G",
+      "label": "Goal:\nTurn NO into YES to increase total cash from the same leads",
+      "label_raw": "Goal:<br/>Turn NO into YES to increase total cash from the same leads",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_do_g",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_DO_O",
+      "label": "Decision:\nAccept downsell?",
+      "label_raw": "Decision:<br/>Accept downsell?",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_do_o",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_DO_T",
+      "label": "Downsell types (book):\nPayment Plan Downsell | Trial With Penalty | Feature Downsell",
+      "label_raw": "Downsell types (book):<br/>Payment Plan Downsell | Trial With Penalty | Feature Downsell",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_do_t",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_EXIT",
+      "label": "Exit\nFollow up later",
+      "label_raw": "Exit<br/>Follow up later",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_exit",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_LATER",
+      "label": "Offer later\nRe-engage",
+      "label_raw": "Offer later<br/>Re-engage",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_later",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_MM",
+      "label": "Money Model\nA deliberate sequence of offers",
+      "label_raw": "Money Model<br/>A deliberate sequence of offers",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_money"
+      ],
+      "meta": {},
+      "slug": "mm_mm",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_NURTURE",
+      "label": "No sale\nNurture and retarget",
+      "label_raw": "No sale<br/>Nurture and retarget",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_nurture",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_R1",
+      "label": "Start: Attraction -> Upsell -> Downsell -> Continuity",
+      "label_raw": "Start: Attraction -> Upsell -> Downsell -> Continuity",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_r1",
+      "concept_keys": [
+        "money_model_build_rules",
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_R2",
+      "label": "Do not implement a full Money Model at once (it will break your business)",
+      "label_raw": "Do not implement a full Money Model at once (it will break your business)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_r2",
+      "concept_keys": [
+        "money_model_build_rules",
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_R3",
+      "label": "Perfect one offer at a time before moving to the next stage",
+      "label_raw": "Perfect one offer at a time before moving to the next stage",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_r3",
+      "concept_keys": [
+        "money_model_build_rules",
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_R4",
+      "label": "You can mix and match offers however you want (there are no rules)",
+      "label_raw": "You can mix and match offers however you want (there are no rules)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_r4",
+      "concept_keys": [
+        "money_model_build_rules",
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_RECUR",
+      "label": "Recurring revenue",
+      "label_raw": "Recurring revenue",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_recur",
+      "concept_keys": [
+        "money_model_build_rules",
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_RULES",
+      "label": "Build rules (book)",
+      "label_raw": "Build rules (book)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_rules"
+      ],
+      "meta": {},
+      "slug": "mm_rules",
+      "concept_keys": [
+        "money_model_build_rules",
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_S1",
+      "label": "Stage I: Get Cash\n(Attraction Offers)",
+      "label_raw": "Stage I: Get Cash<br/>(Attraction Offers)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_stage"
+      ],
+      "meta": {},
+      "slug": "mm_s1",
+      "concept_keys": [
+        "money_model_definition",
+        "money_model_stages"
+      ]
+    },
+    {
+      "id": "MM_S2",
+      "label": "Stage II: Get More Cash\n(Upsell and Downsell Offers)",
+      "label_raw": "Stage II: Get More Cash<br/>(Upsell and Downsell Offers)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_stage"
+      ],
+      "meta": {},
+      "slug": "mm_s2",
+      "concept_keys": [
+        "money_model_definition",
+        "money_model_stages"
+      ]
+    },
+    {
+      "id": "MM_S3",
+      "label": "Stage III: Get The Most Cash\n(Continuity Offers)",
+      "label_raw": "Stage III: Get The Most Cash<br/>(Continuity Offers)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_stage"
+      ],
+      "meta": {},
+      "slug": "mm_s3",
+      "concept_keys": [
+        "money_model_definition",
+        "money_model_stages"
+      ]
+    },
+    {
+      "id": "MM_UO",
+      "label": "Upsell Offer\n(Whatever you offer next)",
+      "label_raw": "Upsell Offer<br/>(Whatever you offer next)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [
+        "mm_upsell"
+      ],
+      "meta": {},
+      "slug": "mm_uo",
+      "concept_keys": [
+        "money_model_definition",
+        "money_model_stages"
+      ]
+    },
+    {
+      "id": "MM_UO_G",
+      "label": "Goal:\nGet 30 day profits well above the cost to acquire and deliver",
+      "label_raw": "Goal:<br/>Get 30 day profits well above the cost to acquire and deliver",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_uo_g",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_UO_O",
+      "label": "Decision:\nAccept upsell?",
+      "label_raw": "Decision:<br/>Accept upsell?",
+      "shape": "{",
+      "kind": "decision",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_uo_o",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_UO_P",
+      "label": "Principle:\nOnce you solve a problem, another appears\nUpsell the next solution at the time of greatest need",
+      "label_raw": "Principle:<br/>Once you solve a problem, another appears<br/>Upsell the next solution at the time of greatest need",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_uo_p",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "MM_UO_T",
+      "label": "Common Upsell Offers:\nClassic Upsell | Menu Upsell | Anchor Upsell | Rollover Upsell",
+      "label_raw": "Common Upsell Offers:<br/>Classic Upsell | Menu Upsell | Anchor Upsell | Rollover Upsell",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_MONEY_MODELS",
+      "chart_id": "CHART_MONEY_MODELS",
+      "classes": [],
+      "meta": {},
+      "slug": "mm_uo_t",
+      "concept_keys": [
+        "money_model_definition"
+      ]
+    },
+    {
+      "id": "OF_C_CASHMULT",
+      "label": "☁️ Offer Cash Multiplier (example)\nUpfront Cash ≈ Resp×Close×Price\nex: 2.5×2.5×4 = 22.4×",
+      "label_raw": "☁️ Offer Cash Multiplier (example)<br/>Upfront Cash ≈ Resp×Close×Price<br/>ex: 2.5×2.5×4 = 22.4×",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_cashmult",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_C_GUAR",
+      "label": "☁️ Guarantee Math (Net Sales)\nNetSales = Sales − Refunds\nex: (130−13)/(100−5)=117/95=1.23×",
+      "label_raw": "☁️ Guarantee Math (Net Sales)<br/>NetSales = Sales − Refunds<br/>ex: (130−13)/(100−5)=117/95=1.23×",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_guar",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_C_PAYLESS",
+      "label": "☁️ Pay Less Now / Pay More Later\nPayLater: $0 now -> bill P later (unless cancel)\nPayNow: P×(1−d), d≈20–50%",
+      "label_raw": "☁️ Pay Less Now / Pay More Later<br/>PayLater: $0 now → bill P later (unless cancel)<br/>PayNow: P×(1−d), d≈20–50%",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_payless",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_C_PPLAN",
+      "label": "☁️ Payment Plan Math\nTotal = Down + (Periodic×n)\nPeriodic = (Total−Down)/n",
+      "label_raw": "☁️ Payment Plan Math<br/>Total = Down + (Periodic×n)<br/>Periodic = (Total−Down)/n",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_pplan",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_C_ROLLOVER",
+      "label": "☁️ Rollover Credit / Discount Spread\nMonthlyCredit = FirstPurchase/Months\nex: $600/12 = $50 off per month",
+      "label_raw": "☁️ Rollover Credit / Discount Spread<br/>MonthlyCredit = FirstPurchase/Months<br/>ex: $600/12 = $50 off per month",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_rollover",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_C_SCALEMATH",
+      "label": "☁️ Scaling / Efficiency Math\nLTGP = Σ(Revenue−DeliveryCost)\nEfficiency: LTGP:CAC (target ≥3:1)\nAdBudget ≈ TargetCustomers×CAC×1.2",
+      "label_raw": "☁️ Scaling / Efficiency Math<br/>LTGP = Σ(Revenue−DeliveryCost)<br/>Efficiency: LTGP:CAC (target ≥3:1)<br/>AdBudget ≈ TargetCustomers×CAC×1.2",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_scalemath",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_C_VAL",
+      "label": "☁️ Value Equation\nV=(DO×PL)/(TD×E&S)\nGoal: ↑DO,↑PL, ↓TD,↓E&S",
+      "label_raw": "☁️ Value Equation<br/>V=(DO×PL)/(TD×E&S)<br/>Goal: ↑DO,↑PL, ↓TD,↓E&S",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_val",
+      "concept_keys": [
+        "value_equation"
+      ]
+    },
+    {
+      "id": "OF_C_WYMB",
+      "label": "☁️ Win Your Money Back (planning)\nExpectedRefunds ≈ Customers×10%\nRefundReserve ≈ ExpectedRefunds×Price",
+      "label_raw": "☁️ Win Your Money Back (planning)<br/>ExpectedRefunds ≈ Customers×10%<br/>RefundReserve ≈ ExpectedRefunds×Price",
+      "shape": "cloud",
+      "kind": "calc",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_calc"
+      ],
+      "meta": {},
+      "slug": "of_c_wymb",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_O",
+      "label": "GRAND SLAM OFFER - Category of One - Sell in a Vacuum",
+      "label_raw": "GRAND SLAM OFFER - Category of One - Sell in a Vacuum",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_money"
+      ],
+      "meta": {},
+      "slug": "of_o",
+      "concept_keys": []
+    },
+    {
+      "id": "OF_S1A",
+      "label": "Pick a market with hungry demand; indicators: Massive Pain, Purchasing Power, Easy to Target, Growing",
+      "label_raw": "Pick a market with hungry demand; indicators: Massive Pain, Purchasing Power, Easy to Target, Growing",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_attraction"
+      ],
+      "meta": {},
+      "slug": "of_s1a",
+      "concept_keys": [
+        "offer_market_selection"
+      ]
+    },
+    {
+      "id": "OF_S1B",
+      "label": "Niche and focus; narrow positioning makes marketing easier",
+      "label_raw": "Niche and focus; narrow positioning makes marketing easier",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_attraction"
+      ],
+      "meta": {},
+      "slug": "of_s1b",
+      "concept_keys": [
+        "offer_market_selection"
+      ]
+    },
+    {
+      "id": "OF_S2A",
+      "label": "Value = (Dream Outcome x Perceived Likelihood) / (Time Delay x Effort and Sacrifice)",
+      "label_raw": "Value = (Dream Outcome x Perceived Likelihood) / (Time Delay x Effort and Sacrifice)",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_upsell"
+      ],
+      "meta": {},
+      "slug": "of_s2a",
+      "concept_keys": [
+        "value_equation"
+      ]
+    },
+    {
+      "id": "OF_S2B",
+      "label": "Increase Dream Outcome; bigger, clearer, more specific result",
+      "label_raw": "Increase Dream Outcome; bigger, clearer, more specific result",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_upsell"
+      ],
+      "meta": {},
+      "slug": "of_s2b",
+      "concept_keys": [
+        "value_equation"
+      ]
+    },
+    {
+      "id": "OF_S2C",
+      "label": "Increase Perceived Likelihood; proof, process, credibility, guarantees",
+      "label_raw": "Increase Perceived Likelihood; proof, process, credibility, guarantees",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_upsell"
+      ],
+      "meta": {},
+      "slug": "of_s2c",
+      "concept_keys": [
+        "value_equation"
+      ]
+    },
+    {
+      "id": "OF_S2D",
+      "label": "Decrease Time Delay; faster path plus fast wins early",
+      "label_raw": "Decrease Time Delay; faster path plus fast wins early",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_upsell"
+      ],
+      "meta": {},
+      "slug": "of_s2d",
+      "concept_keys": [
+        "value_equation"
+      ]
+    },
+    {
+      "id": "OF_S2E",
+      "label": "Decrease Effort and Sacrifice; done-for-you, templates, support, remove friction",
+      "label_raw": "Decrease Effort and Sacrifice; done-for-you, templates, support, remove friction",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_upsell"
+      ],
+      "meta": {},
+      "slug": "of_s2e",
+      "concept_keys": [
+        "value_equation"
+      ]
+    },
+    {
+      "id": "OF_S3A",
+      "label": "1 Define Dream Outcome with timeline; what they want plus by when",
+      "label_raw": "1 Define Dream Outcome with timeline; what they want plus by when",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s3a",
+      "concept_keys": [
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S3B",
+      "label": "2 List obstacles and doubts; before, during, after",
+      "label_raw": "2 List obstacles and doubts; before, during, after",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s3b",
+      "concept_keys": [
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S3C",
+      "label": "3 Create solutions for each obstacle; turn problems into deliverables",
+      "label_raw": "3 Create solutions for each obstacle; turn problems into deliverables",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s3c",
+      "concept_keys": [
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S3D",
+      "label": "4 Choose delivery vehicles; 1:1, group, 1:many; build reusable assets where possible",
+      "label_raw": "4 Choose delivery vehicles; 1:1, group, 1:many; build reusable assets where possible",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s3d",
+      "concept_keys": [
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S3E",
+      "label": "5 Trim and Stack; keep high value low cost; bundle into a single vacuum offer",
+      "label_raw": "5 Trim and Stack; keep high value low cost; bundle into a single vacuum offer",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s3e",
+      "concept_keys": [
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S4A",
+      "label": "Attractive Promotion; reason why now, ethical",
+      "label_raw": "Attractive Promotion; reason why now, ethical",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s4a",
+      "concept_keys": [
+        "grand_slam_stack",
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S4B",
+      "label": "Unmatchable Value; hard to compare, category of one",
+      "label_raw": "Unmatchable Value; hard to compare, category of one",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s4b",
+      "concept_keys": [
+        "grand_slam_stack",
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S4C",
+      "label": "Premium Price; charge more when value is higher",
+      "label_raw": "Premium Price; charge more when value is higher",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s4c",
+      "concept_keys": [
+        "grand_slam_stack",
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S4D",
+      "label": "Unbeatable Guarantee; risk reversal",
+      "label_raw": "Unbeatable Guarantee; risk reversal",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s4d",
+      "concept_keys": [
+        "grand_slam_stack",
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S4E",
+      "label": "Payment Terms and Money Model; make yes easier, reduce friction",
+      "label_raw": "Payment Terms and Money Model; make yes easier, reduce friction",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_core"
+      ],
+      "meta": {},
+      "slug": "of_s4e",
+      "concept_keys": [
+        "grand_slam_stack",
+        "offer_construction"
+      ]
+    },
+    {
+      "id": "OF_S5A",
+      "label": "Scarcity types: Limited Supply, Limited Access, Product Releases; rule: sell out and announce sold out",
+      "label_raw": "Scarcity types: Limited Supply, Limited Access, Product Releases; rule: sell out and announce sold out",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_downsell"
+      ],
+      "meta": {},
+      "slug": "of_s5a",
+      "concept_keys": [
+        "offer_enhancers"
+      ]
+    },
+    {
+      "id": "OF_S5B",
+      "label": "Urgency methods: rolling cohorts, seasonal urgency, promo or price deadline, exploding opportunity",
+      "label_raw": "Urgency methods: rolling cohorts, seasonal urgency, promo or price deadline, exploding opportunity",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_downsell"
+      ],
+      "meta": {},
+      "slug": "of_s5b",
+      "concept_keys": [
+        "offer_enhancers"
+      ]
+    },
+    {
+      "id": "OF_S5C",
+      "label": "Bonuses: prefer adding bonuses over discounting; tie to obstacles; name by benefit; explain why and how it makes faster or easier; add proof; assign and justify value; advanced: partner bonuses",
+      "label_raw": "Bonuses: prefer adding bonuses over discounting; tie to obstacles; name by benefit; explain why and how it makes faster or easier; add proof; assign and justify value; advanced: partner bonuses",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_downsell"
+      ],
+      "meta": {},
+      "slug": "of_s5c",
+      "concept_keys": [
+        "offer_enhancers"
+      ]
+    },
+    {
+      "id": "OF_S5D",
+      "label": "Guarantees types: Unconditional, Conditional, Anti-guarantee, Implied; add teeth: if not X by Y, we do Z; guarantee math: net revenue can rise even with refunds; implied example: pay for performance or share of outcome",
+      "label_raw": "Guarantees types: Unconditional, Conditional, Anti-guarantee, Implied; add teeth: if not X by Y, we do Z; guarantee math: net revenue can rise even with refunds; implied example: pay for performance or share of outcome",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_downsell"
+      ],
+      "meta": {},
+      "slug": "of_s5d",
+      "concept_keys": [
+        "offer_enhancers"
+      ]
+    },
+    {
+      "id": "OF_S6A",
+      "label": "MAGIC: Magnet, Avatar, Goal, Interval, Container; optional rhyme or alliteration; test names and keep winner as control",
+      "label_raw": "MAGIC: Magnet, Avatar, Goal, Interval, Container; optional rhyme or alliteration; test names and keep winner as control",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_continuity"
+      ],
+      "meta": {},
+      "slug": "of_s6a",
+      "concept_keys": [
+        "magic_naming"
+      ]
+    },
+    {
+      "id": "OF_S7A",
+      "label": "Execute, measure, iterate; entrepreneurship is a series of bets",
+      "label_raw": "Execute, measure, iterate; entrepreneurship is a series of bets",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_money"
+      ],
+      "meta": {},
+      "slug": "of_s7a",
+      "concept_keys": [
+        "offer_iteration_fatigue"
+      ]
+    },
+    {
+      "id": "OF_S7B",
+      "label": "Offer fatigue change order: creative, body copy, headline or wrapper, angle, duration, enhancer, monetization structure and price points",
+      "label_raw": "Offer fatigue change order: creative, body copy, headline or wrapper, angle, duration, enhancer, monetization structure and price points",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_OFFERS",
+      "chart_id": "CHART_OFFERS",
+      "classes": [
+        "of_money"
+      ],
+      "meta": {},
+      "slug": "of_s7b",
+      "concept_keys": [
+        "offer_iteration_fatigue"
+      ]
+    },
+    {
+      "id": "SEQ",
+      "label": "SEQUENTIAL SYSTEM (All 3 books merged)\n1) Build Grand Slam Offer -> 2) Generate Engaged Leads -> 3) Monetize via Money Model",
+      "label_raw": "SEQUENTIAL SYSTEM (All 3 books merged)<br/>1) Build Grand Slam Offer → 2) Generate Engaged Leads → 3) Monetize via Money Model",
+      "shape": "[",
+      "kind": "step",
+      "book_id": "BOOK_META",
+      "chart_id": "CHART_MASTER",
+      "classes": [
+        "master"
+      ],
+      "meta": {},
+      "slug": "seq",
+      "concept_keys": []
+    },
+    {
+      "id": "layout: dagre",
+      "label": null,
+      "label_raw": null,
+      "shape": null,
+      "kind": "step",
+      "book_id": "BOOK_META",
+      "chart_id": null,
+      "classes": [],
+      "meta": {},
+      "slug": "layout: dagre",
+      "concept_keys": []
+    }
+  ],
+  "edges": [
+    {
+      "from": "SEQ",
+      "to": "OF_O",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_O",
+      "to": "LD_ROOT",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_ROOT",
+      "to": "MM_MM",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_MM",
+      "to": "MM_S1",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_MM",
+      "to": "MM_S2",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_MM",
+      "to": "MM_S3",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_S1",
+      "to": "MM_AO",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_AO",
+      "to": "MM_AO_G",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_AO",
+      "to": "MM_AO_N",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_AO",
+      "to": "MM_AO_T",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_AO",
+      "to": "MM_AO_O",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_AO_O",
+      "to": "MM_UO",
+      "style": "solid",
+      "condition": "YES",
+      "label": "YES"
+    },
+    {
+      "from": "MM_AO_O",
+      "to": "MM_NURTURE",
+      "style": "solid",
+      "condition": "NO",
+      "label": "NO"
+    },
+    {
+      "from": "MM_AO_G",
+      "to": "MM_CALC_AO_COVER",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_AO_T",
+      "to": "MM_CALC_PAYLESS",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_S2",
+      "to": "MM_UO",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_UO",
+      "to": "MM_UO_G",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_UO",
+      "to": "MM_UO_P",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_UO",
+      "to": "MM_UO_T",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_UO",
+      "to": "MM_UO_O",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_UO_O",
+      "to": "MM_CO",
+      "style": "solid",
+      "condition": "YES",
+      "label": "YES"
+    },
+    {
+      "from": "MM_UO_O",
+      "to": "MM_DO",
+      "style": "solid",
+      "condition": "NO",
+      "label": "NO"
+    },
+    {
+      "from": "MM_UO_G",
+      "to": "MM_CALC_30DAY",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_UO_T",
+      "to": "MM_CALC_ROLLOVER",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_DO",
+      "to": "MM_DO_G",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_DO",
+      "to": "MM_DO_T",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_DO",
+      "to": "MM_DO_O",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_DO_O",
+      "to": "MM_CO",
+      "style": "solid",
+      "condition": "YES",
+      "label": "YES"
+    },
+    {
+      "from": "MM_DO_O",
+      "to": "MM_EXIT",
+      "style": "solid",
+      "condition": "NO",
+      "label": "NO"
+    },
+    {
+      "from": "MM_S3",
+      "to": "MM_CO",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO",
+      "to": "MM_CO_G",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO",
+      "to": "MM_CO_N",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO",
+      "to": "MM_CO_T",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO",
+      "to": "MM_CO_O",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO_O",
+      "to": "MM_RECUR",
+      "style": "solid",
+      "condition": "YES",
+      "label": "YES"
+    },
+    {
+      "from": "MM_CO_O",
+      "to": "MM_LATER",
+      "style": "solid",
+      "condition": "NO",
+      "label": "NO"
+    },
+    {
+      "from": "MM_CO",
+      "to": "MM_CALC_STANDALONE",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO",
+      "to": "MM_CALC_BONUSONLY",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO_N",
+      "to": "MM_CALC_WEEKLY",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO_T",
+      "to": "MM_CALC_EXTEND",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO_T",
+      "to": "MM_CALC_PROCESS",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO_T",
+      "to": "MM_CALC_WAIVEDFEE",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_CO_O",
+      "to": "MM_CALC_CANCEL",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_MM",
+      "to": "MM_RULES",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_RULES",
+      "to": "MM_R1",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_RULES",
+      "to": "MM_R2",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_RULES",
+      "to": "MM_R3",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_RULES",
+      "to": "MM_R4",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_O",
+      "to": "OF_S1A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S1A",
+      "to": "OF_S2A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S1A",
+      "to": "OF_S1B",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S2A",
+      "to": "OF_S3A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S2A",
+      "to": "OF_S2B",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S3A",
+      "to": "OF_S4A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S3A",
+      "to": "OF_S3B",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4A",
+      "to": "OF_S5A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4A",
+      "to": "OF_S4B",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S5A",
+      "to": "OF_S6A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S5A",
+      "to": "OF_S5B",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S6A",
+      "to": "OF_S7A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S2B",
+      "to": "OF_S2C",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S2C",
+      "to": "OF_S2D",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S2D",
+      "to": "OF_S2E",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S3B",
+      "to": "OF_S3C",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S3C",
+      "to": "OF_S3D",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S3D",
+      "to": "OF_S3E",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4B",
+      "to": "OF_S4C",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4C",
+      "to": "OF_S4D",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4D",
+      "to": "OF_S4E",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S5B",
+      "to": "OF_S5C",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S5C",
+      "to": "OF_S5D",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S7A",
+      "to": "OF_S7B",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S2A",
+      "to": "OF_C_VAL",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4B",
+      "to": "OF_C_CASHMULT",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S5D",
+      "to": "OF_C_GUAR",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4E",
+      "to": "OF_C_PAYLESS",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4E",
+      "to": "OF_C_PPLAN",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S4E",
+      "to": "OF_C_ROLLOVER",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S5D",
+      "to": "OF_C_WYMB",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "OF_S7A",
+      "to": "OF_C_SCALEMATH",
+      "style": "dashed",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_ROOT",
+      "to": "LD_DEF",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_DEF",
+      "to": "LD_VEH",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_VEH",
+      "to": "LD_CO1",
+      "style": "solid",
+      "condition": null,
+      "label": "Core Offer"
+    },
+    {
+      "from": "LD_VEH",
+      "to": "LD_LM0",
+      "style": "solid",
+      "condition": null,
+      "label": "Lead Magnet"
+    },
+    {
+      "from": "LD_LM0",
+      "to": "LD_LM_Q",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LM_Q",
+      "to": "LD_LM_STEPS",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LM_STEPS",
+      "to": "LD_LM_TYPES",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LM_STEPS",
+      "to": "LD_LM_DELIV",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LM_STEPS",
+      "to": "LD_LM_TEST",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_CO1",
+      "to": "LD_CF_FRAME",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LM_TEST",
+      "to": "LD_CF_FRAME",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_CF_FRAME",
+      "to": "LD_CF_PICK",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_CF_PICK",
+      "to": "LD_WARM",
+      "style": "solid",
+      "condition": null,
+      "label": "Warm + 1:1"
+    },
+    {
+      "from": "LD_CF_PICK",
+      "to": "LD_CONT",
+      "style": "solid",
+      "condition": null,
+      "label": "Warm + 1:Many"
+    },
+    {
+      "from": "LD_CF_PICK",
+      "to": "LD_COLD",
+      "style": "solid",
+      "condition": null,
+      "label": "Cold + 1:1"
+    },
+    {
+      "from": "LD_CF_PICK",
+      "to": "LD_PAID",
+      "style": "solid",
+      "condition": null,
+      "label": "Cold + 1:Many"
+    },
+    {
+      "from": "LD_WARM",
+      "to": "LD_COMMIT",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_CONT",
+      "to": "LD_COMMIT",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_COLD",
+      "to": "LD_COMMIT",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_PAID",
+      "to": "LD_COMMIT",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_COMMIT",
+      "to": "LD_R100",
+      "style": "solid",
+      "condition": null,
+      "label": "Rule of 100"
+    },
+    {
+      "from": "LD_COMMIT",
+      "to": "LD_OTG",
+      "style": "solid",
+      "condition": null,
+      "label": "Open-To-Goal"
+    },
+    {
+      "from": "LD_R100",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_OTG",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_ONEPAGE",
+      "to": "LD_MEASURE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_ONEPAGE",
+      "to": "LD_LVLS",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_MEASURE",
+      "to": "LD_HIT",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_HIT",
+      "to": "LD_MBN",
+      "style": "solid",
+      "condition": null,
+      "label": "No"
+    },
+    {
+      "from": "LD_HIT",
+      "to": "LD_TIME",
+      "style": "solid",
+      "condition": null,
+      "label": "Yes"
+    },
+    {
+      "from": "LD_MBN",
+      "to": "LD_Q10X",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_MBN",
+      "to": "LD_CONSTR",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_MBN",
+      "to": "LD_MORE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_MBN",
+      "to": "LD_BETTER",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_MBN",
+      "to": "LD_NEW",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_MORE",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_BETTER",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_NEW",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_Q10X",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_CONSTR",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_TIME",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": "No"
+    },
+    {
+      "from": "LD_TIME",
+      "to": "LD_LG",
+      "style": "solid",
+      "condition": null,
+      "label": "Yes"
+    },
+    {
+      "from": "LD_LG",
+      "to": "LD_LADDER",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LG",
+      "to": "LD_LG_PICK",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LG_PICK",
+      "to": "LD_REF",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LG_PICK",
+      "to": "LD_EMP",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LG_PICK",
+      "to": "LD_AGEN",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LG_PICK",
+      "to": "LD_AFF",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_REF",
+      "to": "LD_REF1",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_REF",
+      "to": "LD_REF2",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_REF2",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_EMP",
+      "to": "LD_EMP1",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_EMP",
+      "to": "LD_EMP2",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_EMP2",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_AGEN",
+      "to": "LD_AG1",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_AG1",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_AFF",
+      "to": "LD_AF0",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_AFF",
+      "to": "LD_AF_PAY",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_AFF",
+      "to": "LD_AF_LAUNCH",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_AFF",
+      "to": "LD_AF_INT",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_AF_INT",
+      "to": "LD_ONEPAGE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LVLS",
+      "to": "LD_L1",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_L1",
+      "to": "LD_L2",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_L2",
+      "to": "LD_L3",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_L3",
+      "to": "LD_L4",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_L4",
+      "to": "LD_L5",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_L5",
+      "to": "LD_L6",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_L6",
+      "to": "LD_L7",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_MEASURE",
+      "to": "MM_S1",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_CO1",
+      "to": "MM_AO",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "LD_LM0",
+      "to": "MM_AO",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_RULES",
+      "to": "OF_S7A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_RECUR",
+      "to": "OF_S7A",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_EXIT",
+      "to": "LD_MEASURE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    },
+    {
+      "from": "MM_NURTURE",
+      "to": "LD_MEASURE",
+      "style": "solid",
+      "condition": null,
+      "label": null
+    }
+  ],
+  "adjacency": {
+    "next": {
+      "SEQ": [
+        {
+          "to": "OF_O",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_O": [
+        {
+          "to": "LD_ROOT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_S1A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_ROOT": [
+        {
+          "to": "MM_MM",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_DEF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_MM": [
+        {
+          "to": "MM_S1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_S2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_S3",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_RULES",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_S1": [
+        {
+          "to": "MM_AO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_AO": [
+        {
+          "to": "MM_AO_G",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_AO_N",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_AO_T",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_AO_O",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_AO_O": [
+        {
+          "to": "MM_UO",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        },
+        {
+          "to": "MM_NURTURE",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        }
+      ],
+      "MM_AO_G": [
+        {
+          "to": "MM_CALC_AO_COVER",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_AO_T": [
+        {
+          "to": "MM_CALC_PAYLESS",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_S2": [
+        {
+          "to": "MM_UO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_UO": [
+        {
+          "to": "MM_UO_G",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_UO_P",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_UO_T",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_UO_O",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_UO_O": [
+        {
+          "to": "MM_CO",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        },
+        {
+          "to": "MM_DO",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        }
+      ],
+      "MM_UO_G": [
+        {
+          "to": "MM_CALC_30DAY",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_UO_T": [
+        {
+          "to": "MM_CALC_ROLLOVER",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_DO": [
+        {
+          "to": "MM_DO_G",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_DO_T",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_DO_O",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_DO_O": [
+        {
+          "to": "MM_CO",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        },
+        {
+          "to": "MM_EXIT",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        }
+      ],
+      "MM_S3": [
+        {
+          "to": "MM_CO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_CO": [
+        {
+          "to": "MM_CO_G",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_CO_N",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_CO_T",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_CO_O",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_CALC_STANDALONE",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        },
+        {
+          "to": "MM_CALC_BONUSONLY",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CO_O": [
+        {
+          "to": "MM_RECUR",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        },
+        {
+          "to": "MM_LATER",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        },
+        {
+          "to": "MM_CALC_CANCEL",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CO_N": [
+        {
+          "to": "MM_CALC_WEEKLY",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CO_T": [
+        {
+          "to": "MM_CALC_EXTEND",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        },
+        {
+          "to": "MM_CALC_PROCESS",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        },
+        {
+          "to": "MM_CALC_WAIVEDFEE",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_RULES": [
+        {
+          "to": "MM_R1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_R2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_R3",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_R4",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_S7A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S1A": [
+        {
+          "to": "OF_S2A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_S1B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2A": [
+        {
+          "to": "OF_S3A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_S2B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_C_VAL",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_S3A": [
+        {
+          "to": "OF_S4A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_S3B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4A": [
+        {
+          "to": "OF_S5A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_S4B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S5A": [
+        {
+          "to": "OF_S6A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_S5B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S6A": [
+        {
+          "to": "OF_S7A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2B": [
+        {
+          "to": "OF_S2C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2C": [
+        {
+          "to": "OF_S2D",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2D": [
+        {
+          "to": "OF_S2E",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3B": [
+        {
+          "to": "OF_S3C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3C": [
+        {
+          "to": "OF_S3D",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3D": [
+        {
+          "to": "OF_S3E",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4B": [
+        {
+          "to": "OF_S4C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_C_CASHMULT",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_S4C": [
+        {
+          "to": "OF_S4D",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4D": [
+        {
+          "to": "OF_S4E",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S5B": [
+        {
+          "to": "OF_S5C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S5C": [
+        {
+          "to": "OF_S5D",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S7A": [
+        {
+          "to": "OF_S7B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "OF_C_SCALEMATH",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_S5D": [
+        {
+          "to": "OF_C_GUAR",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        },
+        {
+          "to": "OF_C_WYMB",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_S4E": [
+        {
+          "to": "OF_C_PAYLESS",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        },
+        {
+          "to": "OF_C_PPLAN",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        },
+        {
+          "to": "OF_C_ROLLOVER",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "LD_DEF": [
+        {
+          "to": "LD_VEH",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_VEH": [
+        {
+          "to": "LD_CO1",
+          "condition": null,
+          "style": "solid",
+          "label": "Core Offer"
+        },
+        {
+          "to": "LD_LM0",
+          "condition": null,
+          "style": "solid",
+          "label": "Lead Magnet"
+        }
+      ],
+      "LD_LM0": [
+        {
+          "to": "LD_LM_Q",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_AO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LM_Q": [
+        {
+          "to": "LD_LM_STEPS",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LM_STEPS": [
+        {
+          "to": "LD_LM_TYPES",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_LM_DELIV",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_LM_TEST",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CO1": [
+        {
+          "to": "LD_CF_FRAME",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_AO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LM_TEST": [
+        {
+          "to": "LD_CF_FRAME",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CF_FRAME": [
+        {
+          "to": "LD_CF_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CF_PICK": [
+        {
+          "to": "LD_WARM",
+          "condition": null,
+          "style": "solid",
+          "label": "Warm + 1:1"
+        },
+        {
+          "to": "LD_CONT",
+          "condition": null,
+          "style": "solid",
+          "label": "Warm + 1:Many"
+        },
+        {
+          "to": "LD_COLD",
+          "condition": null,
+          "style": "solid",
+          "label": "Cold + 1:1"
+        },
+        {
+          "to": "LD_PAID",
+          "condition": null,
+          "style": "solid",
+          "label": "Cold + 1:Many"
+        }
+      ],
+      "LD_WARM": [
+        {
+          "to": "LD_COMMIT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CONT": [
+        {
+          "to": "LD_COMMIT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_COLD": [
+        {
+          "to": "LD_COMMIT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_PAID": [
+        {
+          "to": "LD_COMMIT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_COMMIT": [
+        {
+          "to": "LD_R100",
+          "condition": null,
+          "style": "solid",
+          "label": "Rule of 100"
+        },
+        {
+          "to": "LD_OTG",
+          "condition": null,
+          "style": "solid",
+          "label": "Open-To-Goal"
+        }
+      ],
+      "LD_R100": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_OTG": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_ONEPAGE": [
+        {
+          "to": "LD_MEASURE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_LVLS",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_MEASURE": [
+        {
+          "to": "LD_HIT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "MM_S1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_HIT": [
+        {
+          "to": "LD_MBN",
+          "condition": null,
+          "style": "solid",
+          "label": "No"
+        },
+        {
+          "to": "LD_TIME",
+          "condition": null,
+          "style": "solid",
+          "label": "Yes"
+        }
+      ],
+      "LD_MBN": [
+        {
+          "to": "LD_Q10X",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_CONSTR",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_MORE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_BETTER",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_NEW",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_MORE": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_BETTER": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_NEW": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_Q10X": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CONSTR": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_TIME": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": "No"
+        },
+        {
+          "to": "LD_LG",
+          "condition": null,
+          "style": "solid",
+          "label": "Yes"
+        }
+      ],
+      "LD_LG": [
+        {
+          "to": "LD_LADDER",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_LG_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LG_PICK": [
+        {
+          "to": "LD_REF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_EMP",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_AGEN",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_AFF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_REF": [
+        {
+          "to": "LD_REF1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_REF2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_REF2": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_EMP": [
+        {
+          "to": "LD_EMP1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_EMP2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_EMP2": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AGEN": [
+        {
+          "to": "LD_AG1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AG1": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AFF": [
+        {
+          "to": "LD_AF0",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_AF_PAY",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_AF_LAUNCH",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "to": "LD_AF_INT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AF_INT": [
+        {
+          "to": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LVLS": [
+        {
+          "to": "LD_L1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L1": [
+        {
+          "to": "LD_L2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L2": [
+        {
+          "to": "LD_L3",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L3": [
+        {
+          "to": "LD_L4",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L4": [
+        {
+          "to": "LD_L5",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L5": [
+        {
+          "to": "LD_L6",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L6": [
+        {
+          "to": "LD_L7",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_RECUR": [
+        {
+          "to": "OF_S7A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_EXIT": [
+        {
+          "to": "LD_MEASURE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_NURTURE": [
+        {
+          "to": "LD_MEASURE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ]
+    },
+    "prev": {
+      "OF_O": [
+        {
+          "from": "SEQ",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_ROOT": [
+        {
+          "from": "OF_O",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_MM": [
+        {
+          "from": "LD_ROOT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_S1": [
+        {
+          "from": "MM_MM",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_MEASURE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_S2": [
+        {
+          "from": "MM_MM",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_S3": [
+        {
+          "from": "MM_MM",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_AO": [
+        {
+          "from": "MM_S1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_CO1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_LM0",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_AO_G": [
+        {
+          "from": "MM_AO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_AO_N": [
+        {
+          "from": "MM_AO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_AO_T": [
+        {
+          "from": "MM_AO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_AO_O": [
+        {
+          "from": "MM_AO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_UO": [
+        {
+          "from": "MM_AO_O",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        },
+        {
+          "from": "MM_S2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_NURTURE": [
+        {
+          "from": "MM_AO_O",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        }
+      ],
+      "MM_CALC_AO_COVER": [
+        {
+          "from": "MM_AO_G",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_PAYLESS": [
+        {
+          "from": "MM_AO_T",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_UO_G": [
+        {
+          "from": "MM_UO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_UO_P": [
+        {
+          "from": "MM_UO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_UO_T": [
+        {
+          "from": "MM_UO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_UO_O": [
+        {
+          "from": "MM_UO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_CO": [
+        {
+          "from": "MM_UO_O",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        },
+        {
+          "from": "MM_DO_O",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        },
+        {
+          "from": "MM_S3",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_DO": [
+        {
+          "from": "MM_UO_O",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        }
+      ],
+      "MM_CALC_30DAY": [
+        {
+          "from": "MM_UO_G",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_ROLLOVER": [
+        {
+          "from": "MM_UO_T",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_DO_G": [
+        {
+          "from": "MM_DO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_DO_T": [
+        {
+          "from": "MM_DO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_DO_O": [
+        {
+          "from": "MM_DO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_EXIT": [
+        {
+          "from": "MM_DO_O",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        }
+      ],
+      "MM_CO_G": [
+        {
+          "from": "MM_CO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_CO_N": [
+        {
+          "from": "MM_CO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_CO_T": [
+        {
+          "from": "MM_CO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_CO_O": [
+        {
+          "from": "MM_CO",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_RECUR": [
+        {
+          "from": "MM_CO_O",
+          "condition": "YES",
+          "style": "solid",
+          "label": "YES"
+        }
+      ],
+      "MM_LATER": [
+        {
+          "from": "MM_CO_O",
+          "condition": "NO",
+          "style": "solid",
+          "label": "NO"
+        }
+      ],
+      "MM_CALC_STANDALONE": [
+        {
+          "from": "MM_CO",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_BONUSONLY": [
+        {
+          "from": "MM_CO",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_WEEKLY": [
+        {
+          "from": "MM_CO_N",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_EXTEND": [
+        {
+          "from": "MM_CO_T",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_PROCESS": [
+        {
+          "from": "MM_CO_T",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_WAIVEDFEE": [
+        {
+          "from": "MM_CO_T",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_CALC_CANCEL": [
+        {
+          "from": "MM_CO_O",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "MM_RULES": [
+        {
+          "from": "MM_MM",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_R1": [
+        {
+          "from": "MM_RULES",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_R2": [
+        {
+          "from": "MM_RULES",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_R3": [
+        {
+          "from": "MM_RULES",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "MM_R4": [
+        {
+          "from": "MM_RULES",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S1A": [
+        {
+          "from": "OF_O",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2A": [
+        {
+          "from": "OF_S1A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S1B": [
+        {
+          "from": "OF_S1A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3A": [
+        {
+          "from": "OF_S2A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2B": [
+        {
+          "from": "OF_S2A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4A": [
+        {
+          "from": "OF_S3A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3B": [
+        {
+          "from": "OF_S3A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S5A": [
+        {
+          "from": "OF_S4A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4B": [
+        {
+          "from": "OF_S4A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S6A": [
+        {
+          "from": "OF_S5A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S5B": [
+        {
+          "from": "OF_S5A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S7A": [
+        {
+          "from": "OF_S6A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "MM_RULES",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "MM_RECUR",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2C": [
+        {
+          "from": "OF_S2B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2D": [
+        {
+          "from": "OF_S2C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S2E": [
+        {
+          "from": "OF_S2D",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3C": [
+        {
+          "from": "OF_S3B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3D": [
+        {
+          "from": "OF_S3C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S3E": [
+        {
+          "from": "OF_S3D",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4C": [
+        {
+          "from": "OF_S4B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4D": [
+        {
+          "from": "OF_S4C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S4E": [
+        {
+          "from": "OF_S4D",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S5C": [
+        {
+          "from": "OF_S5B",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S5D": [
+        {
+          "from": "OF_S5C",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_S7B": [
+        {
+          "from": "OF_S7A",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "OF_C_VAL": [
+        {
+          "from": "OF_S2A",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_C_CASHMULT": [
+        {
+          "from": "OF_S4B",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_C_GUAR": [
+        {
+          "from": "OF_S5D",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_C_PAYLESS": [
+        {
+          "from": "OF_S4E",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_C_PPLAN": [
+        {
+          "from": "OF_S4E",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_C_ROLLOVER": [
+        {
+          "from": "OF_S4E",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_C_WYMB": [
+        {
+          "from": "OF_S5D",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "OF_C_SCALEMATH": [
+        {
+          "from": "OF_S7A",
+          "condition": null,
+          "style": "dashed",
+          "label": null
+        }
+      ],
+      "LD_DEF": [
+        {
+          "from": "LD_ROOT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_VEH": [
+        {
+          "from": "LD_DEF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CO1": [
+        {
+          "from": "LD_VEH",
+          "condition": null,
+          "style": "solid",
+          "label": "Core Offer"
+        }
+      ],
+      "LD_LM0": [
+        {
+          "from": "LD_VEH",
+          "condition": null,
+          "style": "solid",
+          "label": "Lead Magnet"
+        }
+      ],
+      "LD_LM_Q": [
+        {
+          "from": "LD_LM0",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LM_STEPS": [
+        {
+          "from": "LD_LM_Q",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LM_TYPES": [
+        {
+          "from": "LD_LM_STEPS",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LM_DELIV": [
+        {
+          "from": "LD_LM_STEPS",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LM_TEST": [
+        {
+          "from": "LD_LM_STEPS",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CF_FRAME": [
+        {
+          "from": "LD_CO1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_LM_TEST",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CF_PICK": [
+        {
+          "from": "LD_CF_FRAME",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_WARM": [
+        {
+          "from": "LD_CF_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": "Warm + 1:1"
+        }
+      ],
+      "LD_CONT": [
+        {
+          "from": "LD_CF_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": "Warm + 1:Many"
+        }
+      ],
+      "LD_COLD": [
+        {
+          "from": "LD_CF_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": "Cold + 1:1"
+        }
+      ],
+      "LD_PAID": [
+        {
+          "from": "LD_CF_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": "Cold + 1:Many"
+        }
+      ],
+      "LD_COMMIT": [
+        {
+          "from": "LD_WARM",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_CONT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_COLD",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_PAID",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_R100": [
+        {
+          "from": "LD_COMMIT",
+          "condition": null,
+          "style": "solid",
+          "label": "Rule of 100"
+        }
+      ],
+      "LD_OTG": [
+        {
+          "from": "LD_COMMIT",
+          "condition": null,
+          "style": "solid",
+          "label": "Open-To-Goal"
+        }
+      ],
+      "LD_ONEPAGE": [
+        {
+          "from": "LD_R100",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_OTG",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_MORE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_BETTER",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_NEW",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_Q10X",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_CONSTR",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_TIME",
+          "condition": null,
+          "style": "solid",
+          "label": "No"
+        },
+        {
+          "from": "LD_REF2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_EMP2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_AG1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "LD_AF_INT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_MEASURE": [
+        {
+          "from": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "MM_EXIT",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        },
+        {
+          "from": "MM_NURTURE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LVLS": [
+        {
+          "from": "LD_ONEPAGE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_HIT": [
+        {
+          "from": "LD_MEASURE",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_MBN": [
+        {
+          "from": "LD_HIT",
+          "condition": null,
+          "style": "solid",
+          "label": "No"
+        }
+      ],
+      "LD_TIME": [
+        {
+          "from": "LD_HIT",
+          "condition": null,
+          "style": "solid",
+          "label": "Yes"
+        }
+      ],
+      "LD_Q10X": [
+        {
+          "from": "LD_MBN",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_CONSTR": [
+        {
+          "from": "LD_MBN",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_MORE": [
+        {
+          "from": "LD_MBN",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_BETTER": [
+        {
+          "from": "LD_MBN",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_NEW": [
+        {
+          "from": "LD_MBN",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LG": [
+        {
+          "from": "LD_TIME",
+          "condition": null,
+          "style": "solid",
+          "label": "Yes"
+        }
+      ],
+      "LD_LADDER": [
+        {
+          "from": "LD_LG",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_LG_PICK": [
+        {
+          "from": "LD_LG",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_REF": [
+        {
+          "from": "LD_LG_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_EMP": [
+        {
+          "from": "LD_LG_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AGEN": [
+        {
+          "from": "LD_LG_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AFF": [
+        {
+          "from": "LD_LG_PICK",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_REF1": [
+        {
+          "from": "LD_REF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_REF2": [
+        {
+          "from": "LD_REF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_EMP1": [
+        {
+          "from": "LD_EMP",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_EMP2": [
+        {
+          "from": "LD_EMP",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AG1": [
+        {
+          "from": "LD_AGEN",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AF0": [
+        {
+          "from": "LD_AFF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AF_PAY": [
+        {
+          "from": "LD_AFF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AF_LAUNCH": [
+        {
+          "from": "LD_AFF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_AF_INT": [
+        {
+          "from": "LD_AFF",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L1": [
+        {
+          "from": "LD_LVLS",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L2": [
+        {
+          "from": "LD_L1",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L3": [
+        {
+          "from": "LD_L2",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L4": [
+        {
+          "from": "LD_L3",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L5": [
+        {
+          "from": "LD_L4",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L6": [
+        {
+          "from": "LD_L5",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ],
+      "LD_L7": [
+        {
+          "from": "LD_L6",
+          "condition": null,
+          "style": "solid",
+          "label": null
+        }
+      ]
+    }
+  },
+  "execution_playbook": {
+    "primary_sequence": [
+      {
+        "from": "SEQ",
+        "to": "OF_O",
+        "goal": "Define a Grand Slam Offer"
+      },
+      {
+        "from": "OF_O",
+        "to": "LD_ROOT",
+        "goal": "Operate a daily system that produces engaged leads"
+      },
+      {
+        "from": "LD_ROOT",
+        "to": "MM_MM",
+        "goal": "Deploy a staged money model: attraction -> upsell/downsell -> continuity"
+      }
+    ],
+    "decision_nodes": [
+      "MM_AO_O",
+      "MM_UO_O",
+      "MM_DO_O",
+      "MM_CO_O",
+      "LD_VEH",
+      "LD_CF_PICK",
+      "LD_COMMIT",
+      "LD_HIT",
+      "LD_TIME"
+    ]
+  }
+}

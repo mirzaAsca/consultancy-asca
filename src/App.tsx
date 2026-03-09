@@ -7,58 +7,61 @@ const PRIMARY_CTA = 'Apply for the AI Portfolio Reality Scan'
 const MECHANISM_CTA = 'See how the office works'
 
 const painPoints = [
-  'AI pilots exist, but production impact is still unclear.',
-  'Governance, security, and legal reviews arrive late and slow delivery.',
-  'Business units, IT, and risk teams move on different clocks.',
-  'Leadership wants measured value, not another experimentation cycle.',
+  'AI pilots exist, but nobody can show clear business impact.',
+  'Governance, security, and legal show up late - and slow everything down.',
+  'Business, IT, and risk are all moving - but not together.',
+  'Leadership is done with experiments. They want measurable results.',
 ]
 
 const stallReasons = [
-  'No portfolio logic for clear scale-or-stop decisions.',
-  'No clear decision rights across business, IT, security, and risk.',
-  'No production readiness gate before release into critical workflows.',
+  'No system to decide what should scale and what should stop.',
+  'No clear owner for cross-functional decisions.',
+  'No quality check before AI touches your most important workflows.',
   'No adoption system to turn usage into sustained outcomes.',
 ]
 
 const installBlocks = [
   {
-    title: 'Portfolio Governance',
-    detail: 'One register of initiatives, owners, value hypotheses, risk tiers, and stage status.',
+    title: 'One Portfolio View',
+    detail:
+      'Every AI project in one place - with clear owners, expected value, risk level, and current status.',
   },
   {
-    title: 'Decision Cadence',
-    detail: 'Stage gates, executive reviews, and clear decision rights across business, IT, and risk.',
+    title: 'Regular Decision Rhythm',
+    detail:
+      'Scheduled reviews where business, IT, and risk leaders make clear go/stop/fix decisions together.',
   },
   {
-    title: 'Delivery Oversight',
-    detail: 'Production readiness, adoption tracking, and disciplined scale, stop, or redesign decisions.',
+    title: 'Delivery Accountability',
+    detail:
+      "We track what's live, what's being used, and whether each project should grow, stop, or be redesigned.",
   },
 ]
 
 const firstMonthDeliverables = [
-  'AI portfolio register with owner accountability and risk class.',
-  'Prioritized scale, stop, and sequence decisions.',
-  'Governance charter draft with decision-rights map.',
-  'KPI baseline and value-tracking plan.',
-  '90-day execution roadmap for business, IT, and risk alignment.',
+  "A single list of every AI project - who owns it, what it's worth, and how risky it is.",
+  'Clear recommendations: what to scale, what to stop, and what to do next.',
+  'A draft governance charter - who decides what, and when.',
+  'Baseline metrics so you can track whether AI is actually creating value.',
+  'A 90-day action plan that business, IT, and risk can all follow together.',
 ]
 
 const timeline = [
   {
     title: 'First 30 Days',
-    detail: 'Decision pack delivered: baseline, priorities, governance charter draft, and 90-day plan.',
+    detail: 'You have a decision pack: what you have, what matters, who decides, and what to do next.',
   },
   {
     title: 'First 90 Days',
-    detail: 'Governance artifacts active and 1-2 production pathways defined with measurable progress.',
+    detail: 'Governance is running, and 1-2 initiatives are moving on a clear path to production.',
   },
   {
     title: '6 Months',
-    detail: 'Multiple workflows running with KPI tracking for cycle time, cost-to-serve, quality, and adoption.',
+    detail: 'Several AI workflows are live, with visible impact on speed, cost, quality, and adoption.',
   },
   {
     title: '12 Months',
-    detail: 'AI runs as a governed operating capability with repeatable value realization.',
+    detail: 'AI runs as a governed operating capability with measurable business returns.',
   },
 ]
 
@@ -87,15 +90,15 @@ const proofVisuals = [
 ]
 
 const fitFor = [
-  'Complex enterprises with active AI initiatives and executive urgency.',
-  'Teams willing to redesign workflows, not just add more tools.',
-  'Sponsors ready to align business, IT, risk, and vendors in one cadence.',
+  'Enterprises already investing in AI, with leadership that wants measurable results - fast.',
+  'Teams ready to change workflows, not just buy more tools.',
+  'An executive sponsor willing to bring business, IT, risk, and vendors into one operating rhythm.',
 ]
 
 const fitNotFor = [
-  'Buyers seeking an AI idea workshop without ownership.',
-  'Teams looking only for a chatbot build vendor.',
-  'Organizations unwilling to enforce governance and decision rights.',
+  'Teams looking for strategy sessions without follow-through.',
+  'Companies that only want a chatbot build vendor.',
+  'Organizations not willing to set clear rules about who decides what.',
 ]
 
 const scanIncludes = [
@@ -225,7 +228,7 @@ export default function App() {
             <div>
               <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">ASCA TRANSFORMATION OFFICE</p>
               <p className="mt-2 text-sm text-slate-600">
-                Enterprise AI portfolio governance and production oversight for complex enterprises.
+                We help large companies turn AI pilots into live workflows with clear owners, controls, and ROI.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -258,12 +261,12 @@ export default function App() {
           <div>
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">ENTERPRISE AI TRANSFORMATION OFFICE</p>
             <h1 className="mt-6 max-w-[15ch] text-4xl font-semibold leading-[1.03] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
-              Turn AI activity into a board-governed production portfolio.
+              Stop running AI experiments. Start shipping AI results.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-slate-700">
-              We install the Enterprise AI Transformation Office. It aligns business, IT, and risk around one
-              portfolio, one cadence, and one source of truth. AI starts shipping measurable results instead of
-              multiplying pilots.
+              We set up and run the operating system your AI program is missing. One portfolio. One decision
+              rhythm. One source of truth - so business, IT, and risk move together, and AI starts producing
+              measurable outcomes instead of more pilots.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <a
@@ -280,18 +283,19 @@ export default function App() {
               </a>
             </div>
             <p className="mt-4 text-sm text-slate-600">
-              For complex enterprises with active AI initiatives, executive urgency, and clear pressure to prove value.
+              For enterprises already investing in AI - with leadership pressure to show real returns.
             </p>
           </div>
 
           <aside className="relative border border-slate-300 bg-white/90 p-7 backdrop-blur-sm">
             <div className="absolute -left-4 -top-4 hidden border border-slate-300 bg-slate-900 px-3 py-2 text-xs font-medium uppercase tracking-[0.1em] text-white lg:block">
-              Paid Entry Offer
+              Start Here
             </div>
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">AI PORTFOLIO REALITY SCAN</p>
             <p className="mt-4 text-4xl font-semibold leading-none tracking-[-0.03em]">2-3 weeks</p>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              Get a board-ready baseline, scale-or-stop decisions, governance priorities, and a 90-day execution plan.
+              In 2-3 weeks, you'll know exactly which AI projects to scale, which to stop, and what to fix in
+              your governance - with a clear 90-day plan your leadership team can act on.
             </p>
             <div className="mt-7 space-y-3 border-t border-slate-200 pt-5 text-sm text-slate-700">
               <p>Portfolio register with clear decision rights map</p>
@@ -304,7 +308,7 @@ export default function App() {
         <section className="reveal delay-2 border-b border-[var(--line)] py-14">
           <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">YOU ARE HERE BECAUSE</p>
           <h2 className="mt-4 max-w-[24ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-            The organization is active, but the operating mechanism is missing.
+            Your team is busy with AI. But nothing is making it to production.
           </h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {painPoints.map((point) => (
@@ -317,8 +321,8 @@ export default function App() {
           <div className="mt-8 border border-slate-300 bg-slate-900/95 p-5 text-slate-100">
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.2em] text-slate-300">STAKES AND COST OF INACTION</p>
             <p className="mt-3 text-sm leading-relaxed text-slate-200">
-              Leadership pressure is rising because many firms still cannot prove AI returns. EU AI obligations are
-              phased, and August 2, 2026 is a major milestone.
+              Every month without production AI is spent budget with no return. And EU AI Act obligations start
+              hitting August 2, 2026 - ready or not.
             </p>
           </div>
         </section>
@@ -326,7 +330,7 @@ export default function App() {
         <section className="reveal delay-3 border-b border-[var(--line)] py-14">
           <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">WHY MOST EFFORTS STALL</p>
           <h2 className="mt-4 max-w-[24ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-            Tools and pilots are not enough. You need an operating mechanism.
+            Most AI programs fail for the same four reasons.
           </h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {stallReasons.map((item) => (
@@ -340,7 +344,7 @@ export default function App() {
         <section id="mechanism" className="reveal delay-4 border-b border-[var(--line)] py-14">
           <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">WHAT WE INSTALL</p>
           <h2 className="mt-4 max-w-[22ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-            Executive control plane for portfolio governance, production readiness, and value realization.
+            Three things we put in place to make your AI program actually work.
           </h2>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -367,9 +371,9 @@ export default function App() {
         <section className="reveal grid gap-10 border-b border-[var(--line)] py-14 lg:grid-cols-[1.35fr_1fr]">
           <div>
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">FIRST 30 DAYS</p>
-          <h2 className="mt-4 max-w-[23ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-            Get decision-grade clarity before complexity grows.
-          </h2>
+            <h2 className="mt-4 max-w-[23ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
+              In 30 days, you'll have the clarity to make real decisions.
+            </h2>
             <ul className="mt-7 space-y-3 text-sm leading-relaxed text-slate-700">
               {firstMonthDeliverables.map((item) => (
                 <li key={item} className="border border-slate-300 bg-white/80 px-4 py-3">
@@ -395,11 +399,12 @@ export default function App() {
         <section id="proof" className="reveal border-b border-[var(--line)] py-14">
           <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">PROOF</p>
           <h2 className="mt-4 max-w-[24ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-            Evidence assets, framework alignment, and measurable reporting.
+            We prove our work with real artifacts - not slide decks.
           </h2>
           <p className="mt-5 max-w-4xl text-base leading-relaxed text-slate-700">
-            We show artifacts and controls, not hype. We align delivery to NIST AI RMF, ISO/IEC 42001, OWASP LLM risk
-            categories, and EU AI Act readiness, including the August 2, 2026 milestone.
+            We show working artifacts: dashboards, scorecards, KPI trees, and governance documents. Our delivery
+            aligns with NIST AI RMF, ISO/IEC 42001, OWASP LLM Top 10, and EU AI Act requirements, including
+            August 2, 2026 readiness where relevant.
           </p>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -449,11 +454,11 @@ export default function App() {
           <div>
             <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.22em] text-slate-600">DIAGNOSTIC OFFER</p>
             <h2 className="mt-4 max-w-[23ch] text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-              AI Portfolio Reality Scan: your first commercial yes.
+              AI Portfolio Reality Scan: the fastest way to know what's working and what's not.
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-              In 2-3 weeks, you get a board-ready view of current AI activity, scale-or-stop priorities, governance
-              priorities, and a 90-day execution plan.
+              In 2-3 weeks, you get a clear view of your AI portfolio: what to keep, what to cut, where
+              governance is weak, and what to do in the next 90 days.
             </p>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
               You leave with the decision pack, whether or not we continue together.
@@ -495,8 +500,8 @@ export default function App() {
                 Apply for the AI Portfolio Reality Scan
               </h2>
               <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-                This form is for teams with active AI work, executive urgency, and a need for measured production
-                impact. Qualified applications get next-step coordination within 48 business hours.
+                This is for teams already doing AI work, with leadership pressure to show results. If it's a fit,
+                we'll reach out within 48 business hours.
               </p>
 
               <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
@@ -730,7 +735,7 @@ export default function App() {
           >
             {PRIMARY_EMAIL}
           </a>
-          <p className="text-sm text-slate-600">One flagship offer. One primary CTA path. One governed execution model.</p>
+          <p className="text-sm text-slate-600">One service. One starting point. One clear way to work together.</p>
         </footer>
       </main>
     </div>

@@ -1,0 +1,252 @@
+{
+  "schema": "hormozi_concept_registry.v1",
+  "concepts": [
+    {
+      "key": "value_equation",
+      "primary_book": "BOOK_OFFERS",
+      "aliases": [
+        "Value = (Dream Outcome x Perceived Likelihood) / (Time Delay x Effort and Sacrifice)"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-offers.pdf",
+          "page_hint": "~62-63"
+        }
+      ]
+    },
+    {
+      "key": "offer_market_selection",
+      "primary_book": "BOOK_OFFERS",
+      "aliases": [
+        "Starving Crowd",
+        "Pick a market with hungry demand"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-offers.pdf",
+          "page_hint": "Step 1 section"
+        }
+      ]
+    },
+    {
+      "key": "offer_construction",
+      "primary_book": "BOOK_OFFERS",
+      "aliases": [
+        "Build the offer",
+        "Dream outcome",
+        "Obstacles",
+        "Delivery vehicles",
+        "Trim and stack"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-offers.pdf",
+          "page_hint": "Steps 3-4 sections"
+        }
+      ]
+    },
+    {
+      "key": "grand_slam_stack",
+      "primary_book": "BOOK_OFFERS",
+      "aliases": [
+        "Promotion",
+        "Unmatchable value",
+        "Premium price",
+        "Guarantee",
+        "Payment terms"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-offers.pdf",
+          "page_hint": "Step 4 section"
+        }
+      ]
+    },
+    {
+      "key": "offer_enhancers",
+      "primary_book": "BOOK_OFFERS",
+      "aliases": [
+        "Scarcity",
+        "Urgency",
+        "Bonuses",
+        "Guarantees"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-offers.pdf",
+          "page_hint": "Step 5 section"
+        }
+      ]
+    },
+    {
+      "key": "magic_naming",
+      "primary_book": "BOOK_OFFERS",
+      "aliases": [
+        "MAGIC: Magnet, Avatar, Goal, Interval, Container"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-offers.pdf",
+          "page_hint": "~126-128"
+        }
+      ]
+    },
+    {
+      "key": "offer_iteration_fatigue",
+      "primary_book": "BOOK_OFFERS",
+      "aliases": [
+        "Offer fatigue",
+        "wrapper changes"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-offers.pdf",
+          "page_hint": "Step 7 section"
+        }
+      ]
+    },
+    {
+      "key": "lead_definition",
+      "primary_book": "BOOK_LEADS",
+      "aliases": [
+        "Lead = person you can contact",
+        "Engaged lead = shows interest"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "early chapters"
+        }
+      ]
+    },
+    {
+      "key": "lead_magnet_quality",
+      "primary_book": "BOOK_LEADS",
+      "aliases": [
+        "lead magnet does four things"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "~71-72"
+        }
+      ]
+    },
+    {
+      "key": "lead_magnet_build_steps",
+      "primary_book": "BOOK_LEADS",
+      "aliases": [
+        "Lead Magnet build (7 steps)"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "~71"
+        }
+      ]
+    },
+    {
+      "key": "core_four",
+      "primary_book": "BOOK_LEADS",
+      "aliases": [
+        "Warm outreach",
+        "Posting content",
+        "Cold outreach",
+        "Paid ads"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "~73-77"
+        }
+      ]
+    },
+    {
+      "key": "commitment_modes",
+      "primary_book": "BOOK_LEADS",
+      "aliases": [
+        "Rule of 100",
+        "Open-To-Goal"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "commitment mode section"
+        }
+      ]
+    },
+    {
+      "key": "measure_and_optimize",
+      "primary_book": "BOOK_LEADS",
+      "aliases": [
+        "Engaged leads/day",
+        "conversion rates",
+        "More/Better/New"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "measurement + iteration sections"
+        }
+      ]
+    },
+    {
+      "key": "lead_getters",
+      "primary_book": "BOOK_LEADS",
+      "aliases": [
+        "Referrals",
+        "Employees",
+        "Agencies",
+        "Affiliates"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "Lead Getters section"
+        }
+      ]
+    },
+    {
+      "key": "money_model_definition",
+      "primary_book": "BOOK_MONEY_MODELS",
+      "aliases": [
+        "Money Model is a deliberate sequence of offers"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-leads.pdf",
+          "page_hint": "~148-154"
+        }
+      ]
+    },
+    {
+      "key": "money_model_stages",
+      "primary_book": "BOOK_MONEY_MODELS",
+      "aliases": [
+        "Stage I Get Cash",
+        "Stage II Get More Cash",
+        "Stage III Get The Most Cash"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-money-models.pdf",
+          "page_hint": "~148-154"
+        }
+      ]
+    },
+    {
+      "key": "money_model_build_rules",
+      "primary_book": "BOOK_MONEY_MODELS",
+      "aliases": [
+        "Do not implement a full Money Model at once",
+        "Perfect one offer at a time"
+      ],
+      "likely_pages": [
+        {
+          "file": "100m-money-models.pdf",
+          "page_hint": "~152-155"
+        }
+      ]
+    }
+  ]
+}
