@@ -1,4 +1,4 @@
-import { useState } from 'react'
+  import { useState } from 'react'
 import type { FormEvent } from 'react'
 
 const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
@@ -16,6 +16,10 @@ const surfaceClass = 'border border-[var(--line)] bg-[var(--surface)]'
 const panelClass = `premium-panel ${surfaceClass} p-6`
 const cardClass = `premium-card ${surfaceClass} p-5`
 const listItemClass = `premium-card ${surfaceClass} px-4 py-3`
+const inversePanelClass =
+  'border border-[var(--accent)] bg-[var(--accent)] px-6 py-6 text-slate-100 shadow-[0_18px_38px_rgba(15,23,42,0.12)]'
+const inverseSectionLabelClass =
+  "inline-flex w-fit items-center bg-[rgba(255,255,255,0.12)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-white"
 const sectionLabelClass =
   "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]"
 const sectionHeadingClass =
@@ -57,6 +61,39 @@ const installBlocks = [
   },
 ]
 
+const mechanismFlow = [
+  {
+    step: '01',
+    title: 'Intake',
+    detail: 'Capture initiatives, owners, and workflow scope.',
+  },
+  {
+    step: '02',
+    title: 'Prioritize',
+    detail: 'Rank by impact, readiness, and risk.',
+  },
+  {
+    step: '03',
+    title: 'Govern',
+    detail: 'Set decision rights, controls, and review points.',
+  },
+  {
+    step: '04',
+    title: 'Oversee Delivery',
+    detail: 'Track build progress and production readiness.',
+  },
+  {
+    step: '05',
+    title: 'Measure',
+    detail: 'Monitor KPI, adoption, and business value.',
+  },
+  {
+    step: '06',
+    title: 'Scale or Retire',
+    detail: 'Expand winners. Stop weak bets.',
+  },
+]
+
 const firstMonthDeliverables = [
   "A single list of every AI project - who owns it, what it's worth, and how risky it is.",
   'Clear recommendations: what to scale, what to stop, and what to do next.',
@@ -84,13 +121,19 @@ const timeline = [
   },
 ]
 
-const proofArtifacts = [
-  'Portfolio dashboard snapshot (redacted)',
-  'Use-case scoring model (impact x readiness x risk)',
-  'Governance charter excerpt',
-  'KPI tree and baseline logic',
-  'Stage-gate production-readiness checklist',
-  'Board-ready executive briefing outline',
+const proofEvidence = [
+  {
+    title: 'Portfolio dashboard snapshot',
+    detail: 'Redacted board view of initiatives, owners, status, and risk concentration.',
+  },
+  {
+    title: 'Use-case scoring model',
+    detail: 'Impact, readiness, and risk logic used to rank what scales and what stops.',
+  },
+  {
+    title: 'Governance charter excerpt',
+    detail: 'Decision map showing who approves, who reviews, and when controls apply.',
+  },
 ]
 
 const proofVisuals = [
@@ -134,6 +177,21 @@ const fitNotFor = [
   'Teams looking for strategy sessions without follow-through.',
   'Companies that only want a chatbot build vendor.',
   'Organizations not willing to set clear rules about who decides what.',
+]
+
+const applicationNextSteps = [
+  {
+    title: 'Within 48 business hours',
+    detail: 'Application fit review and response.',
+  },
+  {
+    title: 'Week one',
+    detail: 'Scoping call, stakeholder alignment, and access checklist.',
+  },
+  {
+    title: 'Weeks two to three',
+    detail: 'Reality Scan execution and executive decision pack delivery.',
+  },
 ]
 
 const scanIncludes = [
@@ -200,8 +258,14 @@ function buildMailto(form: FormState): string {
 }
 
 function inputClass(hasError: boolean): string {
-  return `mt-1 w-full border bg-[rgba(255,255,255,0.94)] px-3 py-2 text-sm text-slate-950 outline-none shadow-[0_1px_0_rgba(255,255,255,0.65)] transition-[border-color,box-shadow,background-color] duration-200 focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(30,41,59,0.12)] ${
-    hasError ? 'border-rose-500' : 'border-[var(--line)]'
+  return `mt-1 w-full border bg-[rgba(255,255,255,0.08)] px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] transition-[border-color,box-shadow,background-color] duration-200 caret-white focus:border-white focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] ${
+    hasError ? 'border-rose-400' : 'border-[rgba(255,255,255,0.16)]'
+  }`
+}
+
+function selectClass(hasError: boolean): string {
+  return `w-full appearance-none border bg-[rgba(255,255,255,0.08)] px-3 py-2.5 pr-11 text-sm text-white outline-none [color-scheme:dark] transition-[border-color,box-shadow,background-color] duration-200 caret-white focus:border-white focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] ${
+    hasError ? 'border-rose-400' : 'border-[rgba(255,255,255,0.16)]'
   }`
 }
 
@@ -328,44 +392,49 @@ export default function App() {
         </header>
 
         <section id="overview" className={`${splitSectionClass} gap-8`}>
-          <div className="lg:col-span-7">
-            <p className={sectionLabelClass}>ENTERPRISE AI TRANSFORMATION OFFICE</p>
-            <h1 className="mt-6 max-w-[11ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
-              Stop running AI experiments.{' '}
-              <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-                Start shipping AI results.
-              </span>
-            </h1>
-            <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-              We set up and run the operating system your AI program is missing. One portfolio. One decision
-              rhythm. One source of truth - so business, IT, and risk move together, and AI starts producing
-              measurable outcomes instead of more pilots.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <span className={metaChipClass}>AI Portfolio Reality Scan</span>
-              <span className={metaChipClass}>Decision Pack Guarantee</span>
-              <span className={metaChipClass}>Board-ready artifacts</span>
+          <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
+            <div>
+              <p className={sectionLabelClass}>ENTERPRISE AI TRANSFORMATION OFFICE</p>
+              <h1 className="mt-6 max-w-[11ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
+                Stop running AI experiments.{' '}
+                <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
+                  Start shipping AI results.
+                </span>
+              </h1>
+              <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
+                We set up and run the operating system your AI program is missing. One portfolio. One decision
+                rhythm. One source of truth - so business, IT, and risk move together, and AI starts producing
+                measurable outcomes instead of more pilots.
+              </p>
             </div>
-            <div className="mt-9 flex flex-wrap items-center gap-5">
-              <a
-                href={ctaHref}
-                className={primaryButtonClass}
-              >
-                {PRIMARY_CTA}
-              </a>
-              <a
-                href="#mechanism"
-                className={secondaryButtonClass}
-              >
-                {MECHANISM_CTA}
-              </a>
+
+            <div className="mt-8 space-y-4 lg:mt-auto lg:pt-10">
+              <div className="flex flex-wrap gap-2">
+                <span className={metaChipClass}>AI Portfolio Reality Scan</span>
+                <span className={metaChipClass}>Decision Pack Guarantee</span>
+                <span className={metaChipClass}>Board-ready artifacts</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-5">
+                <a
+                  href={ctaHref}
+                  className={primaryButtonClass}
+                >
+                  {PRIMARY_CTA}
+                </a>
+                <a
+                  href="#mechanism"
+                  className={secondaryButtonClass}
+                >
+                  {MECHANISM_CTA}
+                </a>
+              </div>
+              <p className="text-sm text-slate-600">
+                For enterprises already investing in AI - with leadership pressure to show real returns.
+              </p>
             </div>
-            <p className="mt-4 text-sm text-slate-600">
-              For enterprises already investing in AI - with leadership pressure to show real returns.
-            </p>
           </div>
 
-          <aside className={`lg:col-span-5 ${panelClass}`}>
+          <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className={sectionLabelClass}>START HERE</p>
               <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
@@ -464,20 +533,69 @@ export default function App() {
           </div>
 
           <div className={panelClass + ' mt-8'}>
-            <p className={sectionLabelClass}>MECHANISM FLOW</p>
-            <p className="mt-3 text-sm leading-relaxed text-slate-700">
-              Intake, prioritize, govern, oversee delivery, measure, then scale or retire.
-            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className={sectionLabelClass}>MECHANISM FLOW</p>
+                <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-700">
+                  One operating sequence for every AI initiative, from first intake through scale or retirement.
+                </p>
+              </div>
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+                6-step operating rail
+              </p>
+            </div>
+
+            <ol className="mt-8 space-y-5 lg:hidden">
+              {mechanismFlow.map((item, index) => (
+                <li key={item.step} className="relative pl-12">
+                  {index < mechanismFlow.length - 1 ? (
+                    <div className="absolute left-4 top-9 bottom-[-1.4rem] border-l border-[var(--line)]" />
+                  ) : null}
+                  <div
+                    className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-medium tracking-[0.12em] ${
+                      index === mechanismFlow.length - 1
+                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                        : 'border-[var(--line)] bg-white text-[var(--muted)]'
+                    } font-['IBM_Plex_Mono']`}
+                  >
+                    {item.step}
+                  </div>
+                  <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">{item.title}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                </li>
+              ))}
+            </ol>
+
+            <ol className="relative mt-9 hidden lg:grid lg:grid-cols-6 lg:gap-4">
+              <div className="pointer-events-none absolute left-[calc(100%/12)] right-[calc(100%/12)] top-4 border-t border-[var(--line)]" />
+              {mechanismFlow.map((item, index) => (
+                <li key={item.step} className="relative">
+                  <div
+                    className={`relative z-[1] flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-medium tracking-[0.12em] ${
+                      index === mechanismFlow.length - 1
+                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                        : 'border-[var(--line)] bg-white text-[var(--muted)]'
+                    } font-['IBM_Plex_Mono']`}
+                  >
+                    {item.step}
+                  </div>
+                  <div className="mt-5 max-w-[16ch]">
+                    <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">{item.title}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
 
         <section className={splitSectionClass}>
-          <div className="lg:col-span-7">
+          <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
             <p className={sectionLabelClass}>FIRST 30 DAYS</p>
             <h2 className={sectionHeadingClass}>
               In 30 days, you'll have the clarity to make real decisions.
             </h2>
-            <ul className="mt-7 space-y-3 text-sm leading-relaxed text-slate-700">
+            <ul className="mt-7 space-y-3 text-sm leading-relaxed text-slate-700 lg:mt-auto">
               {firstMonthDeliverables.map((item) => (
                 <li key={item} className={listItemClass}>
                   {item}
@@ -486,11 +604,11 @@ export default function App() {
             </ul>
           </div>
 
-          <aside className={`lg:col-span-5 ${panelClass}`}>
+          <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
             <p className={sectionLabelClass}>TIMELINE</p>
-            <dl className="mt-5 space-y-4 text-sm">
+            <dl className="mt-5 flex flex-1 flex-col text-sm">
               {timeline.map((item) => (
-                <div key={item.title} className="border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0">
+                <div key={item.title} className="flex-1 border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0">
                   <dt className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">{item.title}</dt>
                   <dd className="mt-2 leading-relaxed text-slate-800">{item.detail}</dd>
                 </div>
@@ -500,27 +618,31 @@ export default function App() {
         </section>
 
         <section id="proof" className={splitSectionClass}>
-          <div className="lg:col-span-5">
-            <p className={sectionLabelClass}>PROOF</p>
-            <h2 className={sectionHeadingClass}>
-              We prove our work with real artifacts - not slide decks.
-            </h2>
-            <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-slate-700">
-              We show working artifacts: dashboards, scorecards, KPI trees, and governance documents. Our delivery
-              aligns with NIST AI RMF, ISO/IEC 42001, OWASP LLM Top 10, and EU AI Act requirements, including
-              August 2, 2026 readiness where relevant.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {frameworkTags.map((tag) => (
-                <span key={tag} className={metaChipClass}>
-                  {tag}
-                </span>
-              ))}
+          <div className="flex h-full flex-col lg:col-span-5 lg:pr-4">
+            <div>
+              <p className={sectionLabelClass}>PROOF</p>
+              <h2 className={sectionHeadingClass}>
+                We prove our work with real artifacts - not slide decks.
+              </h2>
+              <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-slate-700">
+                We show working artifacts: dashboards, scorecards, KPI trees, and governance documents. Our delivery
+                aligns with NIST AI RMF, ISO/IEC 42001, OWASP LLM Top 10, and EU AI Act requirements, including
+                August 2, 2026 readiness where relevant.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {frameworkTags.map((tag) => (
+                  <span key={tag} className={metaChipClass}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="mt-8 space-y-3">
-              {proofArtifacts.slice(0, 3).map((item) => (
-                <article key={item} className={listItemClass}>
-                  <p className="text-sm leading-relaxed text-slate-700">{item}</p>
+
+            <div className="mt-8 space-y-4 border-t border-[var(--line)] pt-5 lg:mt-auto">
+              {proofEvidence.map((item) => (
+                <article key={item.title} className="border-b border-[var(--line)] pb-4 last:border-b-0 last:pb-0">
+                  <p className="text-sm font-medium tracking-[-0.01em] text-slate-950">{item.title}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
                 </article>
               ))}
             </div>
@@ -551,55 +673,94 @@ export default function App() {
               </article>
             ))}
           </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-12 lg:col-span-12 lg:grid-cols-12">
-            {proofArtifacts.slice(3).map((item) => (
-              <article key={item} className={`sm:col-span-6 lg:col-span-4 ${cardClass}`}>
-                <p className="text-sm leading-relaxed text-slate-700">{item}</p>
-              </article>
-            ))}
-          </div>
         </section>
 
-        <section className={splitSectionClass}>
-          <div className="lg:col-span-6">
-            <p className={sectionLabelClass}>FIT</p>
-            <h3 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] [text-wrap:balance]">Who this is for</h3>
-            <ul className="mt-6 space-y-3 text-sm leading-relaxed text-slate-700">
-              {fitFor.map((item) => (
-                <li key={item} className={listItemClass}>
-                  {item}
-                </li>
+        <section className="reveal border-b-2 border-[var(--line)] py-14 sm:py-16">
+          <div className="premium-panel relative overflow-hidden border border-[var(--line)] bg-[var(--surface)]">
+            <div className="pointer-events-none absolute bottom-0 left-1/2 top-0 hidden border-l border-[var(--line)] lg:block" />
+
+            <div className="relative z-[1] grid lg:grid-cols-2">
+              <div className="border-b border-[var(--line)] px-6 py-5 lg:border-b-0">
+                <div className="grid gap-4 lg:grid-cols-[2.5rem_minmax(0,1fr)]">
+                  <span
+                    aria-hidden="true"
+                    className="hidden font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-transparent lg:block"
+                  >
+                    01
+                  </span>
+                  <div>
+                    <p className={sectionLabelClass}>FIT</p>
+                    <h3 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] [text-wrap:balance]">
+                      Who this is for
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div className="border-b border-[var(--line)] bg-[var(--accent)] px-6 py-5 text-white lg:border-b-0">
+                <div className="grid gap-4 lg:grid-cols-[2.5rem_minmax(0,1fr)]">
+                  <span
+                    aria-hidden="true"
+                    className="hidden font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-transparent lg:block"
+                  >
+                    01
+                  </span>
+                  <div>
+                    <p className="inline-flex w-fit items-center bg-[rgba(255,255,255,0.12)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-white">
+                      NOT A FIT
+                    </p>
+                    <h3 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] [text-wrap:balance]">
+                      Who this is not for
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative z-[1]">
+              {fitFor.map((item, index) => (
+                <div key={item} className="relative grid lg:grid-cols-2">
+                  <div className="border-t border-[var(--line)] px-6 py-5">
+                    <div className="flex items-start gap-4">
+                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                        0{index + 1}
+                      </p>
+                      <p className="max-w-[40ch] text-sm leading-relaxed text-slate-800">{item}</p>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-[rgba(255,255,255,0.12)] bg-[var(--accent)] px-6 py-5">
+                    <div className="flex items-start gap-4">
+                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
+                        0{index + 1}
+                      </p>
+                      <p className="max-w-[40ch] text-sm leading-relaxed text-slate-100">{fitNotFor[index]}</p>
+                    </div>
+                  </div>
+
+                  <div className="absolute left-1/2 top-1/2 hidden h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--line)] bg-white lg:block" />
+                </div>
               ))}
-            </ul>
-          </div>
-          <div className="lg:col-span-6">
-            <p className={sectionLabelClass}>NOT A FIT</p>
-            <h3 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] [text-wrap:balance]">Who this is not for</h3>
-            <ul className="mt-6 space-y-3 text-sm leading-relaxed text-slate-700">
-              {fitNotFor.map((item) => (
-                <li key={item} className={listItemClass}>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            </div>
           </div>
         </section>
 
         <section id="diagnostic" className={splitSectionClass}>
-          <div className="lg:col-span-7">
-            <p className={sectionLabelClass}>DIAGNOSTIC OFFER</p>
-            <h2 className={sectionHeadingClass}>
-              AI Portfolio Reality Scan: the fastest way to know what's working and what's not.
-            </h2>
-            <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-              In 2-3 weeks, you get a clear view of your AI portfolio: what to keep, what to cut, where
-              governance is weak, and what to do in the next 90 days.
-            </p>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
-              You leave with the decision pack, whether or not we continue together.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-5">
+          <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
+            <div>
+              <p className={sectionLabelClass}>DIAGNOSTIC OFFER</p>
+              <h2 className={sectionHeadingClass}>
+                AI Portfolio Reality Scan: the fastest way to know what's working and what's not.
+              </h2>
+              <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
+                In 2-3 weeks, you get a clear view of your AI portfolio: what to keep, what to cut, where
+                governance is weak, and what to do in the next 90 days.
+              </p>
+              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
+                You leave with the decision pack, whether or not we continue together.
+              </p>
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-5 lg:mt-auto">
               <a
                 href={ctaHref}
                 className={primaryButtonClass}
@@ -612,9 +773,9 @@ export default function App() {
             </div>
           </div>
 
-          <aside className={`lg:col-span-5 ${panelClass}`}>
+          <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
             <p className={sectionLabelClass}>WHAT IS INCLUDED</p>
-            <ul className="mt-5 space-y-3 text-sm leading-relaxed text-slate-700">
+            <ul className="mt-5 flex flex-1 flex-col gap-3 text-sm leading-relaxed text-slate-700">
               {scanIncludes.map((item) => (
                 <li key={item} className={listItemClass}>
                   {item}
@@ -625,238 +786,311 @@ export default function App() {
         </section>
 
         <section id="apply" className="reveal py-14">
-          <div className="grid gap-8 border-b-2 border-[var(--line)] pb-14 sm:pb-16 lg:grid-cols-12">
-            <div className="lg:col-span-7">
-              <p className={sectionLabelClass}>APPLICATION</p>
-              <h2 className={sectionHeadingClass}>
-                Apply for the AI Portfolio Reality Scan
-              </h2>
-              <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-                This is for teams already doing AI work, with leadership pressure to show results. If it's a fit,
-                we'll reach out within 48 business hours.
-              </p>
-
-              <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="text-sm font-medium text-slate-700">
-                    Full name
-                    <input
-                      className={inputClass(Boolean(errors.fullName))}
-                      value={form.fullName}
-                      onChange={(event) => updateField('fullName', event.target.value)}
-                      autoComplete="name"
-                      required
-                    />
-                    {errors.fullName ? <span className="text-xs text-rose-600">{errors.fullName}</span> : null}
-                  </label>
-
-                  <label className="text-sm font-medium text-slate-700">
-                    Work email
-                    <input
-                      className={inputClass(Boolean(errors.workEmail))}
-                      value={form.workEmail}
-                      onChange={(event) => updateField('workEmail', event.target.value)}
-                      autoComplete="email"
-                      required
-                    />
-                    {errors.workEmail ? <span className="text-xs text-rose-600">{errors.workEmail}</span> : null}
-                  </label>
-
-                  <label className="text-sm font-medium text-slate-700">
-                    Role or title
-                    <input
-                      className={inputClass(Boolean(errors.roleTitle))}
-                      value={form.roleTitle}
-                      onChange={(event) => updateField('roleTitle', event.target.value)}
-                      required
-                    />
-                    {errors.roleTitle ? <span className="text-xs text-rose-600">{errors.roleTitle}</span> : null}
-                  </label>
-
-                  <label className="text-sm font-medium text-slate-700">
-                    Company
-                    <input
-                      className={inputClass(Boolean(errors.company))}
-                      value={form.company}
-                      onChange={(event) => updateField('company', event.target.value)}
-                      required
-                    />
-                    {errors.company ? <span className="text-xs text-rose-600">{errors.company}</span> : null}
-                  </label>
-
-                  <label className="text-sm font-medium text-slate-700">
-                    Executive sponsor
-                    <input
-                      className={inputClass(Boolean(errors.executiveSponsor))}
-                      value={form.executiveSponsor}
-                      onChange={(event) => updateField('executiveSponsor', event.target.value)}
-                      required
-                    />
-                    {errors.executiveSponsor ? (
-                      <span className="text-xs text-rose-600">{errors.executiveSponsor}</span>
-                    ) : null}
-                  </label>
-
-                  <label className="text-sm font-medium text-slate-700">
-                    Number of active AI initiatives
-                    <input
-                      className={inputClass(Boolean(errors.aiInitiativeCount))}
-                      value={form.aiInitiativeCount}
-                      onChange={(event) => updateField('aiInitiativeCount', event.target.value)}
-                      required
-                    />
-                    {errors.aiInitiativeCount ? (
-                      <span className="text-xs text-rose-600">{errors.aiInitiativeCount}</span>
-                    ) : null}
-                  </label>
+          <div className="space-y-8">
+            <div className="grid gap-8 lg:grid-cols-12">
+              <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
+                <div>
+                  <p className={sectionLabelClass}>APPLICATION</p>
+                  <h2 className={sectionHeadingClass}>
+                    Apply for the AI Portfolio Reality Scan
+                  </h2>
+                  <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
+                    This is for teams already doing AI work, with leadership pressure to show results. If it's a fit,
+                    we'll reach out within 48 business hours.
+                  </p>
                 </div>
 
-                <div className="grid gap-4">
-                  <label className="text-sm font-medium text-slate-700">
-                    Top 1-3 workflows or functions in focus
-                    <textarea
-                      className={inputClass(Boolean(errors.focusWorkflows))}
-                      rows={3}
-                      value={form.focusWorkflows}
-                      onChange={(event) => updateField('focusWorkflows', event.target.value)}
-                      required
-                    />
-                    {errors.focusWorkflows ? (
-                      <span className="text-xs text-rose-600">{errors.focusWorkflows}</span>
-                    ) : null}
-                  </label>
+                <div className="mt-6 flex flex-wrap gap-2 lg:mt-auto">
+                  <span className={metaChipClass}>10-minute application</span>
+                  <span className={metaChipClass}>Executive sponsor required</span>
+                  <span className={metaChipClass}>Decision pack included</span>
+                </div>
+              </div>
 
-                  <label className="text-sm font-medium text-slate-700">
-                    Biggest blocker today
-                    <textarea
-                      className={inputClass(Boolean(errors.biggestBlocker))}
-                      rows={3}
-                      value={form.biggestBlocker}
-                      onChange={(event) => updateField('biggestBlocker', event.target.value)}
-                      required
-                    />
-                    {errors.biggestBlocker ? (
-                      <span className="text-xs text-rose-600">{errors.biggestBlocker}</span>
-                    ) : null}
-                  </label>
+              <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
+                <p className={sectionLabelClass}>WHAT HAPPENS NEXT</p>
+                <div className="mt-5 flex flex-1 flex-col text-sm leading-relaxed text-slate-700">
+                  {applicationNextSteps.map((item) => (
+                    <div key={item.title} className="flex-1 border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0">
+                      <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">{item.title}</p>
+                      <p className="mt-2">{item.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </aside>
+            </div>
 
-                  <label className="text-sm font-medium text-slate-700">
-                    Compliance or security constraints
-                    <textarea
-                      className={inputClass(Boolean(errors.complianceConstraints))}
-                      rows={3}
-                      value={form.complianceConstraints}
-                      onChange={(event) => updateField('complianceConstraints', event.target.value)}
-                      required
-                    />
-                    {errors.complianceConstraints ? (
-                      <span className="text-xs text-rose-600">{errors.complianceConstraints}</span>
-                    ) : null}
-                  </label>
+            <div className={inversePanelClass}>
+              <div className="flex flex-col gap-3 border-b border-[rgba(255,255,255,0.14)] pb-5 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className={inverseSectionLabelClass}>APPLICATION FORM</p>
+                  <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-100">
+                    Share the current state of your AI portfolio, the blocker, and the urgency. We use this to qualify
+                    fit and prepare the first decision call.
+                  </p>
+                </div>
+                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
+                  Required fields only
+                </p>
+              </div>
 
-                  <label className="text-sm font-medium text-slate-700">
-                    Timeline and urgency
-                    <select
-                      className={inputClass(Boolean(errors.timelineUrgency))}
-                      value={form.timelineUrgency}
-                      onChange={(event) => updateField('timelineUrgency', event.target.value)}
-                      required
+              <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-6">
+                <div className="grid gap-6 lg:grid-cols-12">
+                  <div className="space-y-4 lg:col-span-6">
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
+                      Contact and ownership
+                    </p>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="text-sm font-medium text-slate-100">
+                        Full name
+                        <input
+                          className={inputClass(Boolean(errors.fullName))}
+                          value={form.fullName}
+                          onChange={(event) => updateField('fullName', event.target.value)}
+                          autoComplete="name"
+                          required
+                        />
+                        {errors.fullName ? <span className="text-xs text-rose-600">{errors.fullName}</span> : null}
+                      </label>
+
+                      <label className="text-sm font-medium text-slate-100">
+                        Work email
+                        <input
+                          className={inputClass(Boolean(errors.workEmail))}
+                          value={form.workEmail}
+                          onChange={(event) => updateField('workEmail', event.target.value)}
+                          autoComplete="email"
+                          required
+                        />
+                        {errors.workEmail ? <span className="text-xs text-rose-600">{errors.workEmail}</span> : null}
+                      </label>
+
+                      <label className="text-sm font-medium text-slate-100">
+                        Role or title
+                        <input
+                          className={inputClass(Boolean(errors.roleTitle))}
+                          value={form.roleTitle}
+                          onChange={(event) => updateField('roleTitle', event.target.value)}
+                          required
+                        />
+                        {errors.roleTitle ? <span className="text-xs text-rose-600">{errors.roleTitle}</span> : null}
+                      </label>
+
+                      <label className="text-sm font-medium text-slate-100">
+                        Company
+                        <input
+                          className={inputClass(Boolean(errors.company))}
+                          value={form.company}
+                          onChange={(event) => updateField('company', event.target.value)}
+                          required
+                        />
+                        {errors.company ? <span className="text-xs text-rose-600">{errors.company}</span> : null}
+                      </label>
+
+                      <label className="text-sm font-medium text-slate-100 sm:col-span-2">
+                        Executive sponsor
+                        <input
+                          className={inputClass(Boolean(errors.executiveSponsor))}
+                          value={form.executiveSponsor}
+                          onChange={(event) => updateField('executiveSponsor', event.target.value)}
+                          required
+                        />
+                        {errors.executiveSponsor ? (
+                          <span className="text-xs text-rose-600">{errors.executiveSponsor}</span>
+                        ) : null}
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 lg:col-span-6">
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
+                      Portfolio context
+                    </p>
+                    <div className="grid gap-4">
+                      <label className="text-sm font-medium text-slate-100">
+                        Number of active AI initiatives
+                        <input
+                          className={inputClass(Boolean(errors.aiInitiativeCount))}
+                          value={form.aiInitiativeCount}
+                          onChange={(event) => updateField('aiInitiativeCount', event.target.value)}
+                          required
+                        />
+                        {errors.aiInitiativeCount ? (
+                          <span className="text-xs text-rose-600">{errors.aiInitiativeCount}</span>
+                        ) : null}
+                      </label>
+
+                      <label className="text-sm font-medium text-slate-100">
+                        Top 1-3 workflows or functions in focus
+                        <textarea
+                          className={inputClass(Boolean(errors.focusWorkflows))}
+                          rows={4}
+                          value={form.focusWorkflows}
+                          onChange={(event) => updateField('focusWorkflows', event.target.value)}
+                          required
+                        />
+                        {errors.focusWorkflows ? (
+                          <span className="text-xs text-rose-600">{errors.focusWorkflows}</span>
+                        ) : null}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-12">
+                  <div className="space-y-4 lg:col-span-6">
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
+                      Constraints and urgency
+                    </p>
+                    <div className="grid gap-4">
+                      <label className="text-sm font-medium text-slate-100">
+                        Biggest blocker today
+                        <textarea
+                          className={inputClass(Boolean(errors.biggestBlocker))}
+                          rows={4}
+                          value={form.biggestBlocker}
+                          onChange={(event) => updateField('biggestBlocker', event.target.value)}
+                          required
+                        />
+                        {errors.biggestBlocker ? (
+                          <span className="text-xs text-rose-600">{errors.biggestBlocker}</span>
+                        ) : null}
+                      </label>
+
+                      <label className="text-sm font-medium text-slate-100">
+                        Compliance or security constraints
+                        <textarea
+                          className={inputClass(Boolean(errors.complianceConstraints))}
+                          rows={4}
+                          value={form.complianceConstraints}
+                          onChange={(event) => updateField('complianceConstraints', event.target.value)}
+                          required
+                        />
+                        {errors.complianceConstraints ? (
+                          <span className="text-xs text-rose-600">{errors.complianceConstraints}</span>
+                        ) : null}
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 lg:col-span-6">
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
+                      Decision timing
+                    </p>
+                    <div className="grid gap-4">
+                      <label className="text-sm font-medium text-slate-100">
+                        Timeline and urgency
+                        <div className="relative mt-1">
+                          <select
+                            className={selectClass(Boolean(errors.timelineUrgency))}
+                            value={form.timelineUrgency}
+                            onChange={(event) => updateField('timelineUrgency', event.target.value)}
+                            required
+                          >
+                            <option value="">Select urgency</option>
+                            <option value="Immediate (0-30 days)">Immediate (0-30 days)</option>
+                            <option value="Near term (31-90 days)">Near term (31-90 days)</option>
+                            <option value="This half (3-6 months)">This half (3-6 months)</option>
+                            <option value="Exploratory (6+ months)">Exploratory (6+ months)</option>
+                          </select>
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 20 20"
+                            className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300"
+                          >
+                            <path
+                              d="M5 7.5L10 12.5L15 7.5"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.8"
+                            />
+                          </svg>
+                        </div>
+                        {errors.timelineUrgency ? (
+                          <span className="text-xs text-rose-600">{errors.timelineUrgency}</span>
+                        ) : null}
+                      </label>
+
+                      <label className="text-sm font-medium text-slate-100">
+                        Why now
+                        <textarea
+                          className={inputClass(Boolean(errors.whyNow))}
+                          rows={4}
+                          value={form.whyNow}
+                          onChange={(event) => updateField('whyNow', event.target.value)}
+                          required
+                        />
+                        {errors.whyNow ? <span className="text-xs text-rose-600">{errors.whyNow}</span> : null}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4 border-t border-[rgba(255,255,255,0.14)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-slate-300">
+                    We use this to confirm fit, prepare the first call, and shape the decision pack scope.
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="submit"
+                      className={primaryButtonClass}
                     >
-                      <option value="">Select urgency</option>
-                      <option value="Immediate (0-30 days)">Immediate (0-30 days)</option>
-                      <option value="Near term (31-90 days)">Near term (31-90 days)</option>
-                      <option value="This half (3-6 months)">This half (3-6 months)</option>
-                      <option value="Exploratory (6+ months)">Exploratory (6+ months)</option>
-                    </select>
-                    {errors.timelineUrgency ? (
-                      <span className="text-xs text-rose-600">{errors.timelineUrgency}</span>
-                    ) : null}
-                  </label>
-
-                  <label className="text-sm font-medium text-slate-700">
-                    Why now
-                    <textarea
-                      className={inputClass(Boolean(errors.whyNow))}
-                      rows={3}
-                      value={form.whyNow}
-                      onChange={(event) => updateField('whyNow', event.target.value)}
-                      required
-                    />
-                    {errors.whyNow ? <span className="text-xs text-rose-600">{errors.whyNow}</span> : null}
-                  </label>
-                </div>
-
-                <div className="flex flex-wrap gap-3 pt-2">
-                  <button
-                    type="submit"
-                    className={primaryButtonClass}
-                  >
-                    {PRIMARY_CTA}
-                  </button>
+                      {PRIMARY_CTA}
+                    </button>
+                  </div>
                 </div>
 
                 {submitted ? (
-                  <div className={`space-y-4 ${cardClass}`}>
-                    <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-900">Application received</h3>
-                    <p className="text-sm leading-relaxed text-slate-700">
+                  <div className="space-y-4 border-t border-[rgba(255,255,255,0.14)] pt-5">
+                    <div className="space-y-4 border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-5">
+                      <h3 className="text-lg font-semibold tracking-[-0.01em] text-white">Application received</h3>
+                      <p className="text-sm leading-relaxed text-slate-100">
                       Your email draft is ready. If it did not open, use the link below. We respond within 48 business
                       hours.
-                    </p>
-                    <a
-                      href={buildMailto(form)}
-                      className={primaryButtonClass}
-                    >
-                      Open email draft again
-                    </a>
-                    <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
-                      <div className={heroHighlightClass}>
-                        <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Within 48 hours</p>
-                        <p className="mt-2">Fit review and reply.</p>
+                      </p>
+                      <a
+                        href={buildMailto(form)}
+                        className={primaryButtonClass}
+                      >
+                        Open email draft again
+                      </a>
+                      <div className="grid gap-3 text-sm text-slate-100 sm:grid-cols-3">
+                        <div className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4">
+                          <p className="font-medium uppercase tracking-[0.08em] text-slate-300">Within 48 hours</p>
+                          <p className="mt-2">Fit review and reply.</p>
+                        </div>
+                        <div className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4">
+                          <p className="font-medium uppercase tracking-[0.08em] text-slate-300">Week one</p>
+                          <p className="mt-2">Scope call and access checklist.</p>
+                        </div>
+                        <div className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4">
+                          <p className="font-medium uppercase tracking-[0.08em] text-slate-300">Weeks two to three</p>
+                          <p className="mt-2">Reality Scan and decision pack.</p>
+                        </div>
                       </div>
-                      <div className={heroHighlightClass}>
-                        <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Week one</p>
-                        <p className="mt-2">Scope call and access checklist.</p>
+                      <div className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4 text-sm leading-relaxed text-slate-100">
+                        Prepare your initiative list, owners, top workflows, and baseline KPI reports.
                       </div>
-                      <div className={heroHighlightClass}>
-                        <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Weeks two to three</p>
-                        <p className="mt-2">Reality Scan and decision pack.</p>
-                      </div>
+                      <a
+                        href={SCORECARD_PDF}
+                        download
+                        className="inline-flex items-center justify-center text-sm font-medium text-white underline decoration-[rgba(255,255,255,0.35)] underline-offset-4 transition-colors hover:text-slate-200 hover:decoration-white"
+                      >
+                        Download Pilot-to-Production Scorecard
+                      </a>
+                      <p className="text-sm text-slate-300">
+                        Support:{' '}
+                        <a className="font-medium text-white" href={`mailto:${PRIMARY_EMAIL}`}>
+                          {PRIMARY_EMAIL}
+                        </a>
+                      </p>
                     </div>
-                    <div className={`${heroHighlightClass} text-sm leading-relaxed text-slate-700`}>
-                      Prepare your initiative list, owners, top workflows, and baseline KPI reports.
-                    </div>
-                    <a
-                      href={SCORECARD_PDF}
-                      download
-                      className={secondaryButtonClass}
-                    >
-                      Download Pilot-to-Production Scorecard
-                    </a>
-                    <p className="text-sm text-slate-600">
-                      Support: <a className="font-medium text-slate-900" href={`mailto:${PRIMARY_EMAIL}`}>{PRIMARY_EMAIL}</a>
-                    </p>
                   </div>
                 ) : null}
               </form>
             </div>
-
-            <aside className={`h-fit lg:col-span-5 lg:sticky lg:top-8 ${panelClass}`}>
-              <p className={sectionLabelClass}>WHAT HAPPENS NEXT</p>
-              <div className="mt-5 space-y-4 text-sm leading-relaxed text-slate-700">
-                <div className="border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0">
-                  <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Within 48 business hours</p>
-                  <p className="mt-2">Application fit review and response.</p>
-                </div>
-                <div className="border-t border-[var(--line)] pt-4">
-                  <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Week one</p>
-                  <p className="mt-2">Scoping call, stakeholder alignment, and access checklist.</p>
-                </div>
-                <div className="border-t border-[var(--line)] pt-4">
-                  <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Weeks two to three</p>
-                  <p className="mt-2">Reality Scan execution and executive decision pack delivery.</p>
-                </div>
-              </div>
-            </aside>
           </div>
         </section>
 
