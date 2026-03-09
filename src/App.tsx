@@ -3,12 +3,15 @@ import type { FormEvent } from 'react'
 
 const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
 const SCORECARD_PDF = '/pilot-to-production-scorecard-board-ready-edition.pdf'
+const LINKEDIN_PROFILE = 'https://www.linkedin.com/in/mirzaasceric/'
 const PRIMARY_CTA = 'Apply for the AI Portfolio Reality Scan'
 const MECHANISM_CTA = 'See how the office works'
 const primaryButtonClass =
   'inline-flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:bg-[var(--accent-hover)] hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2'
 const secondaryButtonClass =
   'inline-flex items-center justify-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]'
+const utilityButtonClass =
+  'inline-flex items-center justify-center gap-2 border border-[var(--line)] bg-white px-4 py-2 text-sm font-medium text-[var(--accent)] shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition-[border-color,color,transform,box-shadow] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:text-[var(--accent-hover)] hover:shadow-[0_14px_24px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2'
 const surfaceClass = 'border border-[var(--line)] bg-[var(--surface)]'
 const panelClass = `premium-panel ${surfaceClass} p-6`
 const cardClass = `premium-card ${surfaceClass} p-5`
@@ -115,6 +118,11 @@ const heroHighlights = [
   { label: '03', title: 'Decision pack', detail: 'Clear scale, stop, and governance actions.' },
 ]
 const frameworkTags = ['NIST AI RMF', 'ISO/IEC 42001', 'OWASP LLM Top 10', 'EU AI Act ready']
+const linkedinProfile = {
+  name: 'Mirza (Ašća) Ašćerić',
+  role: 'Director of AI (Agent Orchestration) @ FlyRank',
+  detail: 'Production-grade AI systems | $1M+ ARR in <8 months'
+}
 
 const fitFor = [
   'Enterprises already investing in AI, with leadership that wants measurable results - fast.',
@@ -197,6 +205,14 @@ function inputClass(hasError: boolean): string {
   }`
 }
 
+function LinkedInIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+      <path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19ZM8.34 17.34V9.82H5.84V17.34H8.34ZM7.09 8.79C7.89 8.79 8.55 8.12 8.55 7.33C8.55 6.53 7.89 5.87 7.09 5.87C6.29 5.87 5.64 6.53 5.64 7.33C5.64 8.12 6.29 8.79 7.09 8.79ZM18.36 17.34V13.22C18.36 10.99 17.17 9.63 15.17 9.63C14.21 9.63 13.5 10.16 13.03 10.66V9.82H10.54C10.57 10.38 10.54 17.34 10.54 17.34H13.03V13.14C13.03 12.92 13.04 12.7 13.11 12.54C13.28 12.1 13.66 11.65 14.31 11.65C15.15 11.65 15.48 12.29 15.48 13.24V17.34H18.36Z" />
+    </svg>
+  )
+}
+
 export default function App() {
   const [form, setForm] = useState<FormState>(initialFormState)
   const [errors, setErrors] = useState<ErrorState>({})
@@ -250,6 +266,45 @@ export default function App() {
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.05)_1px,transparent_1px)] bg-[size:52px_52px] [mask-image:linear-gradient(to_bottom,black_18%,transparent_90%)]" />
 
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
+        <section className={`reveal mb-6 ${panelClass}`}>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 items-center gap-4">
+              <div className="shrink-0 rounded-full border border-[var(--line)] bg-white p-1 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+                <img
+                  src="/profile.png"
+                  alt={linkedinProfile.name}
+                  className="h-16 w-16 rounded-full object-cover object-center sm:h-18 sm:w-18"
+                  loading="eager"
+                />
+              </div>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-base font-semibold tracking-[-0.02em] text-slate-950 sm:text-lg">
+                    {linkedinProfile.name}
+                  </p>
+                  <span className={metaChipClass}>LinkedIn</span>
+                </div>
+                <p className="mt-1 text-sm font-medium leading-relaxed text-slate-800">
+                  {linkedinProfile.role}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-700">{linkedinProfile.detail}</p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 lg:justify-end">
+              <a
+                href={LINKEDIN_PROFILE}
+                target="_blank"
+                rel="noreferrer"
+                className={utilityButtonClass}
+              >
+                <LinkedInIcon />
+                Follow on LinkedIn
+              </a>
+            </div>
+          </div>
+        </section>
+
         <header className="reveal border-b-2 border-[var(--line)] pb-7">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <nav className="flex flex-wrap gap-5 text-[12px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
