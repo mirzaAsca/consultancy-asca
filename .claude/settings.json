@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /Users/mirzaasceric/Desktop/consultancy-asca/*.md)",
+      "Bash(npx tsc --noEmit)"
+    ]
+  }
+}
