@@ -202,12 +202,6 @@ const plans = [
   },
 ]
 
-const portfolioCompanies = [
-  { name: 'FlyRank', detail: 'Built the most advanced SEO/GEO engine. Grew to $1M+ ARR in under 8 months.' },
-  { name: 'Agent Orchestration', detail: 'Production-grade AI agent systems running inside enterprise operations.' },
-  { name: 'Shopify Marketplace', detail: 'Reverse-engineered the marketplace ecosystem. Automated seller intelligence at scale.' },
-]
-
 const linkedinProfile = {
   name: 'Mirza (Ašća) Ašćerić',
   role: 'Director of AI (Agent Orchestration) @ FlyRank',
@@ -951,22 +945,6 @@ export default function App() {
               </div>
             </div>
           ) : null}
-        </section>
-
-        {/* ── 7. PORTFOLIO COMPANIES ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
-          <p className={sectionLabelClass}>WHERE WE'VE BUILT</p>
-          <h2 className={sectionHeadingClass}>
-            Companies we've helped go AI-native.
-          </h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {portfolioCompanies.map((company) => (
-              <div key={company.name} className={cardClass}>
-                <p className="text-base font-semibold text-slate-900">{company.name}</p>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{company.detail}</p>
-              </div>
-            ))}
-          </div>
         </section>
 
         {/* ── 9. FAQ ── */}
