@@ -3,10 +3,45 @@ import type { FormEvent } from 'react'
 import SiteHeader from './components/SiteHeader'
 import WarpedGrid from './components/WarpedGrid'
 
+// ── Client logos ──
+import logoBattlbox from './assets/logos/battlbox.svg'
+import logoBalaHealth from './assets/logos/bala-health.svg'
+import logoBeardClub from './assets/logos/beard-club.png'
+import logoBubsNaturals from './assets/logos/bubs-naturals.svg'
+import logoCrateCub from './assets/logos/crate-club.svg'
+import logoCymbiotika from './assets/logos/cymbiotika.png'
+import logoDiamondsByUk from './assets/logos/diamonds-by-uk.svg'
+import logoHoundsy from './assets/logos/houndsy.png'
+import logoLandAndSea from './assets/logos/land-and-sea.svg'
+import logoPlateCrate from './assets/logos/plate-crate.png'
+import logoPraella from './assets/logos/praella.svg'
+import logoSerenity from './assets/logos/serenity.png'
+import logoShipaid from './assets/logos/shipaid.svg'
+import logoTevello from './assets/logos/tevello.svg'
+import logoTrimrx from './assets/logos/trimrx.svg'
+import logoVinylMePlease from './assets/logos/vinyl-me-please.png'
+
+// ── Portfolio logos ──
+import logoFlyrank from './assets/our-logos/flyrank.svg'
+import logoSpyrank from './assets/our-logos/spyrank.svg'
+import logoSaasInsights from './assets/our-logos/saas-insights.svg'
+import logoJaqAndJil from './assets/our-logos/jaq-and-jil.svg'
+import logoKinetic from './assets/our-logos/kinetic.svg'
+import logo10x from './assets/our-logos/10x.svg'
+import logoPowercommerce from './assets/our-logos/powercommerce.svg'
+
+// ── Alumni logos ──
+import logoShopCircle from './assets/logos-old/shop-circle.svg'
+import logoHulkapps from './assets/logos-old/hulkapps.svg'
+import logoCarthook from './assets/logos-old/carthook.svg'
+import logoReleasit from './assets/logos-old/releasit.svg'
+import logoAccentuate from './assets/logos-old/accentuate.svg'
+
 const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
-const SCORECARD_PDF = '/pilot-to-production-scorecard-board-ready-edition.pdf'
 const LINKEDIN_PROFILE = 'https://www.linkedin.com/in/mirzaasceric/'
 const PRIMARY_CTA = 'Join the Waitlist'
+const disabledButtonClass =
+  'inline-flex cursor-not-allowed items-center justify-center border border-[var(--line)] bg-slate-200 px-5 py-2.5 text-sm font-medium text-slate-400'
 const primaryButtonClass =
   'inline-flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:bg-[var(--accent-hover)] hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2'
 const secondaryButtonClass =
@@ -16,7 +51,6 @@ const utilityButtonClass =
 const surfaceClass = 'border border-[var(--line)] bg-[var(--surface)]'
 const panelClass = `premium-panel ${surfaceClass} p-6`
 const cardClass = `premium-card ${surfaceClass} p-5`
-const listItemClass = `premium-card ${surfaceClass} px-4 py-3`
 const inversePanelClass =
   'border border-[var(--accent)] bg-[var(--accent)] px-6 py-6 text-slate-100 shadow-[0_18px_38px_rgba(15,23,42,0.12)]'
 const inverseSectionLabelClass =
@@ -26,16 +60,53 @@ const sectionLabelClass =
 const sectionHeadingClass =
   'mt-4 max-w-[22ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl'
 const splitSectionClass = 'reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
-const heroHighlightClass = `premium-card ${surfaceClass} p-4`
 const metaChipClass =
   "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
 
 // ── DATA ──
 
-const heroHighlights = [
-  { label: '01', title: 'Full AI portfolio map', detail: 'Every project, tool, and vendor in one view.' },
-  { label: '02', title: 'Revenue & cost impact', detail: 'Clear numbers on what AI is doing for you.' },
-  { label: '03', title: 'Board-ready plan', detail: '90-day action plan you can use the same week.' },
+const clientLogos = [
+  { src: logoPraella, name: 'Praella', png: false },
+  { src: logoCymbiotika, name: 'Cymbiotika', png: true },
+  { src: logoBubsNaturals, name: 'Bubs Naturals', png: false },
+  { src: logoShipaid, name: 'ShipAid', png: false },
+  { src: logoTevello, name: 'Tevello', png: false },
+  { src: logoBattlbox, name: 'BattlBox', png: false },
+  { src: logoBeardClub, name: 'Beard Club', png: true },
+  { src: logoCrateCub, name: 'Crate Club', png: false },
+  { src: logoDiamondsByUk, name: 'Diamonds by UK', png: false },
+  { src: logoVinylMePlease, name: 'Vinyl Me, Please', png: true },
+  { src: logoSerenity, name: 'Serenity', png: true },
+  { src: logoBalaHealth, name: 'Bala Health', png: false },
+  { src: logoHoundsy, name: 'Houndsy', png: true },
+  { src: logoLandAndSea, name: 'Land and Sea', png: false },
+  { src: logoPlateCrate, name: 'Plate Crate', png: true },
+  { src: logoTrimrx, name: 'TrimRx', png: false },
+]
+
+const portfolioLogos = [
+  { src: logoFlyrank, name: 'FlyRank', png: false },
+  { src: logoSpyrank, name: 'SpyRank', png: false },
+  { src: logoSaasInsights, name: 'SaaS Insights', png: false },
+  { src: logoJaqAndJil, name: 'Jaq & Jil', png: false },
+  { src: logoKinetic, name: 'Kinetic', png: false },
+  { src: logo10x, name: '10x', png: false },
+  { src: logoPowercommerce, name: 'Powercommerce', png: false },
+]
+
+const alumniLogos = [
+  { src: logoShopCircle, name: 'Shop Circle', png: false },
+  { src: logoHulkapps, name: 'Hulk Apps', png: false },
+  { src: logoCarthook, name: 'CartHook', png: false },
+  { src: logoReleasit, name: 'Releasit', png: false },
+  { src: logoAccentuate, name: 'Accentuate', png: false },
+]
+
+const core4Steps = [
+  { num: '01', label: 'Map', line: 'Find every AI project, tool, and vendor in your company.' },
+  { num: '02', label: 'Decide', line: 'Keep, kill, or scale each one by real dollar impact.' },
+  { num: '03', label: 'Build', line: 'Ship to production with testing, monitoring, and rollback.' },
+  { num: '04', label: 'Run', line: 'Weekly rhythm with your business, IT, and risk leaders.' },
 ]
 
 const painPoints = [
@@ -45,47 +116,90 @@ const painPoints = [
   'Your board keeps asking for results. All you have is a list of experiments.',
 ]
 
-const offerStack = [
+const featureGroups = [
   {
-    title: 'Full AI Portfolio Map',
-    detail: 'We find every AI project, tool, and vendor across your company. You finally see what you\'re paying for and what it\'s doing.',
+    label: 'THE SYSTEM',
+    features: [
+      'Full AI Portfolio Map',
+      'Priority Decisions: Keep, Kill, or Scale',
+      'Governance & Compliance Built In',
+      'Weekly Decision Meetings',
+    ],
   },
   {
-    title: 'Priority Decisions: Keep, Kill, or Scale',
-    detail: 'We rank every initiative by real business impact. You stop wasting budget on things that won\'t pay off.',
+    label: 'THE DASHBOARD',
+    features: [
+      'Revenue & Cost Impact Dashboard',
+      'Vendor & Tool Management',
+    ],
   },
   {
-    title: 'Governance Built In From Day One',
-    detail: 'Security, legal, and compliance are part of the process — not a roadblock at the end. No late surprises. No blocked launches.',
+    label: 'THE PEOPLE',
+    features: [
+      'Adoption & Training System',
+      'Production Delivery Oversight',
+    ],
   },
   {
-    title: 'Weekly Decision Meetings With Your Leaders',
-    detail: 'Business, IT, and risk sit in the same room, every week. Real decisions get made. Projects move.',
+    label: 'THE ARMY',
+    features: [
+      'Direct AI Development Team',
+      'Up to 50 Dedicated AI Engineers',
+      'Organization-Wide 10x Leverage',
+      'Custom Agent Orchestration',
+    ],
   },
   {
-    title: 'Revenue and Cost Impact Dashboard',
-    detail: 'You see what AI is doing for your bottom line. Time saved, money saved, revenue gained — tracked and reported.',
-  },
-  {
-    title: 'Vendor and Tool Management',
-    detail: 'We handle your AI vendors and tools. No more overlapping licenses, duplicate spend, or contract confusion.',
-  },
-  {
-    title: 'Adoption and Training System',
-    detail: 'We redesign workflows and train your people. Because AI that nobody uses is AI that makes no money.',
-  },
-  {
-    title: 'Production Delivery Oversight',
-    detail: 'Every project goes from idea to live production under our watch. Nothing ships without testing, monitoring, and a rollback plan.',
+    label: 'THE EMPIRE',
+    features: [
+      'Multi-Entity Portfolio Management',
+      'FlyRank Platform Integration',
+      'Dedicated Executive Partner',
+      'Custom SLA & Priority Support',
+    ],
   },
 ]
 
-const scanIncludes = [
-  'A map of every AI project, tool, and vendor in your company',
-  'The 3-5 biggest opportunities ranked by revenue and cost impact',
-  'Governance and risk gaps that could cost you later',
-  'A clear 90-day plan: what to do first, second, third',
-  'A one-page board summary you can use the same week',
+const plans = [
+  {
+    name: 'The AI Command Room',
+    subtitle: 'Your AI Transformation Office — Installed & Running',
+    price: '$22,000',
+    period: '/mo',
+    anchor: 'Replaces a $400K+/yr internal AI strategy hire',
+    scarcity: '0 spots available',
+    description: 'We sit in your building every week, make decisions with your leaders, and own results. In 30 days you have a full portfolio map, clear kill/scale decisions, and governance running. By month three, AI is making you money.',
+    cta: 'Apply',
+    ctaDisabled: true,
+    highlighted: false,
+    includedGroups: 3,
+  },
+  {
+    name: 'The 50-Engineer Takeover',
+    subtitle: '50 AI Engineers Inside Your Business',
+    price: '$290,000',
+    period: '/mo',
+    anchor: '$580/head vs. $12,000+/head industry average',
+    scarcity: 'Coming Q3 2026',
+    description: 'Our team becomes your team. Up to 50 dedicated engineers building, shipping, and scaling AI across your entire organization. Your org doesn\'t just adopt AI. It becomes AI-native.',
+    cta: 'Request Early Access',
+    ctaDisabled: true,
+    highlighted: true,
+    includedGroups: 4,
+  },
+  {
+    name: 'The Portfolio Engine',
+    subtitle: 'AI Transformation Across Your Entire Portfolio',
+    price: 'Custom',
+    period: '',
+    anchor: 'One partner, one system, every entity',
+    scarcity: 'By invitation only',
+    description: 'You own multiple companies. We run AI transformation across all of them — shared infrastructure, unified governance, compounding intelligence. Includes FlyRank platform integration for organic growth at scale.',
+    cta: 'Book a Portfolio Review',
+    ctaDisabled: true,
+    highlighted: false,
+    includedGroups: 5,
+  },
 ]
 
 const portfolioCompanies = [
@@ -108,7 +222,7 @@ const fitFor = [
 
 const fitNotFor = [
   'Teams that want a strategy workshop and a PDF. We build and run things.',
-  'Companies looking for someone to build a chatbot. That\'s not what we do.',
+  'Companies looking for someone to build a chatbot. That\'s not the only thing we do.',
   'Organizations where nobody has the authority to make real decisions.',
 ]
 
@@ -123,7 +237,7 @@ const faqItems = [
   },
   {
     q: 'You\'re fully booked. Why should I join the waitlist?',
-    a: 'We rotate clients as engagements mature. The waitlist is first-come, first-served. When a spot opens, we reach out to the next company in line. The free Company Scan lets us understand your situation so we can move fast when your turn comes.',
+    a: 'We rotate clients as engagements mature. The waitlist is first-come, first-served. When a spot opens, we reach out to the next company in line. You get a free Company Scan and a 30-minute strategy call right away — so we already know your situation and can move fast when your turn comes.',
   },
   {
     q: 'What if I have an emergency and can\'t wait?',
@@ -131,7 +245,7 @@ const faqItems = [
   },
   {
     q: 'What if $22,000/month is too much right now?',
-    a: 'Start with the free Company Scan. It costs you nothing, takes a week, and you keep everything we find. If the numbers make sense after that, we talk about the retainer when a spot opens. If not, you still walk away with a clear picture of your AI landscape.',
+    a: 'Start with the free Company Scan and the 30-minute strategy call. Costs you nothing, takes about a week, and you keep everything we find. If the numbers make sense after that, we talk about the retainer when a spot opens. If not, you still walk away with a clear picture and a real plan.',
   },
   {
     q: 'How fast will we see results?',
@@ -373,52 +487,64 @@ export default function App() {
                 <span className={metaChipClass}>Board-ready artifacts</span>
                 <span className={metaChipClass}>$22,000/mo retainer</span>
               </div>
-              <div className="flex flex-wrap items-center gap-5">
-                <a href={ctaHref} className={primaryButtonClass}>
+              <div className="flex flex-wrap items-center gap-4">
+                <span className={disabledButtonClass} title="We're not taking new companies right now">
+                  Apply
+                </span>
+                <a href={ctaHref} className={secondaryButtonClass}>
                   {PRIMARY_CTA}
                 </a>
-                <a href="/how-we-work/" className={secondaryButtonClass}>
-                  See how we work
-                </a>
               </div>
-              <p className="text-sm text-slate-600">
-                We're fully booked. Join the waitlist and get your free Company Scan while you wait.
-              </p>
             </div>
           </div>
 
-          <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
+          <aside className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}>
+            {/* ── Floating lead-magnet label ── */}
+            <span className="absolute -top-3 right-6 z-10 bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white shadow-sm">
+              Free 30-min strategy call
+            </span>
+
+            {/* ── Price anchor + scarcity ── */}
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className={sectionLabelClass}>MONTHLY RETAINER</p>
-              <span className="inline-flex items-center border border-rose-200 bg-rose-50 px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-rose-700">
-                4 of 4 — fully booked
+              <p className="text-3xl font-semibold tracking-[-0.02em] text-slate-950">
+                $22,000<span className="text-lg font-normal text-slate-500">/mo</span>
+              </p>
+              <span className={metaChipClass}>
+                Spots available: 0
               </span>
             </div>
-            <p className="mt-4 text-3xl font-semibold tracking-[-0.02em] text-slate-950">
-              $22,000<span className="text-lg font-normal text-slate-500">/mo</span>
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              Full AI Transformation Office. Portfolio governance, weekly executive rhythm,
-              delivery oversight, adoption tracking, and board-ready reporting.
-            </p>
-            <div className="mt-4 border-t border-[var(--line)] pt-4">
-              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
-                All 4 spots are filled. Next opening TBD.
-              </p>
-              <p className="mt-1 text-sm text-slate-600">
-                Join the waitlist now. We'll reach out the moment a spot opens.
-              </p>
+
+            {/* ── Core 4 delivery system ── */}
+            <div className="mt-5 border-t border-[var(--line)] pt-5">
+              <p className={sectionLabelClass}>WHAT YOU GET — THE SYSTEM</p>
+              <div className="mt-4 space-y-0">
+                {core4Steps.map((step) => (
+                  <div key={step.num} className="flex items-start gap-3 border-b border-[var(--line)] py-3 last:border-b-0">
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                      {step.num}
+                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{step.label}</p>
+                      <p className="mt-0.5 text-sm leading-relaxed text-slate-600">{step.line}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-              {heroHighlights.map((item) => (
-                <div key={item.label} className={heroHighlightClass}>
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    {item.label}
-                  </p>
-                  <p className="mt-3 text-sm font-medium tracking-[-0.01em] text-slate-900">{item.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
-                </div>
-              ))}
+
+
+
+            {/* ── CTA ── */}
+            <div className="mt-5 border-t border-[var(--line)] pt-5">
+              <span className={`w-full justify-center ${disabledButtonClass}`} title="We're not taking new companies right now">
+                Apply
+              </span>
+              <a href={ctaHref} className="mt-3 block text-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]">
+                {PRIMARY_CTA}
+              </a>
+              <p className="mt-2 text-center text-sm text-slate-500">
+                We're not taking new companies right now. Join the waitlist and get your free scan while you wait.
+              </p>
             </div>
           </aside>
         </section>
@@ -437,8 +563,8 @@ export default function App() {
             </div>
             <div className="hidden h-5 border-l border-[var(--line)] sm:block" />
             <div className="flex items-center gap-2">
-              <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">4 / 4</span>
-              <span className="text-sm text-slate-500">client spots filled</span>
+              <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">0</span>
+              <span className="text-sm text-slate-500">spots available</span>
             </div>
           </div>
         </section>
@@ -457,85 +583,243 @@ export default function App() {
             ))}
           </div>
 
-          <div className="mt-8 border border-slate-950 bg-slate-950 p-5 text-slate-100">
-            <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-slate-300">
-              WHAT WAITING COSTS YOU
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-slate-200">
-              Every month you spend on AI without measurable results is budget gone with nothing to show.
-              And while you experiment, the companies that already went AI-native are compounding their advantage — lower costs,
-              faster operations, higher margins. That gap gets wider every quarter you wait.
+          <div className="mt-14 flex flex-col items-center text-center">
+            <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">YOU KNOW YOU NEED A SYSTEM AND</p>
+            <p className="mt-6 text-4xl font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl lg:text-[3.5rem]">
+              <span className="bg-white px-[0.12em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
+                The longer you wait, the more it costs.
+              </span>
             </p>
           </div>
         </section>
 
-        {/* ── 4. GRAND SLAM OFFER STACK ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
-          <p className={sectionLabelClass}>WHAT YOU GET FOR $22,000/MONTH</p>
+        {/* ── FIT / NOT FIT ── */}
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16">
+          <p className={sectionLabelClass}>IS THIS FOR YOU?</p>
           <h2 className={sectionHeadingClass}>
-            Everything you need to go from AI experiments to real business results.
+            We're not for everyone. Here's how to tell.
+          </h2>
+
+          <div className="mt-8 premium-panel relative overflow-hidden border border-[var(--line)] bg-[var(--surface)]">
+            <div className="pointer-events-none absolute bottom-0 left-1/2 top-0 hidden border-l border-[var(--line)] lg:block" />
+
+            <div className="relative z-[1] grid lg:grid-cols-2">
+              <div className="border-b border-[var(--line)] px-6 py-4 lg:border-b-0">
+                <p className={sectionLabelClass}>GOOD FIT</p>
+              </div>
+              <div className="border-b border-[var(--line)] bg-[var(--accent)] px-6 py-4 lg:border-b-0">
+                <p className="inline-flex w-fit items-center bg-[rgba(255,255,255,0.12)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-white">
+                  NOT A FIT
+                </p>
+              </div>
+            </div>
+
+            <div className="relative z-[1]">
+              {fitFor.map((item, index) => (
+                <div key={item} className="relative grid lg:grid-cols-2">
+                  <div className="border-t border-[var(--line)] px-6 py-5">
+                    <div className="flex items-start gap-4">
+                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                        0{index + 1}
+                      </p>
+                      <p className="max-w-[40ch] text-sm leading-relaxed text-slate-800">{item}</p>
+                    </div>
+                  </div>
+                  <div className="border-t border-[rgba(255,255,255,0.12)] bg-[var(--accent)] px-6 py-5">
+                    <div className="flex items-start gap-4">
+                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
+                        0{index + 1}
+                      </p>
+                      <p className="max-w-[40ch] text-sm leading-relaxed text-slate-100">{fitNotFor[index]}</p>
+                    </div>
+                  </div>
+                  <div className="absolute left-1/2 top-1/2 hidden h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--line)] bg-white lg:block" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── WHERE WE'VE COOKED ── */}
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
+          <p className={sectionLabelClass}>WHERE WE'VE COOKED</p>
+          <h2 className={sectionHeadingClass}>
+            AI deployed. Revenue moved.
+          </h2>
+
+          {/* ── Client companies ── */}
+          <div className="mt-10">
+            <div className="flex items-center gap-3">
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
+                Where We're Cooking with AI
+              </p>
+              <span className={metaChipClass}>{clientLogos.length}</span>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-x-20 gap-y-8">
+              {clientLogos.map((logo) => (
+                <img
+                  key={logo.name}
+                  src={logo.src}
+                  alt={logo.name}
+                  className={`h-6 w-auto object-contain opacity-40 transition-[opacity,filter] duration-200 hover:opacity-70 sm:h-7 ${
+                    logo.png ? 'invert' : ''
+                  }`}
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* ── Thick divider ── */}
+          <div className="my-12 border-t-[3px] border-[var(--line)]" />
+
+          {/* ── Portfolio companies ── */}
+          <div>
+            <div className="flex items-center gap-3">
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
+                Our Own Portfolio Cooking Show
+              </p>
+              <span className={metaChipClass}>{portfolioLogos.length}</span>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-x-20 gap-y-8">
+              {portfolioLogos.map((logo) => (
+                <img
+                  key={logo.name}
+                  src={logo.src}
+                  alt={logo.name}
+                  className={`h-6 w-auto object-contain opacity-40 transition-[opacity,filter] duration-200 hover:opacity-70 sm:h-7 ${
+                    logo.png ? 'invert' : ''
+                  }`}
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* ── Thick divider ── */}
+          <div className="my-12 border-t-[3px] border-[var(--line)]" />
+
+          {/* ── Alumni companies ── */}
+          <div>
+            <div className="flex items-center gap-3">
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
+                Where We Used to Cook
+              </p>
+              <span className={metaChipClass}>{alumniLogos.length}</span>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-x-20 gap-y-8">
+              {alumniLogos.map((logo) => (
+                <img
+                  key={logo.name}
+                  src={logo.src}
+                  alt={logo.name}
+                  className={`h-6 w-auto object-contain opacity-40 transition-[opacity,filter] duration-200 hover:opacity-70 sm:h-7 ${
+                    logo.png ? 'invert' : ''
+                  }`}
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 4. PLANS ── */}
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
+          <p className={sectionLabelClass}>PLANS</p>
+          <h2 className={sectionHeadingClass}>
+            Three ways to make AI print money for your business.
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-            This is not a strategy deck you put in a drawer. This is an operating system we build inside your company.
-            We run it with your leaders every week until AI is part of how your business makes money.
+            From strategic advisory to full-scale AI development teams inside your business.
+            Every plan is an operating system we build and run with your leaders.
           </p>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {offerStack.map((item, index) => (
-              <div key={item.title} className={cardClass}>
-                <div className="flex items-start gap-4">
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    0{index + 1}
-                  </p>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-900">{item.title}</p>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.detail}</p>
-                  </div>
+          {/* ── Plan cards ── */}
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {plans.map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative flex flex-col border bg-[var(--surface)] p-6 ${
+                  plan.highlighted
+                    ? 'border-[var(--accent)] shadow-[var(--shadow-panel)]'
+                    : 'border-[var(--line)] shadow-[var(--shadow-card)]'
+                } transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:shadow-[0_18px_32px_rgba(15,23,42,0.08)]`}
+              >
+                {plan.highlighted && (
+                  <span className="absolute -top-3 left-6 bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white">
+                    Most Impact
+                  </span>
+                )}
+
+                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                  {plan.subtitle}
+                </p>
+                <p className="mt-3 text-3xl font-semibold tracking-[-0.02em] text-slate-950">
+                  {plan.price}
+                  {plan.period && <span className="text-lg font-normal text-slate-500">{plan.period}</span>}
+                </p>
+                <p className="mt-1.5 font-['IBM_Plex_Mono'] text-[11px] font-medium text-slate-500">
+                  {plan.anchor}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600 lg:min-h-[7.5rem]">
+                  {plan.description}
+                </p>
+                <span className="mt-3 inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                  {plan.scarcity}
+                </span>
+
+                {/* ── Feature groups ── */}
+                <div className="mt-6 flex-1 border-t border-[var(--line)] pt-5">
+                  {featureGroups.map((group, groupIndex) => {
+                    const included = groupIndex < plan.includedGroups
+                    return (
+                      <div key={group.label} className={groupIndex > 0 ? 'mt-4' : ''}>
+                        <p className={`font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] ${
+                          included ? 'text-[var(--muted)]' : 'text-slate-300'
+                        }`}>
+                          {group.label}
+                        </p>
+                        <ul className="mt-2 space-y-1.5">
+                          {group.features.map((feature) => (
+                            <li
+                              key={feature}
+                              className={`flex items-start gap-2.5 text-sm ${
+                                included ? 'text-slate-800' : 'text-slate-300'
+                              }`}
+                            >
+                              <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center text-[11px] font-medium ${
+                                included ? 'text-slate-700' : 'text-slate-300'
+                              }`}>
+                                {included ? '\u2713' : '\u2014'}
+                              </span>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* ── CTA ── */}
+                <div className="mt-6 border-t border-[var(--line)] pt-5">
+                  {plan.ctaDisabled ? (
+                    <span className={`${disabledButtonClass} w-full justify-center`} title="We're not taking new companies right now">
+                      {plan.cta}
+                    </span>
+                  ) : (
+                    <a href={ctaHref} className={`${primaryButtonClass} w-full justify-center`}>
+                      {plan.cta}
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-5">
-            <a href={ctaHref} className={primaryButtonClass}>{PRIMARY_CTA}</a>
-            <p className="text-sm text-slate-500">We're fully booked — but the waitlist gets you a free Company Scan right away.</p>
-          </div>
-        </section>
-
-        {/* ── 5. FREE COMPANY SCAN (attraction offer) ── */}
-        <section id="diagnostic" className={splitSectionClass}>
-          <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
-            <div>
-              <p className={sectionLabelClass}>FREE — WHILE YOU WAIT</p>
-              <h2 className={sectionHeadingClass}>
-                Join the waitlist and get a free Company Scan right now.
-              </h2>
-              <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-                Don't wait for a spot to open before you start learning. We map your AI projects,
-                find the biggest opportunities to save money and make money, spot the risks, and give you a clear plan.
-                Takes about a week.
-              </p>
-              <p className="mt-3 max-w-3xl text-sm font-medium leading-relaxed text-slate-800">
-                You keep everything we find — whether or not we ever work together.
-              </p>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-5 lg:mt-auto">
-              <a href={ctaHref} className={primaryButtonClass}>{PRIMARY_CTA}</a>
-              <a href={SCORECARD_PDF} download className={secondaryButtonClass}>
-                Download Pilot-to-Production Scorecard
-              </a>
-            </div>
-          </div>
-
-          <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
-            <p className={sectionLabelClass}>WHAT YOU GET</p>
-            <ul className="mt-5 flex flex-1 flex-col gap-3 text-sm leading-relaxed text-slate-700">
-              {scanIncludes.map((item) => (
-                <li key={item} className={listItemClass}>{item}</li>
-              ))}
-            </ul>
-          </aside>
+          <p className="mt-6 text-center text-sm text-slate-500">
+            We're not taking new companies right now. <a href={ctaHref} className={secondaryButtonClass}>{PRIMARY_CTA}</a> — get a free Company Scan and a 30-min strategy call right away.
+          </p>
         </section>
 
         {/* ── 6. EMERGENCY BUTTON ── */}
@@ -685,64 +969,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* ── 8. FIT / NOT FIT ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16">
-          <div className="premium-panel relative overflow-hidden border border-[var(--line)] bg-[var(--surface)]">
-            <div className="pointer-events-none absolute bottom-0 left-1/2 top-0 hidden border-l border-[var(--line)] lg:block" />
-
-            <div className="relative z-[1] grid lg:grid-cols-2">
-              <div className="border-b border-[var(--line)] px-6 py-5 lg:border-b-0">
-                <div className="grid gap-4 lg:grid-cols-[2.5rem_minmax(0,1fr)]">
-                  <span aria-hidden="true" className="hidden font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-transparent lg:block">01</span>
-                  <div>
-                    <p className={sectionLabelClass}>GOOD FIT</p>
-                    <h3 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] [text-wrap:balance]">
-                      This works best for
-                    </h3>
-                  </div>
-                </div>
-              </div>
-              <div className="border-b border-[var(--line)] bg-[var(--accent)] px-6 py-5 text-white lg:border-b-0">
-                <div className="grid gap-4 lg:grid-cols-[2.5rem_minmax(0,1fr)]">
-                  <span aria-hidden="true" className="hidden font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-transparent lg:block">01</span>
-                  <div>
-                    <p className="inline-flex w-fit items-center bg-[rgba(255,255,255,0.12)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-white">
-                      NOT A FIT
-                    </p>
-                    <h3 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] [text-wrap:balance]">
-                      Don't apply if
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative z-[1]">
-              {fitFor.map((item, index) => (
-                <div key={item} className="relative grid lg:grid-cols-2">
-                  <div className="border-t border-[var(--line)] px-6 py-5">
-                    <div className="flex items-start gap-4">
-                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                        0{index + 1}
-                      </p>
-                      <p className="max-w-[40ch] text-sm leading-relaxed text-slate-800">{item}</p>
-                    </div>
-                  </div>
-                  <div className="border-t border-[rgba(255,255,255,0.12)] bg-[var(--accent)] px-6 py-5">
-                    <div className="flex items-start gap-4">
-                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
-                        0{index + 1}
-                      </p>
-                      <p className="max-w-[40ch] text-sm leading-relaxed text-slate-100">{fitNotFor[index]}</p>
-                    </div>
-                  </div>
-                  <div className="absolute left-1/2 top-1/2 hidden h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--line)] bg-white lg:block" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ── 9. FAQ ── */}
         <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>QUESTIONS</p>
@@ -810,7 +1036,7 @@ export default function App() {
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2 lg:mt-auto">
                   <span className={metaChipClass}>2-minute form</span>
-                  <span className={metaChipClass}>Free scan included</span>
+                  <span className={metaChipClass}>Free scan + 30-min call</span>
                   <span className={metaChipClass}>Results in ~1 week</span>
                 </div>
               </div>
@@ -824,7 +1050,7 @@ export default function App() {
                   </div>
                   <div className="flex-1 border-t border-[var(--line)] pt-4">
                     <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Day 3-5</p>
-                    <p className="mt-2">Quick call to understand your business and AI landscape.</p>
+                    <p className="mt-2">Free 30-min strategy call to walk through your AI landscape.</p>
                   </div>
                   <div className="flex-1 border-t border-[var(--line)] pt-4">
                     <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">Day 5-7</p>
@@ -924,7 +1150,7 @@ export default function App() {
 
                 <div className="flex flex-col gap-4 border-t border-[rgba(255,255,255,0.14)] pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-slate-300">
-                    Free scan included. You keep everything we find. First in line when a spot opens.
+                    Free scan + 30-min strategy call. You keep everything we find. First in line when a spot opens.
                   </p>
                   <button type="submit" className={primaryButtonClass}>
                     {PRIMARY_CTA}
