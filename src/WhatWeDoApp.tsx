@@ -1,4 +1,5 @@
 import SiteHeader from './components/SiteHeader'
+import WarpedGrid from './components/WarpedGrid'
 
 const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
 const PRIMARY_CTA = 'Apply for the AI Portfolio Reality Scan'
@@ -15,7 +16,7 @@ const sectionLabelClass =
   "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]"
 const sectionHeadingClass =
   'mt-4 max-w-[18ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl'
-const splitSectionClass = 'reveal border-b-2 border-[var(--line)] py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
+const splitSectionClass = 'reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
 const heroHighlightClass = `premium-card ${surfaceClass} p-4`
 const metaChipClass =
   "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
@@ -146,7 +147,7 @@ export default function WhatWeDoApp() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--ink)]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0))]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.05)_1px,transparent_1px)] bg-[size:52px_52px] [mask-image:linear-gradient(to_bottom,black_18%,transparent_90%)]" />
+      <WarpedGrid />
 
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
         <SiteHeader
@@ -240,7 +241,7 @@ export default function WhatWeDoApp() {
           </aside>
         </section>
 
-        <section id="mechanism" className="reveal delay-4 border-b-2 border-[var(--line)] py-14">
+        <section id="mechanism" className="reveal delay-4 border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>WHAT WE INSTALL</p>
           <h2 className={sectionHeadingClass}>
             Three things we put in place to make your AI program actually work.
@@ -401,7 +402,7 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 border-t-2 border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"

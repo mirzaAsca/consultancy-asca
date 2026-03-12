@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import SiteHeader from './components/SiteHeader'
+import WarpedGrid from './components/WarpedGrid'
 
 const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
 const SCORECARD_PDF = '/pilot-to-production-scorecard-board-ready-edition.pdf'
@@ -24,7 +25,7 @@ const sectionLabelClass =
   "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]"
 const sectionHeadingClass =
   'mt-4 max-w-[22ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl'
-const splitSectionClass = 'reveal border-b-2 border-[var(--line)] py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
+const splitSectionClass = 'reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
 const heroHighlightClass = `premium-card ${surfaceClass} p-4`
 const metaChipClass =
   "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
@@ -335,7 +336,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--ink)]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0))]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.05)_1px,transparent_1px)] bg-[size:52px_52px] [mask-image:linear-gradient(to_bottom,black_18%,transparent_90%)]" />
+      <WarpedGrid />
 
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
         <SiteHeader
@@ -423,7 +424,7 @@ export default function App() {
         </section>
 
         {/* ── 2. PROOF STRIP ── */}
-        <section className="reveal delay-2 border-b-2 border-[var(--line)] py-6">
+        <section className="reveal delay-2 border-b-[3px] border-[var(--line)] py-6">
           <div className="flex flex-wrap items-center gap-6 sm:gap-8">
             <div className="flex items-center gap-2">
               <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">$1M+</span>
@@ -443,7 +444,7 @@ export default function App() {
         </section>
 
         {/* ── 3. PAIN + COST OF INACTION ── */}
-        <section className="reveal border-b-2 border-[var(--line)] py-14">
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>SOUND FAMILIAR?</p>
           <h2 className={sectionHeadingClass}>
             You're spending on AI. But nothing is making it to production.
@@ -469,7 +470,7 @@ export default function App() {
         </section>
 
         {/* ── 4. GRAND SLAM OFFER STACK ── */}
-        <section className="reveal border-b-2 border-[var(--line)] py-14">
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>WHAT YOU GET FOR $22,000/MONTH</p>
           <h2 className={sectionHeadingClass}>
             Everything you need to go from AI experiments to real business results.
@@ -538,7 +539,7 @@ export default function App() {
         </section>
 
         {/* ── 6. EMERGENCY BUTTON ── */}
-        <section className="reveal border-b-2 border-[var(--line)] py-14">
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <div className="mx-auto max-w-2xl text-center">
             <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
               CAN'T WAIT?
@@ -669,7 +670,7 @@ export default function App() {
         </section>
 
         {/* ── 7. PORTFOLIO COMPANIES ── */}
-        <section className="reveal border-b-2 border-[var(--line)] py-14">
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>WHERE WE'VE BUILT</p>
           <h2 className={sectionHeadingClass}>
             Companies we've helped go AI-native.
@@ -685,7 +686,7 @@ export default function App() {
         </section>
 
         {/* ── 8. FIT / NOT FIT ── */}
-        <section className="reveal border-b-2 border-[var(--line)] py-14 sm:py-16">
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16">
           <div className="premium-panel relative overflow-hidden border border-[var(--line)] bg-[var(--surface)]">
             <div className="pointer-events-none absolute bottom-0 left-1/2 top-0 hidden border-l border-[var(--line)] lg:block" />
 
@@ -743,7 +744,7 @@ export default function App() {
         </section>
 
         {/* ── 9. FAQ ── */}
-        <section className="reveal border-b-2 border-[var(--line)] py-14">
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>QUESTIONS</p>
           <h2 className={sectionHeadingClass}>
             Things people ask before they reach out.
@@ -756,7 +757,7 @@ export default function App() {
         </section>
 
         {/* ── 10. LINKEDIN ── */}
-        <section className="reveal border-b-2 border-[var(--line)] py-14">
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <div className={panelClass}>
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex min-w-0 items-center gap-4">
@@ -966,7 +967,7 @@ export default function App() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 border-t-2 border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"

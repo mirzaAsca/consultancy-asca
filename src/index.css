@@ -104,6 +104,7 @@ body {
   box-shadow: var(--shadow-panel);
 }
 
+
 .artifact-shell::after {
   content: "";
   position: absolute;

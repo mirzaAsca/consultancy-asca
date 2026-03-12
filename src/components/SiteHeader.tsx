@@ -20,7 +20,7 @@ export default function SiteHeader({
   whatWeDoHref,
 }: SiteHeaderProps) {
   return (
-    <header className="reveal border-b-2 border-[var(--line)] pb-7">
+    <header className="reveal border-b-[3px] border-[var(--line)] pb-7">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <nav className="flex flex-wrap gap-5 text-[12px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
           <a href={homeHref} className="transition-colors hover:text-slate-900">
