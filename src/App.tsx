@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import type { FormEvent } from 'react'
+import type { CSSProperties, FormEvent } from 'react'
 import SiteHeader from './components/SiteHeader'
 import WarpedGrid from './components/WarpedGrid'
+import { GRID_CELL_PX, SHORT_DIVIDER_GRID_SPAN } from './layout'
 
 // ── Client logos ──
 import logoBattlbox from './assets/logos/battlbox.svg'
@@ -57,9 +58,17 @@ const sectionLabelClass =
   "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]"
 const sectionHeadingClass =
   'mt-4 max-w-[22ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl'
-const splitSectionClass = 'reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
+const stackedSectionClass = 'reveal section-divider-full py-14 sm:py-16'
+const shortDividerSectionClass = 'reveal section-divider-short py-14 sm:py-16'
+const splitSectionNoDividerClass = 'reveal py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
+const compactStripSectionClass = 'reveal delay-2 section-divider-short py-8 sm:py-10'
+const finalSectionClass = 'reveal py-14 sm:py-16'
 const metaChipClass =
   "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
+const gridSystemStyle = {
+  '--grid-cell': `${GRID_CELL_PX}px`,
+  '--short-divider-span': `${SHORT_DIVIDER_GRID_SPAN}`,
+} as CSSProperties
 
 // ── DATA ──
 
@@ -98,13 +107,6 @@ const alumniLogos = [
   { src: logoCarthook, name: 'CartHook', png: false },
   { src: logoReleasit, name: 'Releasit', png: false },
   { src: logoAccentuate, name: 'Accentuate', png: false },
-]
-
-const core4Steps = [
-  { num: '01', label: 'Map', line: 'Find every AI project, tool, and vendor in your company.' },
-  { num: '02', label: 'Decide', line: 'Keep, kill, or scale each one by real dollar impact.' },
-  { num: '03', label: 'Build', line: 'Ship to production with testing, monitoring, and rollback.' },
-  { num: '04', label: 'Run', line: 'Weekly rhythm with your business, IT, and risk leaders.' },
 ]
 
 const dreamOutcomes = [
@@ -438,7 +440,7 @@ export default function App() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0))]" />
       <WarpedGrid />
 
-      <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
+      <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10" style={gridSystemStyle}>
         <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
           <SiteHeader
             applyHref="#scan"
@@ -451,7 +453,7 @@ export default function App() {
         </div>
 
         {/* ── 1. HERO: Split layout matching how-we-work ── */}
-        <section id="overview" className={`${splitSectionClass} gap-8`}>
+        <section id="overview" className={`${splitSectionNoDividerClass} gap-8`}>
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
               <p className={sectionLabelClass}>AI-NATIVE TRANSFORMATION OFFICE</p>
@@ -514,7 +516,7 @@ export default function App() {
         </section>
 
         {/* ── 2. PROOF STRIP ── */}
-        <section className="reveal delay-2 border-b-[3px] border-[var(--line)] py-6">
+        <section className={compactStripSectionClass}>
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
             <div className="flex items-center gap-2">
               <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">$1M+</span>
@@ -534,7 +536,7 @@ export default function App() {
         </section>
 
         {/* ── THE PROMISE ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16">
+        <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
               If you don't have a portfolio map, clear decisions, and governance running in 30 days{' '}
@@ -551,12 +553,12 @@ export default function App() {
         </section>
 
         {/* ── 3. PAIN + COST OF INACTION ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
+        <section className={shortDividerSectionClass}>
           <p className={sectionLabelClass}>SOUND FAMILIAR?</p>
           <h2 className={sectionHeadingClass}>
             You're spending on AI. But nothing is making it to production.
           </h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-12">
+          <div className="mt-10 grid gap-4 md:grid-cols-12">
             {painPoints.map((point) => (
               <article key={point} className={`md:col-span-6 ${cardClass}`}>
                 <p className="text-sm leading-relaxed text-slate-700">{point}</p>
@@ -564,7 +566,7 @@ export default function App() {
             ))}
           </div>
 
-          <div className="mt-14 flex flex-col items-center text-center">
+          <div className="mt-16 flex flex-col items-center text-center">
             <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">YOU KNOW YOU NEED A SYSTEM AND</p>
             <p className="mt-6 text-4xl font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl lg:text-[3.5rem]">
               <span className="bg-white px-[0.12em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
@@ -575,7 +577,7 @@ export default function App() {
         </section>
 
         {/* ── FIT / NOT FIT ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16">
+        <section className={stackedSectionClass}>
           <p className={sectionLabelClass}>IS THIS FOR YOU?</p>
           <h2 className={sectionHeadingClass}>
             We're not for everyone. Here's how to tell.
@@ -622,14 +624,14 @@ export default function App() {
         </section>
 
         {/* ── WHERE WE'VE COOKED ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
+        <section className={stackedSectionClass}>
           <p className={sectionLabelClass}>WHERE WE'VE COOKED</p>
           <h2 className={sectionHeadingClass}>
             AI deployed.
           </h2>
 
           {/* ── Client companies ── */}
-          <div className="mt-10">
+          <div className="mt-12">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
                 Where We're Cooking with AI
@@ -652,7 +654,7 @@ export default function App() {
           </div>
 
           {/* ── Portfolio companies ── */}
-          <div className="mt-16">
+          <div className="mt-20">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
                 Our Own Portfolio Cooking Show
@@ -675,7 +677,7 @@ export default function App() {
           </div>
 
           {/* ── Alumni companies ── */}
-          <div className="mt-16">
+          <div className="mt-20">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
                 Where We Used to Cook
@@ -699,7 +701,7 @@ export default function App() {
         </section>
 
         {/* ── 4. PLANS ── */}
-        <section id="plans" className="reveal border-b-[3px] border-[var(--line)] py-14">
+        <section id="plans" className={stackedSectionClass}>
           <p className={sectionLabelClass}>PLANS</p>
           <h2 className={sectionHeadingClass}>
             Three ways to make AI print money for your business.
@@ -798,7 +800,7 @@ export default function App() {
         </section>
 
         {/* ── 6. EMERGENCY BUTTON ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
+        <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-2xl text-center">
             <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
               CAN'T WAIT?
@@ -929,12 +931,12 @@ export default function App() {
         </section>
 
         {/* ── 9. FAQ ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
+        <section className={stackedSectionClass}>
           <p className={sectionLabelClass}>QUESTIONS</p>
           <h2 className={sectionHeadingClass}>
             Things people ask before they reach out.
           </h2>
-          <div className="mt-8 max-w-3xl">
+          <div className="mt-10 max-w-3xl">
             {faqItems.map((item) => (
               <FAQItem key={item.q} q={item.q} a={item.a} />
             ))}
@@ -942,8 +944,8 @@ export default function App() {
         </section>
 
         {/* ── 10. WAITLIST + FREE SCAN FORM ── */}
-        <section id="scan" className="reveal py-14">
-          <div className="space-y-8">
+        <section id="scan" className={finalSectionClass}>
+          <div className="space-y-10">
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
                 <div>

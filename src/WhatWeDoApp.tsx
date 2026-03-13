@@ -17,7 +17,7 @@ const sectionLabelClass =
   "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]"
 const sectionHeadingClass =
   'mt-4 max-w-[18ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl'
-const splitSectionClass = 'reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
+const splitSectionClass = 'reveal section-divider-full py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
 const heroHighlightClass = `premium-card ${surfaceClass} p-4`
 const metaChipClass =
   "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
@@ -242,7 +242,7 @@ export default function WhatWeDoApp() {
           </aside>
         </section>
 
-        <section id="mechanism" className="reveal delay-4 border-b-[3px] border-[var(--line)] py-14">
+        <section id="mechanism" className="reveal delay-4 section-divider-full py-14">
           <p className={sectionLabelClass}>WHAT WE INSTALL</p>
           <h2 className={sectionHeadingClass}>
             Three things we put in place to make your AI program actually work.
@@ -403,7 +403,7 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"

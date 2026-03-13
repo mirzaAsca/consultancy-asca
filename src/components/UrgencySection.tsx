@@ -63,7 +63,7 @@ export default function UrgencySection() {
   }, [isVisible])
 
   return (
-    <section ref={sectionRef} className="border-b-[3px] border-[var(--line)] py-14 sm:py-16">
+    <section ref={sectionRef} className="section-divider-full py-14 sm:py-16">
       <p className={sectionLabelClass}>WHAT WAITING COSTS YOU</p>
       <h2 className="mt-4 max-w-[22ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl">
         The longer you wait, the more it costs.

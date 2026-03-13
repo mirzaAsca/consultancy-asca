@@ -1,3 +1,5 @@
+import { GRID_CELL_PX } from '../layout'
+
 /**
  * Background grid with perspective-bent lines.
  * Vertical lines bow outward from center toward the bottom.
@@ -10,7 +12,7 @@
 export default function WarpedGrid() {
   const W = 3000
   const H = 4000
-  const cell = 52
+  const cell = GRID_CELL_PX
   const cx = W / 2
 
   // Warp intensity — aggressive so curvature is visible in the first ~2000px

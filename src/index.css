@@ -13,6 +13,8 @@
   --surface-soft: #ffffff;
   --shadow-card: 0 10px 24px rgba(15, 23, 42, 0.05);
   --shadow-panel: 0 18px 38px rgba(15, 23, 42, 0.07);
+  --grid-cell: 52px;
+  --short-divider-span: 5;
 }
 
 * {
@@ -113,6 +115,63 @@ body {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 18%),
     linear-gradient(0deg, rgba(15, 23, 42, 0.03), transparent 28%);
+}
+
+.section-divider-full,
+.section-divider-short {
+  position: relative;
+}
+
+.section-divider-full::before {
+  content: "";
+  position: absolute;
+  right: -12px;
+  bottom: -10px;
+  left: -12px;
+  height: 28px;
+  background:
+    linear-gradient(180deg, rgba(237, 241, 245, 0) 0%, rgba(237, 241, 245, 0.78) 28%, rgba(237, 241, 245, 0.98) 52%, rgba(237, 241, 245, 0.78) 76%, rgba(237, 241, 245, 0) 100%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.section-divider-full::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--line);
+  box-shadow: 0 0 0 6px rgba(237, 241, 245, 0.86);
+  pointer-events: none;
+}
+
+.section-divider-short::before {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  width: min(100%, calc(var(--grid-cell) * (var(--short-divider-span) + 2.4)));
+  height: 28px;
+  background:
+    radial-gradient(ellipse at center, color-mix(in srgb, var(--bg) 98%, white 2%) 0%, rgba(237, 241, 245, 0.94) 52%, rgba(237, 241, 245, 0) 100%);
+  filter: blur(12px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.section-divider-short::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: min(100%, calc(var(--grid-cell) * var(--short-divider-span)));
+  height: 3px;
+  background: var(--line);
+  box-shadow: 0 0 0 6px rgba(237, 241, 245, 0.86);
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .urgency-line {
