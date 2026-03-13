@@ -46,8 +46,6 @@ const primaryButtonClass =
   'inline-flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:bg-[var(--accent-hover)] hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2'
 const secondaryButtonClass =
   'inline-flex items-center justify-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]'
-const utilityButtonClass =
-  'inline-flex items-center justify-center gap-2 border border-[var(--line)] bg-white px-4 py-2 text-sm font-medium text-[var(--accent)] shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition-[border-color,color,transform,box-shadow] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:text-[var(--accent-hover)] hover:shadow-[0_14px_24px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2'
 const surfaceClass = 'border border-[var(--line)] bg-[var(--surface)]'
 const panelClass = `premium-panel ${surfaceClass} p-6`
 const cardClass = `premium-card ${surfaceClass} p-5`
@@ -107,6 +105,14 @@ const core4Steps = [
   { num: '02', label: 'Decide', line: 'Keep, kill, or scale each one by real dollar impact.' },
   { num: '03', label: 'Build', line: 'Ship to production with testing, monitoring, and rollback.' },
   { num: '04', label: 'Run', line: 'Weekly rhythm with your business, IT, and risk leaders.' },
+]
+
+const dreamOutcomes = [
+  'You see every AI project, tool, and vendor in one place',
+  'You know which ones to keep and which ones to cut',
+  'Legal and security are already in the loop',
+  'Your board gets a number, not a slide deck',
+  'AI is actually making you money',
 ]
 
 const painPoints = [
@@ -201,12 +207,6 @@ const plans = [
     includedGroups: 5,
   },
 ]
-
-const linkedinProfile = {
-  name: 'Mirza (Ašća) Ašćerić',
-  role: 'Director of AI (Agent Orchestration) @ FlyRank',
-  detail: 'Production-grade AI systems | $1M+ ARR in <8 months',
-}
 
 const fitFor = [
   'Companies already spending on AI, with leadership that wants to see real numbers — not more decks.',
@@ -327,14 +327,6 @@ function selectClass(hasError: boolean): string {
   return `w-full appearance-none border bg-[rgba(255,255,255,0.08)] px-3 py-2.5 pr-11 text-sm text-white outline-none [color-scheme:dark] transition-[border-color,box-shadow,background-color] duration-200 caret-white focus:border-white focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] ${
     hasError ? 'border-rose-400' : 'border-[rgba(255,255,255,0.16)]'
   }`
-}
-
-function LinkedInIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 fill-current">
-      <path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19ZM8.34 17.34V9.82H5.84V17.34H8.34ZM7.09 8.79C7.89 8.79 8.55 8.12 8.55 7.33C8.55 6.53 7.89 5.87 7.09 5.87C6.29 5.87 5.64 6.53 5.64 7.33C5.64 8.12 6.29 8.79 7.09 8.79ZM18.36 17.34V13.22C18.36 10.99 17.17 9.63 15.17 9.63C14.21 9.63 13.5 10.16 13.03 10.66V9.82H10.54C10.57 10.38 10.54 17.34 10.54 17.34H13.03V13.14C13.03 12.92 13.04 12.7 13.11 12.54C13.28 12.1 13.66 11.65 14.31 11.65C15.15 11.65 15.48 12.29 15.48 13.24V17.34H18.36Z" />
-    </svg>
-  )
 }
 
 function FAQItem({ q, a }: { q: string; a: string }) {
@@ -475,68 +467,46 @@ export default function App() {
               </p>
             </div>
 
-            <div className="mt-8 space-y-4 lg:mt-auto lg:pt-10">
-              <div className="flex flex-wrap gap-2">
-                <span className={metaChipClass}>Free Company Scan</span>
-                <span className={metaChipClass}>Board-ready artifacts</span>
-                <span className={metaChipClass}>$22,000/mo retainer</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <span className={disabledButtonClass} title="We're not taking new companies right now">
-                  Apply
-                </span>
-                <a href={ctaHref} className={secondaryButtonClass}>
-                  {PRIMARY_CTA}
-                </a>
-              </div>
+            <div className="mt-8 lg:mt-auto lg:pt-10">
+              <a href="#plans" className={primaryButtonClass}>
+                See Plans
+              </a>
+              <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-slate-500">
+                Three ways to work with us — from strategy to full takeover.
+              </p>
             </div>
           </div>
 
           <aside className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}>
-            {/* ── Floating lead-magnet label ── */}
+            {/* ── Floating label ── */}
             <span className="absolute -top-3 right-6 z-10 bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white shadow-sm">
               Free 30-min strategy call
             </span>
 
-            {/* ── Price anchor + scarcity ── */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-3xl font-semibold tracking-[-0.02em] text-slate-950">
-                $22,000<span className="text-lg font-normal text-slate-500">/mo</span>
-              </p>
-              <span className={metaChipClass}>
-                Spots available: 0
-              </span>
-            </div>
+            <p className="text-xl font-semibold leading-snug tracking-[-0.02em] text-slate-950">
+              30 days from now
+            </p>
 
-            {/* ── Core 4 delivery system ── */}
             <div className="mt-5 border-t border-[var(--line)] pt-5">
-              <p className={sectionLabelClass}>WHAT YOU GET — THE SYSTEM</p>
-              <div className="mt-4 space-y-0">
-                {core4Steps.map((step) => (
-                  <div key={step.num} className="flex items-start gap-3 border-b border-[var(--line)] py-3 last:border-b-0">
-                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                      {step.num}
-                    </p>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">{step.label}</p>
-                      <p className="mt-0.5 text-sm leading-relaxed text-slate-600">{step.line}</p>
-                    </div>
-                  </div>
+              <p className={sectionLabelClass}>WHAT YOUR COMPANY LOOKS LIKE</p>
+              <ul className="mt-4 space-y-3">
+                {dreamOutcomes.map((outcome) => (
+                  <li key={outcome} className="flex items-start gap-2.5">
+                    <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 bg-[var(--accent)]" />
+                    <p className="text-sm leading-relaxed text-slate-700">{outcome}</p>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
 
-
-
-            {/* ── CTA ── */}
-            <div className="mt-5 border-t border-[var(--line)] pt-5">
-              <span className={`w-full justify-center ${disabledButtonClass}`} title="We're not taking new companies right now">
+            <div className="mt-auto border-t border-[var(--line)] pt-5">
+              <span className={`${disabledButtonClass} w-full justify-center`} title="We're not taking new companies right now">
                 Apply
               </span>
               <a href={ctaHref} className="mt-3 block text-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]">
                 {PRIMARY_CTA}
               </a>
-              <p className="mt-2 text-center text-sm text-slate-500">
+              <p className="mt-3 text-center text-sm leading-relaxed text-slate-500">
                 We're not taking new companies right now. Join the waitlist and get your free scan while you wait.
               </p>
             </div>
@@ -545,7 +515,7 @@ export default function App() {
 
         {/* ── 2. PROOF STRIP ── */}
         <section className="reveal delay-2 border-b-[3px] border-[var(--line)] py-6">
-          <div className="flex flex-wrap items-center gap-6 sm:gap-8">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
             <div className="flex items-center gap-2">
               <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">$1M+</span>
               <span className="text-sm text-slate-500">ARR built in &lt;8 months</span>
@@ -559,6 +529,23 @@ export default function App() {
             <div className="flex items-center gap-2">
               <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">0</span>
               <span className="text-sm text-slate-500">spots available</span>
+            </div>
+          </div>
+        </section>
+
+        {/* ── THE PROMISE ── */}
+        <section className="reveal border-b-[3px] border-[var(--line)] py-14 sm:py-16">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
+              If you don't have a portfolio map, clear decisions, and governance running in 30 days{' '}
+              <span className="text-[var(--muted)]">— we keep working until you do. No extra cost.</span>
+            </p>
+            <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+              <span>0 spots right now</span>
+              <span className="hidden text-[var(--line)] sm:inline">|</span>
+              <span>Free Company Scan when you join the waitlist</span>
+              <span className="hidden text-[var(--line)] sm:inline">|</span>
+              <span>First in line, first to get a spot</span>
             </div>
           </div>
         </section>
@@ -638,7 +625,7 @@ export default function App() {
         <section className="reveal border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>WHERE WE'VE COOKED</p>
           <h2 className={sectionHeadingClass}>
-            AI deployed. Revenue moved.
+            AI deployed.
           </h2>
 
           {/* ── Client companies ── */}
@@ -664,11 +651,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* ── Thick divider ── */}
-          <div className="my-12 border-t-[3px] border-[var(--line)]" />
-
           {/* ── Portfolio companies ── */}
-          <div>
+          <div className="mt-16">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
                 Our Own Portfolio Cooking Show
@@ -690,11 +674,8 @@ export default function App() {
             </div>
           </div>
 
-          {/* ── Thick divider ── */}
-          <div className="my-12 border-t-[3px] border-[var(--line)]" />
-
           {/* ── Alumni companies ── */}
-          <div>
+          <div className="mt-16">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
                 Where We Used to Cook
@@ -718,7 +699,7 @@ export default function App() {
         </section>
 
         {/* ── 4. PLANS ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
+        <section id="plans" className="reveal border-b-[3px] border-[var(--line)] py-14">
           <p className={sectionLabelClass}>PLANS</p>
           <h2 className={sectionHeadingClass}>
             Three ways to make AI print money for your business.
@@ -960,44 +941,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* ── 10. LINKEDIN ── */}
-        <section className="reveal border-b-[3px] border-[var(--line)] py-14">
-          <div className={panelClass}>
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex min-w-0 items-center gap-4">
-                <div className="shrink-0 rounded-full border border-[var(--line)] bg-white p-1 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-                  <img
-                    src="/profile.png"
-                    alt={linkedinProfile.name}
-                    className="h-16 w-16 rounded-full object-cover object-center sm:h-18 sm:w-18"
-                    loading="eager"
-                  />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-base font-semibold tracking-[-0.02em] text-slate-950 sm:text-lg">
-                      {linkedinProfile.name}
-                    </p>
-                    <span className={metaChipClass}>LinkedIn</span>
-                  </div>
-                  <p className="mt-1 text-sm font-medium leading-relaxed text-slate-800">{linkedinProfile.role}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-700">{linkedinProfile.detail}</p>
-                </div>
-              </div>
-              <div className="flex flex-col items-start gap-2 lg:items-end">
-                <a href={LINKEDIN_PROFILE} target="_blank" rel="noreferrer" className={utilityButtonClass}>
-                  <LinkedInIcon />
-                  Follow on LinkedIn
-                </a>
-                <p className="text-xs leading-relaxed text-slate-500 lg:text-right">
-                  I write about business scaling and practical AI use cases.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 11. WAITLIST + FREE SCAN FORM ── */}
+        {/* ── 10. WAITLIST + FREE SCAN FORM ── */}
         <section id="scan" className="reveal py-14">
           <div className="space-y-8">
             <div className="grid gap-8 lg:grid-cols-12">
