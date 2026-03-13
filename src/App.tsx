@@ -442,21 +442,21 @@ export default function App() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--ink)]">
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0))]" />
       <WarpedGrid />
 
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
-        <SiteHeader
-          applyHref="#scan"
-          ctaHref={ctaHref}
-          homeHref="/"
-          primaryButtonClassName={primaryButtonClass}
-          primaryCtaLabel={PRIMARY_CTA}
-          proofHref="/how-we-work/#proof"
-          transformationOfficeHref="/how-we-work/#mechanism"
-          whatWeDoHref="/how-we-work/"
-        />
+        <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+          <SiteHeader
+            applyHref="#scan"
+            founderLinkedIn={LINKEDIN_PROFILE}
+            homeHref="/"
+            proofHref="/how-we-work/#proof"
+            transformationOfficeHref="/how-we-work/#mechanism"
+            whatWeDoHref="/how-we-work/"
+          />
+        </div>
 
         {/* ── 1. HERO: Split layout matching how-we-work ── */}
         <section id="overview" className={`${splitSectionClass} gap-8`}>

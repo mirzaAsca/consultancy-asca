@@ -2,6 +2,7 @@ import SiteHeader from './components/SiteHeader'
 import WarpedGrid from './components/WarpedGrid'
 
 const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
+const LINKEDIN_PROFILE = 'https://www.linkedin.com/in/mirzaasceric/'
 const PRIMARY_CTA = 'Apply for the AI Portfolio Reality Scan'
 const MECHANISM_CTA = 'See how the office works'
 const primaryButtonClass =
@@ -145,21 +146,21 @@ const supportingProofs = proofVisuals.slice(1)
 
 export default function WhatWeDoApp() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--ink)]">
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0))]" />
       <WarpedGrid />
 
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
-        <SiteHeader
-          applyHref="/#apply"
-          ctaHref="/#apply"
-          homeHref="/"
-          primaryButtonClassName={primaryButtonClass}
-          primaryCtaLabel={PRIMARY_CTA}
-          proofHref="#proof"
-          transformationOfficeHref="#mechanism"
-          whatWeDoHref="/how-we-work/"
-        />
+        <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+          <SiteHeader
+            applyHref="/#apply"
+            founderLinkedIn={LINKEDIN_PROFILE}
+            homeHref="/"
+            proofHref="#proof"
+            transformationOfficeHref="#mechanism"
+            whatWeDoHref="/how-we-work/"
+          />
+        </div>
 
         <section id="overview" className={`${splitSectionClass} gap-8`}>
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
