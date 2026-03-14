@@ -1,3 +1,4 @@
+import BusinessAiPrimerSection from './components/BusinessAiPrimerSection'
 import SiteHeader from './components/SiteHeader'
 import WarpedGrid from './components/WarpedGrid'
 
@@ -24,19 +25,19 @@ const metaChipClass =
 
 const installBlocks = [
   {
-    title: 'One Portfolio View',
+    title: 'Portfolio System',
     detail:
-      'Every AI project in one place - with clear owners, expected value, risk level, and current status.',
+      'One operating register for initiatives, workflows, owners, expected value, and risk across the whole AI portfolio.',
   },
   {
-    title: 'Regular Decision Rhythm',
+    title: 'Governance System',
     detail:
-      'Scheduled reviews where business, IT, and risk leaders make clear go/stop/fix decisions together.',
+      'Clear decision rights, stage gates, review forums, and control points shared by business, IT, and risk.',
   },
   {
-    title: 'Delivery Accountability',
+    title: 'Measurement System',
     detail:
-      "We track what's live, what's being used, and whether each project should grow, stop, or be redesigned.",
+      'Baseline KPI, adoption, and value tracking so every initiative is judged against commercial outcomes, not optimism.',
   },
 ]
 
@@ -242,11 +243,17 @@ export default function WhatWeDoApp() {
           </aside>
         </section>
 
+        <BusinessAiPrimerSection />
+
         <section id="mechanism" className="reveal delay-4 section-divider-full py-14">
           <p className={sectionLabelClass}>WHAT WE INSTALL</p>
           <h2 className={sectionHeadingClass}>
-            Three things we put in place to make your AI program actually work.
+            Three systems we install so AI becomes a managed operating capability.
           </h2>
+          <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
+            These are the standing layers of the operating system. Once they are in place, every initiative runs
+            through the same mechanism below.
+          </p>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-12">
             {installBlocks.map((block, index) => (
@@ -265,11 +272,12 @@ export default function WhatWeDoApp() {
               <div>
                 <p className={sectionLabelClass}>MECHANISM FLOW</p>
                 <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-700">
-                  One operating sequence for every AI initiative, from first intake through scale or retirement.
+                  Once the systems are installed, every AI initiative follows the same lifecycle from first intake
+                  through scale or retirement.
                 </p>
               </div>
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-                6-step operating rail
+                6-step initiative lifecycle
               </p>
             </div>
 

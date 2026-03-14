@@ -41,7 +41,8 @@
       "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/hulkApps.svg\" -o logos-old/hulkapps.svg)",
       "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/cartHook.svg\" -o logos-old/carthook.svg)",
       "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/releasit.svg\" -o logos-old/releasit.svg)",
-      "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/accentuate.svg\" -o logos-old/accentuate.svg)"
+      "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/accentuate.svg\" -o logos-old/accentuate.svg)",
+      "Bash(npx tsc --noEmit --skipLibCheck)"
     ],
     "additionalDirectories": [
       "/Users/mirzaasceric/Desktop/consultancy-asca/src/assets"
