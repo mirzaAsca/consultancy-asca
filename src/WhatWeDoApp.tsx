@@ -560,7 +560,7 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"
