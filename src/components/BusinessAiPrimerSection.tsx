@@ -481,11 +481,11 @@ export default function BusinessAiPrimerSection() {
           <p className="text-sm leading-relaxed text-slate-700">
             This is how we decide where AI belongs, where automation wins, and what ships first.
           </p>
-          <div className="flex flex-wrap gap-2">
+          {/* <div className="flex flex-wrap gap-2">
             <span className={metaChipClass}>4 steps</span>
             <span className={metaChipClass}>Automation first</span>
             <span className={metaChipClass}>Biggest wins first</span>
-          </div>
+          </div> */}
         </div>
       </div>
 

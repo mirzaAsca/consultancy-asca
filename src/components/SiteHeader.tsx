@@ -4,8 +4,6 @@ type SiteHeaderProps = {
   applyHref: string
   founderLinkedIn: string
   homeHref: string
-  proofHref: string
-  transformationOfficeHref: string
   whatWeDoHref: string
 }
 
@@ -29,8 +27,6 @@ export default function SiteHeader({
   applyHref,
   founderLinkedIn,
   homeHref,
-  proofHref,
-  transformationOfficeHref,
   whatWeDoHref,
 }: SiteHeaderProps) {
   // 'top' = at page top (normal), 'hidden' = scrolled down & hidden, 'sticky' = scrolling up with blur
@@ -71,12 +67,6 @@ export default function SiteHeader({
           </a>
           <a href={whatWeDoHref} className="transition-colors hover:text-slate-900">
             How We Work
-          </a>
-          <a href={transformationOfficeHref} className="transition-colors hover:text-slate-900">
-            Transformation Office
-          </a>
-          <a href={proofHref} className="transition-colors hover:text-slate-900">
-            Proof
           </a>
           <a href={applyHref} className="transition-colors hover:text-slate-900">
             Apply

@@ -180,11 +180,9 @@ export default function WhatWeDoApp() {
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
         <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
           <SiteHeader
-            applyHref="/#apply"
+            applyHref="/#scan"
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
-            proofHref="#proof"
-            transformationOfficeHref="#mechanism"
             whatWeDoHref="/how-we-work/"
           />
         </div>
@@ -209,7 +207,7 @@ export default function WhatWeDoApp() {
             </div>
 
             <div className="mt-8 space-y-5 lg:mt-auto lg:pt-10">
-              <div className="border border-[var(--line)] bg-[var(--surface)] p-4">
+              {/* <div className="border border-[var(--line)] bg-[var(--surface)] p-4">
                 <p className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
                   Complimentary with every waitlist signup
                 </p>
@@ -232,7 +230,7 @@ export default function WhatWeDoApp() {
                   <span className={metaChipClass}>Results in ~2 weeks</span>
                   <span className={metaChipClass}>You keep everything</span>
                 </div>
-              </div>
+              </div> */}
               <div className="flex flex-wrap items-center gap-5">
                 <a href="/#scan" className={primaryButtonClass}>
                   Get Your $15,000 Scan — Free
@@ -562,7 +560,7 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"
@@ -570,7 +568,7 @@ export default function WhatWeDoApp() {
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            Production-ready workflow in 90 days. Or we keep working for free.
+            Fully booked. Join the waitlist. Get your complimentary scan now.
           </p>
         </footer>
       </main>

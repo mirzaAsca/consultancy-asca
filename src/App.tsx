@@ -514,8 +514,6 @@ export default function App() {
             applyHref="#scan"
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
-            proofHref="/how-we-work/#proof"
-            transformationOfficeHref="/how-we-work/#mechanism"
             whatWeDoHref="/how-we-work/"
           />
         </div>
