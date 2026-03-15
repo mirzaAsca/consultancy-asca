@@ -62,6 +62,7 @@ type PrimerStep = {
   eyebrow: string
   title: string
   detail: string
+  summaryItems?: string[]
   cards?: PrimerCard[]
   gridClass?: string
   tags?: string[]
@@ -124,9 +125,9 @@ const leverFlows: LeverFlow[] = [
 
 const bonusGain: BonusGain = {
   lever: 'Lever 03',
-  title: 'Pricing power',
+  title: 'Increase price',
   detail:
-    'Pricing power is usually earned after volume and unit cost improvements raise delivery speed, reliability, and customer experience enough to support a higher price on objective grounds.',
+    'In most cases, price can be increased after volume and unit cost improvements make delivery faster, more reliable, and more valuable to the customer.',
   proofPoints: ['Faster delivery', 'Higher reliability', 'Better customer experience'],
 }
 
@@ -160,18 +161,9 @@ const integrationSteps: PrimerSequenceItem[] = [
   },
   {
     step: '03',
-    title: 'Prioritize automation first',
-    detail: 'If a rules-based system can do the job reliably, it usually wins on economics.',
-  },
-  {
-    step: '04',
-    title: 'Deploy AI where interpretation remains',
-    detail: 'Use AI where documents, language, ambiguity, or judgment still block a rules-based system.',
-  },
-  {
-    step: '05',
-    title: 'Sequence by return',
-    detail: 'Deployment order follows business return, not novelty.',
+    title: 'Prioritize and deploy',
+    detail:
+      'Ship the highest-return workflows first',
   },
 ]
 
@@ -198,9 +190,10 @@ const schoolSteps: PrimerStep[] = [
   {
     step: '03',
     eyebrow: 'COMMERCIAL LEVERS',
-    title: 'Most measurable value comes from two direct levers. Pricing power usually follows.',
+    title: 'Three commercial levers: increase volume, lower unit cost, increase price.',
     detail:
-      'In most operating environments, first-order gains come from more throughput and lower unit cost. Stronger pricing usually follows once service levels materially improve.',
+      'In practice, volume and cost usually move first. Price usually follows when delivery becomes measurably better.',
+    summaryItems: ['Lever 01: Increase volume', 'Lever 02: Lower unit cost', 'Lever 03: Increase price'],
     leverFlows,
     bonusGain,
     closing: 'If a use case does not change throughput, unit cost, or price realization, it is not yet a business case.',
@@ -210,7 +203,7 @@ const schoolSteps: PrimerStep[] = [
     eyebrow: 'ROLLOUT ORDER',
     title: 'Rollout order follows micro-ROI.',
     detail:
-      'We map each workflow, quantify the upside, and sequence delivery by return, feasibility, and control requirements.',
+      'We assess the workflow, model the upside, then deploy in the order that makes the most commercial sense.',
     sequence: integrationSteps,
   },
 ]
@@ -335,128 +328,124 @@ function ToolComparisonTable({ items }: { items: ToolComparison[] }) {
 function LeverImpactMap({ rows, bonus }: { rows: LeverFlow[]; bonus: BonusGain }) {
   return (
     <div className="space-y-4">
-      <div className={modulePanelClass}>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-              DIRECT VALUE LEVERS
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
-              These are the operating levers AI and automation move most directly.
-            </p>
-          </div>
-          <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-            Lever -&gt; intervention -&gt; outcome
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+            DIRECT VALUE LEVERS
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            These are the operating levers AI and automation move most directly.
           </p>
         </div>
+        <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+          Lever -&gt; intervention -&gt; outcome
+        </p>
+      </div>
 
-        <div className="mt-5 space-y-3">
-          {rows.map((row) => (
-            <article key={row.lever} className="space-y-4 border border-[var(--line)] bg-white/80 p-4">
-              <div className="grid gap-3 xl:grid-cols-[160px_auto_minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-start">
-                <div>
+      {rows.map((row) => (
+        <article key={row.lever} className="space-y-4 border border-[var(--line)] bg-white/80 p-4">
+          <div className="grid gap-3 xl:grid-cols-[160px_auto_minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-start">
+            <div>
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                {row.lever}
+              </p>
+              <h4 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">{row.title}</h4>
+            </div>
+
+            <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
+              <span className="text-lg">-&gt;</span>
+            </div>
+
+            <div className="border border-[var(--line)] bg-white p-4">
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                Intervention
+              </p>
+              <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+                {row.interventions.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
+              <span className="text-lg">-&gt;</span>
+            </div>
+
+            <div className="border border-[var(--line)] bg-white p-4">
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                Outcome
+              </p>
+              <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+                {row.effects.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {row.clarifier ? (
+            <div className={moduleAccentPanelClass}>
+              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+                {row.clarifier.eyebrow}
+              </p>
+              <h5 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">
+                {row.clarifier.title}
+              </h5>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <article className="border border-[var(--line)] bg-white p-4">
                   <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    {row.lever}
+                    Common mistake
                   </p>
-                  <h4 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">{row.title}</h4>
-                </div>
-
-                <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
-                  <span className="text-lg">-&gt;</span>
-                </div>
-
-                <div className="border border-[var(--line)] bg-white p-4">
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Intervention
+                  <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.commonAssumption}</p>
+                </article>
+                <article className="border border-[var(--accent)] bg-white p-4">
+                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+                    Correct model
                   </p>
-                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
-                    {row.interventions.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
-                  <span className="text-lg">-&gt;</span>
-                </div>
-
-                <div className="border border-[var(--line)] bg-white p-4">
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Outcome
-                  </p>
-                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
-                    {row.effects.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.correctUse}</p>
+                </article>
               </div>
 
-              {row.clarifier ? (
-                <div className={moduleAccentPanelClass}>
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-                    {row.clarifier.eyebrow}
-                  </p>
-                  <h5 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">
-                    {row.clarifier.title}
-                  </h5>
+              <p className="mt-4 border-t border-[var(--line)] pt-4 text-sm font-medium tracking-[-0.01em] text-slate-950">
+                {row.clarifier.kicker}
+              </p>
 
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <article className="border border-[var(--line)] bg-white p-4">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {row.clarifier.outcomes.map((item) => (
+                  <article key={item.title} className={cardClass}>
+                    {item.label ? (
                       <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                        Common mistake
+                        {item.label}
                       </p>
-                      <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.commonAssumption}</p>
-                    </article>
-                    <article className="border border-[var(--accent)] bg-white p-4">
-                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-                        Correct model
-                      </p>
-                      <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.correctUse}</p>
-                    </article>
-                  </div>
-
-                  <p className="mt-4 border-t border-[var(--line)] pt-4 text-sm font-medium tracking-[-0.01em] text-slate-950">
-                    {row.clarifier.kicker}
-                  </p>
-
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    {row.clarifier.outcomes.map((item) => (
-                      <article key={item.title} className={cardClass}>
-                        {item.label ? (
-                          <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                            {item.label}
-                          </p>
-                        ) : null}
-                        <h6 className="mt-3 text-sm font-semibold tracking-[-0.01em] text-slate-950">{item.title}</h6>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-            </article>
-          ))}
-        </div>
-      </div>
+                    ) : null}
+                    <h6 className="mt-3 text-sm font-semibold tracking-[-0.01em] text-slate-950">{item.title}</h6>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </article>
+      ))}
 
       <div className={moduleAccentPanelClass}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-              {bonus.lever} - SECONDARY EFFECT
+              {bonus.lever}
             </p>
             <h4 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">{bonus.title}</h4>
             <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-slate-700">{bonus.detail}</p>
           </div>
-          <span className={metaChipClass}>Earned after 01 + 02</span>
+          <span className={metaChipClass}>Usually follows 01 + 02</span>
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           {bonus.proofPoints.map((item) => (
             <article key={item} className={cardClass}>
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                Pricing proof
+                Why price can increase
               </p>
               <p className="mt-3 text-sm font-medium tracking-[-0.01em] text-slate-950">{item}</p>
             </article>
@@ -493,6 +482,7 @@ export default function BusinessAiPrimerSection() {
           const leverMapRows = step.leverFlows
           const bonus = step.bonusGain
           const sequence = step.sequence
+          const summaryItems = step.summaryItems
 
           return (
             <li key={step.step}>
@@ -507,6 +497,13 @@ export default function BusinessAiPrimerSection() {
                       {step.title}
                     </h3>
                     <p className="mt-3 text-sm leading-relaxed text-slate-700">{step.detail}</p>
+                    {summaryItems ? (
+                      <ul className="mt-5 space-y-2 border-t border-[var(--line)] pt-4 text-sm leading-relaxed text-slate-950">
+                        {summaryItems.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    ) : null}
                     {step.tags ? (
                       <div className="mt-5 flex flex-wrap gap-2">
                         {step.tags.map((tag) => (
@@ -531,11 +528,11 @@ export default function BusinessAiPrimerSection() {
                               IMPLEMENTATION ORDER
                             </p>
                             <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                              After the economics and tool fit are clear, deployment order follows expected return.
+                              After tool fit is clear, we move from assessment to deployment in one compact sequence.
                             </p>
                           </div>
                           <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-                            5-step prioritization
+                            3-step deployment logic
                           </p>
                         </div>
 
