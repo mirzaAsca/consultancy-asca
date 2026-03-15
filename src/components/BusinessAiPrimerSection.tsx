@@ -76,134 +76,139 @@ type PrimerStep = {
 const businessBasics: PrimerCard[] = [
   {
     label: 'Core function',
-    title: 'Create value',
-    detail: 'Improve an outcome the market is willing to buy.',
+    title: 'Make something people want',
+    detail: 'Build a product or service good enough that people pay for it.',
   },
   {
     label: 'Core function',
-    title: 'Capture value',
-    detail: 'Turn delivery into revenue, margin, and repeat demand.',
+    title: 'Get paid for it',
+    detail: 'Turn what you deliver into revenue, margin, and repeat buyers.',
   },
 ]
 
 const leverFlows: LeverFlow[] = [
   {
     lever: 'Lever 01',
-    title: 'Increase volume',
-    interventions: ['Automate outreach', 'Shorten response cycles', 'Improve customer experience'],
-    effects: ['More conversion', 'More throughput', 'More supply'],
+    title: 'Sell more',
+    interventions: ['Automate outreach', 'Personalize journeys', 'Improve customer experience'],
+    effects: ['More demand', 'More conversion', 'More sales volume'],
   },
   {
     lever: 'Lever 02',
     title: 'Lower unit cost',
     interventions: ['Automate manual work', 'Train and enable people with AI', 'Speed up human work'],
-    effects: ['Lower unit cost', '10x output per person', 'Higher margin'],
+    effects: ['Lower unit cost', '2–5x output per person', 'Higher margin'],
     clarifier: {
-      eyebrow: 'THE 10X MODEL',
-      title: 'Workforce leverage, not headcount reduction.',
-      commonAssumption: 'AI lowers cost by removing people from payroll.',
+      eyebrow: 'THE PRODUCTIVITY MODEL',
+      title: 'Make each person 2–5x more productive on core tasks. Not fire people.',
+      commonAssumption: '"AI saves money by cutting headcount."',
       correctUse:
-        'AI lowers unit cost by training and enabling teams to produce materially more output per person inside AI-native workflows.',
+        'AI lowers cost per unit by helping your existing team produce way more output. Same people, better tools, bigger results.',
       outcomes: [
         {
-          label: 'Workforce outcome',
-          title: 'Higher-value operators',
+          label: 'For your people',
+          title: 'They become more valuable',
           detail:
-            'People stay relevant, earn more, and become market-ready operators with AI-native execution skills.',
+            'Your team learns to work with AI. They produce more, earn more, and stay relevant in a market that\'s changing fast.',
         },
         {
-          label: 'Company outcome',
-          title: 'A stronger operating model',
+          label: 'For your company',
+          title: 'Better margins without more hiring',
           detail:
-            'The company becomes AI-native, improves margin, gains speed against competitors, and expands output without linear hiring.',
+            'You get more output without hiring proportionally more people. Margins go up. Speed goes up. Competitors fall behind.',
         },
       ],
-      kicker: 'The target is not a thinner payroll. It is a smaller, better-enabled team delivering the output of a much larger one.',
+      kicker: 'The goal is not a thinner payroll. It\'s a smaller, better-equipped team doing the work of a much larger one. Studies show 25–55% task speed gains (Harvard/BCG, GitHub Copilot) and up to 34% productivity improvement for junior staff (Stanford/MIT).',
     },
+  },
+  {
+    lever: 'Lever 03',
+    title: 'Reduce risk',
+    interventions: ['Build governance into delivery', 'Align to NIST AI RMF and EU AI Act', 'Automate compliance checks'],
+    effects: ['Fewer audit failures', 'Faster regulatory approval', 'Lower legal exposure'],
   },
 ]
 
 const bonusGain: BonusGain = {
-  lever: 'Lever 03',
-  title: 'Increase price',
+  lever: 'Lever 04',
+  title: 'Charge more',
   detail:
-    'In most cases, price can be increased after volume and unit cost improvements make delivery faster, more reliable, and more valuable to the customer.',
-  proofPoints: ['Faster delivery', 'Higher reliability', 'Better customer experience'],
+    'When your customer experience gets better, your delivery gets faster, and your reliability goes up - you can raise your prices and people will still pay.',
+  proofPoints: ['Better customer experience', 'Faster delivery', 'Higher reliability'],
 }
 
 const toolComparison: ToolComparison[] = [
   {
     label: 'First choice',
     title: 'Automation',
-    pros: ['Higher consistency', 'Lower run-cost', 'Predictable outputs', 'Easier scaling'],
-    cons: ['Weak on unstructured interpretation', 'Breaks when judgment is required'],
-    useCase: 'Structured, repeatable workflows with fixed inputs, clear rules, and stable outputs.',
+    pros: ['More consistent', 'Cheaper to run', 'Predictable results', 'Easier to scale'],
+    cons: ['Can\'t handle messy or ambiguous inputs', 'Breaks when judgment is needed'],
+    useCase: 'Repeatable work with clear rules: same inputs, same steps, same outputs.',
   },
   {
-    label: 'Used selectively',
+    label: 'Second choice',
     title: 'AI',
-    pros: ['Understands messy inputs', 'Handles judgment-heavy tasks', 'Useful for planning and interpretation'],
-    cons: ['Less consistent than automation', 'Harder to make fully predictable'],
-    useCase: 'Document-heavy, language-heavy, or ambiguous workflows where human interpretation is still the constraint.',
+    pros: ['Handles messy inputs', 'Good at judgment calls', 'Useful for planning and interpretation'],
+    cons: ['Less consistent than automation', 'Harder to predict exactly what you\'ll get'],
+    useCase: 'Work that requires reading, interpreting, or making judgment calls that used to need a human.',
   },
 ]
 
 const integrationSteps: PrimerSequenceItem[] = [
   {
     step: '01',
-    title: 'Map the workflow',
-    detail: 'Inspect internal and external processes, handoffs, tools, and failure points.',
+    title: 'Map the work',
+    detail: 'Look at every process, handoff, tool, and failure point. Find where time and money leak.',
   },
   {
     step: '02',
-    title: 'Model micro-ROI',
-    detail: 'Set a cost, effort, risk, and upside baseline for each workflow.',
+    title: 'Run the numbers',
+    detail: 'For each workflow: what does it cost now, what could it cost, and what\'s the upside?',
   },
   {
     step: '03',
-    title: 'Prioritize and deploy',
-    detail:
-      'Ship the highest-return workflows first',
+    title: 'Ship the biggest wins first',
+    detail: 'Start with whatever makes the most money. Automation where rules hold, AI where judgment is needed.',
   },
 ]
 
 const schoolSteps: PrimerStep[] = [
   {
     step: '01',
-    eyebrow: 'BUSINESS FUNCTION',
-    title: 'Every business must create value and capture value.',
+    eyebrow: 'THE BASICS',
+    title: 'Your business does two things. AI has to help with one of them.',
     detail:
-      'That is the commercial baseline. AI only matters when it changes how value is produced, delivered, or monetized.',
+      'Make something people want, and get paid for it. AI only matters if it helps you do one of those two things better.',
     cards: businessBasics,
     gridClass: 'sm:grid-cols-2',
   },
   {
     step: '02',
-    eyebrow: 'TOOL CHOICE',
-    title: 'Tool selection follows workflow economics.',
+    eyebrow: 'WHICH TOOL',
+    title: 'Automation first. AI second. Most of the time, automation wins.',
     detail:
-      'Automation gets first priority when a workflow is structured, repeatable, and rules-based. AI is used where language, ambiguity, or judgment still block scale.',
+      'Use automation when the work follows clear rules. Use AI when the work needs judgment. Plain automation is cheaper and more reliable. AI is the second choice, not the first.',
     comparisonTable: toolComparison,
-    tags: ['Automation first', 'AI for interpretation', 'ROI decides order'],
-    closing: 'High-cost expert interpretation is now addressable, but only where the commercial case justifies deployment.',
+    tags: ['Automation first', 'AI when judgment is needed', 'Numbers decide'],
+    closing: 'AI can now handle work that used to require expensive experts - but only when the math justifies it.',
   },
   {
     step: '03',
-    eyebrow: 'COMMERCIAL LEVERS',
-    title: 'Three commercial levers: increase volume, lower unit cost, increase price.',
+    eyebrow: 'FOUR LEVERS',
+    title: 'Sell more. Spend less. Reduce risk. Charge more.',
     detail:
-      'In practice, volume and cost usually move first. Price usually follows when delivery becomes measurably better.',
-    summaryItems: ['Lever 01: Increase volume', 'Lever 02: Lower unit cost', 'Lever 03: Increase price'],
+      'Price usually goes up on its own once your customer experience, delivery speed, and reliability get better.',
+    summaryItems: ['Lever 01: Sell more', 'Lever 02: Lower unit cost', 'Lever 03: Reduce risk', 'Lever 04: Charge more'],
     leverFlows,
     bonusGain,
-    closing: 'If a use case does not change throughput, unit cost, or price realization, it is not yet a business case.',
+    closing: 'If a project doesn\'t help you sell more, spend less, reduce risk, or charge more - it\'s not a business case yet.',
   },
   {
     step: '04',
-    eyebrow: 'ROLLOUT ORDER',
-    title: 'Rollout order follows micro-ROI.',
+    eyebrow: 'WHERE TO START',
+    title: 'Start with whatever makes you the most money fastest.',
     detail:
-      'We assess the workflow, model the upside, then deploy in the order that makes the most commercial sense.',
+      'Map the work, run the numbers, ship the biggest wins first. That\'s the order.',
     sequence: integrationSteps,
   },
 ]
@@ -334,7 +339,7 @@ function LeverImpactMap({ rows, bonus }: { rows: LeverFlow[]; bonus: BonusGain }
             DIRECT VALUE LEVERS
           </p>
           <p className="mt-2 text-sm leading-relaxed text-slate-700">
-            These are the operating levers AI and automation move most directly.
+            These are the three ways AI and automation directly make you money.
           </p>
         </div>
         <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
@@ -424,6 +429,14 @@ function LeverImpactMap({ rows, bonus }: { rows: LeverFlow[]; bonus: BonusGain }
                   </article>
                 ))}
               </div>
+              <div className="mt-4 border-t border-[var(--line)] pt-3 text-[11px] leading-relaxed text-slate-400">
+                Sources:{' '}
+                <a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=64700" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">Harvard/BCG 2023</a>
+                {' · '}
+                <a href="https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">GitHub Copilot Research</a>
+                {' · '}
+                <a href="https://www.nber.org/system/files/working_papers/w31161/w31161.pdf" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">Stanford/MIT NBER</a>
+              </div>
             </div>
           ) : null}
         </article>
@@ -438,7 +451,7 @@ function LeverImpactMap({ rows, bonus }: { rows: LeverFlow[]; bonus: BonusGain }
             <h4 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">{bonus.title}</h4>
             <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-slate-700">{bonus.detail}</p>
           </div>
-          <span className={metaChipClass}>Usually follows 01 + 02</span>
+          <span className={metaChipClass}>Usually follows value gains</span>
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
@@ -461,17 +474,17 @@ export default function BusinessAiPrimerSection() {
     <section id="ai-economics" className="reveal delay-2 section-divider-full py-14 sm:py-16">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className={sectionLabelClass}>QUICK SCHOOL OF AI IN BUSINESS</p>
-          <h2 className={sectionHeadingClass}>How AI changes operating economics.</h2>
+          <p className={sectionLabelClass}>HOW AI ACTUALLY MAKES YOU MONEY</p>
+          <h2 className={sectionHeadingClass}>The only four ways AI creates real value.</h2>
         </div>
         <div className="max-w-[44ch] space-y-3">
           <p className="text-sm leading-relaxed text-slate-700">
-            This is the operating lens we use to decide where AI belongs, where automation wins, and what gets deployed first.
+            This is how we decide where AI belongs, where automation wins, and what ships first.
           </p>
           <div className="flex flex-wrap gap-2">
-            <span className={metaChipClass}>4-step model</span>
+            <span className={metaChipClass}>4 steps</span>
             <span className={metaChipClass}>Automation first</span>
-            <span className={metaChipClass}>Micro-ROI ordering</span>
+            <span className={metaChipClass}>Biggest wins first</span>
           </div>
         </div>
       </div>
@@ -528,11 +541,11 @@ export default function BusinessAiPrimerSection() {
                               IMPLEMENTATION ORDER
                             </p>
                             <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                              After tool fit is clear, we move from assessment to deployment in one compact sequence.
+                              Once we know which tool fits, we move from assessment to live deployment in three steps.
                             </p>
                           </div>
                           <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-                            3-step deployment logic
+                            3 steps to live
                           </p>
                         </div>
 

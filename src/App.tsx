@@ -38,7 +38,7 @@ import logoCarthook from "./assets/logos-old/carthook.svg";
 import logoReleasit from "./assets/logos-old/releasit.svg";
 import logoAccentuate from "./assets/logos-old/accentuate.svg";
 
-const PRIMARY_EMAIL = "advisory@enterprise-ai.consulting";
+const PRIMARY_EMAIL = "mirza@10x.ai";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const PRIMARY_CTA = "Join the Waitlist";
 const disabledButtonClass =
@@ -112,17 +112,17 @@ const alumniLogos = [
 ];
 
 const dreamOutcomes = [
-  "One dashboard with all AI initiatives",
-  "Legal and security in the loop",
-  "Your board gets a number, not a slide deck",
-  "2 year plan with full system",
+  "One dashboard with every AI project",
+  "Legal and security know what's happening",
+  "Your board gets real numbers, not a slide deck",
+  "A clear plan for the next two years",
 ];
 
 const painPoints = [
-  "You spent money on AI. But you can't point to a single dollar it made back.",
-  "Different teams run different tools with no shared plan. Nobody owns the full picture.",
-  "Legal and security find out about AI projects too late and shut them down.",
-  "Your board keeps asking for results. All you have is a list of experiments.",
+  "You bought tools, hired people, ran pilots. Still no revenue from any of it.",
+  "Marketing uses one tool. Engineering uses another. Nobody knows what anyone else is doing.",
+  "Legal finds out about an AI project three months in and kills it. Wasted time, wasted money.",
+  "The board asks \"what's AI doing for us?\" and you don't have an answer.",
 ];
 
 const featureGroups = [
@@ -131,33 +131,33 @@ const featureGroups = [
     features: [
       "Full AI Portfolio Map",
       "Priority Decisions: Keep, Kill, or Scale",
-      "Governance & Compliance Built In",
+      "Legal and Security Handled",
       "Weekly Decision Meetings",
     ],
   },
   {
     label: "THE DASHBOARD",
-    features: ["Revenue & Cost Impact Dashboard", "Vendor & Tool Management"],
+    features: ["Revenue & Cost Dashboard", "All Your Tools in One Place"],
   },
   {
     label: "THE PEOPLE",
-    features: ["Adoption & Training System", "Production Delivery Oversight"],
+    features: ["Training Your Team to Use It", "Making Sure It Ships"],
   },
   {
     label: "THE ARMY",
     features: [
-      "Up to 50 Dedicated AI Engineers",
-      "Organization-Wide 10x Leverage",
+      "Up to 20–30 Dedicated AI Engineers",
+      "2–5x More Output Across the Company",
       "Access to external team for: design, copywriting, SEO, development, and more",
     ],
   },
   {
     label: "THE EMPIRE",
     features: [
-      "Multi-Entity Portfolio Management",
+      "AI Across All Your Companies",
       "FlyRank Platform Integration",
       "Dedicated Executive Partner",
-      "Custom SLA & Priority Support",
+      "Priority Support & Custom Terms",
     ],
   },
 ];
@@ -165,14 +165,15 @@ const featureGroups = [
 const plans = [
   {
     name: "COMMAND ROOM",
-    subtitle: "AI Consultancy and hands-on execution",
+    subtitle: "We run AI with your team",
     oldPrice: "$30,800",
     price: "$22,000",
     period: "/mo",
-    anchor: "Replaces a $400K+/yr internal AI strategy hire",
+    anchor: "Replaces a $350K–$600K/yr internal AI strategy hire",
+    anchorSource: { label: "Glassdoor 2026", url: "https://www.glassdoor.com/Salaries/chief-ai-officer-salary-SRCH_KO0,16.htm" },
     scarcity: "0 spots available",
     description:
-      "We sync with you every week and make decisions with your leaders. We define full strategy, optimize your workflows, and customize prequalification programs for your team",
+      "We sync with you every week and make decisions with your leaders. We define full strategy, fix what's broken, and train your team to run it without us",
     cta: "Apply",
     ctaDisabled: true,
     highlighted: true,
@@ -180,14 +181,15 @@ const plans = [
   },
   {
     name: "50X EMPIRE",
-    subtitle: "Expert Outsourcing Solution",
+    subtitle: "Your dedicated AI team",
     oldPrice: "$406,000",
     price: "$290,000",
     period: "/mo",
-    anchor: "$580/head vs. $12,000+/head industry average",
+    anchor: "$580/head vs. $5,000–$15,000/head industry average",
+    anchorSource: { label: "AI consulting benchmarks 2026", url: "https://www.leanware.co/insights/how-much-does-an-ai-consultant-cost" },
     scarcity: "Coming Q3 2026",
     description:
-      "Our team becomes your team. Up to 50 dedicated engineers building, shipping, and scaling AI across your entire organization.",
+      "Our team becomes your team. Up to 20–30 dedicated engineers building, shipping, and scaling AI across your entire organization.",
     cta: "Request Early Access",
     ctaDisabled: false,
     highlighted: false,
@@ -198,10 +200,11 @@ const plans = [
     subtitle: "Custom solutions for your portfolio",
     price: "Custom",
     period: "",
-    anchor: "One partner, one system, every entity",
+    anchor: "Base retainer + 10–20% of documented savings",
+    anchorSource: null,
     scarcity: "By invitation only",
     description:
-      "You own multiple companies. We run AI transformation across all of them — shared infrastructure, unified governance, compounding intelligence. Includes FlyRank platform integration for organic growth at scale.",
+      "You own multiple companies. We run AI across all of them. Same system, shared learnings, one team running the whole thing. Hybrid pricing: base retainer plus performance kicker tied to verified value created.",
     cta: "Book a Portfolio Review",
     ctaDisabled: false,
     highlighted: false,
@@ -210,49 +213,49 @@ const plans = [
 ];
 
 const fitFor = [
-  "Decision makers that want to outperform competition by using AI right way",
-  "Companies already spending on AI, with leadership that wants to see real numbers - not more decks.",
-  "Teams willing to change how they actually work, not just add another tool on top.",
+  "You're a decision maker who wants AI to actually move the needle",
+  "You're already spending on AI and you're tired of presentations with no results",
+  "Your team is willing to change how they work, not just bolt on another tool",
 ];
 
 const fitNotFor = [
-  "Companies that want full transformation in 1-2 months",
-  "Companies looking for someone to build a chatbot. That's not the only thing we do.",
-  "Organizations where nobody has the authority to make real decisions.",
+  "You want full transformation in 30 days. That's not how this works.",
+  "You just want a chatbot. We do a lot more than that.",
+  'Nobody at your company can say "yes" without three months of meetings.',
 ];
 
 const faqItems = [
   {
     q: "We already have an AI strategy. Why do we need this?",
-    a: 'Most companies have a strategy. The problem is almost never the plan — it\'s what happens after. We don\'t write decks. We install the operating system that gets AI from "good idea" to "running in production and making money."',
+    a: 'Most companies have a strategy. The problem is never the plan — it\'s what happens after. We don\'t write decks. We build the system that gets AI from "good idea" to "running and making money."',
   },
   {
-    q: "How is this different from hiring McKinsey or Deloitte?",
-    a: "They hand you a report and leave. We stay. We sit in your weekly rhythm, make decisions with your leaders, and own the delivery. If nothing makes it to production, that's our failure — not yours.",
+    q: "How is this different from McKinsey or Deloitte?",
+    a: "They write a deck, send an invoice, and leave. We stay. We sit in your meetings every week, make decisions with your people, and if nothing ships — that's on us. We don't get paid to be smart. We get paid to get results.",
   },
   {
     q: "You're fully booked. Why should I join the waitlist?",
-    a: "We rotate clients as engagements mature. The waitlist is first-come, first-served. When a spot opens, we reach out to the next company in line. You get a free Company Scan and a 40-minute strategy call right away — so we already know your situation and can move fast when your turn comes.",
+    a: "We rotate clients as engagements mature. First-come, first-served. You get a complimentary AI Portfolio Reality Scan (valued at $10,000) and a 40-minute strategy call right away — so we already know your situation and can move fast when your turn comes.",
   },
   {
     q: "What if I have an emergency and can't wait?",
-    a: "Use the Emergency button on this page. If your situation is critical enough, we may be able to accommodate you outside our normal capacity. We review every emergency request within 24 hours.",
+    a: "Use the Emergency button on this page. If it's critical enough, we'll find a way. We review every emergency request within 24 hours.",
   },
   {
-    q: "What if $22,000/month is too much right now?",
-    a: "Start with the free Company Scan and the 40-minute strategy call. Costs you nothing, takes about a week, and you keep everything we find. If the numbers make sense after that, we talk about the retainer when a spot opens. If not, you still walk away with a clear picture and a real plan.",
+    q: "What if $22,000/month is too much?",
+    a: "Don't start there. Start with the complimentary AI Portfolio Reality Scan (valued at $10,000). Takes a week, costs nothing, and you keep everything we find. If the math works after that, we talk about the retainer. If not, you still walk away with a real plan. No hard feelings.",
   },
   {
     q: "How fast will we see results?",
-    a: "You get the free scan results in about a week. Once you become a client, you'll have a full portfolio map, clear priority decisions, and governance running within 30 days. First production wins happen in months two to three.",
+    a: "Complimentary scan results in about a week. Once you're a client: full project map, clear priorities, and governance running within 30 days. First production-ready workflow within 90 days.",
   },
   {
     q: "What industries do you work with?",
-    a: "We work best with companies that have real operational volume — financial services, manufacturing, logistics, SaaS, healthcare, e-commerce. If your business runs on repeatable workflows, AI can make a measurable difference.",
+    a: "Companies with real operational volume — financial services, manufacturing, logistics, SaaS, healthcare, e-commerce. If your business runs on repeatable work, AI can make a real difference.",
   },
   {
     q: "Do we need a big internal AI team?",
-    a: "No. That's the whole point. We act as your AI Transformation Office. We bring the system, the rhythm, and the oversight. You bring your business knowledge and the people who make decisions.",
+    a: "No. That's the whole point. We bring the system, the structure, and the oversight. You bring your business knowledge and the people who make decisions.",
   },
 ];
 
@@ -278,11 +281,11 @@ const initialFormState: FormState = {
 
 function buildMailto(form: FormState): string {
   const subject = encodeURIComponent(
-    `Waitlist + Free Company Scan — ${form.company}`,
+    `Waitlist + Complimentary AI Portfolio Reality Scan — ${form.company}`,
   );
   const body = encodeURIComponent(
     [
-      "Waitlist + Free Company Scan Request",
+      "Waitlist + Complimentary AI Portfolio Reality Scan Request",
       "",
       `Name: ${form.fullName}`,
       `Email: ${form.workEmail}`,
@@ -486,17 +489,17 @@ export default function App() {
         >
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
-              <p className={sectionLabelClass}>AI-NATIVE SYSTEMS</p>
+              <p className={sectionLabelClass}>AI THAT ACTUALLY WORKS</p>
               <h1 className="mt-6 max-w-[13ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
-                We turn companies into{" "}
+                We make AI work for your business.{" "}
                 <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-                  AI-native businesses.
+                  Not the other way around.
                 </span>
               </h1>
               <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                Your revenue grows. Your costs drop. Your team does more with
-                less time. We install the system that makes it happen - and we
-                run it with you every week.
+                More revenue. Lower costs. Your team gets more done in less
+                time. We build the system, we run it with you every week, and we
+                don't stop until the numbers prove it's working.
               </p>
             </div>
 
@@ -551,7 +554,7 @@ export default function App() {
               </a>
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-500">
                 We're not taking new companies right now. Join the waitlist and
-                get your free scan while you wait.
+                get your complimentary scan while you wait.
               </p>
             </div>
           </aside>
@@ -574,7 +577,7 @@ export default function App() {
                 25+
               </span>
               <span className="text-sm text-slate-500">
-                companies transformed with AI
+                companies using our AI systems
               </span>
             </div>
             <div className="hidden h-5 border-l border-[var(--line)] sm:block" />
@@ -591,14 +594,15 @@ export default function App() {
         <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
-              If we don't produce a fully functional AI system running in 90
-              days{" "}
+              If we can't get a production-ready AI workflow live in 90 days{" "}
               <span className="text-[var(--muted)]">
-                — we work until we do. No extra cost.
+                — we keep working for free until we do.
               </span>
             </p>
             <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-              <span>Direct coordination with decision makers mandatory</span>
+              <span>
+                Only works if we talk to the people who can make decisions
+              </span>
               <span className="hidden text-[var(--line)] sm:inline">|</span>
               {/* <span>Free Company Scan when you join the waitlist</span>
               <span className="hidden text-[var(--line)] sm:inline">|</span>
@@ -607,11 +611,49 @@ export default function App() {
           </div>
         </section>
 
+        {/* ── MARKET REALITY ── */}
+        <section className={shortDividerSectionClass}>
+          <p className={sectionLabelClass}>THE REALITY</p>
+          <h2 className={sectionHeadingClass}>
+            Most companies are burning money on AI with nothing to show for it.
+          </h2>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <article className={`${cardClass} flex flex-col`}>
+              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">56%</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                of CEOs report no tangible return from their AI investments.
+              </p>
+              <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
+                <a href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500">PwC 2026 Global CEO Survey</a>
+              </p>
+            </article>
+            <article className={`${cardClass} flex flex-col`}>
+              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">48%</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                of AI projects ever make it to production. The rest die as pilots.
+              </p>
+              <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
+                <a href="https://www.gartner.com/en/newsroom/press-releases/2024-05-07-gartner-survey-finds-generative-ai-is-now-the-most-frequently-deployed-ai-solution-in-organizations" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500">Gartner 2024 AI in Organizations Survey</a>
+              </p>
+            </article>
+            <article className={`${cardClass} flex flex-col`}>
+              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">42%</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                of enterprises scrapped AI initiatives last year — often due to overly aggressive timelines.
+              </p>
+              <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
+                <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500">McKinsey State of AI 2025</a>
+              </p>
+            </article>
+          </div>
+        </section>
+
         {/* ── 3. PAIN + COST OF INACTION ── */}
         <section className={shortDividerSectionClass}>
           <p className={sectionLabelClass}>SOUND FAMILIAR?</p>
           <h2 className={sectionHeadingClass}>
-            You're spending on AI. But nothing is making it to production.
+            You've spent money on AI. You can't point to one dollar it made
+            back.
           </h2>
           <div className="mt-10 grid gap-4 md:grid-cols-12">
             {painPoints.map((point) => (
@@ -629,7 +671,7 @@ export default function App() {
             </p>
             <p className="mt-6 text-4xl font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl lg:text-[3.5rem]">
               <span className="bg-white px-[0.12em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-                The longer you wait, the more it costs.
+                Every month you wait, your competitors get further ahead.
               </span>
             </p>
           </div>
@@ -638,9 +680,7 @@ export default function App() {
         {/* ── FIT / NOT FIT ── */}
         <section className={stackedSectionClass}>
           <p className={sectionLabelClass}>IS THIS FOR YOU?</p>
-          <h2 className={sectionHeadingClass}>
-            We're not for everyone. Here's how to tell.
-          </h2>
+          <h2 className={sectionHeadingClass}>This isn't for everyone.</h2>
 
           <div className="mt-8 premium-panel relative overflow-hidden border border-[var(--line)] bg-[var(--surface)]">
             <div className="pointer-events-none absolute bottom-0 left-1/2 top-0 hidden border-l border-[var(--line)] lg:block" />
@@ -766,9 +806,9 @@ export default function App() {
           <p className={sectionLabelClass}>PLANS</p>
           <h2 className={sectionHeadingClass}>Three ways to make it happen.</h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-            From strategic advisory to full-scale AI development teams inside
-            your business. Every plan is an operating system we build and run
-            with your leaders.
+            From weekly advisory to a full team of engineers inside your
+            business. Pick the level that fits. We build it and run it with your
+            people.
           </p>
 
           {/* ── Plan cards ── */}
@@ -811,6 +851,14 @@ export default function App() {
                 </div>
                 <p className="mt-1.5 font-['IBM_Plex_Mono'] text-[11px] font-medium text-slate-500">
                   {plan.anchor}
+                  {plan.anchorSource ? (
+                    <>
+                      {" — "}
+                      <a href={plan.anchorSource.url} target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-700 hover:decoration-slate-500">
+                        {plan.anchorSource.label}
+                      </a>
+                    </>
+                  ) : null}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-slate-600 lg:min-h-[7.5rem]">
                   {plan.description}
@@ -1089,21 +1137,21 @@ export default function App() {
               <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
                 <div>
                   <p className={sectionLabelClass}>
-                    JOIN THE WAITLIST — FREE SCAN INCLUDED
+                    JOIN THE WAITLIST — COMPLIMENTARY SCAN INCLUDED
                   </p>
                   <h2 className={sectionHeadingClass}>
-                    Get on the list. Get your free Company Scan now.
+                    Get on the list. Get your AI Portfolio Reality Scan now.
                   </h2>
                   <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
                     Tell us about your company and what's happening with AI
                     right now. We'll come back with a clear map of where the
                     real opportunities are — and you'll be first in line when a
-                    spot opens.
+                    spot opens. Complimentary scan valued at $10,000.
                   </p>
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2 lg:mt-auto">
                   <span className={metaChipClass}>2-minute form</span>
-                  <span className={metaChipClass}>Free scan + 40-min call</span>
+                  <span className={metaChipClass}>Complimentary scan (valued at $10,000) + 40-min call</span>
                   <span className={metaChipClass}>Results in ~1 week</span>
                 </div>
               </div>
@@ -1147,11 +1195,11 @@ export default function App() {
               <div className="flex flex-col gap-3 border-b border-[rgba(255,255,255,0.14)] pb-5 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className={inverseSectionLabelClass}>
-                    WAITLIST + FREE COMPANY SCAN
+                    WAITLIST + COMPLIMENTARY AI PORTFOLIO REALITY SCAN
                   </p>
                   <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-100">
                     Tell us where you are with AI. We'll show you where the
-                    money is — and save your spot.
+                    money is — and save your spot. Scan valued at $10,000.
                   </p>
                 </div>
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
@@ -1281,7 +1329,7 @@ export default function App() {
 
                 <div className="flex flex-col gap-4 border-t border-[rgba(255,255,255,0.14)] pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-slate-300">
-                    Free scan + 40-min strategy call. You keep everything we
+                    Complimentary scan (valued at $10,000) + 40-min strategy call. You keep everything we
                     find. First in line when a spot opens.
                   </p>
                   <button type="submit" className={primaryButtonClass}>
@@ -1297,7 +1345,7 @@ export default function App() {
                       </h3>
                       <p className="text-sm leading-relaxed text-slate-100">
                         Your email draft is ready. If it didn't open, use the
-                        link below. We'll start your free Company Scan and reach
+                        link below. We'll start your AI Portfolio Reality Scan and reach
                         out within 48 hours.
                       </p>
                       <a
@@ -1357,7 +1405,7 @@ export default function App() {
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            Fully booked. Join the waitlist. Get your free scan now.
+            Fully booked. Join the waitlist. Get your complimentary scan now.
           </p>
         </footer>
       </main>

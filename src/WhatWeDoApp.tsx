@@ -1,149 +1,176 @@
-import BusinessAiPrimerSection from './components/BusinessAiPrimerSection'
-import SiteHeader from './components/SiteHeader'
-import WarpedGrid from './components/WarpedGrid'
+import BusinessAiPrimerSection from "./components/BusinessAiPrimerSection";
+import SiteHeader from "./components/SiteHeader";
+import WarpedGrid from "./components/WarpedGrid";
 
-const PRIMARY_EMAIL = 'advisory@enterprise-ai.consulting'
-const LINKEDIN_PROFILE = 'https://www.linkedin.com/in/mirzaasceric/'
-const PRIMARY_CTA = 'Apply for the AI Portfolio Reality Scan'
-const MECHANISM_CTA = 'See how the office works'
+const PRIMARY_EMAIL = "mirza@10x.ai";
+const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
+const PRIMARY_CTA = "Get Your Free Diagnostic";
+const MECHANISM_CTA = "See how it works";
 const primaryButtonClass =
-  'inline-flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:bg-[var(--accent-hover)] hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2'
+  "inline-flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:bg-[var(--accent-hover)] hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2";
 const secondaryButtonClass =
-  'inline-flex items-center justify-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]'
-const surfaceClass = 'border border-[var(--line)] bg-[var(--surface)]'
-const panelClass = `premium-panel ${surfaceClass} p-6`
-const cardClass = `premium-card ${surfaceClass} p-5`
-const listItemClass = `premium-card ${surfaceClass} px-4 py-3`
+  "inline-flex items-center justify-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]";
+const surfaceClass = "border border-[var(--line)] bg-[var(--surface)]";
+const panelClass = `premium-panel ${surfaceClass} p-6`;
+const cardClass = `premium-card ${surfaceClass} p-5`;
+const listItemClass = `premium-card ${surfaceClass} px-4 py-3`;
 const sectionLabelClass =
-  "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]"
+  "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]";
 const sectionHeadingClass =
-  'mt-4 max-w-[18ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl'
-const splitSectionClass = 'reveal section-divider-full py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8'
-const heroHighlightClass = `premium-card ${surfaceClass} p-4`
+  "mt-4 max-w-[18ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl";
+const splitSectionClass =
+  "reveal section-divider-full py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8";
+const heroHighlightClass = `premium-card ${surfaceClass} p-4`;
 const metaChipClass =
-  "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]"
+  "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]";
 
 const installBlocks = [
   {
-    title: 'Portfolio System',
+    title: "The master list",
     detail:
-      'One operating register for initiatives, workflows, owners, expected value, and risk across the whole AI portfolio.',
+      "Every AI project in one place. Who owns it, what it costs, what it's supposed to do, and whether it's actually doing it.",
   },
   {
-    title: 'Governance System',
+    title: "The rules",
     detail:
-      'Clear decision rights, stage gates, review forums, and control points shared by business, IT, and risk.',
+      "Who can approve what. When legal and security get involved. How decisions get made instead of debated for months.",
   },
   {
-    title: 'Measurement System',
+    title: "The scoreboard",
     detail:
-      'Baseline KPI, adoption, and value tracking so every initiative is judged against commercial outcomes, not optimism.',
+      "Hard numbers. Is this project making money, saving money, or wasting money? No opinions. Just math.",
   },
-]
+];
 
 const mechanismFlow = [
   {
-    step: '01',
-    title: 'Intake',
-    detail: 'Capture initiatives, owners, and workflow scope.',
+    step: "01",
+    title: "Collect",
+    detail:
+      "We find every AI project running in your company and write it down.",
   },
   {
-    step: '02',
-    title: 'Prioritize',
-    detail: 'Rank by impact, readiness, and risk.',
+    step: "02",
+    title: "Rank",
+    detail: "Which ones can actually make money? Those go first.",
   },
   {
-    step: '03',
-    title: 'Govern',
-    detail: 'Set decision rights, controls, and review points.',
+    step: "03",
+    title: "Set the rules",
+    detail: 'Who decides what. No more "I thought you were handling that."',
   },
   {
-    step: '04',
-    title: 'Oversee Delivery',
-    detail: 'Track build progress and production readiness.',
+    step: "04",
+    title: "Build and ship",
+    detail: "We track every project until it's live and working.",
   },
   {
-    step: '05',
-    title: 'Measure',
-    detail: 'Monitor KPI, adoption, and business value.',
+    step: "05",
+    title: "Measure",
+    detail: "Is it doing what we said it would? Numbers don't lie.",
   },
   {
-    step: '06',
-    title: 'Scale or Retire',
-    detail: 'Expand winners. Stop weak bets.',
+    step: "06",
+    title: "Double down or kill it",
+    detail: "Winners get more resources. Losers get shut down.",
   },
-]
+];
 
 const firstMonthDeliverables = [
-  "A single list of every AI project - who owns it, what it's worth, and how risky it is.",
-  'Clear recommendations: what to scale, what to stop, and what to do next.',
-  'A draft governance charter - who decides what, and when.',
-  'Baseline metrics so you can track whether AI is actually creating value.',
-  'A 90-day action plan that business, IT, and risk can all follow together.',
-]
+  "One list of every AI project. Who owns it. What it costs. What it's worth.",
+  "A straight answer: keep this, kill that, fix this first.",
+  "A simple doc: who approves what, and when. No more guessing.",
+  "Baseline numbers so you can tell if AI is making you money or burning it.",
+  "A 90-day plan your whole team can actually follow.",
+];
 
 const timeline = [
   {
-    title: 'First 30 Days',
-    detail: 'You have a decision pack: what you have, what matters, who decides, and what to do next.',
+    title: "First 30 Days",
+    detail:
+      "You know what you have, what matters, and exactly what to do next.",
   },
   {
-    title: 'First 90 Days',
-    detail: 'Governance is running, and 1-2 initiatives are moving on a clear path to production.',
+    title: "First 90 Days",
+    detail:
+      'Governance live. First projects in production or on a clear path to deployment.',
   },
   {
-    title: '6 Months',
-    detail: 'Several AI workflows are live, with visible impact on speed, cost, quality, and adoption.',
+    title: "6 Months",
+    detail:
+      "Multiple projects running in production. You can see the impact in your numbers.",
   },
   {
-    title: '12 Months',
-    detail: 'AI runs as a governed operating capability with measurable business returns.',
+    title: "12 Months",
+    detail:
+      "AI is part of how your company works. The board sees returns, not experiments.",
   },
-]
+];
 
 const proofEvidence = [
   {
-    title: 'Portfolio dashboard snapshot',
-    detail: 'Redacted board view of initiatives, owners, status, and risk concentration.',
+    title: "Portfolio dashboard",
+    detail:
+      "Every project, every owner, every status - one view your board can actually read.",
   },
   {
-    title: 'Use-case scoring model',
-    detail: 'Impact, readiness, and risk logic used to rank what scales and what stops.',
+    title: "Scoring model",
+    detail: "The math we use to decide what gets resources and what gets cut.",
   },
   {
-    title: 'Governance charter excerpt',
-    detail: 'Decision map showing who approves, who reviews, and when controls apply.',
+    title: "Decision rules",
+    detail: "Who approves what, who reviews, and when. No ambiguity.",
   },
-]
+];
 
 const proofVisuals = [
   {
-    title: 'Portfolio control dashboard',
-    src: '/proof-portfolio-dashboard.svg',
-    summary: 'Single view of active initiatives, owners, risk, and the next executive decision.',
+    title: "Portfolio dashboard",
+    src: "/proof-portfolio-dashboard.svg",
+    summary:
+      "Every project, who owns it, what's at risk, and what the board needs to decide next.",
   },
   {
-    title: 'Governance charter and decision map',
-    src: '/proof-governance-charter.svg',
-    summary: 'Clear ownership, escalation paths, and review points across business, IT, and risk.',
+    title: "Decision rules and ownership map",
+    src: "/proof-governance-charter.svg",
+    summary:
+      "Who owns what, who escalates to whom, and when reviews happen. No confusion.",
   },
   {
-    title: 'KPI tree and value baseline',
-    src: '/proof-kpi-tree.svg',
-    summary: 'Baseline metrics that connect AI activity to cost, speed, quality, and adoption outcomes.',
+    title: "Scorecard and baselines",
+    src: "/proof-kpi-tree.svg",
+    summary:
+      "The numbers that tell you if AI is saving money, making money, or wasting money.",
   },
-]
+];
 
 const heroHighlights = [
-  { label: '01', title: 'Portfolio register', detail: 'One view of initiatives, owners, and risk.' },
-  { label: '02', title: 'KPI baseline', detail: 'Track value, speed, quality, and adoption.' },
-  { label: '03', title: 'Decision pack', detail: 'Clear scale, stop, and governance actions.' },
-]
+  {
+    label: "01",
+    title: "The full picture",
+    detail: "Every AI project, who owns it, what it costs.",
+  },
+  {
+    label: "02",
+    title: "The scorecard",
+    detail: "Is it actually making money or saving time? Yes or no.",
+  },
+  {
+    label: "03",
+    title: "The action list",
+    detail: "What to keep, what to kill, what to fix first.",
+  },
+];
 
-const frameworkTags = ['NIST AI RMF', 'ISO/IEC 42001', 'OWASP LLM Top 10', 'EU AI Act ready']
+const frameworkTags = [
+  "NIST AI RMF",
+  "ISO/IEC 42001",
+  "OWASP LLM Top 10",
+  "EU AI Act — Aug 2, 2026 deadline",
+];
 
-const featuredProof = proofVisuals[0]
-const supportingProofs = proofVisuals.slice(1)
+const featuredProof = proofVisuals[0];
+const supportingProofs = proofVisuals.slice(1);
 
 export default function WhatWeDoApp() {
   return (
@@ -166,25 +193,29 @@ export default function WhatWeDoApp() {
         <section id="overview" className={`${splitSectionClass} gap-8`}>
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
-              <p className={sectionLabelClass}>ENTERPRISE AI TRANSFORMATION OFFICE</p>
+              <p className={sectionLabelClass}>WHAT WE DO</p>
               <h1 className="mt-6 max-w-[11ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
-                Stop running AI experiments.{' '}
+                You hired consultants. Bought tools.{" "}
                 <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-                  Start shipping AI results.
+                  Still no results.
                 </span>
               </h1>
               <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                We set up and run the operating system your AI program is missing. One portfolio. One decision
-                rhythm. One source of truth - so business, IT, and risk move together, and AI starts producing
-                measurable outcomes instead of more pilots.
+                Most companies spend six figures on AI and have nothing to show
+                for it. We come in, find what's broken, build what's missing,
+                and run it with you until the numbers move. No slide decks. No
+                "strategy sessions." Just working systems that make money or
+                save money.
               </p>
             </div>
 
             <div className="mt-8 space-y-4 lg:mt-auto lg:pt-10">
               <div className="flex flex-wrap gap-2">
-                <span className={metaChipClass}>AI Portfolio Reality Scan</span>
-                <span className={metaChipClass}>Decision Pack Guarantee</span>
-                <span className={metaChipClass}>Board-ready artifacts</span>
+                <span className={metaChipClass}>Complimentary scan (valued at $10,000)</span>
+                <span className={metaChipClass}>
+                  You keep everything we find
+                </span>
+                <span className={metaChipClass}>Results in 30 days</span>
               </div>
               <div className="flex flex-wrap items-center gap-5">
                 <a href="/#apply" className={primaryButtonClass}>
@@ -195,7 +226,8 @@ export default function WhatWeDoApp() {
                 </a>
               </div>
               <p className="text-sm text-slate-600">
-                For enterprises already investing in AI - with leadership pressure to show real returns.
+                For companies already spending on AI that have nothing to show
+                the board yet.
               </p>
             </div>
           </div>
@@ -208,26 +240,32 @@ export default function WhatWeDoApp() {
               </p>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className={metaChipClass}>AI Portfolio Reality Scan</span>
-              <span className={metaChipClass}>Keep the decision pack</span>
+              <span className={metaChipClass}>Complimentary scan (valued at $10,000)</span>
+              <span className={metaChipClass}>You keep everything</span>
             </div>
             <figure className="artifact-shell mt-6 border border-[var(--line)]">
               <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2">
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Board artifact preview
+                  Sample deliverable
                 </p>
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Redacted
+                  Client details hidden
                 </p>
               </div>
-              <img src={featuredProof.src} alt={featuredProof.title} className="h-auto w-full" loading="eager" />
+              <img
+                src={featuredProof.src}
+                alt={featuredProof.title}
+                className="h-auto w-full"
+                loading="eager"
+              />
             </figure>
             <h2 className="mt-5 text-2xl font-semibold leading-tight tracking-[-0.02em] [text-wrap:balance]">
-              Board-ready view of your AI portfolio.
+              One page that shows your board exactly where you stand.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              In 2-3 weeks, leadership gets one clear picture of active AI work, the biggest governance gaps, and
-              what to scale, stop, or fix next.
+              We look at everything you're running. In two weeks, you know
+              what's working, what's wasting money, and what to do about it. You
+              keep the whole thing whether you hire us or not.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
               {heroHighlights.map((item) => (
@@ -235,8 +273,12 @@ export default function WhatWeDoApp() {
                   <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
                     {item.label}
                   </p>
-                  <p className="mt-3 text-sm font-medium tracking-[-0.01em] text-slate-900">{item.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                  <p className="mt-3 text-sm font-medium tracking-[-0.01em] text-slate-900">
+                    {item.title}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                    {item.detail}
+                  </p>
                 </div>
               ))}
             </div>
@@ -245,39 +287,49 @@ export default function WhatWeDoApp() {
 
         <BusinessAiPrimerSection />
 
-        <section id="mechanism" className="reveal delay-4 section-divider-full py-14">
-          <p className={sectionLabelClass}>WHAT WE INSTALL</p>
+        <section
+          id="mechanism"
+          className="reveal delay-4 section-divider-full py-14"
+        >
+          <p className={sectionLabelClass}>WHAT WE BUILD INSIDE YOUR COMPANY</p>
           <h2 className={sectionHeadingClass}>
-            Three systems we install so AI becomes a managed operating capability.
+            Three things you're missing. We build all three.
           </h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            These are the standing layers of the operating system. Once they are in place, every initiative runs
-            through the same mechanism below.
+            Right now your AI projects are scattered across teams with no shared
+            plan. These three pieces fix that.
           </p>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-12">
             {installBlocks.map((block, index) => (
-              <article key={block.title} className={`h-full lg:col-span-4 ${cardClass}`}>
+              <article
+                key={block.title}
+                className={`h-full lg:col-span-4 ${cardClass}`}
+              >
                 <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
                   00{index + 1}
                 </p>
-                <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">{block.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-slate-700">{block.detail}</p>
+                <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
+                  {block.title}
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-slate-700">
+                  {block.detail}
+                </p>
               </article>
             ))}
           </div>
 
-          <div className={panelClass + ' mt-8'}>
+          <div className={panelClass + " mt-8"}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className={sectionLabelClass}>MECHANISM FLOW</p>
+                <p className={sectionLabelClass}>HOW IT WORKS</p>
                 <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-700">
-                  Once the systems are installed, every AI initiative follows the same lifecycle from first intake
-                  through scale or retirement.
+                  Every project goes through the same six steps. No exceptions.
+                  That's how nothing falls through the cracks.
                 </p>
               </div>
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-                6-step initiative lifecycle
+                6 steps, no shortcuts
               </p>
             </div>
 
@@ -290,14 +342,18 @@ export default function WhatWeDoApp() {
                   <div
                     className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-medium tracking-[0.12em] ${
                       index === mechanismFlow.length - 1
-                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
-                        : 'border-[var(--line)] bg-white text-[var(--muted)]'
+                        ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                        : "border-[var(--line)] bg-white text-[var(--muted)]"
                     } font-['IBM_Plex_Mono']`}
                   >
                     {item.step}
                   </div>
-                  <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">{item.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                  <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">
+                    {item.title}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                    {item.detail}
+                  </p>
                 </li>
               ))}
             </ol>
@@ -309,15 +365,19 @@ export default function WhatWeDoApp() {
                   <div
                     className={`relative z-[1] flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-medium tracking-[0.12em] ${
                       index === mechanismFlow.length - 1
-                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
-                        : 'border-[var(--line)] bg-white text-[var(--muted)]'
+                        ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                        : "border-[var(--line)] bg-white text-[var(--muted)]"
                     } font-['IBM_Plex_Mono']`}
                   >
                     {item.step}
                   </div>
                   <div className="mt-5 max-w-[16ch]">
-                    <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">{item.title}</p>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                    <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">
+                      {item.title}
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                      {item.detail}
+                    </p>
                   </div>
                 </li>
               ))}
@@ -329,7 +389,7 @@ export default function WhatWeDoApp() {
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
             <p className={sectionLabelClass}>FIRST 30 DAYS</p>
             <h2 className={sectionHeadingClass}>
-              In 30 days, you'll have the clarity to make real decisions.
+              In 30 days, you'll know exactly what to do.
             </h2>
             <ul className="mt-7 space-y-3 text-sm leading-relaxed text-slate-700 lg:mt-auto">
               {firstMonthDeliverables.map((item) => (
@@ -344,9 +404,16 @@ export default function WhatWeDoApp() {
             <p className={sectionLabelClass}>TIMELINE</p>
             <dl className="mt-5 flex flex-1 flex-col text-sm">
               {timeline.map((item) => (
-                <div key={item.title} className="flex-1 border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0">
-                  <dt className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">{item.title}</dt>
-                  <dd className="mt-2 leading-relaxed text-slate-800">{item.detail}</dd>
+                <div
+                  key={item.title}
+                  className="flex-1 border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0"
+                >
+                  <dt className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
+                    {item.title}
+                  </dt>
+                  <dd className="mt-2 leading-relaxed text-slate-800">
+                    {item.detail}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -358,12 +425,12 @@ export default function WhatWeDoApp() {
             <div>
               <p className={sectionLabelClass}>PROOF</p>
               <h2 className={sectionHeadingClass}>
-                We prove our work with real artifacts - not slide decks.
+                We show our work. Not slides.
               </h2>
               <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-slate-700">
-                We show working artifacts: dashboards, scorecards, KPI trees, and governance documents. Our delivery
-                aligns with NIST AI RMF, ISO/IEC 42001, OWASP LLM Top 10, and EU AI Act requirements, including
-                August 2, 2026 readiness where relevant.
+                You'll see real dashboards, real scorecards, and real documents
+                your board can use. Everything we build meets the compliance
+                standards that matter (NIST, ISO 42001, OWASP, EU AI Act).
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {frameworkTags.map((tag) => (
@@ -372,39 +439,80 @@ export default function WhatWeDoApp() {
                   </span>
                 ))}
               </div>
+              <div className="mt-4 space-y-1 text-[11px] leading-relaxed text-slate-400">
+                <p>
+                  <a href="https://www.nist.gov/artificial-intelligence/executive-order-safe-secure-and-trustworthy-artificial-intelligence" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">NIST AI Risk Management Framework</a>
+                  {" · "}
+                  <a href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">ISO/IEC 42001:2023</a>
+                  {" · "}
+                  <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">OWASP LLM Top 10</a>
+                  {" · "}
+                  <a href="https://artificialintelligenceact.eu/high-level-summary/" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">EU AI Act — high-risk obligations effective Aug 2, 2026</a>
+                </p>
+              </div>
             </div>
 
             <div className="mt-8 space-y-4 border-t border-[var(--line)] pt-5 lg:mt-auto">
               {proofEvidence.map((item) => (
-                <article key={item.title} className="border-b border-[var(--line)] pb-4 last:border-b-0 last:pb-0">
-                  <p className="text-sm font-medium tracking-[-0.01em] text-slate-950">{item.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                <article
+                  key={item.title}
+                  className="border-b border-[var(--line)] pb-4 last:border-b-0 last:pb-0"
+                >
+                  <p className="text-sm font-medium tracking-[-0.01em] text-slate-950">
+                    {item.title}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                    {item.detail}
+                  </p>
                 </article>
               ))}
             </div>
           </div>
 
           <div className="mt-8 grid gap-4 lg:col-span-7 lg:mt-0 lg:grid-cols-12">
-            <article className={`artifact-shell overflow-hidden lg:col-span-12 ${surfaceClass}`}>
-              <img src={featuredProof.src} alt={featuredProof.title} className="h-auto w-full" loading="lazy" />
+            <article
+              className={`artifact-shell overflow-hidden lg:col-span-12 ${surfaceClass}`}
+            >
+              <img
+                src={featuredProof.src}
+                alt={featuredProof.title}
+                className="h-auto w-full"
+                loading="lazy"
+              />
               <div className="border-t border-[var(--line)] px-5 py-4">
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Featured artifact
+                  Main deliverable
                 </p>
-                <p className="text-base font-semibold tracking-[-0.01em] text-slate-900">{featuredProof.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-slate-700">{featuredProof.summary}</p>
+                <p className="text-base font-semibold tracking-[-0.01em] text-slate-900">
+                  {featuredProof.title}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                  {featuredProof.summary}
+                </p>
               </div>
             </article>
 
             {supportingProofs.map((item) => (
-              <article key={item.title} className={`artifact-shell overflow-hidden lg:col-span-6 ${surfaceClass}`}>
-                <img src={item.src} alt={item.title} className="h-auto w-full" loading="lazy" />
+              <article
+                key={item.title}
+                className={`artifact-shell overflow-hidden lg:col-span-6 ${surfaceClass}`}
+              >
+                <img
+                  src={item.src}
+                  alt={item.title}
+                  className="h-auto w-full"
+                  loading="lazy"
+                />
                 <div className="border-t border-[var(--line)] px-4 py-3">
                   <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Supporting artifact
+                    Also included
                   </p>
-                  <p className="text-sm font-medium text-slate-900">{item.title}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.summary}</p>
+                  <p className="text-sm font-medium text-slate-900">
+                    {item.title}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                    {item.summary}
+                  </p>
                 </div>
               </article>
             ))}
@@ -418,9 +526,11 @@ export default function WhatWeDoApp() {
           >
             {PRIMARY_EMAIL}
           </a>
-          <p className="text-sm text-slate-600">One service. One starting point. One clear way to work together.</p>
+          <p className="text-sm text-slate-600">
+            Production-ready workflow in 90 days. Or we keep working for free.
+          </p>
         </footer>
       </main>
     </div>
-  )
+  );
 }

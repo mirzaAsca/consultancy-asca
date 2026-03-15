@@ -42,7 +42,25 @@
       "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/cartHook.svg\" -o logos-old/carthook.svg)",
       "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/releasit.svg\" -o logos-old/releasit.svg)",
       "Bash(curl -sL \"https://www.alenmalkoc.com/images/businesses/accentuate.svg\" -o logos-old/accentuate.svg)",
-      "Bash(npx tsc --noEmit --skipLibCheck)"
+      "Bash(npx tsc --noEmit --skipLibCheck)",
+      "Bash(grep -E '\\\\.\\(json|jsonl\\)$')",
+      "Bash(npx vite build)",
+      "WebSearch",
+      "WebFetch(domain:nicolalazzari.ai)",
+      "WebFetch(domain:stack.expert)",
+      "WebFetch(domain:www.leanware.co)",
+      "WebFetch(domain:uxcontinuum.com)",
+      "WebFetch(domain:consultingquest.com)",
+      "WebFetch(domain:www.rocketblocks.me)",
+      "WebFetch(domain:www.pricefx.com)",
+      "WebFetch(domain:www.orientsoftware.com)",
+      "WebFetch(domain:agentiveaiq.com)",
+      "WebFetch(domain:theprocesshacker.com)",
+      "WebFetch(domain:thepowermoves.com)",
+      "WebFetch(domain:www.mxmoritz.com)",
+      "Bash(git checkout src/App.tsx)",
+      "Bash(grep -n \"$\\\\|hourly\\\\|retainer\\\\|salary\\\\|per-head\\\\|engagement\\\\|cost\\\\|price\\\\|rate\" \"/Users/mirzaasceric/Desktop/consultancy-asca/3.Service System and Delivery Operating Model for an AI Implementation Consultancy.md\")",
+      "Bash(grep -n \"$\\\\|hourly\\\\|salary\\\\|retainer\\\\|per-head\\\\|engagement fee\\\\|pricing\" \"/Users/mirzaasceric/Desktop/consultancy-asca/1. Enterprise AI Transformation Demand, ROI, and Deal Design.md\")"
     ],
     "additionalDirectories": [
       "/Users/mirzaasceric/Desktop/consultancy-asca/src/assets"
