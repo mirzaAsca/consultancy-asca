@@ -148,7 +148,7 @@ const featureGroups = [
     features: [
       "Up to 20–30 Dedicated AI Engineers",
       "2–5x More Output Across the Company",
-      "Access to external team for: design, copywriting, SEO, development, and more",
+      "Access to our in-house expert team for: design, copywriting, SEO, development, and more",
     ],
   },
   {
@@ -166,11 +166,13 @@ const plans = [
   {
     name: "COMMAND ROOM",
     subtitle: "We run AI with your team",
-    oldPrice: "$30,800",
     price: "$22,000",
     period: "/mo",
     anchor: "Replaces a $350K–$600K/yr internal AI strategy hire",
-    anchorSource: { label: "Glassdoor 2026", url: "https://www.glassdoor.com/Salaries/chief-ai-officer-salary-SRCH_KO0,16.htm" },
+    anchorSource: {
+      label: "Glassdoor 2026",
+      url: "https://www.glassdoor.com/Salaries/chief-ai-officer-salary-SRCH_KO0,16.htm",
+    },
     scarcity: "0 spots available",
     description:
       "We sync with you every week and make decisions with your leaders. We define full strategy, fix what's broken, and train your team to run it without us",
@@ -178,15 +180,29 @@ const plans = [
     ctaDisabled: true,
     highlighted: true,
     includedGroups: 3,
+    valueStack: [
+      { name: "Fractional Chief AI Officer", value: "$15,000/mo" },
+      { name: "Weekly Executive Strategy Sessions", value: "$8,000/mo" },
+      { name: "AI Governance & Compliance Framework", value: "$5,000/mo" },
+      { name: "Revenue & Cost Dashboard", value: "$3,000/mo" },
+      { name: "Team Training & Enablement", value: "$4,000/mo" },
+    ],
+    valueStackOneTime: [
+      { name: "AI Portfolio Reality Scan", value: "$15,000" },
+    ],
+    totalMonthlyValue: "$35,000/mo",
+    savings: "You save $13,000/mo + $15,000 one-time",
   },
   {
-    name: "50X EMPIRE",
+    name: "10X EMPIRE",
     subtitle: "Your dedicated AI team",
-    oldPrice: "$406,000",
     price: "$290,000",
     period: "/mo",
     anchor: "$580/head vs. $5,000–$15,000/head industry average",
-    anchorSource: { label: "AI consulting benchmarks 2026", url: "https://www.leanware.co/insights/how-much-does-an-ai-consultant-cost" },
+    anchorSource: {
+      label: "AI consulting benchmarks 2026",
+      url: "https://www.leanware.co/insights/how-much-does-an-ai-consultant-cost",
+    },
     scarcity: "Coming Q3 2026",
     description:
       "Our team becomes your team. Up to 20–30 dedicated engineers building, shipping, and scaling AI across your entire organization.",
@@ -194,6 +210,18 @@ const plans = [
     ctaDisabled: false,
     highlighted: false,
     includedGroups: 4,
+    valueStack: [
+      { name: "20–30 Dedicated AI Engineers", value: "$250,000/mo" },
+      { name: "Full COMMAND ROOM Strategy Layer", value: "$35,000/mo" },
+      { name: "External Team (Design, Copy, SEO, Dev)", value: "$25,000/mo" },
+      { name: "Cross-Org Scaling & Integration", value: "$20,000/mo" },
+      { name: "Organization-Wide Leverage System", value: "$15,000/mo" },
+    ],
+    valueStackOneTime: [
+      { name: "AI Portfolio Reality Scan", value: "$15,000" },
+    ],
+    totalMonthlyValue: "$345,000/mo",
+    savings: "You save $55,000/mo + $15,000 one-time",
   },
   {
     name: "PORTFOLIO ENGINE",
@@ -204,11 +232,21 @@ const plans = [
     anchorSource: null,
     scarcity: "By invitation only",
     description:
-      "You own multiple companies. We run AI across all of them. Same system, shared learnings, one team running the whole thing. Hybrid pricing: base retainer plus performance kicker tied to verified value created.",
+      "You own multiple companies. We run AI across all of them. Same system, shared learnings, one team running the whole thing. Optional Hybrid pricing: base retainer plus performance kicker tied to verified value created.",
     cta: "Book a Portfolio Review",
     ctaDisabled: false,
     highlighted: false,
     includedGroups: 5,
+    valueStack: [
+      { name: "Everything in 10X EMPIRE", value: "" },
+      { name: "Multi-Entity Portfolio Governance", value: "" },
+      { name: "FlyRank Platform Integration", value: "" },
+      { name: "Dedicated Executive Partner", value: "" },
+      { name: "Custom SLA & Priority Support", value: "" },
+    ],
+    valueStackOneTime: [{ name: "AI Portfolio Reality Scan", value: "" }],
+    totalMonthlyValue: null,
+    savings: null,
   },
 ];
 
@@ -235,7 +273,7 @@ const faqItems = [
   },
   {
     q: "You're fully booked. Why should I join the waitlist?",
-    a: "We rotate clients as engagements mature. First-come, first-served. You get a complimentary AI Portfolio Reality Scan (valued at $10,000) and a 40-minute strategy call right away — so we already know your situation and can move fast when your turn comes.",
+    a: "We rotate clients as engagements mature. First-come, first-served. You get a complimentary AI Portfolio Reality Scan (valued at $15,000) and a 40-minute strategy call right away — so we already know your situation and can move fast when your turn comes.",
   },
   {
     q: "What if I have an emergency and can't wait?",
@@ -243,7 +281,7 @@ const faqItems = [
   },
   {
     q: "What if $22,000/month is too much?",
-    a: "Don't start there. Start with the complimentary AI Portfolio Reality Scan (valued at $10,000). Takes a week, costs nothing, and you keep everything we find. If the math works after that, we talk about the retainer. If not, you still walk away with a real plan. No hard feelings.",
+    a: "Don't start there. Start with the complimentary AI Portfolio Reality Scan (valued at $15,000). Takes a week, costs nothing, and you keep everything we find. If the math works after that, we talk about the retainer. If not, you still walk away with a real plan. No hard feelings.",
   },
   {
     q: "How fast will we see results?",
@@ -619,30 +657,59 @@ export default function App() {
           </h2>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             <article className={`${cardClass} flex flex-col`}>
-              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">56%</p>
+              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">
+                56%
+              </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-700">
                 of CEOs report no tangible return from their AI investments.
               </p>
               <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
-                <a href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500">PwC 2026 Global CEO Survey</a>
+                <a
+                  href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
+                >
+                  PwC 2026 Global CEO Survey
+                </a>
               </p>
             </article>
             <article className={`${cardClass} flex flex-col`}>
-              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">48%</p>
+              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">
+                48%
+              </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                of AI projects ever make it to production. The rest die as pilots.
+                of AI projects ever make it to production. The rest die as
+                pilots.
               </p>
               <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
-                <a href="https://www.gartner.com/en/newsroom/press-releases/2024-05-07-gartner-survey-finds-generative-ai-is-now-the-most-frequently-deployed-ai-solution-in-organizations" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500">Gartner 2024 AI in Organizations Survey</a>
+                <a
+                  href="https://www.gartner.com/en/newsroom/press-releases/2024-05-07-gartner-survey-finds-generative-ai-is-now-the-most-frequently-deployed-ai-solution-in-organizations"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
+                >
+                  Gartner 2024 AI in Organizations Survey
+                </a>
               </p>
             </article>
             <article className={`${cardClass} flex flex-col`}>
-              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">42%</p>
+              <p className="font-['IBM_Plex_Mono'] text-3xl font-semibold text-slate-950">
+                42%
+              </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                of enterprises scrapped AI initiatives last year — often due to overly aggressive timelines.
+                of enterprises scrapped AI initiatives last year — often due to
+                overly aggressive timelines.
               </p>
               <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
-                <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500">McKinsey State of AI 2025</a>
+                <a
+                  href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
+                >
+                  McKinsey State of AI 2025
+                </a>
               </p>
             </article>
           </div>
@@ -816,10 +883,10 @@ export default function App() {
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative flex flex-col border bg-[var(--surface)] p-6 ${
+                className={`relative flex flex-col border p-6 ${
                   plan.highlighted
-                    ? "border-[var(--accent)] shadow-[var(--shadow-panel)]"
-                    : "border-[var(--line)] shadow-[var(--shadow-card)]"
+                    ? "border-[var(--accent)] bg-[rgba(15,23,42,0.015)] shadow-[var(--shadow-panel)]"
+                    : "border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-card)]"
                 } transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:shadow-[0_18px_32px_rgba(15,23,42,0.08)]`}
               >
                 {plan.highlighted && (
@@ -828,47 +895,116 @@ export default function App() {
                   </span>
                 )}
 
+                {/* ── Header: subtitle + name ── */}
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
                   {plan.subtitle}
                 </p>
                 <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-[-0.02em] text-slate-950">
                   {plan.name}
                 </h3>
-                <div className="mt-3 flex flex-wrap items-end gap-x-3 gap-y-1">
-                  {plan.oldPrice ? (
-                    <span className="text-lg font-medium tracking-[-0.01em] text-slate-400 line-through decoration-[1.5px] decoration-slate-400">
-                      {plan.oldPrice}
+
+                {/* ── Price block (moved up) ── */}
+                <div className="mt-4">
+                  {plan.totalMonthlyValue && (
+                    <span className="text-base font-medium tracking-[-0.01em] text-slate-400 line-through decoration-[1.5px] decoration-slate-400">
+                      {plan.totalMonthlyValue}
                     </span>
-                  ) : null}
-                  <p className="text-3xl font-semibold tracking-[-0.02em] text-slate-950">
-                    {plan.price}
+                  )}
+                  <div
+                    className={`${plan.totalMonthlyValue ? "mt-1" : ""} inline-flex items-baseline gap-1 ${plan.price === "Custom" ? "border border-[var(--accent)] px-2.5 py-1" : "bg-[var(--accent)] px-2.5 py-1"}`}
+                  >
+                    <span
+                      className={`text-2xl font-semibold tracking-[-0.02em] ${plan.price === "Custom" ? "text-[var(--accent)]" : "text-white"}`}
+                    >
+                      {plan.price}
+                    </span>
                     {plan.period && (
-                      <span className="text-lg font-normal text-slate-500">
+                      <span
+                        className={`text-sm font-normal ${plan.price === "Custom" ? "text-[var(--accent)]/60" : "text-white/70"}`}
+                      >
                         {plan.period}
                       </span>
                     )}
+                  </div>
+                  {plan.savings && (
+                    <p className="mt-1.5 font-['IBM_Plex_Mono'] text-[11px] font-medium text-[var(--accent)]">
+                      {plan.savings}
+                    </p>
+                  )}
+                  <p className="mt-2 font-['IBM_Plex_Mono'] text-[11px] font-medium text-slate-500">
+                    {plan.anchor}
+                    {plan.anchorSource ? (
+                      <>
+                        {" — "}
+                        <a
+                          href={plan.anchorSource.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline decoration-slate-300 underline-offset-2 hover:text-slate-700 hover:decoration-slate-500"
+                        >
+                          {plan.anchorSource.label}
+                        </a>
+                      </>
+                    ) : null}
                   </p>
                 </div>
-                <p className="mt-1.5 font-['IBM_Plex_Mono'] text-[11px] font-medium text-slate-500">
-                  {plan.anchor}
-                  {plan.anchorSource ? (
-                    <>
-                      {" — "}
-                      <a href={plan.anchorSource.url} target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-700 hover:decoration-slate-500">
-                        {plan.anchorSource.label}
-                      </a>
-                    </>
-                  ) : null}
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600 lg:min-h-[7.5rem]">
-                  {plan.description}
-                </p>
-                <span className="mt-3 inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  {plan.scarcity}
-                </span>
+
+                {/* ── Description + scarcity ── */}
+                <div className="mt-4 border-t border-[var(--line)] pt-4">
+                  <p className="text-sm leading-relaxed text-slate-600">
+                    {plan.description}
+                  </p>
+                  <span className="mt-3 inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                    {plan.scarcity}
+                  </span>
+                </div>
+
+                {/* ── Value stack ── */}
+                {plan.valueStack ? (
+                  <div className="mt-4 border-t border-[var(--line)] pt-4">
+                    <p className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                      What you'd pay separately
+                    </p>
+                    <ul className="mt-3 space-y-1.5">
+                      {plan.valueStack.map((item) => (
+                        <li
+                          key={item.name}
+                          className="flex items-start justify-between gap-3 text-[13px]"
+                        >
+                          <span className="text-slate-950">{item.name}</span>
+                          {item.value && (
+                            <span className="shrink-0 font-['IBM_Plex_Mono'] text-[12px] text-slate-700">
+                              {item.value}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    {plan.valueStackOneTime ? (
+                      <div className="mt-2 border-t border-dashed border-[var(--line)] pt-2">
+                        <p className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                          + Included one-time
+                        </p>
+                        {plan.valueStackOneTime.map((item) => (
+                          <div
+                            key={item.name}
+                            className="mt-1.5 flex items-start justify-between gap-3 text-[13px]"
+                          >
+                            <span className="text-slate-950">{item.name}</span>
+                            {item.value && (
+                              <span className="shrink-0 font-['IBM_Plex_Mono'] text-[12px] text-slate-700">
+                                {item.value}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
 
                 {/* ── Feature groups ── */}
-                <div className="mt-6 flex-1 border-t border-[var(--line)] pt-5">
+                <div className="mt-4 flex-1 border-t border-[var(--line)] pt-4">
                   {featureGroups.map((group, groupIndex) => {
                     const included = groupIndex < plan.includedGroups;
                     return (
@@ -1146,12 +1282,14 @@ export default function App() {
                     Tell us about your company and what's happening with AI
                     right now. We'll come back with a clear map of where the
                     real opportunities are — and you'll be first in line when a
-                    spot opens. Complimentary scan valued at $10,000.
+                    spot opens. Complimentary scan valued at $15,000.
                   </p>
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2 lg:mt-auto">
                   <span className={metaChipClass}>2-minute form</span>
-                  <span className={metaChipClass}>Complimentary scan (valued at $10,000) + 40-min call</span>
+                  <span className={metaChipClass}>
+                    Complimentary scan (valued at $15,000) + 40-min call
+                  </span>
                   <span className={metaChipClass}>Results in ~1 week</span>
                 </div>
               </div>
@@ -1199,7 +1337,7 @@ export default function App() {
                   </p>
                   <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-100">
                     Tell us where you are with AI. We'll show you where the
-                    money is — and save your spot. Scan valued at $10,000.
+                    money is — and save your spot. Scan valued at $15,000.
                   </p>
                 </div>
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
@@ -1329,8 +1467,9 @@ export default function App() {
 
                 <div className="flex flex-col gap-4 border-t border-[rgba(255,255,255,0.14)] pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-slate-300">
-                    Complimentary scan (valued at $10,000) + 40-min strategy call. You keep everything we
-                    find. First in line when a spot opens.
+                    Complimentary scan (valued at $15,000) + 40-min strategy
+                    call. You keep everything we find. First in line when a spot
+                    opens.
                   </p>
                   <button type="submit" className={primaryButtonClass}>
                     {PRIMARY_CTA}
@@ -1345,8 +1484,8 @@ export default function App() {
                       </h3>
                       <p className="text-sm leading-relaxed text-slate-100">
                         Your email draft is ready. If it didn't open, use the
-                        link below. We'll start your AI Portfolio Reality Scan and reach
-                        out within 48 hours.
+                        link below. We'll start your AI Portfolio Reality Scan
+                        and reach out within 48 hours.
                       </p>
                       <a
                         href={buildMailto(form)}

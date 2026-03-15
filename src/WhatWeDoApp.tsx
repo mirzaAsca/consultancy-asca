@@ -4,7 +4,6 @@ import WarpedGrid from "./components/WarpedGrid";
 
 const PRIMARY_EMAIL = "mirza@10x.ai";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
-const PRIMARY_CTA = "Get Your Free Diagnostic";
 const MECHANISM_CTA = "See how it works";
 const primaryButtonClass =
   "inline-flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:bg-[var(--accent-hover)] hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2";
@@ -93,7 +92,7 @@ const timeline = [
   {
     title: "First 90 Days",
     detail:
-      'Governance live. First projects in production or on a clear path to deployment.',
+      "Governance live. First projects in production or on a clear path to deployment.",
   },
   {
     title: "6 Months",
@@ -209,17 +208,34 @@ export default function WhatWeDoApp() {
               </p>
             </div>
 
-            <div className="mt-8 space-y-4 lg:mt-auto lg:pt-10">
-              <div className="flex flex-wrap gap-2">
-                <span className={metaChipClass}>Complimentary scan (valued at $10,000)</span>
-                <span className={metaChipClass}>
-                  You keep everything we find
-                </span>
-                <span className={metaChipClass}>Results in 30 days</span>
+            <div className="mt-8 space-y-5 lg:mt-auto lg:pt-10">
+              <div className="border border-[var(--line)] bg-[var(--surface)] p-4">
+                <p className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                  Complimentary with every waitlist signup
+                </p>
+                <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="text-2xl font-semibold tracking-[-0.02em] text-slate-950">
+                    AI Portfolio Reality Scan
+                  </span>
+                  <span className="font-['IBM_Plex_Mono'] text-sm font-medium text-slate-400 line-through decoration-[1.5px]">
+                    $15,000
+                  </span>
+                  <span className="inline-flex items-baseline gap-1 bg-[var(--accent)] px-2 py-0.5 text-sm font-semibold text-white">
+                    $0
+                  </span>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  Full diagnostic of every AI project in your company. You keep everything we find — whether you hire us or not.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className={metaChipClass}>40-min strategy call</span>
+                  <span className={metaChipClass}>Results in ~2 weeks</span>
+                  <span className={metaChipClass}>You keep everything</span>
+                </div>
               </div>
               <div className="flex flex-wrap items-center gap-5">
-                <a href="/#apply" className={primaryButtonClass}>
-                  {PRIMARY_CTA}
+                <a href="/#scan" className={primaryButtonClass}>
+                  Get Your $15,000 Scan — Free
                 </a>
                 <a href="#mechanism" className={secondaryButtonClass}>
                   {MECHANISM_CTA}
@@ -232,16 +248,15 @@ export default function WhatWeDoApp() {
             </div>
           </div>
 
-          <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
+          <aside className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}>
+            <span className="absolute -top-3 right-6 z-10 bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white shadow-sm">
+              Valued at $15,000 — yours free
+            </span>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className={sectionLabelClass}>START HERE</p>
               <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
                 2-3 weeks
               </p>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className={metaChipClass}>Complimentary scan (valued at $10,000)</span>
-              <span className={metaChipClass}>You keep everything</span>
             </div>
             <figure className="artifact-shell mt-6 border border-[var(--line)]">
               <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2">
@@ -441,13 +456,41 @@ export default function WhatWeDoApp() {
               </div>
               <div className="mt-4 space-y-1 text-[11px] leading-relaxed text-slate-400">
                 <p>
-                  <a href="https://www.nist.gov/artificial-intelligence/executive-order-safe-secure-and-trustworthy-artificial-intelligence" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">NIST AI Risk Management Framework</a>
+                  <a
+                    href="https://www.nist.gov/artificial-intelligence/executive-order-safe-secure-and-trustworthy-artificial-intelligence"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
+                  >
+                    NIST AI Risk Management Framework
+                  </a>
                   {" · "}
-                  <a href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">ISO/IEC 42001:2023</a>
+                  <a
+                    href="https://www.iso.org/standard/81230.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
+                  >
+                    ISO/IEC 42001:2023
+                  </a>
                   {" · "}
-                  <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">OWASP LLM Top 10</a>
+                  <a
+                    href="https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
+                  >
+                    OWASP LLM Top 10
+                  </a>
                   {" · "}
-                  <a href="https://artificialintelligenceact.eu/high-level-summary/" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">EU AI Act — high-risk obligations effective Aug 2, 2026</a>
+                  <a
+                    href="https://artificialintelligenceact.eu/high-level-summary/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
+                  >
+                    EU AI Act — high-risk obligations effective Aug 2, 2026
+                  </a>
                 </p>
               </div>
             </div>
