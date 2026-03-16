@@ -1,3 +1,5 @@
+import { useState, useCallback } from 'react'
+
 const panelClass = 'border border-[var(--line)] bg-[var(--surface)] p-6'
 const cardClass = 'border border-[var(--line)] bg-[var(--surface-soft)] p-4'
 const sectionLabelClass =
@@ -164,52 +166,52 @@ const toolComparison: ToolComparison[] = [
 const knowledgeLayers: KnowledgeLayer[] = [
   {
     label: 'Layer 01',
-    title: 'Product & service knowledge',
+    title: 'What you sell',
     items: [
-      'Every feature, capability, and limitation documented',
-      'How it solves customer problems, step by step',
-      'Installation, setup, and usage guides',
-      'Pipeline to keep it current as the product changes',
+      'Every feature, limitation, and edge case — written down',
+      'How it actually solves customer problems, step by step',
+      'Setup guides, usage docs, and troubleshooting',
+      'A pipeline that keeps it current every time the product changes',
     ],
   },
   {
     label: 'Layer 02',
-    title: 'Department & team knowledge',
+    title: 'What each team knows',
     items: [
-      'Development: codebase documentation, architecture decisions, technical debt',
-      'Legal: contracts, compliance requirements, review procedures',
-      'Marketing/SEO: brand guidelines, content strategy, keyword data',
+      'Dev: codebase docs, architecture decisions, technical debt',
+      'Legal: contracts, compliance rules, review procedures',
+      'Marketing: brand guidelines, content strategy, keyword data',
       'Sales: playbooks, objection handling, competitive intel',
     ],
   },
   {
     label: 'Layer 03',
-    title: 'Organization knowledge',
+    title: 'How the company runs',
     items: [
-      'Complete company architecture: positions, roles, duties',
-      'Decision-making chains and escalation paths',
-      'Cross-department dependencies and handoff points',
-      'Policies, SOPs, and institutional knowledge',
+      'Who does what — every position, role, and responsibility',
+      'Who decides what and who to escalate to',
+      'Which teams depend on each other and where handoffs break',
+      'Policies, SOPs, and the stuff that only lives in people\'s heads',
     ],
   },
   {
     label: 'Layer 04',
-    title: 'Task & progress data',
+    title: 'What\'s getting done',
     items: [
-      'All project tracking and task management data',
-      'Sprint histories, velocity, and completion patterns',
-      'Blockers, dependencies, and resolution timelines',
-      'Resource allocation and capacity data',
+      'Every project, task, and deadline — in one place',
+      'What shipped, what\'s stuck, and what\'s overdue',
+      'Blockers, dependencies, and who\'s waiting on who',
+      'Where people are spending their time vs. where they should be',
     ],
   },
   {
     label: 'Layer 05',
-    title: 'Communication data',
+    title: 'What people are saying',
     items: [
-      'Conversations across Slack, Teams, email, and support channels',
-      'Meeting notes, decisions, and action items',
-      'Customer feedback and support ticket patterns',
-      'Internal Q&A and tribal knowledge exchanges',
+      'Slack, Teams, email, support tickets — all of it',
+      'Meeting notes, decisions made, and action items nobody followed up on',
+      'Customer feedback and the patterns hiding in support tickets',
+      'The questions people keep asking that nobody wrote the answer to',
     ],
   },
 ]
@@ -244,16 +246,6 @@ const schoolSteps: PrimerStep[] = [
   },
   {
     step: '02',
-    eyebrow: 'WHICH TOOL',
-    title: 'Automation first. AI second. Most of the time, automation wins.',
-    detail:
-      'Use automation when the work follows clear rules. Use AI when the work needs judgment. Plain automation is cheaper and more reliable. AI is the second choice, not the first.',
-    comparisonTable: toolComparison,
-    tags: ['Automation first', 'AI when judgment is needed', 'Numbers decide'],
-    closing: 'AI can now handle work that used to require expensive experts - but only when the math justifies it.',
-  },
-  {
-    step: '03',
     eyebrow: 'FOUR LEVERS',
     title: 'Sell more. Spend less. Reduce risk. Charge more.',
     detail:
@@ -264,14 +256,24 @@ const schoolSteps: PrimerStep[] = [
     closing: 'If a project doesn\'t help you sell more, spend less, reduce risk, or charge more - it\'s not a business case yet.',
   },
   {
+    step: '03',
+    eyebrow: 'WHICH TOOL',
+    title: 'Automation first. AI second.',
+    detail:
+      'Use automation when the work follows clear rules. Use AI when the work needs judgment. Plain automation is cheaper and more reliable. AI is the second choice, not the first.',
+    comparisonTable: toolComparison,
+    tags: ['Automation first', 'AI when judgment is needed', 'Numbers decide'],
+    closing: 'AI can now handle work that used to require expensive experts - but only when the math justifies it.',
+  },
+  {
     step: '04',
     eyebrow: 'THE FOUNDATION',
-    title: 'None of this works without a centralized knowledge base.',
+    title: 'Your AI is only as smart as what you feed it.',
     detail:
-      'Data is the core of every metric-based and decision-based system. Before AI can help you sell more, spend less, or reduce risk — it needs to understand your company. That means collecting, organizing, and centralizing everything your business knows into one place your AI systems can actually use.',
+      'Before AI can sell more, spend less, or reduce risk — it has to understand your company. That means collecting everything your business knows and putting it in one place your AI systems can actually use. Skip this step and nothing else works.',
     knowledgeLayers,
-    tags: ['Data readiness gate', 'Hard prerequisite', 'AI fails without this'],
-    closing: 'Research is unambiguous: data quality is the #1 pilot-killer (Forrester), and if data access is blocked, the project cannot be top priority — it\'s a hard gate, not a soft factor. IBM notes that skipping data understanding causes unexpected failures in every downstream phase. This isn\'t optional infrastructure — it\'s the foundation everything else depends on.',
+    tags: ['Hard prerequisite', 'AI fails without this'],
+    closing: 'Data quality is the #1 reason AI pilots fail (Forrester). If the data isn\'t there, the project doesn\'t start — that\'s a hard gate, not a soft suggestion. IBM says the same thing: skip data prep and everything downstream breaks. This isn\'t optional infrastructure. It\'s the thing everything else depends on.',
   },
   {
     step: '05',
@@ -282,6 +284,79 @@ const schoolSteps: PrimerStep[] = [
     sequence: integrationSteps,
   },
 ]
+
+// ── Disclosure primitive ──
+
+function ChevronIcon({ open, accent }: { open: boolean; accent?: boolean }) {
+  return (
+    <span className={`inline-flex items-center justify-center border transition-[border-color,background-color] duration-300 ease-in-out ${
+      accent
+        ? open
+          ? 'border-[var(--accent)] bg-[var(--accent)]'
+          : 'border-[var(--line)] bg-transparent'
+        : 'border-transparent bg-transparent'
+    } ${accent ? 'h-9 w-9' : 'h-5 w-5'}`}>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        className={`shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'rotate-180' : ''} ${
+          accent
+            ? open ? 'h-4 w-4 text-white' : 'h-4 w-4 text-[var(--muted)]'
+            : 'h-5 w-5 text-slate-400'
+        }`}
+      >
+        <path
+          d="M5 7.5L10 12.5L15 7.5"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="1.8"
+        />
+      </svg>
+    </span>
+  )
+}
+
+function Disclosure({
+  open,
+  onToggle,
+  header,
+  children,
+  className = '',
+  accent = false,
+}: {
+  open: boolean
+  onToggle: () => void
+  header: React.ReactNode
+  children: React.ReactNode
+  className?: string
+  accent?: boolean
+}) {
+  return (
+    <div className={className}>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full cursor-pointer items-center justify-between gap-4 text-left"
+      >
+        {header}
+        <ChevronIcon open={open} accent={accent} />
+      </button>
+      <div
+        className="grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none"
+        style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
+      >
+        <div className="overflow-hidden" style={{ minHeight: 0 }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Static sub-components ──
 
 function StepConnector() {
   return (
@@ -406,10 +481,10 @@ function KnowledgeLayerDiagram({ layers }: { layers: KnowledgeLayer[] }) {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-            KNOWLEDGE ARCHITECTURE
+            WHAT YOUR AI NEEDS TO KNOW
           </p>
           <p className="mt-2 text-sm leading-relaxed text-slate-700">
-            Five layers of company knowledge that feed your AI systems with real context.
+            Five layers of company knowledge. Without these, your AI is guessing.
           </p>
         </div>
         <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
@@ -428,12 +503,12 @@ function KnowledgeLayerDiagram({ layers }: { layers: KnowledgeLayer[] }) {
               CENTRALIZED KNOWLEDGE BASE
             </p>
             <p className="mt-1 text-base font-semibold tracking-[-0.01em] text-slate-950">
-              One place your AI understands the whole company.
+              One place that knows everything about your company.
             </p>
           </div>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-slate-700">
-          Every AI system — from customer-facing agents to internal tools — pulls context from this single, always-updated source. Without it, your AI guesses. With it, your AI knows.
+          Every AI system you build — customer-facing or internal — pulls from this single source. No hub, no context. No context, no results.
         </p>
       </div>
 
@@ -487,10 +562,10 @@ function KnowledgeLayerDiagram({ layers }: { layers: KnowledgeLayer[] }) {
             ALWAYS RUNNING
           </p>
           <p className="mt-2 text-sm font-semibold tracking-[-0.01em] text-slate-950">
-            Continuous sync pipeline
+            Always updating. Not a one-time export.
           </p>
           <p className="mt-2 text-sm leading-relaxed text-slate-700">
-            Not a one-time export. A live pipeline that keeps every layer current as your company changes — new products, new people, new decisions.
+            A live pipeline that keeps every layer current as your company changes. New products, new people, new decisions — your AI knows about them the same day.
           </p>
         </article>
       </div>
@@ -508,7 +583,19 @@ function KnowledgeLayerDiagram({ layers }: { layers: KnowledgeLayer[] }) {
   )
 }
 
-function LeverImpactMap({ rows, bonus }: { rows: LeverFlow[]; bonus: BonusGain }) {
+// ── Level 2: Lever flows with sub-accordion ──
+
+function LeverImpactMap({
+  rows,
+  bonus,
+  openLever,
+  toggleLever,
+}: {
+  rows: LeverFlow[]
+  bonus: BonusGain
+  openLever: number
+  toggleLever: (index: number) => void
+}) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -525,145 +612,169 @@ function LeverImpactMap({ rows, bonus }: { rows: LeverFlow[]; bonus: BonusGain }
         </p>
       </div>
 
-      {rows.map((row) => (
-        <article key={row.lever} className="space-y-4 border border-[var(--line)] bg-white/80 p-4">
-          <div className="grid gap-3 xl:grid-cols-[160px_auto_minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-start">
-            <div>
+      {rows.map((row, index) => (
+        <Disclosure
+          key={row.lever}
+          open={openLever === index}
+          onToggle={() => toggleLever(index)}
+          className="border border-[var(--line)] bg-white/80 p-4"
+          header={
+            <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
                 {row.lever}
               </p>
-              <h4 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">{row.title}</h4>
+              <h4 className="text-base font-semibold tracking-[-0.01em] text-slate-950">{row.title}</h4>
             </div>
-
-            <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
-              <span className="text-lg">-&gt;</span>
-            </div>
-
-            <div className="border border-[var(--line)] bg-white p-4">
-              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                Intervention
-              </p>
-              <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
-                {row.interventions.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
-              <span className="text-lg">-&gt;</span>
-            </div>
-
-            <div className="border border-[var(--line)] bg-white p-4">
-              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                Outcome
-              </p>
-              <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
-                {row.effects.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {row.clarifier ? (
-            <div className={moduleAccentPanelClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-                {row.clarifier.eyebrow}
-              </p>
-              <h5 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">
-                {row.clarifier.title}
-              </h5>
-
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <article className="border border-[var(--line)] bg-white p-4">
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Common mistake
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.commonAssumption}</p>
-                </article>
-                <article className="border border-[var(--accent)] bg-white p-4">
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-                    Correct model
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.correctUse}</p>
-                </article>
+          }
+        >
+          <div className="mt-4 space-y-4">
+            <div className="grid gap-3 xl:grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-start">
+              <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
+                <span className="text-lg">-&gt;</span>
               </div>
 
-              <p className="mt-4 border-t border-[var(--line)] pt-4 text-sm font-medium tracking-[-0.01em] text-slate-950">
-                {row.clarifier.kicker}
-              </p>
+              <div className="border border-[var(--line)] bg-white p-4">
+                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                  Intervention
+                </p>
+                <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+                  {row.interventions.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                {row.clarifier.outcomes.map((item) => (
-                  <article key={item.title} className={cardClass}>
-                    {item.label ? (
-                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                        {item.label}
-                      </p>
-                    ) : null}
-                    <h6 className="mt-3 text-sm font-semibold tracking-[-0.01em] text-slate-950">{item.title}</h6>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+              <div className="hidden items-center justify-center text-[var(--muted)] xl:flex">
+                <span className="text-lg">-&gt;</span>
+              </div>
+
+              <div className="border border-[var(--line)] bg-white p-4">
+                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                  Outcome
+                </p>
+                <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+                  {row.effects.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {row.clarifier ? (
+              <div className={moduleAccentPanelClass}>
+                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+                  {row.clarifier.eyebrow}
+                </p>
+                <h5 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">
+                  {row.clarifier.title}
+                </h5>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <article className="border border-[var(--line)] bg-white p-4">
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                      Common mistake
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.commonAssumption}</p>
                   </article>
-                ))}
+                  <article className="border border-[var(--accent)] bg-white p-4">
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+                      Correct model
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-700">{row.clarifier.correctUse}</p>
+                  </article>
+                </div>
+
+                <p className="mt-4 border-t border-[var(--line)] pt-4 text-sm font-medium tracking-[-0.01em] text-slate-950">
+                  {row.clarifier.kicker}
+                </p>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {row.clarifier.outcomes.map((item) => (
+                    <article key={item.title} className={cardClass}>
+                      {item.label ? (
+                        <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                          {item.label}
+                        </p>
+                      ) : null}
+                      <h6 className="mt-3 text-sm font-semibold tracking-[-0.01em] text-slate-950">{item.title}</h6>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                    </article>
+                  ))}
+                </div>
+                <div className="mt-4 border-t border-[var(--line)] pt-3 text-[11px] leading-relaxed text-slate-400">
+                  Sources:{' '}
+                  <a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=64700" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">Harvard/BCG 2023</a>
+                  {' · '}
+                  <a href="https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">GitHub Copilot Research</a>
+                  {' · '}
+                  <a href="https://www.nber.org/system/files/working_papers/w31161/w31161.pdf" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">Stanford/MIT NBER</a>
+                </div>
               </div>
-              <div className="mt-4 border-t border-[var(--line)] pt-3 text-[11px] leading-relaxed text-slate-400">
-                Sources:{' '}
-                <a href="https://www.hbs.edu/faculty/Pages/item.aspx?num=64700" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">Harvard/BCG 2023</a>
-                {' · '}
-                <a href="https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">GitHub Copilot Research</a>
-                {' · '}
-                <a href="https://www.nber.org/system/files/working_papers/w31161/w31161.pdf" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">Stanford/MIT NBER</a>
-              </div>
-            </div>
-          ) : null}
-        </article>
+            ) : null}
+          </div>
+        </Disclosure>
       ))}
 
-      <div className={moduleAccentPanelClass}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
+      {/* Bonus lever 04 — also collapsible */}
+      <Disclosure
+        open={openLever === rows.length}
+        onToggle={() => toggleLever(rows.length)}
+        className={moduleAccentPanelClass}
+        header={
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
             <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
               {bonus.lever}
             </p>
-            <h4 className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">{bonus.title}</h4>
-            <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-slate-700">{bonus.detail}</p>
+            <h4 className="text-base font-semibold tracking-[-0.01em] text-slate-950">{bonus.title}</h4>
+            <span className={`hidden sm:inline-flex ${metaChipClass}`}>Usually follows value gains</span>
           </div>
-          <span className={metaChipClass}>Usually follows value gains</span>
-        </div>
+        }
+      >
+        <div className="mt-4">
+          <p className="max-w-[62ch] text-sm leading-relaxed text-slate-700">{bonus.detail}</p>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          {bonus.proofPoints.map((item) => (
-            <article key={item} className={cardClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                Why price can increase
-              </p>
-              <p className="mt-3 text-sm font-medium tracking-[-0.01em] text-slate-950">{item}</p>
-            </article>
-          ))}
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {bonus.proofPoints.map((item) => (
+              <article key={item} className={cardClass}>
+                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                  Why price can increase
+                </p>
+                <p className="mt-3 text-sm font-medium tracking-[-0.01em] text-slate-950">{item}</p>
+              </article>
+            ))}
+          </div>
         </div>
-      </div>
+      </Disclosure>
     </div>
   )
 }
 
+// ── Main section ──
+
 export default function BusinessAiPrimerSection() {
+  const [openStep, setOpenStep] = useState<number>(0)
+  const [openLever, setOpenLever] = useState<number>(-1)
+
+  const toggleStep = useCallback((index: number) => {
+    setOpenStep((prev) => (prev === index ? -1 : index))
+    setOpenLever(-1)
+  }, [])
+
+  const toggleLever = useCallback((index: number) => {
+    setOpenLever((prev) => (prev === index ? -1 : index))
+  }, [])
+
   return (
     <section id="ai-economics" className="reveal delay-2 section-divider-full py-14 sm:py-16">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className={sectionLabelClass}>HOW AI ACTUALLY MAKES YOU MONEY</p>
-          <h2 className={sectionHeadingClass}>The only four ways AI creates real value.</h2>
+          <h2 className={sectionHeadingClass}>Short lesson on AI economics.</h2>
         </div>
         <div className="max-w-[44ch] space-y-3">
           <p className="text-sm leading-relaxed text-slate-700">
             This is how we decide where AI belongs, where automation wins, and what ships first.
           </p>
-          {/* <div className="flex flex-wrap gap-2">
-            <span className={metaChipClass}>4 steps</span>
-            <span className={metaChipClass}>Automation first</span>
-            <span className={metaChipClass}>Biggest wins first</span>
-          </div> */}
         </div>
       </div>
 
@@ -674,83 +785,104 @@ export default function BusinessAiPrimerSection() {
           const bonus = step.bonusGain
           const sequence = step.sequence
           const summaryItems = step.summaryItems
+          const isOpen = openStep === index
 
           return (
             <li key={step.step}>
-              <article className={panelClass}>
-                <div className="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)] xl:items-start">
-                  <div className="xl:border-r xl:border-[var(--line)] xl:pr-6">
-                    <div className="flex flex-wrap items-center gap-3">
+              <Disclosure
+                open={isOpen}
+                onToggle={() => toggleStep(index)}
+                className={panelClass}
+                accent
+                header={
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
                       <span className={stepBadgeClass}>{step.step}</span>
                       <p className={sectionLabelClass}>{step.eyebrow}</p>
                     </div>
-                    <h3 className="mt-5 text-2xl font-semibold leading-tight tracking-[-0.02em] [text-wrap:balance]">
+                    <h3 className="text-lg font-semibold leading-tight tracking-[-0.02em] sm:text-xl">
                       {step.title}
                     </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-700">{step.detail}</p>
-                    {summaryItems ? (
-                      <ul className="mt-5 space-y-2 border-t border-[var(--line)] pt-4 text-sm leading-relaxed text-slate-950">
-                        {summaryItems.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    ) : null}
-                    {step.tags ? (
-                      <div className="mt-5 flex flex-wrap gap-2">
-                        {step.tags.map((tag) => (
-                          <span key={tag} className={metaChipClass}>
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    ) : null}
                   </div>
+                }
+              >
+                <div className="pt-5">
+                  <div className="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)] xl:items-start">
+                    <div className="xl:border-r xl:border-[var(--line)] xl:pr-6">
+                      <p className="text-sm leading-relaxed text-slate-700">{step.detail}</p>
+                      {summaryItems ? (
+                        <ul className="mt-5 space-y-2 border-t border-[var(--line)] pt-4 text-sm leading-relaxed text-slate-950">
+                          {summaryItems.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      {step.tags ? (
+                        <div className="mt-5 flex flex-wrap gap-2">
+                          {step.tags.map((tag) => (
+                            <span key={tag} className={metaChipClass}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
 
-                  <div className="space-y-5">
-                    {cards && step.gridClass ? <CardGrid cards={cards} gridClass={step.gridClass} /> : null}
-                    {step.comparisonTable ? <ToolComparisonTable items={step.comparisonTable} /> : null}
-                    {leverMapRows && bonus ? <LeverImpactMap rows={leverMapRows} bonus={bonus} /> : null}
-                    {step.knowledgeLayers ? <KnowledgeLayerDiagram layers={step.knowledgeLayers} /> : null}
+                    <div className="space-y-5">
+                      {cards && step.gridClass ? <CardGrid cards={cards} gridClass={step.gridClass} /> : null}
+                      {step.comparisonTable ? <ToolComparisonTable items={step.comparisonTable} /> : null}
+                      {leverMapRows && bonus ? (
+                        <LeverImpactMap
+                          rows={leverMapRows}
+                          bonus={bonus}
+                          openLever={openLever}
+                          toggleLever={toggleLever}
+                        />
+                      ) : null}
+                      {step.knowledgeLayers ? (
+                        <KnowledgeLayerDiagram layers={step.knowledgeLayers} />
+                      ) : null}
 
-                    {sequence ? (
-                      <div className={modulePanelClass}>
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                          <div>
-                            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                              IMPLEMENTATION ORDER
-                            </p>
-                            <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                              Once we know which tool fits, we move from assessment to live deployment in three steps.
+                      {sequence ? (
+                        <div className={modulePanelClass}>
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                              <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                                IMPLEMENTATION ORDER
+                              </p>
+                              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                                Once we know which tool fits, we move from assessment to live deployment in three steps.
+                              </p>
+                            </div>
+                            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+                              3 steps to live
                             </p>
                           </div>
-                          <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-                            3 steps to live
-                          </p>
+
+                          <ol className="mt-5 space-y-4">
+                            {sequence.map((item, sequenceIndex) => (
+                              <li key={item.step} className="relative pl-14">
+                                {sequenceIndex < sequence.length - 1 ? (
+                                  <div className="absolute bottom-[-1.35rem] left-4 top-9 border-l border-[var(--line)]" />
+                                ) : null}
+                                <div className={sequenceBadgeClass}>{item.step}</div>
+                                <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">{item.title}</p>
+                                <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
+                              </li>
+                            ))}
+                          </ol>
                         </div>
+                      ) : null}
 
-                        <ol className="mt-5 space-y-4">
-                          {sequence.map((item, sequenceIndex) => (
-                            <li key={item.step} className="relative pl-14">
-                              {sequenceIndex < sequence.length - 1 ? (
-                                <div className="absolute bottom-[-1.35rem] left-4 top-9 border-l border-[var(--line)]" />
-                              ) : null}
-                              <div className={sequenceBadgeClass}>{item.step}</div>
-                              <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">{item.title}</p>
-                              <p className="mt-2 text-sm leading-relaxed text-slate-700">{item.detail}</p>
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    ) : null}
-
-                    {step.closing ? (
-                      <p className="border-t border-[var(--line)] pt-4 text-sm leading-relaxed text-slate-700">
-                        {step.closing}
-                      </p>
-                    ) : null}
+                      {step.closing ? (
+                        <p className="border-t border-[var(--line)] pt-4 text-sm leading-relaxed text-slate-700">
+                          {step.closing}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-              </article>
+              </Disclosure>
 
               {index < schoolSteps.length - 1 ? <StepConnector /> : null}
             </li>

@@ -62,7 +62,8 @@
       "Bash(grep -n \"$\\\\|hourly\\\\|retainer\\\\|salary\\\\|per-head\\\\|engagement\\\\|cost\\\\|price\\\\|rate\" \"/Users/mirzaasceric/Desktop/consultancy-asca/3.Service System and Delivery Operating Model for an AI Implementation Consultancy.md\")",
       "Bash(grep -n \"$\\\\|hourly\\\\|salary\\\\|retainer\\\\|per-head\\\\|engagement fee\\\\|pricing\" \"/Users/mirzaasceric/Desktop/consultancy-asca/1. Enterprise AI Transformation Demand, ROI, and Deal Design.md\")",
       "Bash(npm run build)",
-      "Bash(ls -lah /Users/mirzaasceric/Desktop/consultancy-asca/*.md)"
+      "Bash(ls -lah /Users/mirzaasceric/Desktop/consultancy-asca/*.md)",
+      "Bash(grep -n \"useState\\\\|useEffect\\\\|useRef\" /Users/mirzaasceric/Desktop/consultancy-asca/src/components/*.tsx)"
     ],
     "additionalDirectories": [
       "/Users/mirzaasceric/Desktop/consultancy-asca/src/assets"

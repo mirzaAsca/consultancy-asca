@@ -301,37 +301,45 @@ const faqItems = [
 
 type Field =
   | "fullName"
+  | "linkedIn"
   | "workEmail"
   | "company"
-  | "biggestChallenge"
-  | "urgency";
+  | "website"
+  | "aiBudget"
+  | "employees"
+  | "reason";
 
 type FormState = Record<Field, string>;
 type ErrorState = Partial<Record<Field, string>>;
 
 const initialFormState: FormState = {
   fullName: "",
+  linkedIn: "",
   workEmail: "",
   company: "",
-  biggestChallenge: "",
-  urgency: "",
+  website: "",
+  aiBudget: "",
+  employees: "",
+  reason: "",
 };
 
 function buildMailto(form: FormState): string {
   const subject = encodeURIComponent(
     `Waitlist + Complimentary AI Portfolio Reality Scan — ${form.company}`,
   );
-  const body = encodeURIComponent(
-    [
-      "Waitlist + Complimentary AI Portfolio Reality Scan Request",
-      "",
-      `Name: ${form.fullName}`,
-      `Email: ${form.workEmail}`,
-      `Company: ${form.company}`,
-      `Biggest AI challenge: ${form.biggestChallenge}`,
-      `How soon: ${form.urgency}`,
-    ].join("\n"),
-  );
+  const lines = [
+    "Waitlist + Complimentary AI Portfolio Reality Scan Request",
+    "",
+    `Name: ${form.fullName}`,
+    `Email: ${form.workEmail}`,
+    `Company: ${form.company}`,
+    `Employees: ${form.employees}`,
+    `Why they need us: ${form.reason}`,
+  ];
+  if (form.linkedIn.trim()) lines.push(`LinkedIn: ${form.linkedIn}`);
+  if (form.website.trim()) lines.push(`Website: ${form.website}`);
+  if (form.aiBudget.trim()) lines.push(`AI budget: ${form.aiBudget}`);
+  const body = encodeURIComponent(lines.join("\n"));
   return `mailto:${PRIMARY_EMAIL}?subject=${subject}&body=${body}`;
 }
 
@@ -437,9 +445,11 @@ export default function App() {
     });
   }
 
+  const requiredFields: Field[] = ["fullName", "workEmail", "company", "employees", "reason"];
+
   function validate(nextForm: FormState): ErrorState {
     const nextErrors: ErrorState = {};
-    (Object.keys(nextForm) as Field[]).forEach((field) => {
+    requiredFields.forEach((field) => {
       if (!nextForm[field].trim()) {
         nextErrors[field] = "Required";
       }
@@ -1339,7 +1349,7 @@ export default function App() {
                   </p>
                 </div>
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
-                  5 fields — that's it
+                  8 fields — that's it
                 </p>
               </div>
 
@@ -1348,7 +1358,7 @@ export default function App() {
                 noValidate
                 className="mt-6 space-y-5"
               >
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <label className="text-sm font-medium text-slate-100">
                     Your name
                     <input
@@ -1374,6 +1384,7 @@ export default function App() {
                       onChange={(event) =>
                         updateField("workEmail", event.target.value)
                       }
+                      type="email"
                       autoComplete="email"
                       required
                     />
@@ -1383,14 +1394,18 @@ export default function App() {
                       </span>
                     ) : null}
                   </label>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
                   <label className="text-sm font-medium text-slate-100">
-                    Company
+                    Company name
                     <input
                       className={inputClass(Boolean(errors.company))}
                       value={form.company}
                       onChange={(event) =>
                         updateField("company", event.target.value)
                       }
+                      autoComplete="organization"
                       required
                     />
                     {errors.company ? (
@@ -1399,69 +1414,105 @@ export default function App() {
                       </span>
                     ) : null}
                   </label>
+                  <label className="text-sm font-medium text-slate-100">
+                    Website
+                    <span className="ml-1 text-[11px] font-normal text-slate-400">(optional)</span>
+                    <input
+                      className={inputClass(false)}
+                      value={form.website}
+                      onChange={(event) =>
+                        updateField("website", event.target.value)
+                      }
+                      placeholder="yourcompany.com"
+                      autoComplete="url"
+                    />
+                  </label>
+                  <label className="text-sm font-medium text-slate-100">
+                    Number of employees
+                    <div className="relative mt-1">
+                      <select
+                        className={selectClass(Boolean(errors.employees))}
+                        value={form.employees}
+                        onChange={(event) =>
+                          updateField("employees", event.target.value)
+                        }
+                        required
+                      >
+                        <option value="">Select</option>
+                        <option value="1-50">1–50</option>
+                        <option value="51-200">51–200</option>
+                        <option value="201-1000">201–1,000</option>
+                        <option value="1001-3000">1,001–3,000</option>
+                        <option value="3000+">3,000+</option>
+                      </select>
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 20 20"
+                        className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300"
+                      >
+                        <path
+                          d="M5 7.5L10 12.5L15 7.5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.8"
+                        />
+                      </svg>
+                    </div>
+                    {errors.employees ? (
+                      <span className="text-xs text-rose-400">
+                        {errors.employees}
+                      </span>
+                    ) : null}
+                  </label>
                 </div>
 
-                <label className="block text-sm font-medium text-slate-100">
-                  What's your biggest AI challenge right now?
-                  <textarea
-                    className={inputClass(Boolean(errors.biggestChallenge))}
-                    rows={3}
-                    value={form.biggestChallenge}
-                    onChange={(event) =>
-                      updateField("biggestChallenge", event.target.value)
-                    }
-                    placeholder="e.g. We have 6 pilots but nothing made it to production yet..."
-                    required
-                  />
-                  {errors.biggestChallenge ? (
-                    <span className="text-xs text-rose-400">
-                      {errors.biggestChallenge}
-                    </span>
-                  ) : null}
-                </label>
-
-                <label className="block text-sm font-medium text-slate-100">
-                  How soon do you need this?
-                  <div className="relative mt-1">
-                    <select
-                      className={selectClass(Boolean(errors.urgency))}
-                      value={form.urgency}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="text-sm font-medium text-slate-100">
+                    LinkedIn
+                    <span className="ml-1 text-[11px] font-normal text-slate-400">(optional)</span>
+                    <input
+                      className={inputClass(false)}
+                      value={form.linkedIn}
                       onChange={(event) =>
-                        updateField("urgency", event.target.value)
+                        updateField("linkedIn", event.target.value)
                       }
+                      placeholder="linkedin.com/in/yourname"
+                    />
+                  </label>
+                  <label className="text-sm font-medium text-slate-100">
+                    AI budget
+                    <span className="ml-1 text-[11px] font-normal text-slate-400">(optional)</span>
+                    <input
+                      className={inputClass(false)}
+                      value={form.aiBudget}
+                      onChange={(event) =>
+                        updateField("aiBudget", event.target.value)
+                      }
+                      placeholder="e.g. $10k–25k"
+                    />
+                  </label>
+                </div>
+
+                <label className="text-sm font-medium text-slate-100">
+                    What's the biggest AI challenge you're facing?
+                    <textarea
+                      className={inputClass(Boolean(errors.reason)) + " min-h-[80px] resize-y"}
+                      value={form.reason}
+                      onChange={(event) =>
+                        updateField("reason", event.target.value)
+                      }
+                      rows={3}
+                      placeholder="e.g. We're spending 40 hrs/week on manual data entry and need to automate it"
                       required
-                    >
-                      <option value="">Pick one</option>
-                      <option value="Now (this month)">Now — this month</option>
-                      <option value="Soon (1-3 months)">
-                        Soon — next 1-3 months
-                      </option>
-                      <option value="Planning (3-6 months)">
-                        Planning — 3-6 months out
-                      </option>
-                      <option value="Just exploring">Just exploring</option>
-                    </select>
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 20 20"
-                      className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300"
-                    >
-                      <path
-                        d="M5 7.5L10 12.5L15 7.5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.8"
-                      />
-                    </svg>
-                  </div>
-                  {errors.urgency ? (
-                    <span className="text-xs text-rose-400">
-                      {errors.urgency}
-                    </span>
-                  ) : null}
-                </label>
+                    />
+                    {errors.reason ? (
+                      <span className="text-xs text-rose-400">
+                        {errors.reason}
+                      </span>
+                    ) : null}
+                  </label>
 
                 <div className="flex flex-col gap-4 border-t border-[rgba(255,255,255,0.14)] pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-slate-300">
