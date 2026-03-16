@@ -332,6 +332,31 @@ export default function WhatWeDoApp() {
             ))}
           </div>
 
+          <div className={`mt-8 border border-[var(--accent)] bg-[rgba(15,23,42,0.03)] p-5`}>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white">
+                Prerequisite
+              </span>
+              <p className={sectionLabelClass}>BEFORE ANYTHING SHIPS</p>
+            </div>
+            <h3 className="mt-4 text-lg font-semibold leading-tight tracking-[-0.01em]">
+              We centralize your knowledge base first. Everything else depends on it.
+            </h3>
+            <p className="mt-3 max-w-[62ch] text-sm leading-relaxed text-slate-700">
+              Data is the core of every metric-based and decision-based system. Before we build dashboards, scorecards, or governance — we collect, organize, and centralize everything your company knows into one place your AI systems can actually use. Product docs, team playbooks, org charts, task data, and every conversation across every channel.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className={metaChipClass}>Product & service KB</span>
+              <span className={metaChipClass}>Department-level docs</span>
+              <span className={metaChipClass}>Org architecture</span>
+              <span className={metaChipClass}>Task & progress data</span>
+              <span className={metaChipClass}>Communication channels</span>
+            </div>
+            <p className="mt-4 border-t border-[var(--line)] pt-3 text-[11px] leading-relaxed text-slate-400">
+              Research: data quality is the #1 AI pilot-killer (Forrester). If data access is blocked, the project cannot be prioritized — a hard gate, not a soft factor. IBM: "data understanding is critical to avoid unexpected problems in downstream phases."
+            </p>
+          </div>
+
           <div className={panelClass + " mt-8"}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>

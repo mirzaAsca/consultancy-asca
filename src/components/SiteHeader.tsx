@@ -57,7 +57,7 @@ export default function SiteHeader({
       className={[
         'transition-all duration-300',
         mode === 'hidden' ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100',
-        mode === 'sticky' ? 'backdrop-blur-md bg-white/60 -mx-6 rounded-2xl px-6 py-2 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10' : '',
+        mode === 'sticky' ? 'backdrop-blur-md bg-white/60 -mx-6 px-6 py-2 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10' : '',
       ].join(' ')}
     >
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">

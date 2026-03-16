@@ -57,6 +57,12 @@ type BonusGain = {
   proofPoints: string[]
 }
 
+type KnowledgeLayer = {
+  label: string
+  title: string
+  items: string[]
+}
+
 type PrimerStep = {
   step: string
   eyebrow: string
@@ -70,6 +76,7 @@ type PrimerStep = {
   leverFlows?: LeverFlow[]
   bonusGain?: BonusGain
   sequence?: PrimerSequenceItem[]
+  knowledgeLayers?: KnowledgeLayer[]
   closing?: string
 }
 
@@ -154,6 +161,59 @@ const toolComparison: ToolComparison[] = [
   },
 ]
 
+const knowledgeLayers: KnowledgeLayer[] = [
+  {
+    label: 'Layer 01',
+    title: 'Product & service knowledge',
+    items: [
+      'Every feature, capability, and limitation documented',
+      'How it solves customer problems, step by step',
+      'Installation, setup, and usage guides',
+      'Pipeline to keep it current as the product changes',
+    ],
+  },
+  {
+    label: 'Layer 02',
+    title: 'Department & team knowledge',
+    items: [
+      'Development: codebase documentation, architecture decisions, technical debt',
+      'Legal: contracts, compliance requirements, review procedures',
+      'Marketing/SEO: brand guidelines, content strategy, keyword data',
+      'Sales: playbooks, objection handling, competitive intel',
+    ],
+  },
+  {
+    label: 'Layer 03',
+    title: 'Organization knowledge',
+    items: [
+      'Complete company architecture: positions, roles, duties',
+      'Decision-making chains and escalation paths',
+      'Cross-department dependencies and handoff points',
+      'Policies, SOPs, and institutional knowledge',
+    ],
+  },
+  {
+    label: 'Layer 04',
+    title: 'Task & progress data',
+    items: [
+      'All project tracking and task management data',
+      'Sprint histories, velocity, and completion patterns',
+      'Blockers, dependencies, and resolution timelines',
+      'Resource allocation and capacity data',
+    ],
+  },
+  {
+    label: 'Layer 05',
+    title: 'Communication data',
+    items: [
+      'Conversations across Slack, Teams, email, and support channels',
+      'Meeting notes, decisions, and action items',
+      'Customer feedback and support ticket patterns',
+      'Internal Q&A and tribal knowledge exchanges',
+    ],
+  },
+]
+
 const integrationSteps: PrimerSequenceItem[] = [
   {
     step: '01',
@@ -205,6 +265,16 @@ const schoolSteps: PrimerStep[] = [
   },
   {
     step: '04',
+    eyebrow: 'THE FOUNDATION',
+    title: 'None of this works without a centralized knowledge base.',
+    detail:
+      'Data is the core of every metric-based and decision-based system. Before AI can help you sell more, spend less, or reduce risk — it needs to understand your company. That means collecting, organizing, and centralizing everything your business knows into one place your AI systems can actually use.',
+    knowledgeLayers,
+    tags: ['Data readiness gate', 'Hard prerequisite', 'AI fails without this'],
+    closing: 'Research is unambiguous: data quality is the #1 pilot-killer (Forrester), and if data access is blocked, the project cannot be top priority — it\'s a hard gate, not a soft factor. IBM notes that skipping data understanding causes unexpected failures in every downstream phase. This isn\'t optional infrastructure — it\'s the foundation everything else depends on.',
+  },
+  {
+    step: '05',
     eyebrow: 'WHERE TO START',
     title: 'Start with whatever makes you the most money fastest.',
     detail:
@@ -327,6 +397,114 @@ function ToolComparisonTable({ items }: { items: ToolComparison[] }) {
         </table>
       </div>
     </>
+  )
+}
+
+function KnowledgeLayerDiagram({ layers }: { layers: KnowledgeLayer[] }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+            KNOWLEDGE ARCHITECTURE
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            Five layers of company knowledge that feed your AI systems with real context.
+          </p>
+        </div>
+        <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+          5 layers → 1 source of truth
+        </p>
+      </div>
+
+      {/* Hub diagram: layers converging to center */}
+      <div className="border border-[var(--accent)] bg-[rgba(15,23,42,0.03)] p-4 sm:p-5">
+        <div className="flex items-center gap-3">
+          <span className="inline-flex min-w-[48px] items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-3 py-2 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-white">
+            HUB
+          </span>
+          <div>
+            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+              CENTRALIZED KNOWLEDGE BASE
+            </p>
+            <p className="mt-1 text-base font-semibold tracking-[-0.01em] text-slate-950">
+              One place your AI understands the whole company.
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700">
+          Every AI system — from customer-facing agents to internal tools — pulls context from this single, always-updated source. Without it, your AI guesses. With it, your AI knows.
+        </p>
+      </div>
+
+      {/* Arrow connectors */}
+      <div className="flex items-center justify-center py-1" aria-hidden="true">
+        <div className="flex items-center gap-2 text-[var(--muted)]">
+          <div className="h-6 w-px bg-[var(--line)]" />
+          <span className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em]">fed by</span>
+          <div className="h-6 w-px bg-[var(--line)]" />
+        </div>
+      </div>
+
+      {/* Layer cards */}
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {layers.map((layer, index) => (
+          <article
+            key={layer.label}
+            className={`border p-4 ${
+              index === 0
+                ? 'border-[var(--accent)] bg-[rgba(15,23,42,0.03)]'
+                : 'border-[var(--line)] bg-white/80'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className={`inline-flex min-w-[36px] items-center justify-center px-2 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium tracking-[0.12em] ${
+                  index === 0
+                    ? 'border border-[var(--accent)] bg-[var(--accent)] text-white'
+                    : 'border border-[var(--line)] bg-white text-[var(--muted)]'
+                }`}
+              >
+                {layer.label.replace('Layer ', '')}
+              </span>
+              <p className="text-sm font-semibold tracking-[-0.01em] text-slate-950">
+                {layer.title}
+              </p>
+            </div>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+              {layer.items.map((item) => (
+                <li key={item} className="border-t border-[var(--line)] pt-2 first:border-t-0 first:pt-0">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+
+        {/* The "pipeline" card filling the 6th grid slot */}
+        <article className="flex flex-col justify-center border border-dashed border-[var(--line)] bg-[rgba(15,23,42,0.015)] p-4">
+          <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+            ALWAYS RUNNING
+          </p>
+          <p className="mt-2 text-sm font-semibold tracking-[-0.01em] text-slate-950">
+            Continuous sync pipeline
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            Not a one-time export. A live pipeline that keeps every layer current as your company changes — new products, new people, new decisions.
+          </p>
+        </article>
+      </div>
+
+      {/* Research backing */}
+      <div className="border-t border-[var(--line)] pt-4 text-[11px] leading-relaxed text-slate-400">
+        Sources:{' '}
+        <a href="https://www.nist.gov/artificial-intelligence/executive-order-safe-secure-and-trustworthy-artificial-intelligence" target="_blank" rel="noopener noreferrer" className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600">Forrester TEI / NIST AI RMF</a>
+        {' · '}
+        <span>IBM: "data understanding is critical to avoid unexpected problems in downstream phases"</span>
+        {' · '}
+        <span>Report 3 Stage 4: data readiness (quality, completeness, access, governance) is a formal delivery gate</span>
+      </div>
+    </div>
   )
 }
 
@@ -532,6 +710,7 @@ export default function BusinessAiPrimerSection() {
                     {cards && step.gridClass ? <CardGrid cards={cards} gridClass={step.gridClass} /> : null}
                     {step.comparisonTable ? <ToolComparisonTable items={step.comparisonTable} /> : null}
                     {leverMapRows && bonus ? <LeverImpactMap rows={leverMapRows} bonus={bonus} /> : null}
+                    {step.knowledgeLayers ? <KnowledgeLayerDiagram layers={step.knowledgeLayers} /> : null}
 
                     {sequence ? (
                       <div className={modulePanelClass}>
