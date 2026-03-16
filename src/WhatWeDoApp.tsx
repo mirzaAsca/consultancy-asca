@@ -1,6 +1,7 @@
 import BusinessAiPrimerSection from "./components/BusinessAiPrimerSection";
 import SiteHeader from "./components/SiteHeader";
 import WarpedGrid from "./components/WarpedGrid";
+import WaitlistForm from "./components/WaitlistForm";
 
 const PRIMARY_EMAIL = "mirza@10x.ai";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
@@ -232,7 +233,7 @@ export default function WhatWeDoApp() {
                 </div>
               </div> */}
               <div className="flex flex-wrap items-center gap-5">
-                <a href="/#scan" className={primaryButtonClass}>
+                <a href="#scan" className={primaryButtonClass}>
                   Get Your $15,000 Scan — Free
                 </a>
                 <a href="#mechanism" className={secondaryButtonClass}>
@@ -559,6 +560,72 @@ export default function WhatWeDoApp() {
                 </div>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section id="scan" className="reveal section-divider-full py-14 sm:py-16">
+          <div className="space-y-10">
+            <div className="grid gap-8 lg:grid-cols-12">
+              <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
+                <div>
+                  <p className={sectionLabelClass}>
+                    JOIN THE WAITLIST — COMPLIMENTARY SCAN INCLUDED
+                  </p>
+                  <h2 className={sectionHeadingClass}>
+                    Get on the list. Get your AI Portfolio Reality Scan now.
+                  </h2>
+                  <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
+                    Tell us about your company and what's happening with AI
+                    right now. We'll come back with a clear map of where the
+                    real opportunities are — and you'll be first in line when a
+                    spot opens. Complimentary scan valued at $15,000.
+                  </p>
+                </div>
+                <div className="mt-6 flex flex-wrap gap-2 lg:mt-auto">
+                  <span className={metaChipClass}>2-minute form</span>
+                  <span className={metaChipClass}>
+                    Complimentary scan (valued at $15,000) + 40-min call
+                  </span>
+                  <span className={metaChipClass}>Results in ~1 week</span>
+                </div>
+              </div>
+
+              <aside
+                className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}
+              >
+                <p className={sectionLabelClass}>WHAT HAPPENS NEXT</p>
+                <div className="mt-5 flex flex-1 flex-col text-sm leading-relaxed text-slate-700">
+                  <div className="flex-1 pt-0">
+                    <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
+                      Within 48 hours
+                    </p>
+                    <p className="mt-2">
+                      We confirm your spot on the waitlist and begin your scan.
+                    </p>
+                  </div>
+                  <div className="flex-1 border-t border-[var(--line)] pt-4">
+                    <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
+                      Day 3-5
+                    </p>
+                    <p className="mt-2">
+                      Free 40-min strategy call to walk through your AI
+                      landscape.
+                    </p>
+                  </div>
+                  <div className="flex-1 border-t border-[var(--line)] pt-4">
+                    <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
+                      Day 5-7
+                    </p>
+                    <p className="mt-2">
+                      Your scan results with a clear action plan. You keep
+                      everything.
+                    </p>
+                  </div>
+                </div>
+              </aside>
+            </div>
+
+            <WaitlistForm />
           </div>
         </section>
 
