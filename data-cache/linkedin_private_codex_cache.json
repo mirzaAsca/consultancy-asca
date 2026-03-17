@@ -1,0 +1,889 @@
+{
+  "firms": {
+    "83north": {
+      "urls": [
+        "https://www.linkedin.com/in/laurel-bowden-3a869b",
+        "https://www.linkedin.com/in/yoramsnir",
+        "https://www.linkedin.com/in/gil-goren-707785155",
+        "https://www.linkedin.com/in/erezofer"
+      ],
+      "sources": [
+        "https://www.83north.com/team/",
+        "https://www.linkedin.com/company/83north/people/",
+        "https://www.linkedin.com/posts/laurel-bowden-3a869b_this-really-resonates-because-it-perfectly-activity-7298316390005604353-lIo3",
+        "https://www.linkedin.com/posts/yoramsnir_ai-generativeai-neweconomy-activity-7322687999323469824-n-61",
+        "https://www.linkedin.com/posts/gil-goren-707785155_on-our-way-to-berlin-for-the-superventure-activity-7062036667043801089-4wwJ",
+        "https://www.linkedin.com/posts/erezofer_aisustainability-datacenters-energytransition-activity-7284599177700370432-gc-v"
+      ]
+    },
+    "air street capital": {
+      "urls": [
+        "https://www.linkedin.com/in/alex-chalmers-41937912a",
+        "https://www.linkedin.com/in/corina-gurau-46ba97165",
+        "https://www.linkedin.com/in/nathanbenaich",
+        "https://www.linkedin.com/in/nitarshan",
+        "https://www.linkedin.com/in/othmanesebbouh",
+        "https://www.linkedin.com/in/paulapastor"
+      ],
+      "sources": [
+        "https://www.airstreet.com/team",
+        "https://www.linkedin.com/company/airstreetcapital/"
+      ]
+    },
+    "500 startups": {
+      "urls": [
+        "https://www.linkedin.com/in/hsuan-yih-shawn-chu-57385b43",
+        "https://www.linkedin.com/in/jiun-hsien-lee-69899b66",
+        "https://www.linkedin.com/in/amjadahmadvc",
+        "https://www.linkedin.com/in/arianne-ren%C3%A9e-dilts",
+        "https://www.linkedin.com/in/brinda-dutta-6039902b",
+        "https://www.linkedin.com/in/ceciezquerro",
+        "https://www.linkedin.com/in/damaris-mendoza-loera",
+        "https://www.linkedin.com/in/daniela-p%C3%A9rez-barr%C3%B3n-712286109",
+        "https://www.linkedin.com/in/didierquirozceballos",
+        "https://www.linkedin.com/in/donnacunanan",
+        "https://www.linkedin.com/in/irenish",
+        "https://www.linkedin.com/in/james-wu-74b384",
+        "https://www.linkedin.com/in/juinshern-tong",
+        "https://www.linkedin.com/in/meicheltan",
+        "https://www.linkedin.com/in/paulinaszyrmer",
+        "https://www.linkedin.com/in/regina-zurutuza-20018b64",
+        "https://www.linkedin.com/in/rlomeli88",
+        "https://www.linkedin.com/in/santiago-zavala-47a68b7",
+        "https://www.linkedin.com/in/-kristen-cooper",
+        "https://www.linkedin.com/in/abdulrahman-aljiffry-23834738",
+        "https://www.linkedin.com/in/adelyn-c-949b10103",
+        "https://www.linkedin.com/in/ai-lin-ng-52347310",
+        "https://www.linkedin.com/in/alaaibrahimm",
+        "https://www.linkedin.com/in/alaamurabit",
+        "https://www.linkedin.com/in/amal-bin-jurays-a65a6b185",
+        "https://www.linkedin.com/in/amaldokhan",
+        "https://www.linkedin.com/in/amalenan",
+        "https://www.linkedin.com/in/ana-uribe-84528b56",
+        "https://www.linkedin.com/in/analuciaforero",
+        "https://www.linkedin.com/in/anna-saltykova",
+        "https://www.linkedin.com/in/arief-bin-johan-alimin",
+        "https://www.linkedin.com/in/ashlynbmyers",
+        "https://www.linkedin.com/in/atika-french",
+        "https://www.linkedin.com/in/bedyyang",
+        "https://www.linkedin.com/in/carmenhoong",
+        "https://www.linkedin.com/in/carolina-acosta-tovany",
+        "https://www.linkedin.com/in/carrieliauw",
+        "https://www.linkedin.com/in/charlotte-odell-0070ab70",
+        "https://www.linkedin.com/in/chrissyhu",
+        "https://www.linkedin.com/in/christine-chan-ee-yin-0b691894",
+        "https://www.linkedin.com/in/christinesltsai",
+        "https://www.linkedin.com/in/christophferguson",
+        "https://www.linkedin.com/in/claytonbryan",
+        "https://www.linkedin.com/in/courtneyjpowell",
+        "https://www.linkedin.com/in/cynthiaylchin",
+        "https://www.linkedin.com/in/daif-alrajhi",
+        "https://www.linkedin.com/in/daniela-malagon-alonso-76b88241",
+        "https://www.linkedin.com/in/demolaadegbite",
+        "https://www.linkedin.com/in/eileen-liew-bba8817a",
+        "https://www.linkedin.com/in/emily-lozano-ops",
+        "https://www.linkedin.com/in/emilyprintz",
+        "https://www.linkedin.com/in/emma-kelly21",
+        "https://www.linkedin.com/in/felicia-chia",
+        "https://www.linkedin.com/in/gemma-e-277605156",
+        "https://www.linkedin.com/in/grace-t-52685a221",
+        "https://www.linkedin.com/in/halina-jael-abu-bakar-b821a3128",
+        "https://www.linkedin.com/in/jakeclawson",
+        "https://www.linkedin.com/in/jamie-soo",
+        "https://www.linkedin.com/in/jeff-k-matsuda",
+        "https://www.linkedin.com/in/jenny-chin-sian-theng-290a0317b",
+        "https://www.linkedin.com/in/joanna-goh-a9a954a1",
+        "https://www.linkedin.com/in/justin-koo-cfa",
+        "https://www.linkedin.com/in/kaavya-gowda-294247b4",
+        "https://www.linkedin.com/in/karengvillanueva",
+        "https://www.linkedin.com/in/katerina-zlobina-2709821b7",
+        "https://www.linkedin.com/in/kevinwinsenchandra",
+        "https://www.linkedin.com/in/khailee",
+        "https://www.linkedin.com/in/kratingpoonpol",
+        "https://www.linkedin.com/in/leonardelee",
+        "https://www.linkedin.com/in/liamdigan",
+        "https://www.linkedin.com/in/liane-c-k-affy",
+        "https://www.linkedin.com/in/luisignaciocc",
+        "https://www.linkedin.com/in/lyndylien",
+        "https://www.linkedin.com/in/ma-ruf-muhammad-fajrin-8ba584111",
+        "https://www.linkedin.com/in/marcela-olivares-4b2b5311a",
+        "https://www.linkedin.com/in/melfauzi",
+        "https://www.linkedin.com/in/mercadojamp",
+        "https://www.linkedin.com/in/min-kim-00662232",
+        "https://www.linkedin.com/in/minnieang",
+        "https://www.linkedin.com/in/mirandagahagan",
+        "https://www.linkedin.com/in/misaki-majima-15089222a",
+        "https://www.linkedin.com/in/mohammad-khdair-cma",
+        "https://www.linkedin.com/in/monique-arnold-30491b11b",
+        "https://www.linkedin.com/in/mostafa-salem-191a5a159",
+        "https://www.linkedin.com/in/myerschristina",
+        "https://www.linkedin.com/in/naranpatthi",
+        "https://www.linkedin.com/in/natavudh",
+        "https://www.linkedin.com/in/nickdavison",
+        "https://www.linkedin.com/in/nico-gamboa-836663346",
+        "https://www.linkedin.com/in/noemi-vera",
+        "https://www.linkedin.com/in/nour-akiel-947b68194",
+        "https://www.linkedin.com/in/oksanavodonos",
+        "https://www.linkedin.com/in/pahrada-mameaw",
+        "https://www.linkedin.com/in/paulcabrera123",
+        "https://www.linkedin.com/in/pauleyoo",
+        "https://www.linkedin.com/in/perthkrungkraipetch",
+        "https://www.linkedin.com/in/pichetpatchandrema",
+        "https://www.linkedin.com/in/pohsoon",
+        "https://www.linkedin.com/in/ramasworupha-nair-257792191",
+        "https://www.linkedin.com/in/reem-khamis",
+        "https://www.linkedin.com/in/samanthakiel",
+        "https://www.linkedin.com/in/santosvieira",
+        "https://www.linkedin.com/in/shahrilibrahim",
+        "https://www.linkedin.com/in/sheila-reyna-flores-5a6385115",
+        "https://www.linkedin.com/in/shill515",
+        "https://www.linkedin.com/in/stephaniecobos",
+        "https://www.linkedin.com/in/suzianak",
+        "https://www.linkedin.com/in/tonywang1",
+        "https://www.linkedin.com/in/victor-nge-jik-shern",
+        "https://www.linkedin.com/in/vishalharnal",
+        "https://www.linkedin.com/in/weixensoon",
+        "https://www.linkedin.com/in/yeeshimtan",
+        "https://www.linkedin.com/in/yileenkoh"
+      ],
+      "sources": [
+        "https://500.co/team",
+        "https://500.co/about",
+        "https://linkedin.com/company/500global"
+      ]
+    },
+    "500 global": {
+      "urls": [
+        "https://www.linkedin.com/in/hsuan-yih-shawn-chu-57385b43",
+        "https://www.linkedin.com/in/jiun-hsien-lee-69899b66",
+        "https://www.linkedin.com/in/amjadahmadvc",
+        "https://www.linkedin.com/in/arianne-ren%C3%A9e-dilts",
+        "https://www.linkedin.com/in/brinda-dutta-6039902b",
+        "https://www.linkedin.com/in/ceciezquerro",
+        "https://www.linkedin.com/in/damaris-mendoza-loera",
+        "https://www.linkedin.com/in/daniela-p%C3%A9rez-barr%C3%B3n-712286109",
+        "https://www.linkedin.com/in/didierquirozceballos",
+        "https://www.linkedin.com/in/donnacunanan",
+        "https://www.linkedin.com/in/irenish",
+        "https://www.linkedin.com/in/james-wu-74b384",
+        "https://www.linkedin.com/in/juinshern-tong",
+        "https://www.linkedin.com/in/meicheltan",
+        "https://www.linkedin.com/in/paulinaszyrmer",
+        "https://www.linkedin.com/in/regina-zurutuza-20018b64",
+        "https://www.linkedin.com/in/rlomeli88",
+        "https://www.linkedin.com/in/santiago-zavala-47a68b7",
+        "https://www.linkedin.com/in/-kristen-cooper",
+        "https://www.linkedin.com/in/abdulrahman-aljiffry-23834738",
+        "https://www.linkedin.com/in/adelyn-c-949b10103",
+        "https://www.linkedin.com/in/ai-lin-ng-52347310",
+        "https://www.linkedin.com/in/alaaibrahimm",
+        "https://www.linkedin.com/in/alaamurabit",
+        "https://www.linkedin.com/in/amal-bin-jurays-a65a6b185",
+        "https://www.linkedin.com/in/amaldokhan",
+        "https://www.linkedin.com/in/amalenan",
+        "https://www.linkedin.com/in/ana-uribe-84528b56",
+        "https://www.linkedin.com/in/analuciaforero",
+        "https://www.linkedin.com/in/anna-saltykova",
+        "https://www.linkedin.com/in/arief-bin-johan-alimin",
+        "https://www.linkedin.com/in/ashlynbmyers",
+        "https://www.linkedin.com/in/atika-french",
+        "https://www.linkedin.com/in/bedyyang",
+        "https://www.linkedin.com/in/carmenhoong",
+        "https://www.linkedin.com/in/carolina-acosta-tovany",
+        "https://www.linkedin.com/in/carrieliauw",
+        "https://www.linkedin.com/in/charlotte-odell-0070ab70",
+        "https://www.linkedin.com/in/chrissyhu",
+        "https://www.linkedin.com/in/christine-chan-ee-yin-0b691894",
+        "https://www.linkedin.com/in/christinesltsai",
+        "https://www.linkedin.com/in/christophferguson",
+        "https://www.linkedin.com/in/claytonbryan",
+        "https://www.linkedin.com/in/courtneyjpowell",
+        "https://www.linkedin.com/in/cynthiaylchin",
+        "https://www.linkedin.com/in/daif-alrajhi",
+        "https://www.linkedin.com/in/daniela-malagon-alonso-76b88241",
+        "https://www.linkedin.com/in/demolaadegbite",
+        "https://www.linkedin.com/in/eileen-liew-bba8817a",
+        "https://www.linkedin.com/in/emily-lozano-ops",
+        "https://www.linkedin.com/in/emilyprintz",
+        "https://www.linkedin.com/in/emma-kelly21",
+        "https://www.linkedin.com/in/felicia-chia",
+        "https://www.linkedin.com/in/gemma-e-277605156",
+        "https://www.linkedin.com/in/grace-t-52685a221",
+        "https://www.linkedin.com/in/halina-jael-abu-bakar-b821a3128",
+        "https://www.linkedin.com/in/jakeclawson",
+        "https://www.linkedin.com/in/jamie-soo",
+        "https://www.linkedin.com/in/jeff-k-matsuda",
+        "https://www.linkedin.com/in/jenny-chin-sian-theng-290a0317b",
+        "https://www.linkedin.com/in/joanna-goh-a9a954a1",
+        "https://www.linkedin.com/in/justin-koo-cfa",
+        "https://www.linkedin.com/in/kaavya-gowda-294247b4",
+        "https://www.linkedin.com/in/karengvillanueva",
+        "https://www.linkedin.com/in/katerina-zlobina-2709821b7",
+        "https://www.linkedin.com/in/kevinwinsenchandra",
+        "https://www.linkedin.com/in/khailee",
+        "https://www.linkedin.com/in/kratingpoonpol",
+        "https://www.linkedin.com/in/leonardelee",
+        "https://www.linkedin.com/in/liamdigan",
+        "https://www.linkedin.com/in/liane-c-k-affy",
+        "https://www.linkedin.com/in/luisignaciocc",
+        "https://www.linkedin.com/in/lyndylien",
+        "https://www.linkedin.com/in/ma-ruf-muhammad-fajrin-8ba584111",
+        "https://www.linkedin.com/in/marcela-olivares-4b2b5311a",
+        "https://www.linkedin.com/in/melfauzi",
+        "https://www.linkedin.com/in/mercadojamp",
+        "https://www.linkedin.com/in/min-kim-00662232",
+        "https://www.linkedin.com/in/minnieang",
+        "https://www.linkedin.com/in/mirandagahagan",
+        "https://www.linkedin.com/in/misaki-majima-15089222a",
+        "https://www.linkedin.com/in/mohammad-khdair-cma",
+        "https://www.linkedin.com/in/monique-arnold-30491b11b",
+        "https://www.linkedin.com/in/mostafa-salem-191a5a159",
+        "https://www.linkedin.com/in/myerschristina",
+        "https://www.linkedin.com/in/naranpatthi",
+        "https://www.linkedin.com/in/natavudh",
+        "https://www.linkedin.com/in/nickdavison",
+        "https://www.linkedin.com/in/nico-gamboa-836663346",
+        "https://www.linkedin.com/in/noemi-vera",
+        "https://www.linkedin.com/in/nour-akiel-947b68194",
+        "https://www.linkedin.com/in/oksanavodonos",
+        "https://www.linkedin.com/in/pahrada-mameaw",
+        "https://www.linkedin.com/in/paulcabrera123",
+        "https://www.linkedin.com/in/pauleyoo",
+        "https://www.linkedin.com/in/perthkrungkraipetch",
+        "https://www.linkedin.com/in/pichetpatchandrema",
+        "https://www.linkedin.com/in/pohsoon",
+        "https://www.linkedin.com/in/ramasworupha-nair-257792191",
+        "https://www.linkedin.com/in/reem-khamis",
+        "https://www.linkedin.com/in/samanthakiel",
+        "https://www.linkedin.com/in/santosvieira",
+        "https://www.linkedin.com/in/shahrilibrahim",
+        "https://www.linkedin.com/in/sheila-reyna-flores-5a6385115",
+        "https://www.linkedin.com/in/shill515",
+        "https://www.linkedin.com/in/stephaniecobos",
+        "https://www.linkedin.com/in/suzianak",
+        "https://www.linkedin.com/in/tonywang1",
+        "https://www.linkedin.com/in/victor-nge-jik-shern",
+        "https://www.linkedin.com/in/vishalharnal",
+        "https://www.linkedin.com/in/weixensoon",
+        "https://www.linkedin.com/in/yeeshimtan",
+        "https://www.linkedin.com/in/yileenkoh"
+      ],
+      "sources": [
+        "https://500.co/team",
+        "https://500.co/about",
+        "https://linkedin.com/company/500global"
+      ]
+    },
+    "angular ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/alexrosemblat",
+        "https://www.linkedin.com/in/baruchin",
+        "https://www.linkedin.com/in/davidlpeterson3",
+        "https://www.linkedin.com/in/davisscottt",
+        "https://www.linkedin.com/in/eldadfarkash",
+        "https://www.linkedin.com/in/gildibner",
+        "https://www.linkedin.com/in/hazelmulhare",
+        "https://www.linkedin.com/in/jdischler",
+        "https://www.linkedin.com/in/jennifer-schear-66a0a04",
+        "https://www.linkedin.com/in/leelach-avidov-04951296",
+        "https://www.linkedin.com/in/naksec",
+        "https://www.linkedin.com/in/parmuppal",
+        "https://www.linkedin.com/in/pwickham",
+        "https://www.linkedin.com/in/ronyachini",
+        "https://www.linkedin.com/in/shahar-azulay-54156bb4",
+        "https://www.linkedin.com/in/tal-shapira",
+        "https://www.linkedin.com/in/yechezkel-rabinovich-946794b4"
+      ],
+      "sources": [
+        "https://angularventures.com/team",
+        "https://www.linkedin.com/company/angularventures"
+      ]
+    },
+    "balderton capital": {
+      "urls": [
+        "https://www.linkedin.com/in/jameswise",
+        "https://www.linkedin.com/in/rana-yared-0aab242",
+        "https://www.linkedin.com/in/suranga",
+        "https://www.linkedin.com/in/daniel-waterhouse-b1620488",
+        "https://www.linkedin.com/in/robmoffat"
+      ],
+      "sources": [
+        "https://www.balderton.com/team",
+        "https://www.linkedin.com/posts/jameswise_how-we-build-by-james-wise-activity-7285587152181737472-dMXz",
+        "https://www.linkedin.com/posts/rana-yared-0aab242_rana-yared-on-linkedin-generative-ai-will-activity-7234478502428395520-S08a",
+        "https://www.linkedin.com/posts/suranga_happy-to-share-that-im-joining-the-board-activity-7308804489613654016-qvG7",
+        "https://www.linkedin.com/posts/daniel-waterhouse-b1620488_we-are-hiring-a-new-investment-analyst-in-london-activity-7089899950689757184-QgFa",
+        "https://www.linkedin.com/posts/robmoffat_the-perfect-investment-memo-openais-activity-7327259243636903936-C0DJ"
+      ]
+    },
+    "branded strategic hospitality": {
+      "urls": [
+        "https://www.linkedin.com/in/adam-levine-6437896",
+        "https://www.linkedin.com/in/alonsocastaneda",
+        "https://www.linkedin.com/in/andrew-peskoe",
+        "https://www.linkedin.com/in/annarahmanan",
+        "https://www.linkedin.com/in/cameron-hanson-80b92619b",
+        "https://www.linkedin.com/in/dana-zukofsky-cpa-mba-28572527",
+        "https://www.linkedin.com/in/davidpeller",
+        "https://www.linkedin.com/in/dean-palin-98b34b15",
+        "https://www.linkedin.com/in/drewe-raimi",
+        "https://www.linkedin.com/in/elizabeth-park-72328b20b",
+        "https://www.linkedin.com/in/evanveryard",
+        "https://www.linkedin.com/in/greggmajewski",
+        "https://www.linkedin.com/in/grodnik",
+        "https://www.linkedin.com/in/jacob-grodnik-4621572a",
+        "https://www.linkedin.com/in/jamesfrischling",
+        "https://www.linkedin.com/in/josh-wirth-38a7913b",
+        "https://www.linkedin.com/in/julie-zucker-41895b2",
+        "https://www.linkedin.com/in/michael-ryan-9415598",
+        "https://www.linkedin.com/in/noahdanielstern",
+        "https://www.linkedin.com/in/revciancio"
+      ],
+      "sources": [
+        "https://www.brandedstrategic.com/about",
+        "https://www.brandedstrategic.com/team"
+      ]
+    },
+    "dawn capital": {
+      "urls": [
+        "https://www.linkedin.com/in/normanfiore",
+        "https://www.linkedin.com/in/haakonoverli",
+        "https://www.linkedin.com/in/evgeniaplotnikova",
+        "https://www.linkedin.com/in/henrymason"
+      ],
+      "sources": [
+        "https://dawncapital.com/team/",
+        "https://www.linkedin.com/posts/normanfiore_announcing-dawns-investment-in-hokodo-activity-6701479902349492224-JVfG",
+        "https://www.linkedin.com/posts/haakonoverli_humbled-and-honoured-to-be-featured-on-the-cover-activity-7277231702038167552-xg0X",
+        "https://www.linkedin.com/posts/evgeniaplotnikova_this-is-a-big-and-much-needed-moment-for-activity-7236686382099537920-9UuV",
+        "https://www.linkedin.com/posts/henrymason_leading-vcs-say-startups-should-plan-for-no-activity-6716340067586375680-7rCG"
+      ]
+    },
+    "firstmark capital": {
+      "urls": [
+        "https://www.linkedin.com/in/adam-nelson-ny",
+        "https://www.linkedin.com/in/alexandratderbyshire2016",
+        "https://www.linkedin.com/in/aman-kabeer",
+        "https://www.linkedin.com/in/amishjani",
+        "https://www.linkedin.com/in/arnavbimbhet",
+        "https://www.linkedin.com/in/ashtonrosin",
+        "https://www.linkedin.com/in/benwinn",
+        "https://www.linkedin.com/in/bviner",
+        "https://www.linkedin.com/in/daniel-gaisin-a235504",
+        "https://www.linkedin.com/in/davidwaltcher",
+        "https://www.linkedin.com/in/desmond-fleming-b84042100",
+        "https://www.linkedin.com/in/faith-waldron",
+        "https://www.linkedin.com/in/gutierrezdiego",
+        "https://www.linkedin.com/in/hank-zhou-0b98a932",
+        "https://www.linkedin.com/in/hanna-saghafi",
+        "https://www.linkedin.com/in/kweinmann",
+        "https://www.linkedin.com/in/leahmlevine",
+        "https://www.linkedin.com/in/may-hasso",
+        "https://www.linkedin.com/in/michaelcarozza",
+        "https://www.linkedin.com/in/patrickkearneysmith",
+        "https://www.linkedin.com/in/putnamkristin",
+        "https://www.linkedin.com/in/rickheitzmann",
+        "https://www.linkedin.com/in/ryan-sullivan-ansa",
+        "https://www.linkedin.com/in/shilpanayyar",
+        "https://www.linkedin.com/in/turck",
+        "https://www.linkedin.com/in/vivian-foley-14ba58162",
+        "https://www.linkedin.com/in/wangvera"
+      ],
+      "sources": [
+        "https://firstmark.com/team/",
+        "https://firstmark.com/team/adam-nelson/",
+        "https://firstmark.com/team/alex-derbyshire/",
+        "https://firstmark.com/team/amish-jani/",
+        "https://firstmark.com/team/matt-turck/"
+      ]
+    },
+    "creandum": {
+      "urls": [
+        "https://www.linkedin.com/in/johanbrenner",
+        "https://www.linkedin.com/in/fritjofsson",
+        "https://www.linkedin.com/in/staffanhelgesson",
+        "https://www.linkedin.com/in/danielblomquist"
+      ],
+      "sources": [
+        "https://creandum.com/team/",
+        "https://creandum.com/team/johan-brenner/",
+        "https://creandum.com/team/carl-fritjofsson/",
+        "https://creandum.com/team/staffan-helgesson/",
+        "https://creandum.com/team/daniel-blomquist/",
+        "https://www.linkedin.com/in/johanbrenner/",
+        "https://www.linkedin.com/in/fritjofsson/",
+        "https://www.linkedin.com/in/staffanhelgesson/",
+        "https://www.linkedin.com/in/danielblomquist/"
+      ]
+    },
+    "cherry ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/filipdames",
+        "https://www.linkedin.com/in/sophiabendz",
+        "https://www.linkedin.com/in/christian-meermann",
+        "https://www.linkedin.com/in/alexander-langholz-baikousis-905b193a",
+        "https://www.linkedin.com/in/katharina-baratta-dragono",
+        "https://www.linkedin.com/in/nadja-carina-reischel"
+      ],
+      "sources": [
+        "https://www.linkedin.com/company/cherry-ventures/",
+        "https://cherry.vc/team",
+        "https://cherry.vc/team/filip-dames",
+        "https://cherry.vc/team/bruno-wisniewski",
+        "https://www.linkedin.com/posts/alexander-langholz-baikousis-905b193a_2025-was-a-big-year-for-us-at-cherry-activity-7406637810809688065-e5hA",
+        "https://www.linkedin.com/posts/cherry-ventures_our-investment-team-is-growing-and-today-activity-7254401145849233408-EwBg",
+        "https://www.linkedin.com/posts/christian-meermann_at-cherry-ventures-we-put-founders-first-activity-7155106822394130433-Og3W"
+      ]
+    },
+    "kibo ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/edvinaskiskis",
+        "https://www.linkedin.com/in/afresnillo",
+        "https://www.linkedin.com/in/alvarolozano1",
+        "https://www.linkedin.com/in/aquilinopena",
+        "https://www.linkedin.com/in/fernandodiazsolis",
+        "https://www.linkedin.com/in/guillermo-alvarez-96443095",
+        "https://www.linkedin.com/in/ignacio-pallás-84352b25",
+        "https://www.linkedin.com/in/jaimegervasnieto",
+        "https://www.linkedin.com/in/jmgasalla",
+        "https://www.linkedin.com/in/pablo-campos-118a4b6",
+        "https://www.linkedin.com/in/reyes-rubio-roa-030914122",
+        "https://www.linkedin.com/in/vicentevazquezbouza",
+        "https://www.linkedin.com/in/aallendez",
+        "https://www.linkedin.com/in/covadonga-garc%C3%ADa-vald%C3%A9s-ba6800105",
+        "https://www.linkedin.com/in/gonzalo-s%C3%A1nchez-arjona-12a210a",
+        "https://www.linkedin.com/in/ignacio-alfeiran-peñalosa-b02442261",
+        "https://www.linkedin.com/in/inma-g-serrano-63aaa3ab",
+        "https://www.linkedin.com/in/javier-torremocha",
+        "https://www.linkedin.com/in/jessaade",
+        "https://www.linkedin.com/in/jmamusategui",
+        "https://www.linkedin.com/in/joaquinrebuelta",
+        "https://www.linkedin.com/in/jordividaldearanavc",
+        "https://www.linkedin.com/in/joseguardomedina",
+        "https://www.linkedin.com/in/juanlopezsantamaria",
+        "https://www.linkedin.com/in/lucía-sáenz-galán",
+        "https://www.linkedin.com/in/mar%C3%ADa-rosillo-tr%C3%A9nor-3323a594",
+        "https://www.linkedin.com/in/miguelgovies",
+        "https://www.linkedin.com/in/soniafernandez",
+        "https://www.linkedin.com/in/sunirkapoor",
+        "https://www.linkedin.com/in/valeria-loewe-2b0279"
+      ],
+      "sources": [
+        "https://kiboventures.com/team",
+        "https://kiboventures.com/about"
+      ]
+    },
+    "cambridge innovation capital": {
+      "urls": [
+        "https://www.linkedin.com/in/andrewwilliamson",
+        "https://www.linkedin.com/in/michael-anstey-24a239",
+        "https://www.linkedin.com/in/ianjauncey",
+        "https://www.linkedin.com/in/philipwinter1"
+      ],
+      "sources": [
+        "https://www.cic.vc/team/",
+        "https://www.cic.vc/team/andrew-williamson/",
+        "https://www.cic.vc/team/michael-anstey/",
+        "https://www.cic.vc/team/ian-jauncey/",
+        "https://www.cic.vc/team/philip-winter/",
+        "https://www.linkedin.com/in/andrewwilliamson/?originalSubdomain=uk",
+        "https://www.linkedin.com/in/michael-anstey-24a239/",
+        "https://www.linkedin.com/in/ianjauncey/?originalSubdomain=uk",
+        "https://www.linkedin.com/in/philipwinter1/"
+      ]
+    },
+    "grove ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/dovmoran",
+        "https://www.linkedin.com/in/lotanlevkowitz",
+        "https://www.linkedin.com/in/liorhandelsman",
+        "https://www.linkedin.com/in/renana-ashkenazi-94515850",
+        "https://www.linkedin.com/in/liat-koren-kedmi-b00a512b",
+        "https://www.linkedin.com/in/orgit"
+      ],
+      "sources": [
+        "https://www.grovevc.com/team/",
+        "https://www.grovevc.com/team/dov-moran/",
+        "https://www.grovevc.com/team/lotan-levkowitz/",
+        "https://www.grovevc.com/team/lior-handelsman/",
+        "https://www.grovevc.com/team/renana-ashkenazi/",
+        "https://www.grovevc.com/team/liat-koren/",
+        "https://www.grovevc.com/team/or-git-associate-investor/"
+      ]
+    },
+    "u s venture partners": {
+      "urls": [
+        "https://www.linkedin.com/in/dafinat",
+        "https://www.linkedin.com/in/jacques-benkoski-ab9133",
+        "https://www.linkedin.com/in/jonathan-root-md-b3b26b56",
+        "https://www.linkedin.com/in/matthewgarratt",
+        "https://www.linkedin.com/in/rickusvp"
+      ],
+      "sources": [
+        "https://www.usvp.com/team/",
+        "https://www.usvp.com/team/dafina-toncheva/",
+        "https://www.usvp.com/team/jacques-benkoski/",
+        "https://www.usvp.com/team/jon-root/",
+        "https://www.usvp.com/team/matt-garratt/",
+        "https://www.usvp.com/team/rick-lewis/"
+      ]
+    },
+    "us venture partners": {
+      "urls": [
+        "https://www.linkedin.com/in/dafinat",
+        "https://www.linkedin.com/in/jacques-benkoski-ab9133",
+        "https://www.linkedin.com/in/jonathan-root-md-b3b26b56",
+        "https://www.linkedin.com/in/matthewgarratt",
+        "https://www.linkedin.com/in/rickusvp"
+      ],
+      "sources": [
+        "https://www.usvp.com/team/",
+        "https://www.usvp.com/team/dafina-toncheva/",
+        "https://www.usvp.com/team/jacques-benkoski/",
+        "https://www.usvp.com/team/jon-root/",
+        "https://www.usvp.com/team/matt-garratt/",
+        "https://www.usvp.com/team/rick-lewis/"
+      ]
+    },
+    "usvp": {
+      "urls": [
+        "https://www.linkedin.com/in/dafinat",
+        "https://www.linkedin.com/in/jacques-benkoski-ab9133",
+        "https://www.linkedin.com/in/jonathan-root-md-b3b26b56",
+        "https://www.linkedin.com/in/matthewgarratt",
+        "https://www.linkedin.com/in/rickusvp"
+      ],
+      "sources": [
+        "https://www.usvp.com/team/",
+        "https://www.usvp.com/team/dafina-toncheva/",
+        "https://www.usvp.com/team/jacques-benkoski/",
+        "https://www.usvp.com/team/jon-root/",
+        "https://www.usvp.com/team/matt-garratt/",
+        "https://www.usvp.com/team/rick-lewis/"
+      ]
+    },
+    "hv capital": {
+      "urls": [
+        "https://www.linkedin.com/in/davidkuczek",
+        "https://www.linkedin.com/in/rainer-maerkle",
+        "https://www.linkedin.com/in/janmiczaika",
+        "https://www.linkedin.com/in/barbodnamini"
+      ],
+      "sources": [
+        "https://www.hvcapital.com/team",
+        "https://www.linkedin.com/posts/davidkuczek_sharing-our-flixbus-learnings-a-story-about-activity-6561903122787164160-GWBT",
+        "https://www.linkedin.com/posts/rainer-maerkle_we-use-every-tool-available-to-drive-long-term-activity-7341690187816624130-fqVp",
+        "https://www.linkedin.com/posts/janmiczaika_hv-capital-invested-in-impossible-cloud-activity-7036713516346572800-0eCi",
+        "https://www.linkedin.com/posts/barbodnamini_yapily-continues-to-be-on-a-roll-in-2025-activity-7381996579164962817-Pvxg"
+      ]
+    },
+    "headline": {
+      "urls": [
+        "https://www.linkedin.com/in/maschilling",
+        "https://www.linkedin.com/in/taylor-brandt-89415250",
+        "https://www.linkedin.com/in/romero",
+        "https://www.linkedin.com/in/gieselmann",
+        "https://www.linkedin.com/in/shalini-rao-152216136"
+      ],
+      "sources": [
+        "https://headline.com/team/mathias-schilling",
+        "https://www.linkedin.com/posts/maschilling_citizen-health-raises-30m-series-a-to-build-activity-7361793183632044032-UQlF",
+        "https://www.linkedin.com/posts/taylor-brandt-89415250_so-excited-for-the-next-chapter-of-our-growth-activity-7242166456455507969-mRIz",
+        "https://pt.linkedin.com/posts/romero_headline-investe-horuss-ai-intelig%C3%AAncia-activity-7252673414409187328-69WN",
+        "https://www.linkedin.com/posts/gieselmann_today-at-headline-we-announce-a-series-of-activity-7186761291972128769-8seE",
+        "https://www.linkedin.com/posts/shalini-rao-152216136_microsoft-ai-diffusion-report-activity-7416716219862368256-LvRg"
+      ]
+    },
+    "heartcore capital": {
+      "urls": [
+        "https://www.linkedin.com/in/anne-kl%C3%BCssendorf",
+        "https://www.linkedin.com/in/b%C3%A9renger-teboul-danguin",
+        "https://www.linkedin.com/in/bj%C3%B6rn-nilsen-817b1691",
+        "https://www.linkedin.com/in/boditent",
+        "https://www.linkedin.com/in/cljepsen",
+        "https://www.linkedin.com/in/emma-kullenberg-4125a024b",
+        "https://www.linkedin.com/in/heidi-haurholm-rasmussen-7392467",
+        "https://www.linkedin.com/in/helena-overgaard-b98147295",
+        "https://www.linkedin.com/in/ishita-sinha03",
+        "https://www.linkedin.com/in/jimmyfussing",
+        "https://www.linkedin.com/in/lisaharmerr",
+        "https://www.linkedin.com/in/maxniederhofer",
+        "https://www.linkedin.com/in/michael-baczyk",
+        "https://www.linkedin.com/in/paulinakoschitz",
+        "https://www.linkedin.com/in/soerenrasktange",
+        "https://www.linkedin.com/in/yacineghalim"
+      ],
+      "sources": [
+        "https://www.heartcore.com/team/",
+        "https://www.linkedin.com/company/heartcorecapital/about/"
+      ]
+    },
+    "hetz ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/alex-shine-6a690a142",
+        "https://www.linkedin.com/in/alice-ben-david-155906119",
+        "https://www.linkedin.com/in/anat-eitan-zach-2aa965b",
+        "https://www.linkedin.com/in/andrew-feldman-2a09b6208",
+        "https://www.linkedin.com/in/guyfig",
+        "https://www.linkedin.com/in/itamarmula",
+        "https://www.linkedin.com/in/judah-taub-3773247b",
+        "https://www.linkedin.com/in/lizcohen",
+        "https://www.linkedin.com/in/neil-cohen-37941",
+        "https://www.linkedin.com/in/pavel-livshiz-68b3183a",
+        "https://www.linkedin.com/in/shraga-katz-b434187",
+        "https://www.linkedin.com/in/viki-temer-05b88a89"
+      ],
+      "sources": [
+        "https://www.hetz.vc/our-team",
+        "https://www.hetz.vc/team"
+      ]
+    },
+    "hummingbird ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/akshay-mehra-7989312b",
+        "https://www.linkedin.com/in/aleksandra-livinskaia",
+        "https://www.linkedin.com/in/ani-mouradyan",
+        "https://www.linkedin.com/in/barend-van-den-brande-219513",
+        "https://www.linkedin.com/in/caitlinedennis",
+        "https://www.linkedin.com/in/diyala-erekat",
+        "https://www.linkedin.com/in/elcinmetin",
+        "https://www.linkedin.com/in/ilerifirat",
+        "https://www.linkedin.com/in/katherine-jones-b88848127",
+        "https://www.linkedin.com/in/kobe-hendrickx-cfa-80383037",
+        "https://www.linkedin.com/in/konradkordowski",
+        "https://www.linkedin.com/in/lucas-de-four-864788b0",
+        "https://www.linkedin.com/in/lukasdecoster",
+        "https://www.linkedin.com/in/marc-rizk-771631243",
+        "https://www.linkedin.com/in/mariogabriele",
+        "https://www.linkedin.com/in/mickellu",
+        "https://www.linkedin.com/in/patlundgren",
+        "https://www.linkedin.com/in/peter-devlin",
+        "https://www.linkedin.com/in/roxanneroukoz",
+        "https://www.linkedin.com/in/sigrid-myncke-aab5561b7",
+        "https://www.linkedin.com/in/tealfrost",
+        "https://www.linkedin.com/in/thomas-delplanque-60391415",
+        "https://www.linkedin.com/in/woutergort"
+      ],
+      "sources": [
+        "https://www.hummingbird.vc/team"
+      ]
+    },
+    "inspiration ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/antoniobeja",
+        "https://www.linkedin.com/in/gady-nemirovsky-804bb33",
+        "https://www.linkedin.com/in/jay-bartels",
+        "https://www.linkedin.com/in/leylblack",
+        "https://www.linkedin.com/in/robert-fanini-64549167",
+        "https://www.linkedin.com/in/roger-lang-736b"
+      ],
+      "sources": [
+        "https://www.inspirationventures.com/team"
+      ]
+    },
+    "index ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/danfougere",
+        "https://www.linkedin.com/in/nina-achadjian",
+        "https://www.linkedin.com/in/hannah-seal-78938a22",
+        "https://www.linkedin.com/in/hammerjan",
+        "https://www.linkedin.com/in/martinmignot"
+      ],
+      "sources": [
+        "https://www.indexventures.com/team/",
+        "https://www.indexventures.com/team/dan-fougere/",
+        "https://www.indexventures.com/team/nina-achadjian/",
+        "https://www.indexventures.com/team/hannah-seal/",
+        "https://www.indexventures.com/team/jan-hammer/",
+        "https://www.indexventures.com/team/martin-mignot/",
+        "https://www.linkedin.com/in/danfougere",
+        "https://www.linkedin.com/in/nina-achadjian/",
+        "https://www.linkedin.com/in/hannah-seal-78938a22/?originalSubdomain=uk",
+        "https://www.linkedin.com/in/hammerjan/",
+        "https://www.linkedin.com/in/martinmignot/?originalSubdomain=uk"
+      ]
+    },
+    "notion capital": {
+      "urls": [
+        "https://www.linkedin.com/in/joscwhite",
+        "https://www.linkedin.com/in/itxasodp",
+        "https://www.linkedin.com/in/patrick-norris-b74426",
+        "https://www.linkedin.com/in/stephenemillard"
+      ],
+      "sources": [
+        "https://www.notioncapital.com/team/",
+        "https://www.notioncapital.com/team/jos-white",
+        "https://www.notioncapital.com/team/itxaso-del-palacio",
+        "https://www.notioncapital.com/team/patrick-norris",
+        "https://www.notioncapital.com/team/stephen-millard",
+        "https://www.linkedin.com/in/joscwhite/",
+        "https://www.linkedin.com/in/itxasodp/",
+        "https://www.linkedin.com/in/patrick-norris-b74426/",
+        "https://www.linkedin.com/in/stephenemillard/"
+      ]
+    },
+    "lifeline ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/timoahopelto",
+        "https://www.linkedin.com/in/petterikoponen",
+        "https://www.linkedin.com/in/jyriengestrom",
+        "https://www.linkedin.com/in/elinaholkko"
+      ],
+      "sources": [
+        "https://www.lifelineventures.com/contact-our-team/",
+        "https://www.linkedin.com/company/lifeline-ventures/",
+        "https://www.linkedin.com/posts/timoahopelto_%C5%8Dura-raises-over-900m-to-accelerate-global-activity-7383840920280006656-hLJs",
+        "https://www.linkedin.com/posts/petterikoponen_satellite-startup-iceye-raises-at-28-billion-activity-7402736033043267584-xS8I",
+        "https://www.linkedin.com/posts/jyriengestrom_in-the-uk-yes-vc-and-lifeline-ventures-portfolio-activity-7244571129573462017-tNnV",
+        "https://www.linkedin.com/posts/elinaholkko_satellite-startup-iceye-raises-at-28-billion-activity-7402735468607561729-li4d"
+      ]
+    },
+    "octopus ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/willgibbs1",
+        "https://www.linkedin.com/in/matmunro",
+        "https://www.linkedin.com/in/owen-metters",
+        "https://www.linkedin.com/in/mphchandler",
+        "https://www.linkedin.com/in/richardcourt",
+        "https://www.linkedin.com/in/paul-d-8a180414"
+      ],
+      "sources": [
+        "https://octopusventures.com/team/",
+        "https://octopusventures.com/team/health/will-gibbs/",
+        "https://octopusventures.com/team/deep-tech/mat-munro/",
+        "https://octopusventures.com/team/deep-tech/owen-metters/",
+        "https://octopusventures.com/team/consumer/matthew-chandler/",
+        "https://octopusventures.com/team/b2b-software/richard-court/",
+        "https://octopusventures.com/team/b2b-software/paul-davidson/"
+      ]
+    },
+    "susa ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/chadabyers",
+        "https://www.linkedin.com/in/courtney-buie-lipkin-5690406b",
+        "https://www.linkedin.com/in/derickenwezoh",
+        "https://www.linkedin.com/in/lpolovets",
+        "https://www.linkedin.com/in/misha-gordonrowe",
+        "https://www.linkedin.com/in/pratyush-buddiga-9238b4156",
+        "https://www.linkedin.com/in/sethgberman",
+        "https://www.linkedin.com/in/shaheer-sandhu"
+      ],
+      "sources": [
+        "https://www.susaventures.com/team/",
+        "https://www.linkedin.com/company/susa-ventures/"
+      ]
+    },
+    "venturefriends": {
+      "urls": [
+        "https://www.linkedin.com/in/alistair-owen",
+        "https://www.linkedin.com/in/anna-katrine-lauring-988217172",
+        "https://www.linkedin.com/in/apostolosapostolakis",
+        "https://www.linkedin.com/in/fivos-tsoukatos",
+        "https://www.linkedin.com/in/george-dimopoulos",
+        "https://www.linkedin.com/in/karabelasgeorge",
+        "https://www.linkedin.com/in/lilyjoo",
+        "https://www.linkedin.com/in/maria-piotrowska",
+        "https://www.linkedin.com/in/pavlos-pavlakis"
+      ],
+      "sources": [
+        "https://venturefriends.vc/team/",
+        "https://www.linkedin.com/company/venturefriends/posts/?feedView=all"
+      ]
+    },
+    "peakspan capital": {
+      "urls": [
+        "https://www.linkedin.com/in/philipdur",
+        "https://www.linkedin.com/in/matt-melymuka-98b5a617",
+        "https://www.linkedin.com/in/jackwfreeman",
+        "https://www.linkedin.com/in/sanketmerchant",
+        "https://www.linkedin.com/in/samkorman",
+        "https://www.linkedin.com/in/celia-smith1"
+      ],
+      "sources": [
+        "https://www.peakspancapital.com/expertise/investment-team",
+        "https://www.peakspancapital.com/investment-team/phil-dur",
+        "https://www.peakspancapital.com/investment-team/matt-melymuka",
+        "https://www.peakspancapital.com/investment-team/jack-freeman",
+        "https://www.peakspancapital.com/investment-team/sanket-merchant",
+        "https://www.peakspancapital.com/investment-team/sam-korman",
+        "https://www.peakspancapital.com/investment-team/celia-smith"
+      ]
+    },
+    "startupbootcamp": {
+      "urls": [
+        "https://www.linkedin.com/in/abeseksek",
+        "https://www.linkedin.com/in/alceorapagna",
+        "https://www.linkedin.com/in/alexfarcet",
+        "https://www.linkedin.com/in/andresfontao",
+        "https://www.linkedin.com/in/anna-barlow-6b34691a",
+        "https://www.linkedin.com/in/ckoelbek",
+        "https://www.linkedin.com/in/ferminbueno",
+        "https://www.linkedin.com/in/mjellema",
+        "https://www.linkedin.com/in/nazzareno-mengoni-9066b036",
+        "https://www.linkedin.com/in/oliver-howard-42898b47",
+        "https://www.linkedin.com/in/pkiracofe",
+        "https://www.linkedin.com/in/richardcelm",
+        "https://www.linkedin.com/in/stuart-allinson-848032232",
+        "https://www.linkedin.com/in/trevortownsend"
+      ],
+      "sources": [
+        "https://www.startupbootcamp.org/about/startupbootcamp",
+        "https://www.linkedin.com/company/startupbootcamp/"
+      ]
+    },
+    "speedinvest": {
+      "urls": [
+        "https://www.linkedin.com/in/oliverholle",
+        "https://www.linkedin.com/in/andrea-bernau-35a1a459",
+        "https://www.linkedin.com/in/jeroenvanacker",
+        "https://www.linkedin.com/in/deepalinarian",
+        "https://www.linkedin.com/in/tomfilipleschek"
+      ],
+      "sources": [
+        "https://www.speedinvest.com/team/",
+        "https://www.speedinvest.com/team/oliver-holle/",
+        "https://www.speedinvest.com/team/andrea-bernau/",
+        "https://www.speedinvest.com/team/jeroen-vanacker/",
+        "https://www.speedinvest.com/team/deepali-narian/",
+        "https://www.speedinvest.com/team/tom-filip-leschek/"
+      ]
+    },
+    "entr e capital": {
+      "urls": [
+        "https://www.linkedin.com/in/avieyal",
+        "https://www.linkedin.com/in/eli-dubnov-66642344",
+        "https://www.linkedin.com/in/eran-bielski-1baa2049",
+        "https://www.linkedin.com/in/hadar-shani-234a6212",
+        "https://www.linkedin.com/in/iyar-el-ami-4a810991",
+        "https://www.linkedin.com/in/jessica-yakim-167640192",
+        "https://www.linkedin.com/in/maorisraeli",
+        "https://www.linkedin.com/in/maya-benichou-b42161aa",
+        "https://www.linkedin.com/in/otnielbenamara",
+        "https://www.linkedin.com/in/rachituv",
+        "https://www.linkedin.com/in/saul-levin-4b0a35141",
+        "https://www.linkedin.com/in/tomer-niv",
+        "https://www.linkedin.com/in/yoniosherov"
+      ],
+      "sources": [
+        "https://entreecap.com/about/",
+        "https://www.linkedin.com/company/entree-capital/"
+      ]
+    },
+    "seedcamp": {
+      "urls": [
+        "https://www.linkedin.com/in/carloseduardoespinal",
+        "https://www.linkedin.com/in/reshmasohoni",
+        "https://www.linkedin.com/in/tomwilsonseedcamp",
+        "https://www.linkedin.com/in/sia-houchangnia"
+      ],
+      "sources": [
+        "https://seedcamp.com/team/",
+        "https://www.linkedin.com/posts/reshmasohoni_the-ai-opportunity-has-never-been-more-important-activity-7318548852396840961-e2uo",
+        "https://www.linkedin.com/posts/tomwilsonseedcamp_how-fast-should-your-ai-startup-grow-openais-activity-7300922483508531200-HGXZ",
+        "https://www.linkedin.com/posts/carloseduardoespinal_this-is-a-great-summary-by-chris-about-the-activity-7236992884899368962-EhVv",
+        "https://www.linkedin.com/posts/sia-houchangnia_learning-with-smart-and-kind-folks-had-a-lovely-activity-7174165654436089856-8sMg"
+      ]
+    }
+  },
+  "people": {}
+}

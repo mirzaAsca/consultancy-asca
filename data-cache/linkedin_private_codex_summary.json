@@ -1,0 +1,232 @@
+{
+  "files": {
+    "001__html__deep_tech_investors_mapping_public_version_google_drive.csv": {
+      "rows": 1833,
+      "rows_with_linkedin_private_codex": 0,
+      "sources": {
+        "needs-person-research": 1830,
+        "needs-firm-research": 3
+      }
+    },
+    "002__html__euro_tech_vc_funds_from_1_2016_please_read_first_tab_google_drive.csv": {
+      "rows": 1348,
+      "rows_with_linkedin_private_codex": 81,
+      "sources": {
+        "needs-firm-research": 1267,
+        "existing-personal": 81
+      }
+    },
+    "003__html__global_active_investors_list_google_drive.csv": {
+      "rows": 395,
+      "rows_with_linkedin_private_codex": 381,
+      "sources": {
+        "needs-person-research": 14,
+        "existing-personal": 381
+      }
+    },
+    "004__html__micro_vc_seed_fund_spreadsheet_google_drive.csv": {
+      "rows": 631,
+      "rows_with_linkedin_private_codex": 4,
+      "sources": {
+        "needs-firm-research": 627,
+        "existing-personal": 4
+      }
+    },
+    "005__html__pre_seed_vc_firms_google_drive.csv": {
+      "rows": 78,
+      "rows_with_linkedin_private_codex": 70,
+      "sources": {
+        "existing-personal": 70,
+        "needs-firm-research": 8
+      }
+    },
+    "006__html__the_ultimate_list_of_750_seed_funds_google_drive.csv": {
+      "rows": 786,
+      "rows_with_linkedin_private_codex": 4,
+      "sources": {
+        "needs-firm-research": 782,
+        "existing-personal": 4
+      }
+    },
+    "007__html__vc_firms_that_accept_cold_outreach_from_founders_google_drive.csv": {
+      "rows": 2536,
+      "rows_with_linkedin_private_codex": 43,
+      "sources": {
+        "needs-firm-research": 849,
+        "needs-person-research": 1644,
+        "existing-personal": 43
+      }
+    },
+    "008__native__early_stage_nyc_vcs_grid_view.csv": {
+      "rows": 84,
+      "rows_with_linkedin_private_codex": 32,
+      "sources": {
+        "needs-person-research": 29,
+        "existing-personal": 32,
+        "needs-firm-research": 23
+      }
+    },
+    "009__native__folk_all_vcs_2026_02_15_people.csv": {
+      "rows": 2215,
+      "rows_with_linkedin_private_codex": 80,
+      "sources": {
+        "needs-person-research": 201,
+        "existing-personal": 80,
+        "needs-firm-research": 1933,
+        "unclassified": 1
+      }
+    },
+    "010__native__folk_corporate_venture_arms_2026_02_15_companies.csv": {
+      "rows": 1482,
+      "rows_with_linkedin_private_codex": 10,
+      "sources": {
+        "needs-firm-research": 1472,
+        "existing-personal": 10
+      }
+    },
+    "011__native__folk_european_family_offices_founders_2026_02_15_people.csv": {
+      "rows": 147,
+      "rows_with_linkedin_private_codex": 91,
+      "sources": {
+        "needs-person-research": 23,
+        "existing-personal": 91,
+        "needs-firm-research": 33
+      }
+    },
+    "012__native__list_5000_vc_family_office_angel_networks_accelerators_5_000_vc_250_fos_accelerators_angel_networks.csv": {
+      "rows": 4774,
+      "rows_with_linkedin_private_codex": 31,
+      "sources": {
+        "needs-person-research": 4738,
+        "existing-personal": 31,
+        "needs-firm-research": 5
+      }
+    },
+    "013__native__mercury_com_2026_02_15.csv": {
+      "rows": 295,
+      "rows_with_linkedin_private_codex": 0,
+      "sources": {
+        "unclassified": 295
+      }
+    },
+    "014__native__people.csv": {
+      "rows": 1955,
+      "rows_with_linkedin_private_codex": 74,
+      "sources": {
+        "needs-firm-research": 1872,
+        "existing-personal": 74,
+        "needs-person-research": 9
+      }
+    },
+    "015__zip__folk_100_best_vc_funds_in_uk_2026_02_15_companies.csv": {
+      "rows": 120,
+      "rows_with_linkedin_private_codex": 7,
+      "sources": {
+        "needs-firm-research": 113,
+        "existing-personal": 7
+      }
+    },
+    "016__zip__folk_200_ai_angel_investors_2026_02_15_people.csv": {
+      "rows": 233,
+      "rows_with_linkedin_private_codex": 230,
+      "sources": {
+        "existing-personal": 230,
+        "needs-person-research": 3
+      }
+    },
+    "017__zip__folk_300_australian_early_stage_investors_2026_02_15_people.csv": {
+      "rows": 290,
+      "rows_with_linkedin_private_codex": 290,
+      "sources": {
+        "existing-personal": 290
+      }
+    },
+    "018__zip__folk_100_vc_firms_investing_in_saas_2026_02_15_companies.csv": {
+      "rows": 90,
+      "rows_with_linkedin_private_codex": 4,
+      "sources": {
+        "existing-personal": 4,
+        "needs-firm-research": 86
+      }
+    },
+    "019__zip__folk_350_most_active_angel_investors_in_usa_2026_02_15_people.csv": {
+      "rows": 384,
+      "rows_with_linkedin_private_codex": 369,
+      "sources": {
+        "existing-personal": 369,
+        "needs-person-research": 15
+      }
+    },
+    "020__zip__folk_all_vcs_2026_02_15_people_2.csv": {
+      "rows": 500,
+      "rows_with_linkedin_private_codex": 33,
+      "sources": {
+        "needs-firm-research": 409,
+        "needs-person-research": 58,
+        "existing-personal": 33
+      }
+    },
+    "021__zip__folk_all_accelerators_2026_02_15_companies.csv": {
+      "rows": 695,
+      "rows_with_linkedin_private_codex": 14,
+      "sources": {
+        "needs-firm-research": 681,
+        "existing-personal": 14
+      }
+    },
+    "022__zip__folk_data_investors_in_asia_2026_02_15_people.csv": {
+      "rows": 100,
+      "rows_with_linkedin_private_codex": 99,
+      "sources": {
+        "existing-personal": 99,
+        "needs-person-research": 1
+      }
+    },
+    "023__zip__folk_early_stage_web_3_us_investors_2026_02_15_people.csv": {
+      "rows": 208,
+      "rows_with_linkedin_private_codex": 15,
+      "sources": {
+        "existing-personal": 15,
+        "needs-person-research": 193
+      }
+    },
+    "024__zip__folk_gen_ai_investors_in_asia_2026_02_15_people.csv": {
+      "rows": 179,
+      "rows_with_linkedin_private_codex": 178,
+      "sources": {
+        "existing-personal": 178,
+        "needs-person-research": 1
+      }
+    },
+    "025__zip__folk_les_vc_francais_399_options_pour_lever_des_fonds_2026_02_15_people.csv": {
+      "rows": 328,
+      "rows_with_linkedin_private_codex": 327,
+      "sources": {
+        "existing-personal": 327,
+        "needs-person-research": 1
+      }
+    },
+    "026__zip__folk_most_prolific_investment_firms_number_of_investments_2026_02_15_companies.csv": {
+      "rows": 94,
+      "rows_with_linkedin_private_codex": 31,
+      "sources": {
+        "existing-personal": 31,
+        "needs-firm-research": 63
+      }
+    },
+    "027__zip__folk_top_300_angel_investors_in_middle_east_2026_02_15_people.csv": {
+      "rows": 299,
+      "rows_with_linkedin_private_codex": 299,
+      "sources": {
+        "existing-personal": 299
+      }
+    }
+  },
+  "totals": {
+    "files": 27,
+    "pending_people": 8760,
+    "pending_firms": 10226,
+    "cached_people_keys": 0,
+    "cached_firm_keys": 34
+  }
+}
