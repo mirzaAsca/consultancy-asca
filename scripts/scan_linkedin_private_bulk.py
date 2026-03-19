@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import concurrent.futures as cf
 import json
+import os
 import re
 import time
 from pathlib import Path
@@ -135,11 +136,13 @@ def append_processed(results: list[dict[str, object]]) -> None:
 
 
 def main() -> None:
-    targets = choose_targets(MAX_TARGETS)
+    max_targets = int(os.environ.get("MAX_TARGETS", str(MAX_TARGETS)))
+    max_workers = int(os.environ.get("MAX_WORKERS", str(MAX_WORKERS)))
+    targets = choose_targets(max_targets)
     print(f"chunk_targets {len(targets)}", flush=True)
     start = time.time()
     results: list[dict[str, object]] = []
-    with cf.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    with cf.ThreadPoolExecutor(max_workers=max_workers) as executor:
         for index, result in enumerate(executor.map(scan_record, targets), start=1):
             results.append(result)
             if index % 10 == 0:

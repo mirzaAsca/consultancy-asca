@@ -116,10 +116,10 @@ const dreamOutcomes = [
 ];
 
 const painPoints = [
-  "You bought tools, hired people, ran pilots. Still no revenue from any of it.",
-  "Marketing uses one tool. Engineering uses another. Nobody knows what anyone else is doing.",
-  "Legal finds out about an AI project three months in and kills it. Wasted time, wasted money.",
-  "The board asks \"what's AI doing for us?\" and you don't have an answer.",
+  "You've spent $200K+ on AI tools and pilots. Your team still copies from ChatGPT and pastes into Google Docs. Zero revenue. Zero cost savings. Just invoices.",
+  "Marketing runs Gemini. Engineering runs Claude. Sales has a chatbot nobody uses. Finance doesn't know any of this exists. You're paying for 6 AI tools and none of them talk to each other.",
+  "Legal finds out about an AI project three months after launch and kills it. Three months of engineering time. Gone.",
+  "The board asks \"what's AI doing for us?\" and you open a spreadsheet you made that morning.",
 ];
 
 const featureGroups = [
@@ -262,7 +262,7 @@ const fitNotFor = [
 const faqItems = [
   {
     q: "We already have an AI strategy. Why do we need this?",
-    a: 'Most companies have a strategy. The problem is never the plan — it\'s what happens after. We don\'t write decks. We build the system that gets AI from "good idea" to "running and making money."',
+    a: "Good. Then you know what you want AI to do. The problem is almost never the strategy — it's that six months later, nothing shipped. You probably have a 40-page strategy deck somewhere. We don't rewrite your strategy. We build the system that turns it into working software your team actually uses.",
   },
   {
     q: "How is this different from McKinsey or Deloitte?",
@@ -278,7 +278,7 @@ const faqItems = [
   },
   {
     q: "What if $22,000/month is too much?",
-    a: "Don't start there. Start with the complimentary AI Portfolio Reality Scan (valued at $15,000). Takes a week, costs nothing, and you keep everything we find. If the math works after that, we talk about the retainer. If not, you still walk away with a real plan. No hard feelings.",
+    a: "Then don't start there. Start with the free scan. Takes a week. You keep everything. If the scan shows you're leaving $200K on the table, the $22K conversation becomes easy. If it doesn't, you walk away with a real plan. No pitch. No pressure.",
   },
   {
     q: "How fast will we see results?",
@@ -430,7 +430,7 @@ export default function App() {
         >
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
-              <p className={sectionLabelClass}>AI THAT ACTUALLY WORKS</p>
+              <p className={sectionLabelClass}>WE FIX BROKEN AI</p>
               <h1 className="mt-6 max-w-[13ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
                 We make AI work for your business.{" "}
                 <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
@@ -540,14 +540,14 @@ export default function App() {
                 — we keep working for free until we do.
               </span>
             </p>
+            <p className="mx-auto mt-6 max-w-[48ch] text-base leading-relaxed text-slate-600">
+              This isn't automation. It's leverage. Your best people, doing 4-8x the work, at the same quality or better.
+            </p>
             <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
               <span>
                 Only works if we talk to the people who can make decisions
               </span>
               <span className="hidden text-[var(--line)] sm:inline">|</span>
-              {/* <span>Free Company Scan when you join the waitlist</span>
-              <span className="hidden text-[var(--line)] sm:inline">|</span>
-              <span>First in line, first to get a spot</span> */}
             </div>
           </div>
         </section>
@@ -618,6 +618,48 @@ export default function App() {
           </div>
         </section>
 
+        {/* ── QUICK CHECK: Self-assessment ── */}
+        <section className={shortDividerSectionClass}>
+          <p className={sectionLabelClass}>QUICK CHECK</p>
+          <h2 className={sectionHeadingClass}>
+            How broken is your AI setup?
+          </h2>
+          <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
+            Five things every company should have before spending another dollar on AI. Most have zero.
+          </p>
+
+          <div className="mt-8 space-y-3">
+            {[
+              "We have a list of every AI project running right now",
+              "Someone owns each project and reports on it weekly",
+              "We know the cost of each project vs. the revenue or savings it creates",
+              "Legal and security have reviewed every AI tool we use",
+              "We have a decision framework for which projects to fund, scale, or kill",
+            ].map((item) => (
+              <div key={item} className={`flex items-start gap-4 ${cardClass}`}>
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-[var(--line)] bg-white font-['IBM_Plex_Mono'] text-[10px] text-[var(--muted)]">
+                  &nbsp;
+                </span>
+                <p className="text-sm leading-relaxed text-slate-700">
+                  {item}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className={`mt-8 ${panelClass}`}>
+            <p className="text-sm leading-relaxed text-slate-700">
+              <span className="font-semibold text-slate-950">If you checked fewer than 3:</span>{" "}
+              you need a system.{" "}
+              <span className="font-semibold text-slate-950">If you checked 0:</span>{" "}
+              you need us.
+            </p>
+            <a href="#scan" className={`mt-4 ${primaryButtonClass}`}>
+              Get your free scan
+            </a>
+          </div>
+        </section>
+
         {/* ── 3. PAIN + COST OF INACTION ── */}
         <section className={shortDividerSectionClass}>
           <p className={sectionLabelClass}>SOUND FAMILIAR?</p>
@@ -644,6 +686,60 @@ export default function App() {
                 Every month you wait, your competitors get further ahead.
               </span>
             </p>
+          </div>
+        </section>
+
+        {/* ── THE FIX: 3-framework bridge ── */}
+        <section className={stackedSectionClass}>
+          <p className={sectionLabelClass}>THE FIX</p>
+          <h2 className={sectionHeadingClass}>
+            Three things. That's all you're missing.
+          </h2>
+          <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
+            Right now your AI projects are scattered across teams with no shared
+            plan. These three pieces fix that.
+          </p>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <article className={cardClass}>
+              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
+                01
+              </p>
+              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
+                The list
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-slate-700">
+                Every AI project, who owns it, what it costs. In one place.
+              </p>
+            </article>
+            <article className={cardClass}>
+              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
+                02
+              </p>
+              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
+                The rules
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-slate-700">
+                Who approves what. When legal gets involved. No more guessing.
+              </p>
+            </article>
+            <article className={cardClass}>
+              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
+                03
+              </p>
+              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
+                The score
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-slate-700">
+                Is it making money or burning it? Numbers, not opinions.
+              </p>
+            </article>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
+            <a href="/how-we-work/" className={primaryButtonClass}>
+              See how we build all three
+            </a>
           </div>
         </section>
 
