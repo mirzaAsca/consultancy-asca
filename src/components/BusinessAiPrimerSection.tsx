@@ -135,7 +135,7 @@ const leverFlows: LeverFlow[] = [
           label: "For your company",
           title: "Better margins without more hiring",
           detail:
-            "You get more output without hiring proportionally more people. Margins go up. Speed goes up. Competitors fall behind.",
+            "You get more output without hiring proportionally more people. Margins go up. Speed goes up.",
         },
       ],
       kicker:
@@ -195,10 +195,7 @@ const toolComparison: ToolComparison[] = [
       "Gets better with more data",
       "Turns history into predictions",
     ],
-    cons: [
-      "Needs clean data",
-      "Needs volume — garbage in, garbage out",
-    ],
+    cons: ["Needs clean data", "Needs volume — garbage in, garbage out"],
     useCase:
       "Demand forecasting. Churn prediction. Lead scoring. Fraud detection. Dynamic pricing. Inventory optimization. Anything where the answer is hiding in your past data.",
   },
@@ -308,7 +305,7 @@ const schoolSteps: PrimerStep[] = [
     eyebrow: "FOUR LEVERS",
     title: "Sell more. Spend less. Reduce risk. Charge more.",
     detail:
-      "Price usually goes up on its own once your customer experience, delivery speed, and reliability get better.",
+      "Price easily goes up once your customer experience, delivery speed, and reliability get better.",
     summaryItems: [
       "Lever 01: Sell more",
       "Lever 02: Lower unit cost",

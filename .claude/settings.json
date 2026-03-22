@@ -70,7 +70,15 @@
       "Read(//Users/mirzaasceric/Desktop/consultancy-asca/**)",
       "Bash(python3:*)",
       "Skill(update-config)",
-      "Skill(update-config:*)"
+      "Skill(update-config:*)",
+      "WebFetch(domain:www.pwc.com)",
+      "WebFetch(domain:www.gartner.com)",
+      "WebFetch(domain:www.mckinsey.com)",
+      "WebFetch(domain:www.glassdoor.com)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:blog.quest.com)",
+      "WebFetch(domain:www.in-parallel.com)",
+      "WebFetch(domain:www.ziprecruiter.com)"
     ],
     "additionalDirectories": [
       "/Users/mirzaasceric/Desktop/consultancy-asca/src/assets"

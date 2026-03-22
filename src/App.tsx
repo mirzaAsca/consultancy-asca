@@ -144,7 +144,7 @@ const featureGroups = [
     label: "THE ARMY",
     features: [
       "Up to 20–30 Dedicated AI Engineers",
-      "2–5x More Output Across the Company",
+      "2–3x More Output Per Affected Team Member",
       "Access to our in-house expert team for: design, copywriting, SEO, development, and more",
     ],
   },
@@ -165,7 +165,7 @@ const plans = [
     subtitle: "We run AI with your team",
     price: "$22,000",
     period: "/mo",
-    anchor: "Replaces a $350K–$600K/yr internal AI strategy hire",
+    anchor: "Replaces a $350K–$500K/yr internal AI strategy hire",
     anchorSource: {
       label: "Glassdoor 2026",
       url: "https://www.glassdoor.com/Salaries/chief-ai-officer-salary-SRCH_KO0,16.htm",
@@ -195,20 +195,20 @@ const plans = [
     subtitle: "Your dedicated AI team",
     price: "$290,000",
     period: "/mo",
-    anchor: "$580/head vs. $5,000–$15,000/head industry average",
+    anchor: "Building this team in-house: $400K–$720K/mo in salary alone",
     anchorSource: {
-      label: "AI consulting benchmarks 2026",
-      url: "https://www.leanware.co/insights/how-much-does-an-ai-consultant-cost",
+      label: "Robert Half / Glassdoor AI Engineer Salary Data 2026",
+      url: "https://www.roberthalf.com/us/en/job-details/aiml-engineer",
     },
     scarcity: "Coming Q3 2026",
     description:
-      "Our team becomes your team. Up to 20–30 dedicated engineers building, shipping, and scaYou’ll have 20–30 dedicated engineers. They will build, ship, and scale AI in your organization.",
+      "20–30 dedicated engineers building AI systems that make your existing team 2–3x more productive. They build it, deploy it, and make sure your people actually use it.",
     cta: "Request Early Access",
     ctaDisabled: false,
     highlighted: false,
     includedGroups: 4,
     valueStack: [
-      { name: "20–30 Dedicated AI Engineers", value: "$250,000/mo" },
+      { name: "20–30 Dedicated AI Engineers", value: "$400,000/mo" },
       { name: "Full COMMAND ROOM Strategy Layer", value: "$35,000/mo" },
       { name: "External Team (Design, Copy, SEO, Dev)", value: "$25,000/mo" },
       { name: "Cross-Org Scaling & Integration", value: "$20,000/mo" },
@@ -217,8 +217,8 @@ const plans = [
     valueStackOneTime: [
       { name: "AI Portfolio Reality Scan", value: "$15,000" },
     ],
-    totalMonthlyValue: "$345,000/mo",
-    savings: "You save $55,000/mo + $15,000 one-time",
+    totalMonthlyValue: "$495,000/mo",
+    savings: "You save $205,000/mo + $15,000 one-time",
   },
   {
     name: "PORTFOLIO ENGINE",
@@ -449,7 +449,7 @@ export default function App() {
                 See Plans
               </a>
               <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-slate-500">
-                Choose the plan that fits your organization best.
+                See what's included.
               </p>
             </div>
           </div>
@@ -494,8 +494,7 @@ export default function App() {
                 {PRIMARY_CTA}
               </a>
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-500">
-                We're not taking new companies right now. Join the waitlist and
-                get your complimentary scan while you wait.
+                We're not taking new companies right now.
               </p>
             </div>
           </aside>
@@ -557,7 +556,7 @@ export default function App() {
         <section className={shortDividerSectionClass}>
           <p className={sectionLabelClass}>THE REALITY</p>
           <h2 className={sectionHeadingClass}>
-            Most companies are burning money on AI with nothing to show for it.
+            What the data says about AI spending.
           </h2>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             <article className={`${cardClass} flex flex-col`}>
@@ -565,7 +564,7 @@ export default function App() {
                 56%
               </p>
               <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                of CEOs report no tangible return from their AI investments.
+                of CEOs report neither revenue nor cost benefits from AI.
               </p>
               <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
                 <a
@@ -607,12 +606,12 @@ export default function App() {
               </p>
               <p className="mt-auto pt-4 text-[11px] leading-relaxed text-slate-400">
                 <a
-                  href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai"
+                  href="https://www.spglobal.com/market-intelligence/en/news-insights/research/ai-experiences-rapid-adoption-but-with-mixed-outcomes-highlights-from-vote-ai-machine-learning"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
                 >
-                  McKinsey State of AI 2025
+                  S&P Global, AI &amp; ML Use Cases 2025
                 </a>
               </p>
             </article>
@@ -622,10 +621,9 @@ export default function App() {
         {/* ── QUICK CHECK: Self-assessment ── */}
         <section className={shortDividerSectionClass}>
           <p className={sectionLabelClass}>QUICK CHECK</p>
-          <h2 className={sectionHeadingClass}>How broken is your AI setup?</h2>
+          <h2 className={sectionHeadingClass}>Five things companies with working AI have in common.</h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            Five things every company should have before spending another dollar
-            on AI. Most have zero.
+            Based on companies where AI generates measurable ROI.
           </p>
 
           <div className="mt-8 space-y-3">
@@ -647,14 +645,21 @@ export default function App() {
 
           <div className={`mt-8 ${panelClass}`}>
             <p className="text-sm leading-relaxed text-slate-700">
+              Companies with structured AI operating models achieve up to{" "}
               <span className="font-semibold text-slate-950">
-                If you checked fewer than 3:
+                2.7x greater ROI
               </span>{" "}
-              you need a system.{" "}
-              <span className="font-semibold text-slate-950">
-                If you checked 0:
-              </span>{" "}
-              you need us.
+              on AI investments.
+            </p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-slate-400">
+              <a
+                href="https://www.bcg.com/publications/2025/are-you-generating-value-from-ai-the-widening-gap"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
+              >
+                BCG 2025
+              </a>
             </p>
             <a href="#scan" className={`mt-4 ${primaryButtonClass}`}>
               Get your free scan
@@ -664,10 +669,9 @@ export default function App() {
 
         {/* ── 3. PAIN + COST OF INACTION ── */}
         <section className={shortDividerSectionClass}>
-          <p className={sectionLabelClass}>SOUND FAMILIAR?</p>
+          <p className={sectionLabelClass}>WHAT WE SEE</p>
           <h2 className={sectionHeadingClass}>
-            You've spent money on AI. You can't point to one dollar it made
-            back.
+            Six-figure AI budgets. Zero measurable return.
           </h2>
           <div className="mt-10 grid gap-4 md:grid-cols-12">
             {painPoints.map((point) => (
@@ -679,26 +683,16 @@ export default function App() {
             ))}
           </div>
 
-          <div className="mt-16 flex flex-col items-center text-center">
-            <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-              YOU KNOW YOU NEED A SYSTEM AND
-            </p>
-            <p className="mt-6 text-4xl font-semibold leading-[1.08] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl lg:text-[3.5rem]">
-              <span className="bg-white px-[0.12em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-                Every month you wait, your competitors get further ahead.
-              </span>
-            </p>
-          </div>
         </section>
 
         {/* ── THE FIX: 3-framework bridge ── */}
         <section className={stackedSectionClass}>
           <p className={sectionLabelClass}>THE FIX</p>
           <h2 className={sectionHeadingClass}>
-            Three things. That's all you're missing.
+            Three things that separate companies where AI works from companies where it doesn't.
           </h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            Right now, teams are working on your AI projects without a shared
+            Most AI projects fail because teams are building without a shared
             plan.
           </p>
 
@@ -875,8 +869,7 @@ export default function App() {
           <h2 className={sectionHeadingClass}>Three ways to make it happen.</h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
             From weekly advisory to a full team of engineers inside your
-            business. Pick the level that fits. We build it and run it with your
-            people.
+            business. We build it and run it with your people.
           </p>
 
           {/* ── Plan cards ── */}
@@ -955,7 +948,11 @@ export default function App() {
                   <p className="text-sm leading-relaxed text-slate-600">
                     {plan.description}
                   </p>
-                  <span className="mt-3 inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                  <span className={`mt-3 inline-flex w-fit items-center px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] ${
+                    plan.scarcity === "0 spots available"
+                      ? "border border-rose-200 bg-rose-50 text-rose-600"
+                      : "border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] text-[var(--muted)]"
+                  }`}>
                     {plan.scarcity}
                   </span>
                 </div>
@@ -1001,6 +998,18 @@ export default function App() {
                         ))}
                       </div>
                     ) : null}
+                    {plan.totalMonthlyValue && (
+                      <div className="mt-3 border-t border-[var(--line)] pt-3">
+                        <div className="flex items-baseline justify-between gap-3">
+                          <span className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-950">
+                            Total value
+                          </span>
+                          <span className="shrink-0 font-['IBM_Plex_Mono'] text-[14px] font-semibold text-[var(--accent)]">
+                            {plan.totalMonthlyValue}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : null}
 
@@ -1277,7 +1286,7 @@ export default function App() {
                     JOIN THE WAITLIST — COMPLIMENTARY SCAN INCLUDED
                   </p>
                   <h2 className={sectionHeadingClass}>
-                    Get on the list. Get your AI Portfolio Reality Scan now.
+                    AI Portfolio Reality Scan — complimentary for waitlist members.
                   </h2>
                   <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
                     Tell us about your company and what's happening with AI
@@ -1342,7 +1351,7 @@ export default function App() {
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            Fully booked. Join the waitlist. Get your complimentary scan now.
+            Fully booked. Complimentary scan available for waitlist members.
           </p>
         </footer>
       </main>
