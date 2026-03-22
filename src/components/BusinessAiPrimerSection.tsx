@@ -172,7 +172,7 @@ const bonusGain: BonusGain = {
 
 const toolComparison: ToolComparison[] = [
   {
-    label: "First choice",
+    label: "Rules-based",
     title: "Automation",
     pros: [
       "More consistent",
@@ -188,8 +188,23 @@ const toolComparison: ToolComparison[] = [
       "Repeatable work with clear rules: same inputs, same steps, same outputs.",
   },
   {
-    label: "Second choice",
-    title: "AI",
+    label: "Pattern-based",
+    title: "Machine Learning",
+    pros: [
+      "Finds patterns humans miss",
+      "Gets better with more data",
+      "Turns history into predictions",
+    ],
+    cons: [
+      "Needs clean data",
+      "Needs volume — garbage in, garbage out",
+    ],
+    useCase:
+      "Demand forecasting. Churn prediction. Lead scoring. Fraud detection. Dynamic pricing. Inventory optimization. Anything where the answer is hiding in your past data.",
+  },
+  {
+    label: "Judgment-based",
+    title: "Generative AI",
     pros: [
       "Handles messy inputs",
       "Good at judgment calls",
@@ -307,17 +322,6 @@ const schoolSteps: PrimerStep[] = [
   },
   {
     step: "03",
-    eyebrow: "WHICH TOOL",
-    title: "Automation first. AI second.",
-    detail:
-      "Use automation when the work follows clear rules. Use AI when the work needs judgment. Plain automation is cheaper and more reliable. AI is the second choice, not the first.",
-    comparisonTable: toolComparison,
-    tags: ["Automation first", "AI when judgment is needed", "Numbers decide"],
-    closing:
-      "AI can now handle work that used to require expensive experts - but only when the math justifies it.",
-  },
-  {
-    step: "04",
     eyebrow: "THE FOUNDATION",
     title: "Your AI is only as smart as what you feed it.",
     detail:
@@ -326,6 +330,16 @@ const schoolSteps: PrimerStep[] = [
     tags: ["Hard prerequisite", "AI fails without this"],
     closing:
       "Data quality is the #1 reason AI pilots fail (Forrester). If the data isn't there, the project doesn't start — that's a hard gate, not a soft suggestion. IBM says the same thing: skip data prep and everything downstream breaks. This isn't optional infrastructure. It's the thing everything else depends on.",
+  },
+  {
+    step: "04",
+    eyebrow: "THREE TOOLS",
+    title: "Automation for rules. ML for patterns. AI for judgment.",
+    detail:
+      "Three different tools. Three different jobs. Most companies skip straight to AI for everything. That's like hiring a strategist to do data entry. Match the tool to the work.",
+    comparisonTable: toolComparison,
+    closing:
+      "If a rule can handle it, automate it. If the answer is hiding in your data, ML will find it. If it needs a human brain, AI can do it now.",
   },
   {
     step: "05",

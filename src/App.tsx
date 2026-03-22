@@ -119,7 +119,7 @@ const painPoints = [
   "You've spent $200K+ on AI tools and pilots. Your team still copies from ChatGPT and pastes into Google Docs. Zero revenue. Zero cost savings. Just invoices.",
   "Marketing runs Gemini. Engineering runs Claude. Sales has a chatbot nobody uses. Finance doesn't know any of this exists. You're paying for 6 AI tools and none of them talk to each other.",
   "Legal finds out about an AI project three months after launch and kills it. Three months of engineering time. Gone.",
-  "The board asks \"what's AI doing for us?\" and you open a spreadsheet you made that morning.",
+  'The board asks "what\'s AI doing for us?" and you open a spreadsheet you made that morning.',
 ];
 
 const featureGroups = [
@@ -202,7 +202,7 @@ const plans = [
     },
     scarcity: "Coming Q3 2026",
     description:
-      "Our team becomes your team. Up to 20–30 dedicated engineers building, shipping, and scaling AI across your entire organization.",
+      "Our team becomes your team. Up to 20–30 dedicated engineers building, shipping, and scaYou’ll have 20–30 dedicated engineers. They will build, ship, and scale AI in your organization.",
     cta: "Request Early Access",
     ctaDisabled: false,
     highlighted: false,
@@ -541,7 +541,8 @@ export default function App() {
               </span>
             </p>
             <p className="mx-auto mt-6 max-w-[48ch] text-base leading-relaxed text-slate-600">
-              This isn't automation. It's leverage. Your best people, doing 4-8x the work, at the same quality or better.
+              This isn't automation. It's leverage. Your best people, doing 4-8x
+              the work, at the same quality or better.
             </p>
             <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
               <span>
@@ -621,11 +622,10 @@ export default function App() {
         {/* ── QUICK CHECK: Self-assessment ── */}
         <section className={shortDividerSectionClass}>
           <p className={sectionLabelClass}>QUICK CHECK</p>
-          <h2 className={sectionHeadingClass}>
-            How broken is your AI setup?
-          </h2>
+          <h2 className={sectionHeadingClass}>How broken is your AI setup?</h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            Five things every company should have before spending another dollar on AI. Most have zero.
+            Five things every company should have before spending another dollar
+            on AI. Most have zero.
           </p>
 
           <div className="mt-8 space-y-3">
@@ -640,18 +640,20 @@ export default function App() {
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-[var(--line)] bg-white font-['IBM_Plex_Mono'] text-[10px] text-[var(--muted)]">
                   &nbsp;
                 </span>
-                <p className="text-sm leading-relaxed text-slate-700">
-                  {item}
-                </p>
+                <p className="text-sm leading-relaxed text-slate-700">{item}</p>
               </div>
             ))}
           </div>
 
           <div className={`mt-8 ${panelClass}`}>
             <p className="text-sm leading-relaxed text-slate-700">
-              <span className="font-semibold text-slate-950">If you checked fewer than 3:</span>{" "}
+              <span className="font-semibold text-slate-950">
+                If you checked fewer than 3:
+              </span>{" "}
               you need a system.{" "}
-              <span className="font-semibold text-slate-950">If you checked 0:</span>{" "}
+              <span className="font-semibold text-slate-950">
+                If you checked 0:
+              </span>{" "}
               you need us.
             </p>
             <a href="#scan" className={`mt-4 ${primaryButtonClass}`}>
@@ -696,8 +698,8 @@ export default function App() {
             Three things. That's all you're missing.
           </h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            Right now your AI projects are scattered across teams with no shared
-            plan. These three pieces fix that.
+            Right now, teams are working on your AI projects without a shared
+            plan.
           </p>
 
           <div className="mt-10 grid gap-4 md:grid-cols-3">

@@ -38,7 +38,7 @@ const installBlocks = [
   {
     title: "The scoreboard",
     detail:
-      "Hard numbers. Is this project making money, saving money, or wasting money? No opinions. Just math.",
+      "Hard numbers. Is this project making money, saving money, or wasting money? No opinions.",
   },
 ];
 
@@ -98,7 +98,7 @@ const timeline = [
   {
     title: "6 Months",
     detail:
-      "Multiple projects running in production. You can see the impact in your numbers.",
+      "Many projects running in production. You can see the impact in your numbers.",
   },
   {
     title: "12 Months",
@@ -312,8 +312,8 @@ export default function WhatWeDoApp() {
             Three things you're missing. We build all three.
           </h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            Right now your AI projects are scattered across teams with no shared
-            plan. These three pieces fix that.
+            Right now, teams are working on your AI projects without a shared
+            plan.
           </p>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-12">
@@ -438,11 +438,10 @@ export default function WhatWeDoApp() {
 
         <section className="reveal section-divider-full py-14 sm:py-16">
           <p className={sectionLabelClass}>WHAT YOU CAN DO TODAY</p>
-          <h2 className={sectionHeadingClass}>
-            Before you even talk to us.
-          </h2>
+          <h2 className={sectionHeadingClass}>Before you even talk to us.</h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            You don't need us to start. Do these three things this week and you'll already know more than 90% of companies.
+            You don't need us to start. Do these three things this week and
+            you'll already know more than 90% of companies.
           </p>
 
           <ol className="mt-8 space-y-4">
@@ -450,29 +449,30 @@ export default function WhatWeDoApp() {
               {
                 step: "01",
                 title: "List every AI tool your company pays for",
-                detail: "Open a spreadsheet. Write down every AI tool, who uses it, and what it costs per month. Most companies can't do this in under an hour. That's the problem.",
+                detail:
+                  "Open a spreadsheet. Write down every AI tool, who uses it, and what it costs per month. Most companies can't do this in under an hour. That's the problem.",
               },
               {
                 step: "02",
                 title: "Ask each team lead one question",
-                detail: "\"What is AI doing for your team right now?\" Write down the answers. You'll find most of them say \"we're experimenting\" or \"not much yet.\"",
+                detail:
+                  '"What is AI doing for your team right now?" Write down the answers. You\'ll find most of them say "we\'re experimenting" or "not much yet."',
               },
               {
                 step: "03",
                 title: "Circle anything that's actually making or saving money",
-                detail: "Look at your list. Circle anything generating revenue or saving measurable time. If the list is short or empty — that's exactly why we exist.",
+                detail:
+                  "Look at your list. Circle anything generating revenue or saving measurable time. If the list is short or empty — that's exactly why we exist.",
               },
-            ].map((item, index) => (
-              <li key={item.step} className={`relative pl-12 ${cardClass}`}>
-                <div
-                  className="absolute left-4 top-5 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] bg-white font-['IBM_Plex_Mono'] text-[10px] font-medium tracking-[0.12em] text-[var(--muted)]"
-                >
+            ].map((item) => (
+              <li key={item.step} className={cardClass}>
+                <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
                   {item.step}
-                </div>
-                <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">
-                  {item.title}
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
+                  {item.title}
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-slate-700">
                   {item.detail}
                 </p>
               </li>
@@ -495,11 +495,13 @@ export default function WhatWeDoApp() {
               </h2>
               <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-slate-700">
                 You'll see real dashboards, real scorecards, and real documents
-                your board can use. Everything we build meets the compliance
-                standards that matter (NIST, ISO 42001, OWASP, EU AI Act).
+                your board can use. We ensure that everything we build meets key
+                compliance standards. These include NIST, ISO 42001, OWASP, and
+                the EU AI Act.
               </p>
               <p className="mt-6 text-sm font-medium text-slate-700">
-                The standards your legal team will ask about. We build to all of them.
+                The standards your legal team will ask about. We build to all of
+                them.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {frameworkTags.map((tag) => (
@@ -616,7 +618,10 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <section id="scan" className="reveal section-divider-full py-14 sm:py-16">
+        <section
+          id="scan"
+          className="reveal section-divider-full py-14 sm:py-16"
+        >
           <div className="space-y-10">
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
