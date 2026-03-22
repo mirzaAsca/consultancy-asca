@@ -5,6 +5,7 @@ type SiteHeaderProps = {
   founderLinkedIn: string
   homeHref: string
   whatWeDoHref: string
+  roiHref?: string
 }
 
 function LinkedInIcon() {
@@ -28,6 +29,7 @@ export default function SiteHeader({
   founderLinkedIn,
   homeHref,
   whatWeDoHref,
+  roiHref = '/roi/',
 }: SiteHeaderProps) {
   // 'top' = at page top (normal), 'hidden' = scrolled down & hidden, 'sticky' = scrolling up with blur
   const [mode, setMode] = useState<'top' | 'hidden' | 'sticky'>('top')
@@ -67,6 +69,9 @@ export default function SiteHeader({
           </a>
           <a href={whatWeDoHref} className="transition-colors hover:text-slate-900">
             How We Work
+          </a>
+          <a href={roiHref} className="transition-colors hover:text-slate-900">
+            ROI Calculator
           </a>
           <a href={applyHref} className="transition-colors hover:text-slate-900">
             Apply

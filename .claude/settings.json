@@ -78,7 +78,8 @@
       "WebFetch(domain:medium.com)",
       "WebFetch(domain:blog.quest.com)",
       "WebFetch(domain:www.in-parallel.com)",
-      "WebFetch(domain:www.ziprecruiter.com)"
+      "WebFetch(domain:www.ziprecruiter.com)",
+      "Bash(node -e \":*)"
     ],
     "additionalDirectories": [
       "/Users/mirzaasceric/Desktop/consultancy-asca/src/assets"

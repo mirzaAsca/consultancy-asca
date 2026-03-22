@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         howWeWork: resolve(__dirname, 'how-we-work/index.html'),
+        roi: resolve(__dirname, 'roi/index.html'),
       },
     },
   },

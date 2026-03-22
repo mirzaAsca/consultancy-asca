@@ -647,9 +647,9 @@ export default function App() {
             <p className="text-sm leading-relaxed text-slate-700">
               Companies with structured AI operating models achieve up to{" "}
               <span className="font-semibold text-slate-950">
-                2.7x greater ROI
+                2.7x return on invested capital
               </span>{" "}
-              on AI investments.
+              compared to laggards.
             </p>
             <p className="mt-1.5 text-[11px] leading-relaxed text-slate-400">
               <a

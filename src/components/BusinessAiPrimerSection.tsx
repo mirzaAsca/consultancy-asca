@@ -139,7 +139,7 @@ const leverFlows: LeverFlow[] = [
         },
       ],
       kicker:
-        "The goal is not a thinner payroll. It's a smaller, better-equipped team doing the work of a much larger one. Studies show 25–55% task speed gains (Harvard/BCG, GitHub Copilot) and up to 34% productivity improvement for junior staff (Stanford/MIT).",
+        "The goal is not a thinner payroll. It's a smaller, better-equipped team doing the work of a much larger one. Studies show 25–55% task speed gains (Harvard/BCG, GitHub Copilot) and up to 35% productivity improvement for less experienced workers (Stanford/MIT).",
     },
   },
   {
