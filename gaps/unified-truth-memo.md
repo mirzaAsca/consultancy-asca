@@ -1,7 +1,7 @@
 # ASCA Unified Truth Memo
 
 **Date:** 2026-04-08  
-**Updated:** 2026-04-08 — added kill prioritization, the concrete business prescription, and the immediate action plan  
+**Updated:** 2026-04-09 — aligned with homepage implementation: first-person voice, "The 10-Week AI Sprint" offer, 2-tier pricing, opportunity framing over broken framing  
 **Sources synthesized:** `gaps/codex-gaps.md`, `gaps/claude-gaps.md`, and the follow-up audit comparing both
 
 ---
@@ -530,46 +530,51 @@ The three analyses converge on one viable path. This section names it explicitly
 
 ### The buyer
 
-Operator-led companies. 20-150 employees. Revenue above $5M. A founder or ops leader who can name the workflow that's breaking, who owns it, and what "better" looks like in numbers.
+Growing teams. 20-150 employees. Revenue above $5M. A founder or ops leader who knows where AI could save the most time, who owns the workflow, and what "better" looks like in numbers.
 
 These are companies where:
 
 - every person wears multiple hats
-- the bottleneck is felt daily, not discussed quarterly
+- the time waste is felt daily, not discussed quarterly
 - the buyer is the decision-maker (no procurement gauntlet)
 - your existing proof trail (workflow automation, internal knowledge systems, operator tooling) looks native, not aspirational
 
 ### The offer
 
-Fixed-scope, fixed-price workflow implementation. Not a retainer. Not a transformation office.
+**The 10-Week AI Sprint** — fixed-scope, fixed-price AI implementation for one workflow. Not a retainer. Not a transformation office. Framed as collaborative implementation (I help your team implement AI), not done-for-you repair.
 
-Structure:
+Structure (bundled as one engagement, not sold separately):
 
-1. **Diagnostic** ($5-15K, 1-2 weeks): Map one workflow end-to-end. Baseline the current state. Identify where automation or AI removes the most friction. Deliver a scoped build plan with expected before/after metrics.
-2. **Implementation** ($15-40K, 4-8 weeks): Build the solution. Integrate it. Train the team. Measure the result. Hand it over.
-3. **Expansion** (only if earned): After the first workflow is live and measured, scope the next one. This is where the retainer conversation becomes natural — after trust exists, not before.
+1. **Diagnostic phase** (weeks 1-2): Map one workflow end-to-end. Baseline the current state. Identify where AI or automation saves the most time. Deliver a scoped implementation plan with expected before/after metrics.
+2. **Implementation phase** (weeks 3-9): Build the AI solution with the team. Integrate it. Train the team.
+3. **Measurement and handover** (week 10): Measure before/after numbers. Hand over ownership. If there's another workflow worth improving, scope it as a new sprint.
 
-Total initial engagement: $20-55K over 6-10 weeks. That is a purchase a founder can say yes to in one conversation.
+Total engagement: $20-55K over 10 weeks. That is a purchase a founder can say yes to in one conversation.
+
+**Anchor tier:** AI Operations Team ($85-150K/mo, by referral only). A full team embedded across multiple workflows. 10-30 people. This tier exists primarily as a pricing anchor — it makes the sprint feel accessible by comparison. It is also a real offer for referral clients at scale.
+
+The diagnostic is no longer sold as a standalone product. It is the first phase of every sprint. This prevents the diagnostic-to-freelancer leak (see Gap 5) and simplifies the sales conversation to one decision: start the sprint or don't.
 
 ### The pricing logic
 
 - $22K/month retainer = $264K/year commitment before trust exists. Founders reject this.
-- $20-55K project = roughly 2-4 months of a senior hire, with a defined deliverable and end date. Founders accept this.
+- $20-55K sprint = roughly 2-4 months of a senior hire, with a defined deliverable and end date. Founders accept this.
+- $85-150K/mo anchor tier makes the $20-55K sprint feel like a no-brainer by comparison. The anchor is real (staffable from a 30-50 person network) but positioned as "by referral only" to explain why there's no detail.
 
 The economics work because:
 
-- delivery is scoped, so margin is predictable
+- delivery is scoped to 10 weeks, so margin is predictable
 - you can serve 3-5 clients concurrently at this scope
-- expansion revenue compounds from satisfied clients, not from sales effort
-- each completed project becomes a case study
+- expansion revenue compounds from satisfied clients who want the next workflow done
+- each completed sprint becomes a case study
 
 ### The proof you need before scaling
 
 You need exactly 3 things:
 
-1. **2-3 completed projects** with named workflows, measured baselines, and measured outcomes. "Company X's invoice processing went from 6 hours/day to 40 minutes" is worth more than any ROI calculator.
+1. **2-3 completed sprints** with named workflows, measured baselines, and measured outcomes. "Company X's invoice processing went from 6 hours/day to 40 minutes" is worth more than any ROI calculator.
 2. **Client permission to reference** the work (anonymized is fine, named is better).
-3. **One repeatable vertical or workflow type** where you can say "we've done this three times and the result is consistent."
+3. **One repeatable vertical or workflow type** where you can say "I've done this three times and the result is consistent."
 
 Until you have these three things, everything else — the calculator, the routing logic, the enterprise positioning, the service pages — is premature.
 
@@ -577,8 +582,8 @@ Until you have these three things, everything else — the calculator, the routi
 
 Not inbound-only. Not content-and-wait.
 
-1. **Direct outreach** to 20 founders who match the profile. LinkedIn, warm intros, mutual connections. The message: "I help [type of company] fix [type of bottleneck]. Here's what I built for [reference]. Want me to look at yours?"
-2. **The diagnostic as the first sale.** Don't sell the implementation upfront. Sell the diagnostic. It's lower risk, it demonstrates competence, and it creates the scope for the implementation sale.
+1. **Direct outreach** to 20 founders who match the profile. LinkedIn, warm intros, mutual connections. The message: "I help growing teams implement AI where it saves the most time. Here's what I built for [reference]. Want me to look at yours?"
+2. **The sprint as the offer.** Sell the full 10-week sprint, not the diagnostic alone. The diagnostic is bundled into weeks 1-2, reducing buyer decisions to one: start or don't. This also eliminates the diagnostic-to-freelancer leak.
 3. **The calculator as a supporting asset**, not the primary channel. It builds credibility. It's not the sales engine.
 
 ### What this means for the calculator
@@ -596,11 +601,13 @@ The calculator should support one business, not many.
 
 The website should say one thing clearly:
 
-- We fix operational bottlenecks for growing companies
-- Here's how we do it (diagnostic → implementation → measurement)
+- I help growing teams implement AI where it saves the most time
+- Here's how I do it (The 10-Week AI Sprint: diagnostic → implementation → measurement)
 - Here's proof it works (case studies)
-- Here's what it costs (bounded, not open-ended)
-- Here's how to start (book the diagnostic)
+- Here's what it costs ($20-55K, bounded, not open-ended)
+- Here's how to start (join the waitlist)
+
+Voice is first-person singular ("I") throughout — founder-direct, personal accountability, no corporate "we" pretending to be a team. This aligns with the single-operator reality and builds trust with founder buyers.
 
 Remove everything that targets a buyer you cannot credibly serve today.
 
@@ -667,15 +674,17 @@ The diagnostic → implementation → expansion structure is Hormozi-shaped. Her
 
 **Lead with the work, not the funnel.** Hormozi clones talk about their offer structure. You should talk about the workflow you fixed and the number that changed. "We reduced invoice processing from 6 hours to 40 minutes for a 45-person logistics company" is not a funnel — it's proof.
 
-**Be boring on purpose.** Hormozi-influenced businesses use high-energy copy: "Grand Slam," "10X," "Empire." Your positioning should be deliberately understated. "We fix one broken workflow. We measure the result. That's it." Understatement signals confidence. Hype signals insecurity.
+**Be boring on purpose.** Hormozi-influenced businesses use high-energy copy: "Grand Slam," "10X," "Empire." Your positioning should be deliberately understated. "I help your team implement AI where it saves the most time. I measure the result. That's it." Understatement signals confidence. Hype signals insecurity.
 
 **Price like an implementer, not a guru.** Hormozi clones price like coaches and consultants — monthly retainers, high-ticket calls, "investment" language. You price like a contractor — fixed scope, fixed price, defined deliverable. That alone separates you from 90% of the funnel-builders.
 
 ### Gap 5: No diagnostic anti-leak mechanism
 
-The risk: client buys the $5-15K diagnostic, gets the findings, hands them to a freelancer or internal team.
+The risk: client gets the diagnostic findings and hands them to a freelancer or internal team.
 
-**Design the diagnostic output to be implementation-dependent, not implementation-agnostic.** Concretely:
+**Primary mitigation (implemented):** The diagnostic is no longer sold standalone. It is bundled as weeks 1-2 of the 10-Week AI Sprint. The client buys one engagement, not two decisions. This eliminates the gap between "diagnostic delivered" and "implementation sold."
+
+**Secondary mitigation: Design the diagnostic output to be implementation-dependent, not implementation-agnostic.** Concretely:
 
 - The diagnostic should identify *what* to build and *why*, but not deliver a step-by-step build spec. The "how" stays in your head and your delivery methodology.
 - Include complexity and risk assessments that require your judgment to navigate. "This workflow has 14 exception paths, 3 of which require real-time data from your ERP. The integration sequence matters — doing them in the wrong order creates a data integrity risk." A freelancer reading that doesn't know what to do with it. You do.
@@ -769,7 +778,7 @@ All issues from both gap analyses mapped to resolution status after this update.
 | E2 | Proof not enterprise-grade | Resolved — Kill #4, Modify #5 and #7 |
 | E3 | Commercial ops are not real | Resolved — Gap 7 (sales infrastructure) |
 | E4 | Background doesn't match enterprise buyer | Resolved — Kill #2, Modify #1 |
-| E5 | Timeline promises are fantasy | Resolved — enterprise killed, new offer is 6-10 weeks scoped |
+| E5 | Timeline promises are fantasy | Resolved — enterprise killed, new offer is 10-week sprint |
 | C1 | Incumbents do your exact pitch | Resolved — Kill #2, new segment incumbents ignore |
 | C2 | Buyers prefer known vendors | Resolved — warm outreach, relationship-based sales |
 | C3 | Platform vendors collapsing differentiation | Resolved — Diagnosis #8 (alternatives), Gap 3 |
@@ -792,27 +801,26 @@ All issues from both gap analyses mapped to resolution status after this update.
 1. Strip unverified proof claims from the live site
 2. Remove or archive the 10X EMPIRE / Plan B offer
 3. Remove enterprise transformation-office language from public-facing pages
-4. Rewrite the site around one offer, one buyer, one proof story
+4. Rewrite the site around one offer, one buyer, one proof story — **done: "The 10-Week AI Sprint" with anchor tier, first-person voice, opportunity framing**
 
 ### Next 2 weeks
 
-5. Identify 20 companies that fit the buyer profile (operator-led, 20-150 people, named bottleneck)
-6. Reach out directly to founders — offer the diagnostic
-7. Close 1-2 diagnostic engagements at $5-15K
+5. Identify 20 companies that fit the buyer profile (growing teams, 20-150 people, workflow where AI saves time)
+6. Reach out directly to founders — offer the sprint
+7. Close 1-2 sprint engagements at $20-55K
 
 ### Next 30 days
 
-8. Deliver the first diagnostic
-9. Convert the diagnostic into an implementation engagement
-10. Document the result as a case study
+8. Deliver the first sprint (diagnostic through implementation and measurement)
+9. Document the result as a case study
 
 ### Next 90 days
 
-11. Complete 2-3 full diagnostic-to-implementation cycles
-12. Build the repeatable proof trail
-13. Only then: revisit the calculator, the routing, the service architecture, and whether enterprise is worth pursuing
+10. Complete 2-3 full sprints
+11. Build the repeatable proof trail
+12. Only then: revisit the calculator, the routing, the service architecture, and whether enterprise is worth pursuing
 
-Everything before step 7 is preparation. Everything after step 10 is earned. The business starts when someone pays you.
+Everything before step 7 is preparation. Everything after step 9 is earned. The business starts when someone pays you.
 
 ---
 

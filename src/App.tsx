@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, FormEvent } from "react";
 import SiteHeader from "./components/SiteHeader";
 import WarpedGrid from "./components/WarpedGrid";
 import WaitlistForm from "./components/WaitlistForm";
@@ -115,41 +115,222 @@ const dreamOutcomes = [
   "The first AI implementation is already underway",
 ];
 
-const painPoints = [
-  "Your team spends 3 hours a day on something that should take 20 minutes. Everyone knows it. Nobody has time to fix it.",
-  "You hired someone to handle the backlog. Now you have two people drowning instead of one.",
-  "You tried Zapier. Or a freelancer. It worked for a month, then it broke and nobody fixed it.",
-  "You know where AI could help. You just don't have the time or expertise to implement it properly.",
+const featureGroups = [
+  {
+    label: "THE SYSTEM",
+    features: [
+      "Full AI Portfolio Map",
+      "Priority Decisions: Keep, Kill, or Scale",
+      "Legal and Security Handled",
+      "Weekly Decision Meetings",
+    ],
+  },
+  {
+    label: "THE DASHBOARD",
+    features: ["Revenue & Cost Dashboard", "All Your Tools in One Place"],
+  },
+  {
+    label: "THE PEOPLE",
+    features: ["Training Your Team to Use It", "Making Sure It Ships"],
+  },
+  {
+    label: "THE ARMY",
+    features: [
+      "Up to 20–30 Dedicated AI Engineers",
+      "2–3x More Output Per Affected Team Member",
+      "Access to our in-house expert team for: design, copywriting, SEO, development, and more",
+    ],
+  },
+  {
+    label: "THE EMPIRE",
+    features: [
+      "AI Across All Your Companies",
+      "FlyRank Platform Integration",
+      "Dedicated Executive Partner",
+      "Priority Support & Custom Terms",
+    ],
+  },
 ];
 
 const plans = [
   {
+    name: "COMMAND ROOM",
+    subtitle: "We run AI with your team",
+    price: "$22,000",
+    period: "/mo",
+    anchor: "Replaces a $350K–$500K/yr internal AI strategy hire",
+    anchorSource: {
+      label: "Glassdoor 2026",
+      url: "https://www.glassdoor.com/Salaries/chief-ai-officer-salary-SRCH_KO0,16.htm",
+    },
+    scarcity: "0 spots available",
+    description:
+      "We sync with you every week and make decisions with your leaders. We define full strategy, fix what's broken, and train your team to run it without us",
+    cta: "Apply",
+    ctaDisabled: true,
+    highlighted: true,
+    includedGroups: 3,
+    valueStack: [
+      { name: "Fractional Chief AI Officer", value: "$15,000/mo" },
+      { name: "Weekly Executive Strategy Sessions", value: "$8,000/mo" },
+      { name: "AI Governance & Compliance Framework", value: "$5,000/mo" },
+      { name: "Revenue & Cost Dashboard", value: "$3,000/mo" },
+      { name: "Team Training & Enablement", value: "$4,000/mo" },
+    ],
+    valueStackOneTime: [
+      { name: "AI Portfolio Reality Scan", value: "$15,000" },
+    ],
+    totalMonthlyValue: "$35,000/mo",
+    savings: "You save $13,000/mo + $15,000 one-time",
+  },
+  {
+    name: "10X EMPIRE",
+    subtitle: "Your dedicated AI team",
+    price: "$290,000",
+    period: "/mo",
+    anchor: "Building this team in-house: $400K–$720K/mo in salary alone",
+    anchorSource: {
+      label: "Robert Half / Glassdoor AI Engineer Salary Data 2026",
+      url: "https://www.roberthalf.com/us/en/job-details/aiml-engineer",
+    },
+    scarcity: "Coming Q3 2026",
+    description:
+      "20–30 dedicated engineers building AI systems that make your existing team 2–3x more productive. They build it, deploy it, and make sure your people actually use it.",
+    cta: "Request Early Access",
+    ctaDisabled: false,
+    highlighted: false,
+    includedGroups: 4,
+    valueStack: [
+      { name: "20–30 Dedicated AI Engineers", value: "$400,000/mo" },
+      { name: "Full COMMAND ROOM Strategy Layer", value: "$35,000/mo" },
+      { name: "External Team (Design, Copy, SEO, Dev)", value: "$25,000/mo" },
+      { name: "Cross-Org Scaling & Integration", value: "$20,000/mo" },
+      { name: "Organization-Wide Leverage System", value: "$15,000/mo" },
+    ],
+    valueStackOneTime: [
+      { name: "AI Portfolio Reality Scan", value: "$15,000" },
+    ],
+    totalMonthlyValue: "$495,000/mo",
+    savings: "You save $205,000/mo + $15,000 one-time",
+  },
+  {
+    name: "PORTFOLIO ENGINE",
+    subtitle: "Custom solutions for your portfolio",
+    price: "Custom",
+    period: "",
+    anchor: "Base retainer + 10–20% of documented savings",
+    anchorSource: null,
+    scarcity: "By invitation only",
+    description:
+      "You own multiple companies. We run AI across all of them. Same system, shared learnings, one team running the whole thing. Optional Hybrid pricing: base retainer plus performance kicker tied to verified value created.",
+    cta: "Book a Portfolio Review",
+    ctaDisabled: false,
+    highlighted: false,
+    includedGroups: 5,
+    valueStack: [
+      { name: "Everything in 10X EMPIRE", value: "" },
+      { name: "Multi-Entity Portfolio Governance", value: "" },
+      { name: "FlyRank Platform Integration", value: "" },
+      { name: "Dedicated Executive Partner", value: "" },
+      { name: "Custom SLA & Priority Support", value: "" },
+    ],
+    valueStackOneTime: [{ name: "AI Portfolio Reality Scan", value: "" }],
+    totalMonthlyValue: null,
+    savings: null,
+  },
+];
+
+const newFeatureGroups = [
+  {
+    label: "THE PROCESS",
+    features: [
+      "Full Workflow Map",
+      "Priority Scoping: What to Automate First",
+      "Weekly Check-ins",
+    ],
+  },
+  {
+    label: "THE BUILD",
+    features: [
+      "AI / Automation Implementation",
+      "System Integration",
+      "Before & After Measurement",
+    ],
+  },
+  {
+    label: "THE PEOPLE",
+    features: ["Training Your Team to Use It", "Making Sure It Ships"],
+  },
+  {
+    label: "THE TEAM",
+    features: [
+      "Up to 10–30 Dedicated Engineers",
+      "2–3x More Output Per Affected Team Member",
+      "Access to in-house expert team for: design, copywriting, SEO, development, and more",
+    ],
+  },
+];
+
+const newPlans = [
+  {
     name: "THE EMBEDDED AI OPERATIONS TEAM",
     subtitle: "I embed a full team",
-    price: "$85,000 – $150,000",
+    price: "$145,000",
     period: "/mo",
+    anchor: "Building this team in-house: $300K–$600K/mo in salary alone",
+    anchorSource: {
+      label: "Robert Half / Glassdoor AI Engineer Salary Data 2026",
+      url: "https://www.roberthalf.com/us/en/job-details/aiml-engineer",
+    },
+    scarcity: "Coming Q3 2026",
     description:
       "I embed a full team across multiple workflows. 10-30 people. Strategy, implementation, measurement, training, ongoing.",
-    scarcity: "By referral only",
-    cta: null,
-    ctaDisabled: true,
+    cta: "Request Early Access",
+    ctaDisabled: false,
     highlighted: false,
-    isAnchor: true,
+    includedGroups: 4,
+    valueStack: [
+      { name: "10–30 Dedicated AI Engineers", value: "$250,000/mo" },
+      { name: "Full Strategy & Scoping Layer", value: "$25,000/mo" },
+      {
+        name: "External Specialists (Design, Copy, SEO, Dev)",
+        value: "$20,000/mo",
+      },
+      { name: "Organization-Wide Training & Enablement", value: "$15,000/mo" },
+      { name: "Ongoing Measurement & Optimization", value: "$10,000/mo" },
+    ],
+    valueStackOneTime: [{ name: "Full Workflow Audit", value: "$15,000" }],
+    totalMonthlyValue: "$320,000/mo",
+    savings: "You save $175,000/mo vs. building in-house",
   },
   {
     name: "THE 10-WEEK AI SPRINT",
     subtitle: "For growing teams",
-    price: "$20,000 – $55,000",
+    price: "$22,000",
     period: "",
+    anchor:
+      "Buying these services separately: $115K+ from agencies and freelancers",
+    anchorSource: {
+      label: "Clutch / Toptal / Robert Half 2025–2026",
+      url: "https://clutch.co/developers/artificial-intelligence",
+    },
+    scarcity: "0 spots available",
     description:
       "I map your highest-impact workflow, implement the AI solution with your team, and measure the result. Starts with a 1-2 week diagnostic. Fixed scope. 10 weeks.",
-    comparison:
-      "That's less than 4 months of one senior hire — and you get a working system at the end, not a job opening.",
-    scarcity: "0 spots — join the waitlist",
-    cta: "Join the Waitlist",
+    cta: "Apply",
     ctaDisabled: true,
     highlighted: true,
-    isAnchor: false,
+    includedGroups: 3,
+    valueStack: [
+      { name: "Workflow Diagnostic & Mapping", value: "$15,000" },
+      { name: "AI / Automation Implementation", value: "$50,000" },
+      { name: "System Integration & Testing", value: "$30,000" },
+      { name: "Team Training & Enablement", value: "$10,000" },
+      { name: "Before & After Measurement", value: "$10,000" },
+    ],
+    valueStackOneTime: null,
+    totalMonthlyValue: "$115,000+",
+    savings: "You save $93,000+ vs. hiring separately",
   },
 ];
 
@@ -176,7 +357,7 @@ const faqItems = [
   },
   {
     q: "You're fully booked. Why should I join the waitlist?",
-    a: "Waitlist members get a free workflow review when I open spots. First come, first served. You also get priority on the diagnostic.",
+    a: "Waitlist members get a free workflow review when I open spots.",
   },
   {
     q: "What if the diagnostic shows AI isn't the right fit?",
@@ -199,6 +380,35 @@ const faqItems = [
     a: "You own it. I hand it over. If you have another workflow worth improving, we do it again — same structure, same pricing. If you don't, we part as friends. No retainer, no lock-in.",
   },
 ];
+
+// ── EMERGENCY FORM ──
+
+type EmergencyField = "name" | "contact" | "problem" | "budget";
+
+type EmergencyFormState = Record<EmergencyField, string>;
+type EmergencyErrorState = Partial<Record<EmergencyField, string>>;
+
+const initialEmergencyState: EmergencyFormState = {
+  name: "",
+  contact: "",
+  problem: "",
+  budget: "",
+};
+
+function buildEmergencyMailto(form: EmergencyFormState): string {
+  const subject = encodeURIComponent(`EMERGENCY AI Request — ${form.name}`);
+  const body = encodeURIComponent(
+    [
+      "Emergency AI Transformation Request",
+      "",
+      `Name / Company: ${form.name}`,
+      `Preferred contact: ${form.contact}`,
+      `Problem: ${form.problem}`,
+      `Budget: ${form.budget}`,
+    ].join("\n"),
+  );
+  return `mailto:${PRIMARY_EMAIL}?subject=${subject}&body=${body}`;
+}
 
 // ── SHARED UI ──
 
@@ -237,7 +447,50 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 // ── APP ──
 
 export default function App() {
+  const [emergencyForm, setEmergencyForm] = useState<EmergencyFormState>(
+    initialEmergencyState,
+  );
+  const [emergencyErrors, setEmergencyErrors] = useState<EmergencyErrorState>(
+    {},
+  );
+  const [emergencySubmitted, setEmergencySubmitted] = useState(false);
+  const [showEmergency, setShowEmergency] = useState(false);
+
   const ctaHref = "#scan";
+
+  function updateEmergencyField(field: EmergencyField, value: string) {
+    setEmergencyForm((previous) => ({ ...previous, [field]: value }));
+    setEmergencyErrors((previous) => {
+      const next = { ...previous };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function validateEmergency(
+    nextForm: EmergencyFormState,
+  ): EmergencyErrorState {
+    const nextErrors: EmergencyErrorState = {};
+    (Object.keys(nextForm) as EmergencyField[]).forEach((field) => {
+      if (!nextForm[field].trim()) {
+        nextErrors[field] = "Required";
+      }
+    });
+    return nextErrors;
+  }
+
+  function handleEmergencySubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const nextErrors = validateEmergency(emergencyForm);
+    if (Object.keys(nextErrors).length > 0) {
+      setEmergencyErrors(nextErrors);
+      return;
+    }
+    setEmergencySubmitted(true);
+    window.setTimeout(() => {
+      window.location.href = buildEmergencyMailto(emergencyForm);
+    }, 80);
+  }
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] text-[var(--ink)]">
@@ -264,7 +517,9 @@ export default function App() {
         >
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
-              <p className={sectionLabelClass}>AI IMPLEMENTATION FOR GROWING TEAMS</p>
+              <p className={sectionLabelClass}>
+                AI IMPLEMENTATION FOR GROWING TEAMS
+              </p>
               <h1 className="mt-6 max-w-[22ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
                 I help growing teams implement AI{" "}
                 <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
@@ -272,9 +527,9 @@ export default function App() {
                 </span>
               </h1>
               <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                You tell us what's broken. We map it, build the fix, and measure
-                the result. Fixed scope. Fixed price. You see the numbers before
-                and after.
+                More revenue. Lower costs. Your team gets more done in less
+                time. We build the system, I run it with you every week, and we
+                don't stop until the numbers prove it's working.
               </p>
             </div>
 
@@ -282,6 +537,9 @@ export default function App() {
               <a href="#how-it-works" className={primaryButtonClass}>
                 See how it works
               </a>
+              <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-slate-500">
+                See what's included.
+              </p>
             </div>
           </div>
 
@@ -312,6 +570,12 @@ export default function App() {
             </div>
 
             <div className="mt-auto border-t border-[var(--line)] pt-5">
+              <span
+                className={`${disabledButtonClass} w-full justify-center`}
+                title="We're not taking new companies right now"
+              >
+                Apply
+              </span>
               <a
                 href={ctaHref}
                 className="mt-3 block text-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]"
@@ -319,7 +583,7 @@ export default function App() {
                 {PRIMARY_CTA}
               </a>
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-500">
-                I take 3 new teams per quarter. All spots are currently filled.
+                We're not taking new companies right now.
               </p>
             </div>
           </aside>
@@ -327,16 +591,40 @@ export default function App() {
 
         {/* ── 2. PROOF STRIP ── */}
         <section className={compactStripSectionClass}>
-          <p className="text-center text-sm leading-relaxed text-slate-600">
-            I've built automation and AI systems for teams across ecommerce, logistics, SaaS, and services.
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
+            <div className="flex items-center gap-2">
+              <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">
+                $1M+
+              </span>
+              <span className="text-sm text-slate-500">
+                ARR built in &lt;8 months
+              </span>
+            </div>
+            <div className="hidden h-5 border-l border-[var(--line)] sm:block" />
+            <div className="flex items-center gap-2">
+              <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">
+                25+
+              </span>
+              <span className="text-sm text-slate-500">
+                companies using our AI systems
+              </span>
+            </div>
+            <div className="hidden h-5 border-l border-[var(--line)] sm:block" />
+            <div className="flex items-center gap-2">
+              <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">
+                2,500+
+              </span>
+              <span className="text-sm text-slate-500">hours working AI</span>
+            </div>
+          </div>
         </section>
 
         {/* ── THE PROMISE ── */}
         <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
-              If the system we implement doesn't measurably save your team time within 60 days of going live{" "}
+              If the system we implement doesn't measurably save your team time
+              within 60 days of going live{" "}
               <span className="text-[var(--muted)]">
                 — I keep working for free until it does.
               </span>
@@ -347,7 +635,7 @@ export default function App() {
             </p>
             <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
               <span>
-                Works best when the person with the problem is the person on the call
+                Only works if we talk to the people who can make decisions
               </span>
             </div>
           </div>
@@ -418,20 +706,25 @@ export default function App() {
             </article>
           </div>
           <p className="mt-8 text-center text-base font-medium leading-relaxed text-slate-700">
-            The difference? They started with the tool. I start with the workflow.
+            The difference? They started with the tool. I start with the
+            workflow.
           </p>
         </section>
 
         {/* ── QUICK CHECK: Self-assessment ── */}
         <section className={shortDividerSectionClass}>
           <p className={sectionLabelClass}>QUICK CHECK</p>
-          <h2 className={sectionHeadingClass}>Does this sound like you?</h2>
+          <h2 className={sectionHeadingClass}>
+            Does this sound like your company?
+          </h2>
 
           <div className="mt-8 space-y-3">
             {[
-              "Your team spends hours on something AI could handle in minutes",
-              "You've looked into AI but aren't sure where to start or what's worth it",
-              "You know where the time goes but don't have capacity to implement the fix",
+              "Your team wastes hours every day on one process and everyone knows it",
+              "The person who owns it is too busy doing it to fix it",
+              "You tried Zapier. Or a freelancer. It worked for a month, then it broke and nobody fixed it",
+              "You know AI could help but you don't know where to start",
+              "Your business is growing but the problem is growing faster",
             ].map((item) => (
               <div key={item} className={`flex items-start gap-4 ${cardClass}`}>
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-[var(--line)] bg-white font-['IBM_Plex_Mono'] text-[10px] text-[var(--muted)]">
@@ -444,7 +737,21 @@ export default function App() {
 
           <div className={`mt-8 ${panelClass}`}>
             <p className="text-sm leading-relaxed text-slate-700">
-              The longer you wait, the more time your team loses. Most companies don't realize how much until someone maps it.
+              Companies with structured AI operating models achieve up to{" "}
+              <span className="font-semibold text-slate-950">
+                2.7x return on invested capital
+              </span>{" "}
+              compared to laggards.
+            </p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-slate-400">
+              <a
+                href="https://www.bcg.com/publications/2025/are-you-generating-value-from-ai-the-widening-gap"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
+              >
+                BCG 2025
+              </a>
             </p>
             <a href="#how-it-works" className={`mt-4 ${primaryButtonClass}`}>
               See how it works
@@ -452,116 +759,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* ── 3. PAIN + COST OF INACTION ── */}
-        <section className={shortDividerSectionClass}>
-          <p className={sectionLabelClass}>WHAT WE SEE</p>
-          <h2 className={sectionHeadingClass}>
-            Sound familiar?
-          </h2>
-          <div className="mt-10 grid gap-4 md:grid-cols-12">
-            {painPoints.map((point) => (
-              <article key={point} className={`md:col-span-6 ${cardClass}`}>
-                <p className="text-sm leading-relaxed text-slate-700">
-                  {point}
-                </p>
-              </article>
-            ))}
-          </div>
-
-        </section>
-
-        {/* ── THE FIX: 3-framework bridge ── */}
-        <section className={stackedSectionClass}>
-          <p className={sectionLabelClass}>THE FIX</p>
-          <h2 className={sectionHeadingClass}>
-            Here's what I actually do.
-          </h2>
-
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            <article className={cardClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
-                01
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
-                The map
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                I map your workflow step by step so you can see where AI saves the most time.
-              </p>
-            </article>
-            <article className={cardClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
-                02
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
-                The build
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                I implement the AI solution with your team. Simplest thing that works.
-              </p>
-            </article>
-            <article className={cardClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--muted)]">
-                03
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
-                The proof
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                I measure before and after so you know exactly what changed.
-              </p>
-            </article>
-          </div>
-
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
-            <a href="/how-we-work/" className={primaryButtonClass}>
-              See how it works
-            </a>
-          </div>
-        </section>
-
-        {/* ── HOW IT WORKS: 3-step process ── */}
-        <section id="how-it-works" className={stackedSectionClass}>
-          <p className={sectionLabelClass}>HOW IT WORKS</p>
-          <h2 className={sectionHeadingClass}>Three steps. That's it.</h2>
-
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            <article className={cardClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--accent)]">
-                STEP 1
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
-                You tell me where the time goes.
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                Join the waitlist. Tell me the workflow. I'll reach out when a spot opens.
-              </p>
-            </article>
-            <article className={cardClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--accent)]">
-                STEP 2
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
-                I map it and implement the solution with your team.
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                10 weeks. Fixed scope. I handle the implementation, integration, and training.
-              </p>
-            </article>
-            <article className={cardClass}>
-              <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium tracking-[0.18em] text-[var(--accent)]">
-                STEP 3
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-tight tracking-[-0.01em]">
-                You see the before/after numbers.
-              </h3>
-              <p className="mt-4 text-sm leading-relaxed text-slate-700">
-                Hard numbers. Did it work? By how much? You own the system.
-              </p>
-            </article>
-          </div>
-        </section>
-
+     
         {/* ── FIT / NOT FIT ── */}
         <section className={stackedSectionClass}>
           <p className={sectionLabelClass}>IS THIS FOR YOU?</p>
@@ -620,7 +818,7 @@ export default function App() {
           <div className="mt-12">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
-                Client work
+                Where I'm currently Cooking with AI
               </p>
               <span className={metaChipClass}>{clientLogos.length}</span>
             </div>
@@ -643,7 +841,7 @@ export default function App() {
           <div className="mt-20">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
-                My companies
+                Our Own Portfolio Cooking Show
               </p>
               <span className={metaChipClass}>{portfolioLogos.length}</span>
             </div>
@@ -666,7 +864,7 @@ export default function App() {
           <div className="mt-20">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
-                Built and exited
+                Where We Used to Cook
               </p>
               <span className={metaChipClass}>{alumniLogos.length}</span>
             </div>
@@ -686,55 +884,17 @@ export default function App() {
           </div>
         </section>
 
-        {/* ── CASE STUDY PLACEHOLDER ── */}
+        {/* ── NEW PLANS (PROPOSED) ── */}
         <section className={stackedSectionClass}>
-          <p className={sectionLabelClass}>RESULTS</p>
-          <h2 className={sectionHeadingClass}>What it looks like in practice.</h2>
-          <div className={`mt-8 ${panelClass}`}>
-            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-              Example
-            </p>
-            <p className="mt-3 text-base font-semibold text-slate-950">
-              Logistics company, 45 employees
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
-              Manual invoice processing went from 6 hours/day to 40 minutes. Built in 8 weeks.
-            </p>
-            <p className="mt-4 text-[11px] text-slate-400">
-              More case studies coming as projects complete.
-            </p>
-          </div>
-        </section>
-
-        {/* ── FOUNDER BIO ── */}
-        <section className={stackedSectionClass}>
-          <p className={sectionLabelClass}>WHO'S BEHIND THIS</p>
-          <div className={`mt-8 ${panelClass}`}>
-            <p className="text-base leading-relaxed text-slate-700">
-              Built and exited 5 software companies. Built automation and AI systems for 16+ companies across ecommerce, SaaS, logistics, and services. Now I help growing teams implement AI where it saves the most time.
-            </p>
-            <a
-              href={LINKEDIN_PROFILE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]"
-            >
-              Mirza on LinkedIn
-            </a>
-          </div>
-        </section>
-
-        {/* ── 4. PLANS ── */}
-        <section id="plans" className={stackedSectionClass}>
-          <p className={sectionLabelClass}>PLANS</p>
+          <p className={sectionLabelClass}>NEW PLANS (PROPOSED)</p>
           <h2 className={sectionHeadingClass}>Two ways to work with me.</h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-            From a focused sprint to a full operations team. Start where it makes sense.
+            From weekly advisory to a full team of engineers inside your
+            business. We build it and run it with your people.
           </p>
 
-          {/* ── Plan cards ── */}
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            {plans.map((plan) => (
+            {newPlans.map((plan) => (
               <div
                 key={plan.name}
                 className={`relative flex flex-col border p-6 ${
@@ -749,7 +909,7 @@ export default function App() {
                   </span>
                 )}
 
-                {/* ── Header: subtitle + name ── */}
+                {/* ── Header ── */}
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
                   {plan.subtitle}
                 </p>
@@ -759,7 +919,14 @@ export default function App() {
 
                 {/* ── Price block ── */}
                 <div className="mt-4">
-                  <div className="inline-flex items-baseline gap-1 bg-[var(--accent)] px-2.5 py-1">
+                  {plan.totalMonthlyValue && (
+                    <span className="text-base font-medium tracking-[-0.01em] text-slate-400 line-through decoration-[1.5px] decoration-slate-400">
+                      {plan.totalMonthlyValue}
+                    </span>
+                  )}
+                  <div
+                    className={`${plan.totalMonthlyValue ? "mt-1" : ""} inline-flex items-baseline gap-1 bg-[var(--accent)] px-2.5 py-1`}
+                  >
                     <span className="text-2xl font-semibold tracking-[-0.02em] text-white">
                       {plan.price}
                     </span>
@@ -769,54 +936,359 @@ export default function App() {
                       </span>
                     )}
                   </div>
+                  {plan.savings && (
+                    <p className="mt-1.5 font-['IBM_Plex_Mono'] text-[11px] font-medium text-[var(--accent)]">
+                      {plan.savings}
+                    </p>
+                  )}
+                  <p className="mt-2 font-['IBM_Plex_Mono'] text-[11px] font-medium text-slate-500">
+                    {plan.anchor}
+                    {plan.anchorSource ? (
+                      <>
+                        {" — "}
+                        <a
+                          href={plan.anchorSource.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline decoration-slate-300 underline-offset-2 hover:text-slate-700 hover:decoration-slate-500"
+                        >
+                          {plan.anchorSource.label}
+                        </a>
+                      </>
+                    ) : null}
+                  </p>
                 </div>
 
                 {/* ── Description + scarcity ── */}
-                <div className="mt-4 flex-1 border-t border-[var(--line)] pt-4">
+                <div className="mt-4 border-t border-[var(--line)] pt-4">
                   <p className="text-sm leading-relaxed text-slate-600">
                     {plan.description}
                   </p>
-                  {"comparison" in plan && plan.comparison && (
-                    <p className="mt-3 text-[12px] leading-relaxed text-slate-500">
-                      {plan.comparison}
-                    </p>
-                  )}
-                  <span className={`mt-3 inline-flex w-fit items-center px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] ${
-                    plan.scarcity.includes("0 spots")
-                      ? "border border-rose-200 bg-rose-50 text-rose-600"
-                      : "border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] text-[var(--muted)]"
-                  }`}>
+                  <span
+                    className={`mt-3 inline-flex w-fit items-center px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] ${
+                      plan.scarcity.includes("0 spots")
+                        ? "border border-rose-200 bg-rose-50 text-rose-600"
+                        : "border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] text-[var(--muted)]"
+                    }`}
+                  >
                     {plan.scarcity}
                   </span>
                 </div>
 
+                {/* ── Value stack ── */}
+                <div className="mt-4 border-t border-[var(--line)] pt-4">
+                  <p className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                    What you'd pay separately
+                  </p>
+                  <ul className="mt-3 space-y-1.5">
+                    {plan.valueStack.map((item) => (
+                      <li
+                        key={item.name}
+                        className="flex items-start justify-between gap-3 text-[13px]"
+                      >
+                        <span className="text-slate-950">{item.name}</span>
+                        {item.value && (
+                          <span className="shrink-0 font-['IBM_Plex_Mono'] text-[12px] text-slate-700">
+                            {item.value}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                  {plan.valueStackOneTime ? (
+                    <div className="mt-2 border-t border-dashed border-[var(--line)] pt-2">
+                      <p className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                        + Included one-time
+                      </p>
+                      {plan.valueStackOneTime.map((item) => (
+                        <div
+                          key={item.name}
+                          className="mt-1.5 flex items-start justify-between gap-3 text-[13px]"
+                        >
+                          <span className="text-slate-950">{item.name}</span>
+                          {item.value && (
+                            <span className="shrink-0 font-['IBM_Plex_Mono'] text-[12px] text-slate-700">
+                              {item.value}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                  {plan.totalMonthlyValue && (
+                    <div className="mt-3 border-t border-[var(--line)] pt-3">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-950">
+                          Total value
+                        </span>
+                        <span className="shrink-0 font-['IBM_Plex_Mono'] text-[14px] font-semibold text-[var(--accent)]">
+                          {plan.totalMonthlyValue}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Feature groups ── */}
+                <div className="mt-4 flex-1 border-t border-[var(--line)] pt-4">
+                  {newFeatureGroups.map((group, groupIndex) => {
+                    const included = groupIndex < plan.includedGroups;
+                    return (
+                      <div
+                        key={group.label}
+                        className={groupIndex > 0 ? "mt-4" : ""}
+                      >
+                        <p
+                          className={`font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] ${
+                            included ? "text-[var(--muted)]" : "text-slate-300"
+                          }`}
+                        >
+                          {group.label}
+                        </p>
+                        <ul className="mt-2 space-y-1.5">
+                          {group.features.map((feature) => (
+                            <li
+                              key={feature}
+                              className={`flex items-start gap-2.5 text-sm ${
+                                included ? "text-slate-800" : "text-slate-300"
+                              }`}
+                            >
+                              <span
+                                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center text-[11px] font-medium ${
+                                  included ? "text-slate-700" : "text-slate-300"
+                                }`}
+                              >
+                                {included ? "\u2713" : "\u2014"}
+                              </span>
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+
                 {/* ── CTA ── */}
                 <div className="mt-6 border-t border-[var(--line)] pt-5">
-                  {plan.cta ? (
-                    plan.ctaDisabled ? (
+                  {plan.ctaDisabled ? (
+                    <>
                       <span
                         className={`${disabledButtonClass} w-full justify-center`}
                         title={plan.scarcity}
                       >
                         {plan.cta}
                       </span>
-                    ) : (
                       <a
                         href={ctaHref}
-                        className={`${primaryButtonClass} w-full justify-center`}
+                        className="mt-3 block text-center text-sm font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]"
                       >
-                        {plan.cta}
+                        {PRIMARY_CTA}
                       </a>
-                    )
-                  ) : null}
+                      <p className="mt-3 text-center text-sm leading-relaxed text-slate-500">
+                        We're not taking new companies right now.
+                      </p>
+                    </>
+                  ) : (
+                    <a
+                      href={ctaHref}
+                      className={`${primaryButtonClass} w-full justify-center`}
+                    >
+                      {plan.cta}
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
           </div>
 
           <p className="mt-6 text-center text-sm text-slate-500">
-            Every sprint starts with a diagnostic. If AI isn't the right answer, I'll tell you.
+            THE 10-WEEK AI SPRINT is currently full.{" "}
+            <a href={ctaHref} className={secondaryButtonClass}>
+              {PRIMARY_CTA}
+            </a>{" "}
+            for the next opening, or request early access to the operations team
+            above.
           </p>
+        </section>
+
+        {/* ── 6. EMERGENCY BUTTON ── */}
+        <section className={shortDividerSectionClass}>
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+              CAN'T WAIT?
+            </p>
+            <h2 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-3xl">
+              Emergency?
+            </h2>
+            <p className="mx-auto mt-3 max-w-[48ch] text-sm leading-relaxed text-slate-600">
+              If your situation is critical, we may be able to help outside our
+              normal capacity. Tell us what's happening and we'll review your
+              case within 24 hours.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setShowEmergency(!showEmergency);
+                if (!showEmergency) {
+                  window.setTimeout(() => {
+                    document
+                      .getElementById("emergency")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }, 100);
+                }
+              }}
+              className="mt-6 inline-flex items-center justify-center border border-rose-600 bg-white px-6 py-2.5 text-sm font-medium text-rose-700 shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition-[border-color,color,transform,box-shadow,background-color] duration-200 hover:-translate-y-px hover:border-rose-700 hover:bg-rose-50 hover:shadow-[0_14px_24px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+            >
+              Submit an Emergency Request
+            </button>
+          </div>
+
+          {showEmergency ? (
+            <div id="emergency" className="mx-auto mt-10 max-w-2xl">
+              <div className="border border-rose-200 bg-rose-50 px-6 py-6">
+                <div className="flex flex-col gap-3 border-b border-rose-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-rose-700">
+                      EMERGENCY REQUEST
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                      Quick form. We review every request within 24 hours.
+                    </p>
+                  </div>
+                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-rose-500">
+                    4 fields
+                  </p>
+                </div>
+
+                <form
+                  onSubmit={handleEmergencySubmit}
+                  noValidate
+                  className="mt-5 space-y-4"
+                >
+                  <label className="block text-sm font-medium text-slate-800">
+                    Name & company
+                    <input
+                      className={`mt-1 w-full border bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-[border-color,box-shadow] duration-200 focus:border-rose-500 focus:shadow-[0_0_0_3px_rgba(225,29,72,0.08)] ${
+                        emergencyErrors.name
+                          ? "border-rose-400"
+                          : "border-rose-200"
+                      }`}
+                      value={emergencyForm.name}
+                      onChange={(event) =>
+                        updateEmergencyField("name", event.target.value)
+                      }
+                      placeholder="Jane Smith, Acme Corp"
+                      required
+                    />
+                    {emergencyErrors.name ? (
+                      <span className="text-xs text-rose-500">
+                        {emergencyErrors.name}
+                      </span>
+                    ) : null}
+                  </label>
+
+                  <label className="block text-sm font-medium text-slate-800">
+                    Preferred contact (email, phone, or LinkedIn)
+                    <input
+                      className={`mt-1 w-full border bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-[border-color,box-shadow] duration-200 focus:border-rose-500 focus:shadow-[0_0_0_3px_rgba(225,29,72,0.08)] ${
+                        emergencyErrors.contact
+                          ? "border-rose-400"
+                          : "border-rose-200"
+                      }`}
+                      value={emergencyForm.contact}
+                      onChange={(event) =>
+                        updateEmergencyField("contact", event.target.value)
+                      }
+                      placeholder="jane@acme.com or +1 555-0123"
+                      required
+                    />
+                    {emergencyErrors.contact ? (
+                      <span className="text-xs text-rose-500">
+                        {emergencyErrors.contact}
+                      </span>
+                    ) : null}
+                  </label>
+
+                  <label className="block text-sm font-medium text-slate-800">
+                    What's the problem? (short description)
+                    <textarea
+                      className={`mt-1 w-full border bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-[border-color,box-shadow] duration-200 focus:border-rose-500 focus:shadow-[0_0_0_3px_rgba(225,29,72,0.08)] ${
+                        emergencyErrors.problem
+                          ? "border-rose-400"
+                          : "border-rose-200"
+                      }`}
+                      rows={3}
+                      value={emergencyForm.problem}
+                      onChange={(event) =>
+                        updateEmergencyField("problem", event.target.value)
+                      }
+                      placeholder="e.g. Board meeting in 2 weeks, need AI portfolio audit before then..."
+                      required
+                    />
+                    {emergencyErrors.problem ? (
+                      <span className="text-xs text-rose-500">
+                        {emergencyErrors.problem}
+                      </span>
+                    ) : null}
+                  </label>
+
+                  <label className="block text-sm font-medium text-slate-800">
+                    Budget range
+                    <input
+                      className={`mt-1 w-full border bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-[border-color,box-shadow] duration-200 focus:border-rose-500 focus:shadow-[0_0_0_3px_rgba(225,29,72,0.08)] ${
+                        emergencyErrors.budget
+                          ? "border-rose-400"
+                          : "border-rose-200"
+                      }`}
+                      value={emergencyForm.budget}
+                      onChange={(event) =>
+                        updateEmergencyField("budget", event.target.value)
+                      }
+                      placeholder="e.g. $15k-25k for the engagement"
+                      required
+                    />
+                    {emergencyErrors.budget ? (
+                      <span className="text-xs text-rose-500">
+                        {emergencyErrors.budget}
+                      </span>
+                    ) : null}
+                  </label>
+
+                  <div className="flex items-center justify-between border-t border-rose-200 pt-4">
+                    <p className="text-sm text-slate-600">
+                      We review every request within 24 hours.
+                    </p>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center justify-center border border-rose-600 bg-rose-600 px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-rose-700 hover:bg-rose-700 hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+                    >
+                      Send Emergency Request
+                    </button>
+                  </div>
+
+                  {emergencySubmitted ? (
+                    <div className="border border-rose-200 bg-white p-5">
+                      <h3 className="text-lg font-semibold text-slate-900">
+                        Emergency request sent
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                        Your email draft is ready. If it didn't open
+                        automatically, use the link below. We'll review and
+                        respond within 24 hours.
+                      </p>
+                      <a
+                        href={buildEmergencyMailto(emergencyForm)}
+                        className="mt-3 inline-flex text-sm font-medium text-rose-700 underline underline-offset-4 hover:text-rose-900"
+                      >
+                        Open email draft again
+                      </a>
+                    </div>
+                  ) : null}
+                </form>
+              </div>
+            </div>
+          ) : null}
         </section>
 
         {/* ── 9. FAQ ── */}
@@ -836,7 +1308,8 @@ export default function App() {
         <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm leading-relaxed text-slate-600">
-              Follow the build on LinkedIn — practical AI implementation steps every week.
+              Follow the build on LinkedIn — practical AI implementation steps
+              every week.
             </p>
             <a
               href={LINKEDIN_PROFILE}
@@ -855,24 +1328,16 @@ export default function App() {
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
                 <div>
-                  <p className={sectionLabelClass}>
-                    TELL ME ABOUT YOUR TEAM
-                  </p>
+                  <p className={sectionLabelClass}>TELL ME ABOUT YOUR TEAM</p>
                   <h2 className={sectionHeadingClass}>
-                    When I have capacity, waitlist members get a free workflow review.
+                    When I have capacity, waitlist members get a free workflow
+                    review.
                   </h2>
                   <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
                     No pitch. Just an honest look at whether AI can save your
                     team real time. Tell me about your company and the workflow
                     that's costing you the most.
                   </p>
-                </div>
-                <div className="mt-6 flex flex-wrap gap-2 lg:mt-auto">
-                  <span className={metaChipClass}>2-minute form</span>
-                  <span className={metaChipClass}>
-                    Free workflow review when a spot opens
-                  </span>
-                  <span className={metaChipClass}>First come, first served</span>
                 </div>
               </div>
 
@@ -885,9 +1350,7 @@ export default function App() {
                     <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
                       Within 48 hours
                     </p>
-                    <p className="mt-2">
-                      I confirm your spot on the waitlist.
-                    </p>
+                    <p className="mt-2">I confirm your spot on the waitlist.</p>
                   </div>
                   <div className="flex-1 border-t border-[var(--line)] pt-4">
                     <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
@@ -902,7 +1365,8 @@ export default function App() {
                       After the call
                     </p>
                     <p className="mt-2">
-                      You get a straight answer: is it worth fixing, and what would it take.
+                      You get a straight answer: is it worth fixing, and what
+                      would it take.
                     </p>
                   </div>
                 </div>
@@ -921,7 +1385,8 @@ export default function App() {
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            I help growing teams implement AI where it saves the most time. Currently booked — join the waitlist.
+            I help growing teams implement AI where it saves the most time.
+            Currently booked — join the waitlist.
           </p>
         </footer>
       </main>

@@ -5,7 +5,7 @@ import { fmtCurrency, fmtX, getPublicRouteLabel } from "../lib/roi-calculator";
 const PRIMARY_EMAIL = "mirza@10x.ai";
 const DEFAULT_HEADING = "TELL US WHAT'S BROKEN";
 const DEFAULT_SUBHEADING =
-  "Tell us about your company and the workflow that's costing you the most time. We'll review your submission and reach out when a spot opens. First come, first served.";
+  "Tell us about your company and the workflow that's costing you the most time. We'll review your submission and reach out when a spot opens.";
 const DEFAULT_CTA = "Join the Waitlist";
 
 const primaryButtonClass =
@@ -17,9 +17,11 @@ const inverseSectionLabelClass =
 
 type Field =
   | "fullName"
+  | "linkedIn"
   | "workEmail"
   | "company"
   | "website"
+  | "aiBudget"
   | "employees"
   | "reason";
 
@@ -35,9 +37,11 @@ export type WaitlistFormProps = {
 
 const initialFormState: FormState = {
   fullName: "",
+  linkedIn: "",
   workEmail: "",
   company: "",
   website: "",
+  aiBudget: "",
   employees: "",
   reason: "",
 };
@@ -71,7 +75,9 @@ function buildMailto(form: FormState, context?: WaitlistContext): string {
     `Why they need us: ${form.reason}`,
   ];
 
+  if (form.linkedIn.trim()) lines.push(`LinkedIn: ${form.linkedIn}`);
   if (form.website.trim()) lines.push(`Website: ${form.website}`);
+  if (form.aiBudget.trim()) lines.push(`AI budget: ${form.aiBudget}`);
 
   if (context) {
     lines.push("");
@@ -188,7 +194,7 @@ export default function WaitlistForm({
           </p>
         </div>
         <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
-          6 fields - that's it
+          8 fields - that's it
         </p>
       </div>
 
@@ -300,6 +306,33 @@ export default function WaitlistForm({
             {errors.employees ? (
               <span className="text-xs text-rose-400">{errors.employees}</span>
             ) : null}
+          </label>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="text-sm font-medium text-slate-100">
+            LinkedIn
+            <span className="ml-1 text-[11px] font-normal text-slate-400">
+              (optional)
+            </span>
+            <input
+              className={inputClass(false)}
+              value={form.linkedIn}
+              onChange={(event) => updateField("linkedIn", event.target.value)}
+              placeholder="linkedin.com/in/yourname"
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-100">
+            AI budget
+            <span className="ml-1 text-[11px] font-normal text-slate-400">
+              (optional)
+            </span>
+            <input
+              className={inputClass(false)}
+              value={form.aiBudget}
+              onChange={(event) => updateField("aiBudget", event.target.value)}
+              placeholder="e.g. $10k-25k"
+            />
           </label>
         </div>
 
