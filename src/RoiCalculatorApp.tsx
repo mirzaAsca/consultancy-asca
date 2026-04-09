@@ -1,27 +1,42 @@
-import { useState, useRef } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import SiteHeader from "./components/SiteHeader";
-import WarpedGrid from "./components/WarpedGrid";
 import WaitlistForm from "./components/WaitlistForm";
-
-// ── PRICING ──
-
-const PLAN_A_MONTHLY = 22_000;
-const PLAN_A_ANNUAL = PLAN_A_MONTHLY * 12;
-const PLAN_B_MONTHLY = 290_000;
-const PLAN_B_ANNUAL = PLAN_B_MONTHLY * 12;
-
-// ── REACH (constant across scenarios) ──
-
-const PLAN_A_REACH = 0.25; // 25% of knowledge workers — planning estimate based on BCG 2025 adoption data (16-33% actual usage range)
-const PLAN_B_REACH = 0.40; // 40% of knowledge workers — planning estimate; McKinsey 2025 reports 44% of work hours (not workers) are automatable
-
-// ── IN-HOUSE COMPARISON ──
-
-const CAIO_ANNUAL = 425_000; // Glassdoor 2026 midpoint ($350K-$500K)
-const AI_ENGINEER_ANNUAL = 240_000; // Robert Half 2026 fully loaded
-const PLAN_B_EQUIV_ENGINEERS = 25; // Midpoint of 20-30
-
-// ── CLASSES ──
+import WarpedGrid from "./components/WarpedGrid";
+import { TIER1_SOURCES, TIER2_SOURCES, type Source } from "./lib/roi-sources";
+import {
+  AI_ENGINEER_ANNUAL,
+  BOTTLENECKS,
+  CAIO_ANNUAL,
+  calculate,
+  fmtCurrency,
+  fmtInput,
+  fmtPct,
+  fmtX,
+  getPlanInterpretation,
+  getPublicRouteLabel,
+  getRouteCta,
+  getRouteHeadline,
+  getRouteReason,
+  getRouteSummary,
+  INDUSTRIES,
+  LEAN_TEAM_PLAYBOOKS,
+  PLAN_A_ANNUAL,
+  PLAN_A_MONTHLY,
+  PLAN_B_EQUIV_ENGINEERS,
+  PLAN_B_MONTHLY,
+  PLAN_B_ANNUAL,
+  SCENARIOS,
+  type BottleneckKey,
+  type IndustryKey,
+  type Inputs,
+  type PlanResult,
+  type Results,
+  type Scenario,
+  type ScenarioId,
+  type SituationIntentId,
+  buildWaitlistContext,
+} from "./lib/roi-calculator";
+import { buildWaitlistHref } from "./lib/waitlist-context";
 
 const PRIMARY_EMAIL = "mirza@10x.ai";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
@@ -40,523 +55,86 @@ const inputClass =
   "mt-1 w-full border border-[var(--line)] bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-[border-color,box-shadow] duration-200 focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(30,41,59,0.08)]";
 const statExplainClass = "mt-1 text-[11px] leading-relaxed text-slate-400";
 
-// ── INDUSTRY DATA ──
-
-type IndustryKey =
-  | "financial"
-  | "saas"
-  | "manufacturing"
-  | "healthcare"
-  | "logistics"
-  | "ecommerce"
-  | "other";
-
-const INDUSTRIES: Record<
-  IndustryKey,
-  { label: string; knowledgeWorkerPct: number; fullyLoadedCost: number }
-> = {
-  financial: { label: "Financial Services", knowledgeWorkerPct: 70, fullyLoadedCost: 180_000 },
-  saas: { label: "SaaS / Software", knowledgeWorkerPct: 85, fullyLoadedCost: 170_000 },
-  manufacturing: { label: "Manufacturing", knowledgeWorkerPct: 35, fullyLoadedCost: 130_000 },
-  healthcare: { label: "Healthcare", knowledgeWorkerPct: 45, fullyLoadedCost: 140_000 },
-  logistics: { label: "Logistics / Transportation", knowledgeWorkerPct: 30, fullyLoadedCost: 120_000 },
-  ecommerce: { label: "E-commerce / Retail", knowledgeWorkerPct: 55, fullyLoadedCost: 140_000 },
-  other: { label: "Other", knowledgeWorkerPct: 50, fullyLoadedCost: 150_000 },
-};
-
-// ── SCENARIO DATA ──
-
-type ScenarioId = "lower" | "mid" | "upper";
-
-type Scenario = {
+const SITUATION_OPTIONS: Array<{
+  value: SituationIntentId;
   label: string;
-  sublabel: string;
-  planAGain: number;
-  planBGain: number;
-  source: string;
-  sourceDetail: string;
-};
-
-const SCENARIOS: Record<ScenarioId, Scenario> = {
-  lower: {
-    label: "Lower range",
-    sublabel: "Lowest documented gains",
-    planAGain: 0.14,
-    planBGain: 0.5,
-    source: "Stanford/MIT 2023",
-    sourceDetail:
-      "14% average productivity gain measured across 5,000 customer service agents at a Fortune 500 company over one year. Junior workers saw up to 35% improvement.",
-  },
-  mid: {
-    label: "Mid range",
-    sublabel: "Cross-study average",
-    planAGain: 0.25,
-    planBGain: 1.0,
-    source: "Harvard/BCG 2023 + St. Louis Fed 2025",
-    sourceDetail:
-      "25.1% speed improvement measured across 758 BCG consultants using GPT-4. Confirmed by St. Louis Fed meta-analysis averaging ~25% across multiple independent studies.",
-  },
-  upper: {
-    label: "Upper range",
-    sublabel: "Highest documented gains",
-    planAGain: 0.4,
-    planBGain: 1.5,
-    source: "Harvard/BCG 2023 (quality-adjusted) + GitHub Copilot 2023",
-    sourceDetail:
-      "40% higher quality results from the 758-consultant study. GitHub Copilot study showed 55.8% speed improvement for developers. Anthropic 2025 measured ~80% per-task speed-up.",
-  },
-};
-
-// ── SOURCE LIBRARY ──
-
-type Source = {
-  name: string;
-  detail: string;
-  url: string;
-  year: string;
-};
-
-const TIER1_SOURCES: Source[] = [
+}> = [
   {
-    name: "Stanford/MIT — Generative AI Can Boost Productivity Without Replacing Workers",
-    detail:
-      "14% average productivity gain, 35% for junior workers. 5,000 customer service agents studied over one year at a Fortune 500 company.",
-    url: "https://www.gsb.stanford.edu/insights/generative-ai-can-boost-productivity-without-replacing-workers",
-    year: "2023",
+    value: "enterprise_scale",
+    label: "We have AI pilots but need to scale them across the company",
   },
   {
-    name: "Harvard/BCG — Navigating the Jagged Technological Frontier",
-    detail:
-      "758 BCG consultants: 12.2% more tasks completed, 25.1% faster, 40% higher quality output. Bottom-half performers saw 43% improvement.",
-    url: "https://www.hbs.edu/faculty/Pages/item.aspx?num=64700",
-    year: "2023",
+    value: "bottleneck",
+    label: "We have a specific bottleneck we want AI to solve",
   },
   {
-    name: "GitHub — Quantifying Copilot's Impact on Developer Productivity",
-    detail:
-      "55.8% faster task completion. 81% of users report faster task completion. 87% report preserved mental effort on repetitive tasks.",
-    url: "https://github.blog/news-insights/research/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/",
-    year: "2023",
-  },
-  {
-    name: "Anthropic — Estimating Productivity Gains from AI",
-    detail:
-      "~80% speed-up per individual task. 12x faster for college-level skill tasks. Projected 1.0-1.8% annual US labor productivity growth increase.",
-    url: "https://www.anthropic.com/research/estimating-productivity-gains",
-    year: "2025",
-  },
-  {
-    name: "BLS — Employer Costs for Employee Compensation (ECEC)",
-    detail:
-      "Total employer compensation: $46.15/hour average. Benefits = 29.8% of total compensation. Provides the methodology and multiplier for fully-loaded cost estimates; industry-specific figures are adjusted estimates.",
-    url: "https://www.bls.gov/news.release/pdf/ecec.pdf",
-    year: "Dec 2025",
-  },
-  {
-    name: "Avasant/Computer Economics — IT Spending Benchmarks by Industry",
-    detail:
-      "IT spending as percentage of revenue by industry sector: Financial Services 6-10%, Manufacturing 2-4%, SaaS 8-12%, Healthcare 4-6%. Used for industry context, not directly in calculator formulas.",
-    url: "https://avasant.com/report/it-spending-as-a-percentage-of-revenue-by-industry-company-size-and-region/",
-    year: "2025",
-  },
-  {
-    name: "McKinsey — State of AI 2025",
-    detail:
-      "88% of organizations use AI in at least one function. 27% of white-collar workers use AI daily. 33% have begun to scale AI programs.",
-    url: "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
-    year: "2025",
-  },
-  {
-    name: "McKinsey — AI-Powered Marketing and Sales Reach New Heights with Generative AI",
-    detail:
-      "Organizations investing in AI in marketing and sales are seeing 3-15% revenue uplift and 10-20% sales ROI uplift. Used to inform the calculator's revenue-leverage planning assumptions.",
-    url: "https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/ai-powered-marketing-and-sales-reach-new-heights-with-generative-ai",
-    year: "2023",
-  },
-  {
-    name: "St. Louis Fed — Impact of Generative AI on Work Productivity",
-    detail:
-      "Meta-analysis of multiple studies: productivity gains range 10-55%, averaging approximately 25%. Workers self-report saving 5.4% of weekly hours.",
-    url: "https://www.stlouisfed.org/on-the-economy/2025/feb/impact-generative-ai-work-productivity",
-    year: "Feb 2025",
-  },
-  {
-    name: "BCG — The Widening AI Value Gap",
-    detail:
-      "Top 5% of companies ('future-built') achieve 2.7x return on invested capital. ~2x revenue increases and ~1.4x greater cost reductions vs. laggards.",
-    url: "https://www.bcg.com/publications/2025/are-you-generating-value-from-ai-the-widening-gap",
-    year: "Sep 2025",
-  },
-  {
-    name: "Glassdoor — Chief AI Officer Salaries",
-    detail:
-      "Average: $352,612/yr. 25th percentile: $264,459. 75th percentile: $493,657. Based on reported salary data.",
-    url: "https://www.glassdoor.com/Salaries/chief-ai-officer-salary-SRCH_KO0,16.htm",
-    year: "2026",
-  },
-  {
-    name: "Robert Half — AI/ML Engineer Salary Data",
-    detail:
-      "Senior AI/ML engineers: $180K-$280K base. Fully loaded (benefits, overhead, tooling): $16,000-$24,000/month.",
-    url: "https://www.roberthalf.com/us/en/job-details/aiml-engineer",
-    year: "2026",
+    value: "exploring",
+    label: "We're exploring what AI could do for us",
   },
 ];
 
-const TIER2_SOURCES: Source[] = [
-  {
-    name: "PwC — 28th Annual Global CEO Survey",
-    detail:
-      "56% of CEOs report neither revenue nor cost benefits from AI investments.",
-    url: "https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html",
-    year: "2026",
-  },
-  {
-    name: "S&P Global — AI & Machine Learning Use Cases Survey",
-    detail:
-      "42% of enterprises scrapped AI initiatives, up from 17% the prior year. Survey of 1,006 IT and business professionals.",
-    url: "https://www.spglobal.com/market-intelligence/en/news-insights/research/ai-experiences-rapid-adoption-but-with-mixed-outcomes-highlights-from-vote-ai-machine-learning",
-    year: "2025",
-  },
-  {
-    name: "Gartner — AI in Organizations Survey",
-    detail:
-      "48% of AI projects reach production. Generative AI is the most frequently deployed AI solution.",
-    url: "https://www.gartner.com/en/newsroom/press-releases/2024-05-07-gartner-survey-finds-generative-ai-is-now-the-most-frequently-deployed-ai-solution-in-organizations",
-    year: "2024",
-  },
-  {
-    name: "BCG — AI at Work: Momentum Builds But Gaps Remain",
-    detail:
-      "51% of frontline workers stalled in AI adoption. 75%+ of leaders/managers use GenAI several times per week.",
-    url: "https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain",
-    year: "2025",
-  },
-  {
-    name: "Anthropic — Economic Index",
-    detail:
-      "49% of jobs have AI-augmentable tasks (up from 36% earlier in 2025). Software development captures 19% of total productivity gains.",
-    url: "https://www.anthropic.com/research/economic-index-primitives",
-    year: "2025",
-  },
-  {
-    name: "McKinsey — Superagency in the Workplace",
-    detail:
-      "57% of US work hours automatable by current technology. 44% automatable by AI agents alone (non-physical tasks).",
-    url: "https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/superagency-in-the-workplace-empowering-people-to-unlock-ais-full-potential-at-work",
-    year: "Nov 2025",
-  },
-  {
-    name: "McKinsey — The Economic Potential of Generative AI",
-    detail:
-      "60-70% of employee work time augmentable by GenAI. 25% of work time requires natural language understanding.",
-    url: "https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-economic-potential-of-generative-ai-the-next-productivity-frontier",
-    year: "2023",
-  },
-  {
-    name: "Deloitte — State of AI in the Enterprise",
-    detail:
-      "36% of digital initiative budgets allocated to AI. Survey of 3,235 enterprise leaders.",
-    url: "https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html",
-    year: "2026",
-  },
-  {
-    name: "Gartner — Worldwide AI Spending Forecast",
-    detail: "Global AI spending projected at $2.52 trillion in 2026, up 44% year-over-year.",
-    url: "https://www.gartner.com/en/newsroom/press-releases/2026-1-15-gartner-says-worldwide-ai-spending-will-total-2-point-5-trillion-dollars-in-2026",
-    year: "Jan 2026",
-  },
-  {
-    name: "ISG — Enterprise AI Spending Study",
-    detail:
-      "Enterprise AI spending rose 5.7% in 2025 while overall IT budgets grew only 1.8%. AI accounts for ~30% of incremental IT budget growth.",
-    url: "https://ir.isg-one.com/news-market-information/press-releases/news-details/2024/Enterprise-AI-Spending-to-Rise-5.7-Percent-in-2025-Despite-Overall-IT-Budget-Increase-of-Less-than-2-Percent-ISG-Study/default.aspx",
-    year: "2025",
-  },
-  {
-    name: "Menlo Ventures — State of GenAI in the Enterprise",
-    detail:
-      "Average organization spends ~$85,500/month on AI-native applications. 37% of enterprises spend >$250K/year on LLMs alone.",
-    url: "https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/",
-    year: "2025",
-  },
-  {
-    name: "CloudZero — State of AI Costs",
-    detail:
-      "Mid-market firms budget $20K-$100K/year for AI. Enterprise AI costs rising 36% year-over-year.",
-    url: "https://www.cloudzero.com/state-of-ai-costs/",
-    year: "2025",
-  },
-  {
-    name: "IBM — How Governance Increases Velocity",
-    detail:
-      "58% reduction in data clearance processing time via watsonx.governance. 1,000+ AI models governed.",
-    url: "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/ai-governance-trends",
-    year: "Dec 2025",
-  },
-  {
-    name: "WEF — Why Effective AI Governance Is Becoming a Growth Strategy",
-    detail:
-      "One manufacturer went from 6-8 week approval cycles to same-day for low-risk AI tools — 400% increase in AI experimentation.",
-    url: "https://www.weforum.org/stories/2026/01/why-effective-ai-governance-is-becoming-a-growth-strategy/",
-    year: "Jan 2026",
-  },
-  {
-    name: "Deloitte — The AI ROI Paradox",
-    detail:
-      "Rising investment alongside elusive returns. Analysis of why most AI investments fail to produce measurable business outcomes.",
-    url: "https://www.deloitte.com/global/en/issues/generative-ai/ai-roi-the-paradox-of-rising-investment-and-elusive-returns.html",
-    year: "2025",
-  },
-  {
-    name: "California Management Review — ROI of AI Ethics and Governance",
-    detail:
-      "From loss aversion to value generation. Academic analysis of governance investment driving AI returns.",
-    url: "https://cmr.berkeley.edu/2024/07/on-the-roi-of-ai-ethics-and-governance-investments-from-loss-aversion-to-value-generation/",
-    year: "Jul 2024",
-  },
-  {
-    name: "CSIMarket — Revenue Per Employee by Sector",
-    detail:
-      "Cross-sector RPE benchmarks. Financial Services: $450K+, Retail: ~$449K. Provides context for revenue-per-employee ratios by sector.",
-    url: "https://csimarket.com/Industry/industry_Efficiency.php",
-    year: "2025",
-  },
-  {
-    name: "Damodaran / NYU Stern — Employee Metrics Dataset",
-    detail:
-      "Sector-level employee productivity and revenue-per-employee data across all major industries. Reference context, not directly used in calculator formulas.",
-    url: "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/Employee.html",
-    year: "2025",
-  },
+const TRANSFORMATION_KPIS = [
+  "Operating margin / EBIT",
+  "SG&A as % of revenue",
+  "Cost-to-serve",
+  "Cycle time",
+  "Workflow adoption",
+  "Production deployment coverage",
+  "Governance maturity",
+  "Pilot-to-production conversion",
 ];
 
-// ── BOTTLENECK DATA ──
-
-const BOTTLENECKS: Record<BottleneckKey, { label: string; study: string; studyDetail: string }> = {
-  sales: {
-    label: "Sales",
-    study: "McKinsey 2023",
-    studyDetail: "McKinsey reports 3-5% sales productivity improvement from AI in marketing and sales functions. Your sales team can work more deals, personalize outreach at scale, and shorten deal cycles — without adding headcount.",
-  },
-  engineering: {
-    label: "Engineering",
-    study: "GitHub Copilot 2023",
-    studyDetail: "GitHub Copilot study shows 55.8% faster task completion for developers. Your engineering team ships at the pace of a team significantly larger — faster product iterations, faster time-to-market.",
-  },
-  customer_success: {
-    label: "Customer Success",
-    study: "Stanford/MIT 2023",
-    studyDetail: "Stanford/MIT measured 14% average productivity gain and 35% for less experienced agents across 5,000 customer service workers. Your support team handles more volume, resolves issues faster, and reduces churn — at the same headcount.",
-  },
-  marketing: {
-    label: "Marketing",
-    study: "Harvard/BCG 2023",
-    studyDetail: "Harvard/BCG found 25% faster knowledge work and 40% higher quality output. Your marketing team produces more campaigns, more content, and more personalized experiences without proportional hiring.",
-  },
-  ops: {
-    label: "Operations",
-    study: "St. Louis Fed 2025",
-    studyDetail: "St. Louis Fed meta-analysis shows 10-55% productivity range across studies, averaging ~25%. Your operations team automates repeatable workflows, reduces manual processing, and scales without adding layers.",
-  },
+const TRANSFORMATION_OVERLAYS: Partial<Record<IndustryKey, string[]>> = {
+  financial: [
+    "Control exceptions",
+    "Audit findings",
+    "Model governance coverage",
+    "Servicing cost",
+    "Case cycle time",
+  ],
+  healthcare: [
+    "Claim cycle time",
+    "Denial rate",
+    "Patient throughput",
+    "Compliance exposure",
+    "Audit survivability",
+  ],
+  manufacturing: ["Throughput", "Yield", "Downtime", "Unit cost"],
+  saas: [
+    "Product delivery cadence",
+    "Support cost-to-serve",
+    "Security review velocity",
+    "Trust and evaluation coverage",
+  ],
 };
 
-// ── TYPES ──
+const STANDARD_KPIS = [
+  "Payback period",
+  "Workflow coverage",
+  "Team adoption",
+  "Manual time removed",
+  "Opportunity cost per quarter",
+];
 
-type Inputs = {
-  revenue: string;
-  employees: string;
-  industry: IndustryKey;
-  knowledgeWorkerPct: number;
-  currentAiSpend: string;
-  plannedHires: string;
-  bottleneck: BottleneckKey;
-};
-
-type BottleneckKey = "sales" | "engineering" | "customer_success" | "marketing" | "ops";
-
-type PlanResult = {
-  affectedWorkers: number;
-  gainPct: number;
-  equivalentFTEs: number;
-  annualValue: number;
-  annualCost: number;
-  netValue: number;
-  roi: number;
-  monthsToPayback: number;
-};
-
-type Results = {
-  revenue: number;
-  revenuePerEmployee: number;
-  isHighRPE: boolean;
-  knowledgeWorkers: number;
-  fullyLoadedCost: number;
-  industryLabel: string;
-  planA: PlanResult;
-  planB: PlanResult;
-  hiresAvoidedA: number;
-  hiresAvoidedB: number;
-  hiringAvoidanceValueA: number;
-  hiringAvoidanceValueB: number;
-  plannedHires: number;
-  buildInHouseB: number;
-  currentAiSpend: number;
-  bottleneck: BottleneckKey;
-};
-
-// ── FORMATTING ──
-
-function parseNum(v: string): number {
-  return parseInt(v.replace(/[^0-9]/g, ""), 10) || 0;
-}
-
-function fmtInput(n: number): string {
-  if (n === 0) return "";
-  return n.toLocaleString("en-US");
-}
-
-function fmtCurrency(n: number): string {
-  if (Math.abs(n) >= 1_000_000_000)
-    return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (Math.abs(n) >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  return `$${Math.round(n).toLocaleString("en-US")}`;
-}
-
-function fmtPct(n: number): string {
-  return `${Math.round(n * 100)}%`;
-}
-
-function fmtX(n: number): string {
-  if (n >= 100) return `${Math.round(n)}x`;
-  const thresholds = [1, 1.5, 3, 5, 10];
-  if (thresholds.some((threshold) => Math.abs(n - threshold) < 0.05)) {
-    return `${n.toFixed(2)}x`;
-  }
-  return `${n.toFixed(1)}x`;
-}
-
-// ── CALCULATIONS ──
-
-function calculate(
-  inputs: Inputs,
-  scenario: ScenarioId,
-): Results {
-  const revenue = parseNum(inputs.revenue);
-  const employees = parseNum(inputs.employees);
-  const ind = INDUSTRIES[inputs.industry];
-  const kwPct = inputs.knowledgeWorkerPct / 100;
-  const sc = SCENARIOS[scenario];
-
-  const knowledgeWorkers = Math.round(employees * kwPct);
-  const fullyLoadedCost = ind.fullyLoadedCost;
-  const revenuePerEmployee = employees > 0 ? revenue / employees : 0;
-  const isHighRPE = revenuePerEmployee >= 300_000;
-  const plannedHires = parseNum(inputs.plannedHires);
-
-  function planCalc(
-    reach: number,
-    gain: number,
-    annualCost: number,
-  ): PlanResult {
-    const affected = Math.round(knowledgeWorkers * reach);
-    const ftes = affected * gain;
-    const value = ftes * fullyLoadedCost;
-    const net = value - annualCost;
-    const roi = annualCost > 0 ? value / annualCost : 0;
-    const months = value > 0 ? Math.ceil((annualCost / value) * 12) : 99;
-    return {
-      affectedWorkers: affected,
-      gainPct: gain,
-      equivalentFTEs: ftes,
-      annualValue: value,
-      annualCost,
-      netValue: net,
-      roi,
-      monthsToPayback: months,
-    };
-  }
-
-  const planA = planCalc(PLAN_A_REACH, sc.planAGain, PLAN_A_ANNUAL);
-  const planB = planCalc(PLAN_B_REACH, sc.planBGain, PLAN_B_ANNUAL);
-
-  // Hiring avoidance: how many of their planned hires could be avoided
-  const hiresAvoidedA = plannedHires > 0
-    ? Math.min(plannedHires, Math.floor(planA.equivalentFTEs))
-    : 0;
-  const hiresAvoidedB = plannedHires > 0
-    ? Math.min(plannedHires, Math.floor(planB.equivalentFTEs))
-    : 0;
-
-  const buildInHouseB = CAIO_ANNUAL + PLAN_B_EQUIV_ENGINEERS * AI_ENGINEER_ANNUAL;
-
-  return {
-    revenue,
-    revenuePerEmployee,
-    isHighRPE,
-    knowledgeWorkers,
-    fullyLoadedCost,
-    industryLabel: ind.label,
-    planA,
-    planB,
-    hiresAvoidedA,
-    hiresAvoidedB,
-    hiringAvoidanceValueA: hiresAvoidedA * fullyLoadedCost,
-    hiringAvoidanceValueB: hiresAvoidedB * fullyLoadedCost,
-    plannedHires,
-    buildInHouseB,
-    currentAiSpend: parseNum(inputs.currentAiSpend),
-    bottleneck: inputs.bottleneck,
-  };
-}
-
-// ── INTERPRETATION ──
-
-function getPlanInterpretation(
-  label: string,
-  r: PlanResult,
-): { verdict: string; detail: string } {
-  let verdict: string;
-  let detail: string;
-
-  if (r.roi > 10) {
-    verdict = `Exceptional fit for ${label}`;
-    detail = `At ${fmtX(r.roi)} ROI, the investment is a small fraction of the value created. Even if actual results come in at half of these projections, the return remains strongly positive. The investment would pay for itself in approximately ${r.monthsToPayback} month${r.monthsToPayback === 1 ? "" : "s"}.`;
-  } else if (r.roi > 5) {
-    verdict = `Strong fit for ${label}`;
-    detail = `At ${fmtX(r.roi)} ROI, the investment would pay for itself within the first ${r.monthsToPayback} months based on productivity gains alone. This is well above the threshold most organizations use to justify technology investments.`;
-  } else if (r.roi > 3) {
-    verdict = `Good fit for ${label}`;
-    detail = `At ${fmtX(r.roi)} ROI, returns are clearly positive. The investment would pay for itself in approximately ${r.monthsToPayback} months. We recommend starting with the complimentary AI Portfolio Reality Scan to identify your highest-impact opportunities.`;
-  } else if (r.roi > 1.5) {
-    verdict = "Positive but modest at this scale";
-    detail = `At ${fmtX(r.roi)} ROI, returns are positive but depend heavily on execution quality. A targeted approach focused on your highest-value workflows would be important. The free scan can identify where those opportunities are.`;
-  } else if (r.roi > 1) {
-    verdict = "Marginal at current scale";
-    detail = `At ${fmtX(r.roi)} ROI, the investment breaks even but doesn't create significant surplus value at your current company size. We recommend the complimentary AI Portfolio Reality Scan (valued at $15,000) to assess whether a more targeted approach would deliver better results.`;
-  } else {
-    verdict = "Not recommended at this scale";
-    detail = `At ${fmtX(r.roi)} ROI, the standard engagement does not show positive returns for your current company profile. This is not a fit issue — it's a scale issue. As your organization grows, the math changes significantly. We recommend the free scan to identify targeted quick wins.`;
-  }
-
-  return { verdict, detail };
-}
-
-// ── EXPANDABLE SECTION ──
+const NOT_NOW_STEPS = [
+  "Clarify one workflow that hurts enough to fix now.",
+  "Name one owner who will sponsor the workflow change.",
+  "Define one measurable outcome before buying a broader program.",
+];
 
 function Expandable({
   title,
   children,
 }: {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border-b border-[var(--line)]">
       <button
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center justify-between gap-4 py-4 text-left text-sm font-medium text-slate-900 transition-colors hover:text-[var(--accent)]"
       >
         {title}
@@ -580,8 +158,6 @@ function Expandable({
   );
 }
 
-// ── SOURCE LIST ──
-
 function SourceList({
   title,
   sources,
@@ -595,27 +171,29 @@ function SourceList({
     <div className="mt-8">
       <div className="flex items-center gap-3">
         <p
-          className={`font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] ${accent ? "bg-[var(--accent)] text-white px-2.5 py-1" : "text-[var(--muted)]"}`}
+          className={`font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] ${accent ? "bg-[var(--accent)] px-2.5 py-1 text-white" : "text-[var(--muted)]"}`}
         >
           {title}
         </p>
         <span className={metaChipClass}>{sources.length}</span>
       </div>
       <ol className="mt-4 space-y-2">
-        {sources.map((s, i) => (
-          <li key={s.url} className="group relative text-sm leading-relaxed">
-            <span className="font-['IBM_Plex_Mono'] text-[11px] text-[var(--muted)]">{i + 1}.</span>{" "}
-            <span className="font-medium text-slate-950">{s.name}</span>{" "}
-            <span className="text-[11px] text-slate-400">({s.year})</span>
+        {sources.map((source, index) => (
+          <li key={source.url} className="group relative text-sm leading-relaxed">
+            <span className="font-['IBM_Plex_Mono'] text-[11px] text-[var(--muted)]">
+              {index + 1}.
+            </span>{" "}
+            <span className="font-medium text-slate-950">{source.name}</span>{" "}
+            <span className="text-[11px] text-slate-400">({source.year})</span>
             <br />
             <a
-              href={s.url}
+              href={source.url}
               target="_blank"
               rel="noopener noreferrer"
-              title={s.detail}
+              title={source.detail}
               className="break-all font-['IBM_Plex_Mono'] text-[11px] text-[var(--accent)] underline decoration-slate-300 underline-offset-2 hover:decoration-[var(--accent)]"
             >
-              {s.url}
+              {source.url}
             </a>
           </li>
         ))}
@@ -624,7 +202,675 @@ function SourceList({
   );
 }
 
-// ── APP ──
+function getIndustryKeyFromLabel(label: string): IndustryKey {
+  return (
+    (Object.entries(INDUSTRIES).find(([, industry]) => industry.label === label)?.[0] as
+      | IndustryKey
+      | undefined) ?? "other"
+  );
+}
+
+function StatRow({
+  label,
+  value,
+  detail,
+  valueClassName,
+}: {
+  label: string;
+  value: string;
+  detail?: string;
+  valueClassName?: string;
+}) {
+  return (
+    <div>
+      <div className="flex justify-between gap-4 text-sm">
+        <span className="text-slate-700">{label}</span>
+        <span
+          className={`font-['IBM_Plex_Mono'] font-medium text-slate-950 ${valueClassName ?? ""}`}
+        >
+          {value}
+        </span>
+      </div>
+      {detail ? <p className={statExplainClass}>{detail}</p> : null}
+    </div>
+  );
+}
+
+function PlanCard({
+  eyebrow,
+  title,
+  result,
+  startHere,
+  description,
+  emphasis,
+}: {
+  eyebrow: string;
+  title: string;
+  result: PlanResult;
+  startHere?: string;
+  description: string;
+  emphasis: "primary" | "secondary" | "warning";
+}) {
+  const interpretation = getPlanInterpretation(title, result);
+  const borderClass = emphasis === "primary"
+    ? "border-[var(--accent)]"
+    : emphasis === "warning"
+      ? "border-rose-300"
+      : "border-[var(--line)]";
+
+  return (
+    <div className={`flex flex-col ${panelClass} ${borderClass}`}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+            {eyebrow}
+          </p>
+          <p className="mt-2 text-lg font-semibold text-slate-950">{title}</p>
+        </div>
+        {startHere ? (
+          <span className="bg-[var(--accent)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[0.12em] text-white">
+            {startHere}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div>
+          <p className="font-['IBM_Plex_Mono'] text-4xl font-semibold text-slate-950">
+            {fmtX(result.roi)}
+          </p>
+          <p className="mt-1 text-sm text-slate-600">return on investment</p>
+        </div>
+        <div>
+          <p className="font-['IBM_Plex_Mono'] text-4xl font-semibold text-slate-950">
+            {result.monthsToPayback}
+          </p>
+          <p className="mt-1 text-sm text-slate-600">months to payback</p>
+        </div>
+      </div>
+
+      <p className="mt-5 text-sm leading-relaxed text-slate-700">{description}</p>
+
+      <div className="mt-6 space-y-4 border-t border-[var(--line)] pt-5">
+        <StatRow
+          label="Workers affected"
+          value={result.affectedWorkers.toLocaleString("en-US")}
+          detail="Planning estimate for who this program can realistically touch in the first year."
+        />
+        <StatRow
+          label="Equivalent output added"
+          value={`${result.equivalentFTEs.toFixed(1)} FTEs`}
+          detail={`${result.affectedWorkers} workers x ${fmtPct(result.gainPct)} productivity gain.`}
+        />
+        <StatRow
+          label="Annual productivity value"
+          value={fmtCurrency(result.annualValue)}
+          valueClassName="text-[var(--accent)]"
+        />
+        <StatRow label="Your investment" value={`${fmtCurrency(result.annualCost)}/yr`} />
+        <StatRow
+          label="Net return"
+          value={`${fmtCurrency(result.netValue)}/yr`}
+          valueClassName={result.netValue >= 0 ? "text-[var(--accent)]" : "text-rose-600"}
+        />
+      </div>
+
+      <div className="mt-6 border-t border-[var(--line)] pt-5">
+        <p
+          className={`font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] ${result.roi >= 3 ? "text-[var(--accent)]" : result.roi >= 1 ? "text-amber-600" : "text-rose-600"}`}
+        >
+          {interpretation.verdict}
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          {interpretation.detail}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function RouteInsightPanel({
+  results,
+  situationIntent,
+}: {
+  results: Results;
+  situationIntent: SituationIntentId | "";
+}) {
+  const routeLabel = getPublicRouteLabel(results.route);
+  const primaryPayback = results.route === "constraint_sprint"
+    ? results.constraintEconomics.monthsToPayback
+    : results.planA.monthsToPayback;
+
+  return (
+    <div className={`mt-6 ${cardClass} border-[var(--accent)] bg-[rgba(244,247,251,0.9)]`}>
+      <div className="flex flex-wrap gap-2">
+        <span className={metaChipClass}>{routeLabel}</span>
+        <span className={metaChipClass}>
+          Revenue / employee {fmtCurrency(results.revenuePerEmployee)}
+        </span>
+        <span className={metaChipClass}>
+          Primary payback {primaryPayback} months
+        </span>
+        {results.currentAiSpend > 0 ? (
+          <span className={metaChipClass}>
+            Current AI spend {fmtCurrency(results.currentAiSpend)}/yr
+          </span>
+        ) : null}
+      </div>
+      <p className="mt-4 font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">
+        Why this route
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-slate-700">
+        {getRouteReason(results, situationIntent)}
+      </p>
+      <p className="mt-4 text-sm leading-relaxed text-slate-700">
+        {getRouteSummary(results.route, results)}
+      </p>
+      {results.isRegulatedIndustry && results.route === "transformation_office" ? (
+        <p className="mt-3 text-sm leading-relaxed text-slate-700">
+          For regulated enterprises, governance maturity is not optional. It
+          shortens deployment time by removing late-stage compliance blocks.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function ResultsNextStepCard({
+  results,
+  cta,
+  handoffHref,
+  selectedScenario,
+  industryKey,
+}: {
+  results: Results;
+  cta: NonNullable<ReturnType<typeof getRouteCta>>;
+  handoffHref: string;
+  selectedScenario: Scenario;
+  industryKey: IndustryKey;
+}) {
+  return (
+    <div id="next-step" className={`mt-8 ${panelClass} border-[var(--accent)]`}>
+      <div className="grid gap-6 lg:grid-cols-[1.15fr_minmax(0,0.85fr)] lg:items-center">
+        <div>
+          <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--accent)]">
+            Next step
+          </p>
+          <h3 className="mt-3 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] text-slate-950">
+            {cta.heading}
+          </h3>
+          <p className="mt-3 max-w-[54ch] text-sm leading-relaxed text-slate-700">
+            {cta.subheading}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className={metaChipClass}>
+              Route: {getPublicRouteLabel(results.route)}
+            </span>
+            <span className={metaChipClass}>
+              Industry: {INDUSTRIES[industryKey].label}
+            </span>
+            <span className={metaChipClass}>
+              Scenario: {selectedScenario.label}
+            </span>
+          </div>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600">
+            Calculator context carries forward automatically: revenue,
+            employees, bottleneck, research scenario, route, and the reason for
+            the recommendation.
+          </p>
+        </div>
+        <a href={handoffHref} className={`${primaryButtonClass} w-full`}>
+          {cta.label}
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function ConstraintSprintCards({
+  results,
+}: {
+  results: Results;
+}) {
+  const playbook = LEAN_TEAM_PLAYBOOKS[results.bottleneck];
+  const economics = results.constraintEconomics;
+
+  return (
+    <div className="mt-10 grid gap-6 lg:grid-cols-[1.35fr_minmax(0,0.9fr)]">
+      <div className={`flex flex-col ${panelClass} border-[var(--accent)]`}>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+              {playbook.cardLabel}
+            </p>
+            <h3 className="mt-3 text-2xl font-semibold leading-[1.08] tracking-[-0.02em] text-slate-950">
+              Pays for itself in {economics.monthsToPayback} month
+              {economics.monthsToPayback === 1 ? "" : "s"}
+            </h3>
+            <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-700">
+              {playbook.headline}
+            </p>
+          </div>
+          <span className="bg-[var(--accent)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[0.12em] text-white">
+            Focused entry
+          </span>
+        </div>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {playbook.systems.map((system) => (
+            <div key={system.name} className={cardClass}>
+              <p className="text-sm font-semibold text-slate-950">{system.name}</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                {system.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 space-y-4 border-t border-[var(--line)] pt-5">
+          <StatRow
+            label="Productivity value"
+            value={fmtCurrency(economics.productivityValue)}
+            detail={`Base labor-productivity value using Plan A economics (${results.planA.equivalentFTEs.toFixed(1)} FTEs of added capacity).`}
+          />
+          <StatRow
+            label="Hire deferral value"
+            value={fmtCurrency(economics.hireDeferralValue)}
+            detail={economics.hireDeferralCount > 0
+              ? `${economics.hireDeferralCount} deferred hire${economics.hireDeferralCount === 1 ? "" : "s"} at ${fmtCurrency(results.fullyLoadedCost)} fully-loaded cost each.`
+              : "No hire-deferral value applied because planned hires are zero or smaller than the capacity added."}
+          />
+          <StatRow
+            label="Revenue leverage value"
+            value={fmtCurrency(economics.revenueLeverageValue)}
+            detail={economics.revenueLeveragePct > 0
+              ? `${fmtPct(economics.revenueLeveragePct)} conditional revenue leverage applied because ${BOTTLENECKS[results.bottleneck].label.toLowerCase()} directly affects revenue flow.`
+              : "No revenue leverage applied. This route keeps the math conservative for non-revenue bottlenecks."}
+          />
+          <StatRow
+            label="Combined annual value"
+            value={fmtCurrency(economics.combinedAnnualValue)}
+            detail="Combined annual value (capacity value + conditional revenue leverage). Productivity and hire deferral are not double counted."
+            valueClassName="text-[var(--accent)]"
+          />
+          <StatRow label="Your investment" value={`${fmtCurrency(PLAN_A_ANNUAL)}/yr`} />
+          <StatRow
+            label="Net return"
+            value={`${fmtCurrency(economics.netReturn)}/yr`}
+            valueClassName={economics.netReturn >= 0 ? "text-[var(--accent)]" : "text-rose-600"}
+          />
+        </div>
+
+        <div className="mt-6 border-t border-[var(--line)] pt-5">
+          <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--accent)]">
+            Measurable outcome
+          </p>
+          <p className="mt-2 text-sm text-slate-700">{playbook.successMetric}</p>
+          <p className="mt-4 text-sm text-slate-700">{playbook.timeline}</p>
+          <p className="mt-2 text-sm text-slate-700">{playbook.effortLine}</p>
+          <p className="mt-2 text-sm text-slate-700">
+            We handle build, integration, training, and measurement. No
+            disruption to current operations.
+          </p>
+        </div>
+      </div>
+
+      <div className={`flex flex-col ${panelClass} border-rose-300`}>
+        <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-rose-600">
+          TOO BROAD RIGHT NOW
+        </p>
+        <h3 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-slate-950">
+          10X EMPIRE - {fmtCurrency(PLAN_B_MONTHLY)}/mo
+        </h3>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700">
+          This is not the wrong offer forever. It is just too broad for this
+          team shape. Start with one focused system and expand only after the
+          first measured win is live.
+        </p>
+        <div className="mt-6 space-y-4 border-t border-[var(--line)] pt-5">
+          <StatRow label="ROI" value={fmtX(results.planB.roi)} />
+          <StatRow
+            label="Payback"
+            value={`${results.planB.monthsToPayback} months`}
+          />
+          <StatRow
+            label="Annual productivity value"
+            value={fmtCurrency(results.planB.annualValue)}
+          />
+          <StatRow
+            label="Investment"
+            value={`${fmtCurrency(PLAN_B_ANNUAL)}/yr`}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RouteKpiPanel({
+  results,
+}: {
+  results: Results;
+}) {
+  const playbook = LEAN_TEAM_PLAYBOOKS[results.bottleneck];
+  const industryKey = getIndustryKeyFromLabel(results.industryLabel);
+
+  if (results.route === "transformation_office") {
+    const overlayKpis = TRANSFORMATION_OVERLAYS[industryKey] ?? [];
+    return (
+      <div className={`mt-8 ${panelClass}`}>
+        <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--accent)]">
+          ENTERPRISE KPI OVERLAY
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700">
+          At your scale, the value story is operating leverage: margin
+          expansion, cost-to-serve reduction, cycle-time compression, and
+          governance that survives audit.
+        </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {TRANSFORMATION_KPIS.map((kpi) => (
+            <div key={kpi} className={cardClass}>
+              <p className="text-sm text-slate-700">{kpi}</p>
+            </div>
+          ))}
+        </div>
+        {overlayKpis.length > 0 ? (
+          <div className="mt-5">
+            <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">
+              Industry resonance
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {overlayKpis.map((kpi) => (
+                <div key={kpi} className={cardClass}>
+                  <p className="text-sm text-slate-700">{kpi}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (results.route === "constraint_sprint") {
+    const overlayKpis = playbook.industryKpis?.[industryKey] ?? [];
+
+    return (
+      <div className={`mt-8 ${panelClass}`}>
+        <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--accent)]">
+          BOTTLENECK KPI OVERLAY
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700">
+          {BOTTLENECKS[results.bottleneck].studyDetail}
+        </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {playbook.baseKpis.map((kpi) => (
+            <div key={kpi} className={cardClass}>
+              <p className="text-sm text-slate-700">{kpi}</p>
+            </div>
+          ))}
+        </div>
+        {overlayKpis.length > 0 ? (
+          <div className="mt-5">
+            <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">
+              Industry resonance
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {overlayKpis.map((kpi) => (
+                <div key={kpi} className={cardClass}>
+                  <p className="text-sm text-slate-700">{kpi}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (results.route === "not_now") {
+    return (
+      <div className={`mt-8 ${panelClass}`}>
+        <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--accent)]">
+          READINESS GUIDANCE
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-700">
+          This does not mean the company is bad. It means the next best move is
+          clarifying one workflow, one owner, and one measurable outcome before
+          you buy a retained program.
+        </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          {NOT_NOW_STEPS.map((step) => (
+            <div key={step} className={cardClass}>
+              <p className="text-sm leading-relaxed text-slate-700">{step}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`mt-8 ${panelClass}`}>
+      <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--accent)]">
+        MEASURED ENTRY KPIS
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-slate-700">
+        The economics support a start. The right move is a measured entry point
+        with clear payback, adoption, and workflow visibility.
+      </p>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {STANDARD_KPIS.map((kpi) => (
+          <div key={kpi} className={cardClass}>
+            <p className="text-sm text-slate-700">{kpi}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScenarioComparison({
+  inputs,
+}: {
+  inputs: Inputs;
+}) {
+  const allScenarioIds: ScenarioId[] = ["lower", "mid", "upper"];
+  const allResults = allScenarioIds.map((scenarioId) => ({
+    id: scenarioId,
+    scenario: SCENARIOS[scenarioId],
+    results: calculate(inputs, scenarioId),
+  }));
+
+  return (
+    <div className={`mt-8 ${panelClass}`}>
+      <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">
+        ROI ACROSS ALL THREE RESEARCH SCENARIOS
+      </p>
+      <div className="mt-5 border-t border-[var(--line)] pt-4">
+        <p className="text-sm font-semibold text-slate-950">Plan A / focused entry</p>
+        <div className="mt-3 grid grid-cols-4 gap-3 text-center">
+          <div />
+          {allResults.map(({ id, scenario }) => (
+            <div
+              key={id}
+              className={`font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[0.1em] ${id === "mid" ? "text-[var(--accent)]" : "text-[var(--muted)]"}`}
+            >
+              {scenario.label}
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 grid grid-cols-4 gap-3 text-sm">
+          <div className="text-slate-600">Gain / worker</div>
+          {allResults.map(({ id, results }) => (
+            <div
+              key={id}
+              className={`text-center font-['IBM_Plex_Mono'] ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}
+            >
+              {fmtPct(results.planA.gainPct)}
+            </div>
+          ))}
+        </div>
+        <div className="mt-1.5 grid grid-cols-4 gap-3 text-sm">
+          <div className="text-slate-600">Annual value</div>
+          {allResults.map(({ id, results }) => (
+            <div
+              key={id}
+              className={`text-center font-['IBM_Plex_Mono'] ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}
+            >
+              {fmtCurrency(results.planA.annualValue)}
+            </div>
+          ))}
+        </div>
+        <div className="mt-1.5 grid grid-cols-4 gap-3 text-sm">
+          <div className="text-slate-600">Payback</div>
+          {allResults.map(({ id, results }) => (
+            <div
+              key={id}
+              className={`text-center font-['IBM_Plex_Mono'] ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}
+            >
+              {results.constraintEconomics.monthsToPayback} mo
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 border-t border-[var(--line)] pt-4">
+        <p className="text-sm font-semibold text-slate-950">Plan B / scale-up</p>
+        <div className="mt-3 grid grid-cols-4 gap-3 text-center">
+          <div />
+          {allResults.map(({ id, scenario }) => (
+            <div
+              key={id}
+              className={`font-['IBM_Plex_Mono'] text-[10px] uppercase tracking-[0.1em] ${id === "mid" ? "text-[var(--accent)]" : "text-[var(--muted)]"}`}
+            >
+              {scenario.label}
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 grid grid-cols-4 gap-3 text-sm">
+          <div className="text-slate-600">ROI</div>
+          {allResults.map(({ id, results }) => (
+            <div
+              key={id}
+              className={`text-center font-['IBM_Plex_Mono'] ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}
+            >
+              {fmtX(results.planB.roi)}
+            </div>
+          ))}
+        </div>
+        <div className="mt-1.5 grid grid-cols-4 gap-3 text-sm">
+          <div className="text-slate-600">Payback</div>
+          {allResults.map(({ id, results }) => (
+            <div
+              key={id}
+              className={`text-center font-['IBM_Plex_Mono'] ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}
+            >
+              {results.planB.monthsToPayback} mo
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Methodology({
+  results,
+  inputs,
+  scenario,
+}: {
+  results: Results;
+  inputs: Inputs;
+  scenario: Scenario;
+}) {
+  const opportunityAnnual = results.route === "constraint_sprint"
+    ? results.constraintEconomics.combinedAnnualValue
+    : results.planA.annualValue;
+
+  return (
+    <div className="mt-10">
+      <Expandable title="How we calculated this - full methodology">
+        <div className="space-y-4 text-sm leading-relaxed text-slate-700">
+          <div>
+            <p className="font-medium text-slate-950">Step 1: Knowledge workers</p>
+            <p>
+              {results.employees.toLocaleString("en-US")} employees x{" "}
+              {inputs.knowledgeWorkerPct}% ={" "}
+              {results.knowledgeWorkers.toLocaleString("en-US")} knowledge workers
+            </p>
+          </div>
+          <div>
+            <p className="font-medium text-slate-950">Step 2: Affected workers</p>
+            <p>
+              Plan A: {results.knowledgeWorkers.toLocaleString("en-US")} x 25% ={" "}
+              {results.planA.affectedWorkers} workers
+            </p>
+            <p>
+              Plan B: {results.knowledgeWorkers.toLocaleString("en-US")} x 40% ={" "}
+              {results.planB.affectedWorkers} workers
+            </p>
+          </div>
+          <div>
+            <p className="font-medium text-slate-950">
+              Step 3: Productivity gain per worker
+            </p>
+            <p>
+              Plan A: {fmtPct(results.planA.gainPct)} per affected worker (
+              {scenario.source})
+            </p>
+            <p>
+              Plan B: {fmtPct(results.planB.gainPct)} per affected worker (custom
+              systems modeled as deeper gains than off-the-shelf tools)
+            </p>
+          </div>
+          <div>
+            <p className="font-medium text-slate-950">Step 4: Equivalent FTEs</p>
+            <p>
+              Plan A: {results.planA.affectedWorkers} x{" "}
+              {fmtPct(results.planA.gainPct)} ={" "}
+              {results.planA.equivalentFTEs.toFixed(1)} FTEs
+            </p>
+            <p>
+              Plan B: {results.planB.affectedWorkers} x{" "}
+              {fmtPct(results.planB.gainPct)} ={" "}
+              {results.planB.equivalentFTEs.toFixed(1)} FTEs
+            </p>
+          </div>
+          <div>
+            <p className="font-medium text-slate-950">Step 5: Annual value</p>
+            <p>
+              Equivalent FTEs x {fmtCurrency(results.fullyLoadedCost)} fully-loaded
+              cost per {results.industryLabel} knowledge worker
+            </p>
+          </div>
+          {results.route === "constraint_sprint" ? (
+            <div>
+              <p className="font-medium text-slate-950">
+                Constraint Sprint no-double-counting rule
+              </p>
+              <p>
+                Capacity value = max(productivity value, hire deferral value).
+                Combined annual value = capacity value + conditional revenue
+                leverage.
+              </p>
+              <p>
+                Combined annual value: {fmtCurrency(results.constraintEconomics.combinedAnnualValue)}
+              </p>
+            </div>
+          ) : null}
+          <div>
+            <p className="font-medium text-slate-950">Step 6: Opportunity cost</p>
+            <p>
+              Annual opportunity cost: {fmtCurrency(opportunityAnnual)}. Quarterly
+              opportunity cost: {fmtCurrency(opportunityAnnual / 4)}.
+            </p>
+          </div>
+        </div>
+      </Expandable>
+    </div>
+  );
+}
 
 export default function RoiCalculatorApp() {
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -636,6 +882,7 @@ export default function RoiCalculatorApp() {
     currentAiSpend: "",
     plannedHires: "",
     bottleneck: "engineering",
+    situationIntent: "",
   });
   const [scenario, setScenario] = useState<ScenarioId>("mid");
   const [results, setResults] = useState<Results | null>(null);
@@ -651,20 +898,30 @@ export default function RoiCalculatorApp() {
     });
   }
 
-  function handleScenarioChange(s: ScenarioId) {
-    setScenario(s);
-  }
-
   function handleCalculate() {
-    const r = calculate(inputs, scenario);
-    setResults(r);
+    const nextResults = calculate(inputs, scenario);
+    setResults(nextResults);
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 150);
   }
 
-  const sc = SCENARIOS[scenario];
-  const canSubmit = parseNum(inputs.revenue) > 0 && parseNum(inputs.employees) > 0;
+  const selectedScenario = SCENARIOS[scenario];
+  const canSubmit =
+    Number.parseInt(inputs.revenue, 10) > 0 &&
+    Number.parseInt(inputs.employees, 10) > 0;
+
+  const cta = results ? getRouteCta(results) : null;
+  const handoffHref = results && cta
+    ? buildWaitlistHref(cta.path, buildWaitlistContext(results, scenario))
+    : null;
+  const opportunityAnnual = results
+    ? results.route === "constraint_sprint"
+      ? results.constraintEconomics.combinedAnnualValue
+      : results.planA.annualValue
+    : 0;
+  const industryKey =
+    results ? getIndustryKeyFromLabel(results.industryLabel) : "other";
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] text-[var(--ink)]">
@@ -672,223 +929,231 @@ export default function RoiCalculatorApp() {
       <WarpedGrid />
 
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
-        {/* ── Header ── */}
         <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
           <SiteHeader
-            applyHref="/#scan"
+            applyHref={results ? "#next-step" : "#scan"}
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
             whatWeDoHref="/how-we-work/"
           />
         </div>
 
-        {/* ── Hero ── */}
         <section className="reveal py-14 sm:py-16">
           <p className={sectionLabelClass}>AI ROI CALCULATOR</p>
           <h1 className="mt-6 max-w-[18ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
             What the research says about AI ROI at your company size.
           </h1>
           <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            Every calculation uses published productivity research and
-            transparent planning assumptions. Full methodology and all{" "}
-            {TIER1_SOURCES.length + TIER2_SOURCES.length} sources are listed
-            below.
+            Same calculator inputs, different interpretation. The model keeps
+            the research transparency while detecting whether you are a
+            Transformation Office fit, a Constraint Sprint fit, or simply not
+            ready for a broader program yet.
           </p>
         </section>
 
-        {/* ── Calculator Form ── */}
         <section className="reveal section-divider-full py-14 sm:py-16">
-          <div>
-            <div className="grid gap-8 lg:grid-cols-12">
-              {/* ── Inputs ── */}
-              <div className={`lg:col-span-7 ${panelClass}`}>
-                <p className={sectionLabelClass}>YOUR COMPANY</p>
+          <div className="grid gap-8 lg:grid-cols-12">
+            <div className={`lg:col-span-7 ${panelClass}`}>
+              <p className={sectionLabelClass}>YOUR COMPANY</p>
 
-                <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                  <label className="block text-sm font-medium text-slate-800">
-                    Annual revenue
-                    <input
-                      className={inputClass}
-                      value={inputs.revenue ? `$${fmtInput(parseNum(inputs.revenue))}` : ""}
-                      onChange={(e) =>
-                        updateField("revenue", e.target.value.replace(/[^0-9]/g, ""))
-                      }
-                      placeholder="$250,000,000"
-                      inputMode="numeric"
-                    />
-                  </label>
-
-                  <label className="block text-sm font-medium text-slate-800">
-                    Number of employees
-                    <input
-                      className={inputClass}
-                      value={inputs.employees ? fmtInput(parseNum(inputs.employees)) : ""}
-                      onChange={(e) =>
-                        updateField("employees", e.target.value.replace(/[^0-9]/g, ""))
-                      }
-                      placeholder="800"
-                      inputMode="numeric"
-                    />
-                  </label>
-                </div>
-
-                <label className="mt-5 block text-sm font-medium text-slate-800">
-                  Industry
-                  <select
-                    className={`${inputClass} cursor-pointer`}
-                    value={inputs.industry}
-                    onChange={(e) =>
-                      updateField("industry", e.target.value)
-                    }
-                  >
-                    {(
-                      Object.entries(INDUSTRIES) as [IndustryKey, (typeof INDUSTRIES)[IndustryKey]][]
-                    ).map(([key, ind]) => (
-                      <option key={key} value={key}>
-                        {ind.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="mt-5 block text-sm font-medium text-slate-800">
-                  Knowledge workers (% of employees)
-                  <div className="mt-2 flex items-center gap-4">
-                    <input
-                      type="range"
-                      min={10}
-                      max={95}
-                      step={5}
-                      value={inputs.knowledgeWorkerPct}
-                      onChange={(e) =>
-                        updateField("knowledgeWorkerPct", Number(e.target.value))
-                      }
-                      className="flex-1"
-                    />
-                    <span className="w-12 font-['IBM_Plex_Mono'] text-sm font-medium text-slate-950">
-                      {inputs.knowledgeWorkerPct}%
-                    </span>
-                  </div>
-                  <p className={statExplainClass}>
-                    Pre-filled using our default planning estimate for{" "}
-                    {INDUSTRIES[inputs.industry].label}. Adjust if you know
-                    your ratio.
-                  </p>
-                </label>
-
-                <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                  <label className="block text-sm font-medium text-slate-800">
-                    Planned hires next 12 months{" "}
-                    <span className="font-normal text-slate-400">(optional)</span>
-                    <input
-                      className={inputClass}
-                      value={inputs.plannedHires ? fmtInput(parseNum(inputs.plannedHires)) : ""}
-                      onChange={(e) => updateField("plannedHires", e.target.value.replace(/[^0-9]/g, ""))}
-                      placeholder="20"
-                      inputMode="numeric"
-                    />
-                  </label>
-
-                  <label className="block text-sm font-medium text-slate-800">
-                    Primary growth bottleneck
-                    <select
-                      className={`${inputClass} cursor-pointer`}
-                      value={inputs.bottleneck}
-                      onChange={(e) => updateField("bottleneck", e.target.value)}
-                    >
-                      {(Object.entries(BOTTLENECKS) as [BottleneckKey, (typeof BOTTLENECKS)[BottleneckKey]][]).map(([key, b]) => (
-                        <option key={key} value={key}>{b.label}</option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
-                <label className="mt-5 block text-sm font-medium text-slate-800">
-                  Current annual AI spend{" "}
-                  <span className="font-normal text-slate-400">(optional)</span>
+              <div className="mt-6 grid gap-5 sm:grid-cols-2">
+                <label className="block text-sm font-medium text-slate-800">
+                  Annual revenue
                   <input
                     className={inputClass}
-                    value={
-                      inputs.currentAiSpend
-                        ? `$${fmtInput(parseNum(inputs.currentAiSpend))}`
-                        : ""
+                    value={inputs.revenue ? `$${fmtInput(Number(inputs.revenue))}` : ""}
+                    onChange={(event) =>
+                      updateField("revenue", event.target.value.replace(/[^0-9]/g, ""))
                     }
-                    onChange={(e) =>
-                      updateField(
-                        "currentAiSpend",
-                        e.target.value.replace(/[^0-9]/g, ""),
-                      )
-                    }
-                    placeholder="$200,000"
+                    placeholder="$250,000,000"
                     inputMode="numeric"
                   />
                 </label>
 
-                <button
-                  type="button"
-                  disabled={!canSubmit}
-                  onClick={handleCalculate}
-                  className={`mt-8 w-full justify-center ${canSubmit ? primaryButtonClass : "inline-flex cursor-not-allowed items-center justify-center border border-[var(--line)] bg-slate-200 px-5 py-2.5 text-sm font-medium text-slate-400"}`}
-                >
-                  {results ? "Recalculate ROI" : "Calculate ROI"}
-                </button>
+                <label className="block text-sm font-medium text-slate-800">
+                  Number of employees
+                  <input
+                    className={inputClass}
+                    value={inputs.employees ? fmtInput(Number(inputs.employees)) : ""}
+                    onChange={(event) =>
+                      updateField("employees", event.target.value.replace(/[^0-9]/g, ""))
+                    }
+                    placeholder="800"
+                    inputMode="numeric"
+                  />
+                </label>
               </div>
 
-              {/* ── Scenario Selector ── */}
-              <div className={`lg:col-span-5 ${panelClass} flex flex-col`}>
-                <p className={sectionLabelClass}>RESEARCH SCENARIO</p>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                  Choose which documented research results to use for
-                  productivity gain estimates. All three scenarios use
-                  peer-reviewed or industry-published data.
-                </p>
+              <label className="mt-5 block text-sm font-medium text-slate-800">
+                Industry
+                <select
+                  className={`${inputClass} cursor-pointer`}
+                  value={inputs.industry}
+                  onChange={(event) => updateField("industry", event.target.value)}
+                >
+                  {(Object.entries(INDUSTRIES) as [IndustryKey, typeof INDUSTRIES[IndustryKey]][]).map(
+                    ([key, industry]) => (
+                      <option key={key} value={key}>
+                        {industry.label}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </label>
 
-                <div className="mt-6 space-y-3">
-                  {(
-                    Object.entries(SCENARIOS) as [ScenarioId, Scenario][]
-                  ).map(([id, s]) => (
+              <label className="mt-5 block text-sm font-medium text-slate-800">
+                Knowledge workers (% of employees)
+                <div className="mt-2 flex items-center gap-4">
+                  <input
+                    type="range"
+                    min={10}
+                    max={95}
+                    step={5}
+                    value={inputs.knowledgeWorkerPct}
+                    onChange={(event) =>
+                      updateField("knowledgeWorkerPct", Number(event.target.value))
+                    }
+                    className="flex-1"
+                  />
+                  <span className="w-12 font-['IBM_Plex_Mono'] text-sm font-medium text-slate-950">
+                    {inputs.knowledgeWorkerPct}%
+                  </span>
+                </div>
+                <p className={statExplainClass}>
+                  Pre-filled using our default planning estimate for{" "}
+                  {INDUSTRIES[inputs.industry].label}. Adjust if you know your
+                  actual mix.
+                </p>
+              </label>
+
+              <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                <label className="block text-sm font-medium text-slate-800">
+                  Planned hires next 12 months{" "}
+                  <span className="font-normal text-slate-400">(optional)</span>
+                  <input
+                    className={inputClass}
+                    value={inputs.plannedHires ? fmtInput(Number(inputs.plannedHires)) : ""}
+                    onChange={(event) =>
+                      updateField("plannedHires", event.target.value.replace(/[^0-9]/g, ""))
+                    }
+                    placeholder="20"
+                    inputMode="numeric"
+                  />
+                </label>
+
+                <label className="block text-sm font-medium text-slate-800">
+                  Primary growth bottleneck
+                  <select
+                    className={`${inputClass} cursor-pointer`}
+                    value={inputs.bottleneck}
+                    onChange={(event) =>
+                      updateField("bottleneck", event.target.value as BottleneckKey)
+                    }
+                  >
+                    {(Object.entries(BOTTLENECKS) as [BottleneckKey, typeof BOTTLENECKS[BottleneckKey]][]).map(
+                      ([key, bottleneck]) => (
+                        <option key={key} value={key}>
+                          {bottleneck.label}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </label>
+              </div>
+
+              <label className="mt-5 block text-sm font-medium text-slate-800">
+                Current annual AI spend{" "}
+                <span className="font-normal text-slate-400">(optional)</span>
+                <input
+                  className={inputClass}
+                  value={inputs.currentAiSpend ? `$${fmtInput(Number(inputs.currentAiSpend))}` : ""}
+                  onChange={(event) =>
+                    updateField("currentAiSpend", event.target.value.replace(/[^0-9]/g, ""))
+                  }
+                  placeholder="$200,000"
+                  inputMode="numeric"
+                />
+              </label>
+
+              <label className="mt-5 block text-sm font-medium text-slate-800">
+                What best describes your situation?{" "}
+                <span className="font-normal text-slate-400">(optional)</span>
+                <select
+                  className={`${inputClass} cursor-pointer`}
+                  value={inputs.situationIntent}
+                  onChange={(event) =>
+                    updateField("situationIntent", event.target.value)
+                  }
+                >
+                  <option value="">Let the calculator detect it silently</option>
+                  {SITUATION_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                disabled={!canSubmit}
+                onClick={handleCalculate}
+                className={`mt-8 w-full justify-center ${canSubmit ? primaryButtonClass : "inline-flex cursor-not-allowed items-center justify-center border border-[var(--line)] bg-slate-200 px-5 py-2.5 text-sm font-medium text-slate-400"}`}
+              >
+                {results ? "Recalculate ROI" : "Calculate ROI"}
+              </button>
+            </div>
+
+            <div className={`lg:col-span-5 ${panelClass} flex flex-col`}>
+              <p className={sectionLabelClass}>RESEARCH SCENARIO</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                Choose which documented research results to use for productivity
+                gain estimates. The calculator preserves this scenario through
+                the route recommendation and diagnostic handoff.
+              </p>
+
+              <div className="mt-6 space-y-3">
+                {(Object.entries(SCENARIOS) as [ScenarioId, Scenario][]).map(
+                  ([scenarioId, nextScenario]) => (
                     <button
-                      key={id}
+                      key={scenarioId}
                       type="button"
-                      onClick={() => handleScenarioChange(id)}
+                      onClick={() => setScenario(scenarioId)}
                       className={`w-full text-left ${cardClass} transition-[border-color,box-shadow] duration-200 ${
-                        scenario === id
+                        scenario === scenarioId
                           ? "border-[var(--accent)] shadow-[var(--shadow-panel)]"
                           : "hover:border-slate-300"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-semibold text-slate-950">
-                          {s.label}
+                          {nextScenario.label}
                         </p>
-                        {id === "mid" && (
-                          <span className="bg-[var(--accent)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[9px] font-medium uppercase tracking-[0.14em] text-white">
+                        {scenarioId === "mid" ? (
+                          <span className="bg-[var(--accent)] px-2 py-0.5 font-['IBM_Plex_Mono'] text-[9px] uppercase tracking-[0.14em] text-white">
                             Default
                           </span>
-                        )}
+                        ) : null}
                       </div>
                       <p className="mt-1 font-['IBM_Plex_Mono'] text-[11px] text-[var(--muted)]">
-                        {s.sublabel}
+                        {nextScenario.sublabel}
                       </p>
                       <p className="mt-2 text-[12px] leading-relaxed text-slate-500">
-                        {s.sourceDetail}
+                        {nextScenario.sourceDetail}
                       </p>
                     </button>
-                  ))}
-                </div>
-
-                <p className="mt-auto pt-5 text-[11px] leading-relaxed text-slate-400">
-                  Productivity gains are applied per affected knowledge worker,
-                  not across the entire company. Reach percentages (25% for
-                  training, 40% for custom systems) are planning estimates
-                  informed by BCG and McKinsey adoption data.
-                </p>
+                  ),
+                )}
               </div>
+
+              <p className="mt-auto pt-5 text-[11px] leading-relaxed text-slate-400">
+                Reach percentages remain visible assumptions: 25% for a
+                measured entry, 40% for a broader custom-system rollout.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* ── Results ── */}
         {results ? (
           <section
             ref={resultsRef}
@@ -896,678 +1161,205 @@ export default function RoiCalculatorApp() {
           >
             <p className={sectionLabelClass}>YOUR RESULTS</p>
             <h2 className={sectionHeadingClass}>
-              Based on {sc.label.toLowerCase()} research data.
+              {getRouteHeadline(results.route, results)}
             </h2>
-            <p className="mt-3 text-sm text-slate-500">
-              Source: {sc.source}
+            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+              Based on {selectedScenario.label.toLowerCase()} research data. Source:{" "}
+              {selectedScenario.source}
             </p>
-            {results.revenue > 0 && (
-              <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-600">
-                <span>Plan A cost as % of revenue: <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">{((PLAN_A_ANNUAL / results.revenue) * 100).toFixed(2)}%</span></span>
-                <span>Plan B cost as % of revenue: <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">{((PLAN_B_ANNUAL / results.revenue) * 100).toFixed(2)}%</span></span>
-                <span>Revenue per employee: <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">{fmtCurrency(results.revenuePerEmployee)}</span></span>
-              </div>
-            )}
-            {results.isHighRPE && (
-              <div className={`mt-6 ${cardClass} border-[var(--accent)] bg-[rgba(244,247,251,0.9)]`}>
-                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-                  HIGH REVENUE PER EMPLOYEE
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                  At {fmtCurrency(results.revenuePerEmployee)} revenue per
-                  employee, the primary value of AI for your company isn't cost
-                  reduction. It's scaling growth capacity without proportional
-                  hiring. Each person you avoid hiring saves{" "}
-                  {fmtCurrency(results.fullyLoadedCost)}/yr in fully-loaded cost
-                  and reduces recruiting and onboarding burden.
-                </p>
-              </div>
-            )}
 
-            {/* ── Current AI spend context ── */}
-            {results.currentAiSpend > 0 && (
-              <div className={`mt-8 ${cardClass} border-amber-200 bg-amber-50`}>
-                <p className="text-sm leading-relaxed text-slate-700">
-                  You're currently spending{" "}
-                  <span className="font-semibold text-slate-950">
-                    {fmtCurrency(results.currentAiSpend)}/year
-                  </span>{" "}
-                  on AI. 56% of companies at this stage report neither revenue
-                  nor cost benefits from these investments (PwC 2026). A
-                  structured approach could make that existing spend productive.
-                </p>
-              </div>
-            )}
-
-            {/* ── Plan comparison cards ── */}
-            <div className="mt-10 grid gap-6 lg:grid-cols-2">
-              {/* Plan A */}
-              {(() => {
-                const r = results.planA;
-                const interp = getPlanInterpretation(
-                  "COMMAND ROOM",
-                  r,
-                );
-                return (
-                  <div
-                    className={`flex flex-col ${panelClass} ${r.roi >= 1 ? "border-[var(--accent)]" : "border-rose-300"}`}
-                  >
-                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                      COMMAND ROOM — $22,000/mo
-                    </p>
-                    <p className="mt-4 font-['IBM_Plex_Mono'] text-4xl font-semibold text-slate-950">
-                      {fmtX(r.roi)}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      return on investment
-                    </p>
-
-                    <div className="mt-6 space-y-4 border-t border-[var(--line)] pt-5">
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">
-                            Knowledge workers
-                          </span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                            {results.knowledgeWorkers.toLocaleString()}
-                          </span>
-                        </div>
-                        <p className={statExplainClass}>
-                          {inputs.knowledgeWorkerPct}% of your{" "}
-                          {parseNum(inputs.employees).toLocaleString()}{" "}
-                          employees, based on our default planning estimate for{" "}
-                          {results.industryLabel}
-                        </p>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">
-                            Workers affected
-                          </span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                            {r.affectedWorkers.toLocaleString()}
-                          </span>
-                        </div>
-                        <p className={statExplainClass}>
-                          Planning estimate: ~25% of knowledge workers
-                          effectively adopt AI tools with structured training
-                          (BCG 2025 reports 16-33% actual usage range)
-                        </p>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">
-                            Productivity gain per worker
-                          </span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                            {fmtPct(r.gainPct)}
-                          </span>
-                        </div>
-                        <p className={statExplainClass}>{sc.sourceDetail}</p>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">
-                            Equivalent output added
-                          </span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                            {r.equivalentFTEs.toFixed(1)} FTEs
-                          </span>
-                        </div>
-                        <p className={statExplainClass}>
-                          {r.affectedWorkers} workers x {fmtPct(r.gainPct)}{" "}
-                          gain = equivalent to {r.equivalentFTEs.toFixed(1)}{" "}
-                          additional full-time employees
-                        </p>
-                      </div>
-
-                      <div className="border-t border-dashed border-[var(--line)] pt-4">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">
-                            Annual productivity value
-                          </span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-[var(--accent)]">
-                            {fmtCurrency(r.annualValue)}
-                          </span>
-                        </div>
-                        <p className={statExplainClass}>
-                          {r.equivalentFTEs.toFixed(1)} FTEs x{" "}
-                          {fmtCurrency(results.fullyLoadedCost)} fully-loaded
-                          cost per {results.industryLabel} knowledge worker (BLS
-                          2025)
-                        </p>
-                      </div>
-
-                      {results.isHighRPE && results.plannedHires > 0 && (
-                        <div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-slate-700">
-                              Potential hires avoided
-                            </span>
-                            <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                              {results.hiresAvoidedA} hires
-                            </span>
-                          </div>
-                          <p className={statExplainClass}>
-                            Equivalent capacity of {r.equivalentFTEs.toFixed(1)}{" "}
-                            FTEs, capped at your {results.plannedHires} planned
-                            hires. Each avoided hire saves{" "}
-                            {fmtCurrency(results.fullyLoadedCost)}/yr and reduces
-                            recruiting and onboarding burden.
-                          </p>
-                        </div>
-                      )}
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">
-                            Your investment
-                          </span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                            {fmtCurrency(r.annualCost)}/yr
-                          </span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="font-medium text-slate-950">
-                            Net return
-                          </span>
-                          <span
-                            className={`font-['IBM_Plex_Mono'] font-semibold ${r.netValue >= 0 ? "text-[var(--accent)]" : "text-rose-600"}`}
-                          >
-                            {fmtCurrency(r.netValue)}/yr
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Interpretation */}
-                    <div className="mt-6 border-t border-[var(--line)] pt-5">
-                      <p
-                        className={`font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] ${r.roi >= 3 ? "text-[var(--accent)]" : r.roi >= 1 ? "text-amber-600" : "text-rose-600"}`}
-                      >
-                        {interp.verdict}
-                      </p>
-                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                        {interp.detail}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* Plan B */}
-              {(() => {
-                const r = results.planB;
-                const interp = getPlanInterpretation(
-                  "10X EMPIRE",
-                  r,
-                );
-                return (
-                  <div
-                    className={`flex flex-col ${panelClass} ${r.roi >= 1 ? "border-[var(--line)]" : "border-rose-300"}`}
-                  >
-                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                      10X EMPIRE — $290,000/mo
-                    </p>
-                    <p className="mt-4 font-['IBM_Plex_Mono'] text-4xl font-semibold text-slate-950">
-                      {fmtX(r.roi)}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      return on investment
-                    </p>
-
-                    <div className="mt-6 space-y-4 border-t border-[var(--line)] pt-5">
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">Knowledge workers</span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">{results.knowledgeWorkers.toLocaleString()}</span>
-                        </div>
-                        <p className={statExplainClass}>Same knowledge worker base as above</p>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">Workers affected</span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">{r.affectedWorkers.toLocaleString()}</span>
-                        </div>
-                        <p className={statExplainClass}>
-                          Planning estimate: ~40% of knowledge workers affected by custom-built AI systems (McKinsey 2025 reports 44% of work hours automatable by AI agents)
-                        </p>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">Productivity gain per worker</span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                            {fmtPct(r.gainPct)}{" "}
-                            <span className="text-[11px] text-slate-400">({(1 + r.gainPct).toFixed(1)}x)</span>
-                          </span>
-                        </div>
-                        <p className={statExplainClass}>
-                          Custom-built AI systems deliver deeper gains than off-the-shelf tools. GitHub Copilot (off-the-shelf) shows 55% for developers. Anthropic 2025 measured ~80% per-task speed-ups.
-                        </p>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">Equivalent output added</span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">{r.equivalentFTEs.toFixed(1)} FTEs</span>
-                        </div>
-                        <p className={statExplainClass}>
-                          {r.affectedWorkers} workers x {fmtPct(r.gainPct)} gain = equivalent to {r.equivalentFTEs.toFixed(1)} additional full-time employees
-                        </p>
-                      </div>
-
-                      <div className="border-t border-dashed border-[var(--line)] pt-4">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">Annual productivity value</span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-[var(--accent)]">{fmtCurrency(r.annualValue)}</span>
-                        </div>
-                        <p className={statExplainClass}>
-                          {r.equivalentFTEs.toFixed(1)} FTEs x {fmtCurrency(results.fullyLoadedCost)} fully-loaded cost (BLS 2025)
-                        </p>
-                      </div>
-
-                      {results.isHighRPE && results.plannedHires > 0 && (
-                        <div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-slate-700">Potential hires avoided</span>
-                            <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">{results.hiresAvoidedB} hires</span>
-                          </div>
-                          <p className={statExplainClass}>
-                            Equivalent capacity of {r.equivalentFTEs.toFixed(1)}{" "}
-                            FTEs, capped at your {results.plannedHires} planned
-                            hires. Each avoided hire saves{" "}
-                            {fmtCurrency(results.fullyLoadedCost)}/yr and reduces
-                            recruiting and onboarding burden.
-                          </p>
-                        </div>
-                      )}
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-700">
-                            Your investment
-                          </span>
-                          <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                            {fmtCurrency(r.annualCost)}/yr
-                          </span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm">
-                          <span className="font-medium text-slate-950">
-                            Net return
-                          </span>
-                          <span
-                            className={`font-['IBM_Plex_Mono'] font-semibold ${r.netValue >= 0 ? "text-[var(--accent)]" : "text-rose-600"}`}
-                          >
-                            {fmtCurrency(r.netValue)}/yr
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Interpretation */}
-                    <div className="mt-6 border-t border-[var(--line)] pt-5">
-                      <p
-                        className={`font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] ${r.roi >= 3 ? "text-[var(--accent)]" : r.roi >= 1 ? "text-amber-600" : "text-rose-600"}`}
-                      >
-                        {interp.verdict}
-                      </p>
-                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                        {interp.detail}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })()}
+            <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-600">
+              <span>
+                Route:{" "}
+                <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
+                  {getPublicRouteLabel(results.route)}
+                </span>
+              </span>
+              <span>
+                Plan A cost as % of revenue:{" "}
+                <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
+                  {((PLAN_A_ANNUAL / results.revenue) * 100).toFixed(2)}%
+                </span>
+              </span>
+              <span>
+                Plan B cost as % of revenue:{" "}
+                <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
+                  {((PLAN_B_ANNUAL / results.revenue) * 100).toFixed(2)}%
+                </span>
+              </span>
+              <span>
+                Revenue per employee:{" "}
+                <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
+                  {fmtCurrency(results.revenuePerEmployee)}
+                </span>
+              </span>
             </div>
 
-            {/* ── All 3 scenarios comparison ── */}
-            {(() => {
-              const scenarioIds: ScenarioId[] = ["lower", "mid", "upper"];
-              const all = scenarioIds.map((id) => ({
-                id,
-                sc: SCENARIOS[id],
-                planA: calculate(inputs, id).planA,
-                planB: calculate(inputs, id).planB,
-              }));
-              return (
-                <div className={`mt-8 ${panelClass}`}>
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    ROI ACROSS ALL THREE RESEARCH SCENARIOS
-                  </p>
+            <RouteInsightPanel
+              results={results}
+              situationIntent={inputs.situationIntent}
+            />
 
-                  {/* Plan A row */}
-                  <div className="mt-5 border-t border-[var(--line)] pt-4">
-                    <p className="text-sm font-semibold text-slate-950">COMMAND ROOM — $22,000/mo</p>
-                    <div className="mt-3 grid grid-cols-4 gap-3 text-center">
-                      <div />
-                      {all.map(({ id, sc: s }) => (
-                        <div key={id} className={`font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.1em] ${id === "mid" ? "text-[var(--accent)]" : "text-[var(--muted)]"}`}>
-                          {s.label}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-2 grid grid-cols-4 gap-3 text-sm">
-                      <div className="text-slate-600">Gain / worker</div>
-                      {all.map(({ id, planA }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-medium ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}>{fmtPct(planA.gainPct)}</div>
-                      ))}
-                    </div>
-                    <div className="mt-1.5 grid grid-cols-4 gap-3 text-sm">
-                      <div className="text-slate-600">Annual value</div>
-                      {all.map(({ id, planA }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-medium ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}>{fmtCurrency(planA.annualValue)}</div>
-                      ))}
-                    </div>
-                    <div className="mt-1.5 grid grid-cols-4 gap-3 border-t border-dashed border-[var(--line)] pt-1.5 text-sm">
-                      <div className="font-medium text-slate-950">ROI</div>
-                      {all.map(({ id, planA }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-semibold ${id === "mid" ? "text-lg text-[var(--accent)]" : "text-slate-600"}`}>{fmtX(planA.roi)}</div>
-                      ))}
-                    </div>
-                    <div className="mt-1.5 grid grid-cols-4 gap-3 text-sm">
-                      <div className="text-slate-600">Net return</div>
-                      {all.map(({ id, planA }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-medium ${planA.netValue >= 0 ? (id === "mid" ? "text-[var(--accent)]" : "text-slate-500") : "text-rose-600"}`}>{fmtCurrency(planA.netValue)}/yr</div>
-                      ))}
-                    </div>
-                    <div className="mt-2 grid grid-cols-4 gap-3 text-[11px] text-slate-400">
-                      <div>Source</div>
-                      {all.map(({ id, sc: s }) => (
-                        <div key={id} className="text-center">{s.source}</div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Plan B row */}
-                  <div className="mt-6 border-t border-[var(--line)] pt-4">
-                    <p className="text-sm font-semibold text-slate-950">10X EMPIRE — $290,000/mo</p>
-                    <div className="mt-3 grid grid-cols-4 gap-3 text-center">
-                      <div />
-                      {all.map(({ id, sc: s }) => (
-                        <div key={id} className={`font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.1em] ${id === "mid" ? "text-[var(--accent)]" : "text-[var(--muted)]"}`}>
-                          {s.label}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-2 grid grid-cols-4 gap-3 text-sm">
-                      <div className="text-slate-600">Gain / worker</div>
-                      {all.map(({ id, planB }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-medium ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}>{fmtPct(planB.gainPct)} <span className="text-[10px] text-slate-400">({(1 + planB.gainPct).toFixed(1)}x)</span></div>
-                      ))}
-                    </div>
-                    <div className="mt-1.5 grid grid-cols-4 gap-3 text-sm">
-                      <div className="text-slate-600">Annual value</div>
-                      {all.map(({ id, planB }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-medium ${id === "mid" ? "text-slate-950" : "text-slate-500"}`}>{fmtCurrency(planB.annualValue)}</div>
-                      ))}
-                    </div>
-                    <div className="mt-1.5 grid grid-cols-4 gap-3 border-t border-dashed border-[var(--line)] pt-1.5 text-sm">
-                      <div className="font-medium text-slate-950">ROI</div>
-                      {all.map(({ id, planB }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-semibold ${id === "mid" ? "text-lg text-[var(--accent)]" : planB.roi >= 1 ? "text-slate-600" : "text-rose-600"}`}>{fmtX(planB.roi)}</div>
-                      ))}
-                    </div>
-                    <div className="mt-1.5 grid grid-cols-4 gap-3 text-sm">
-                      <div className="text-slate-600">Net return</div>
-                      {all.map(({ id, planB }) => (
-                        <div key={id} className={`text-center font-['IBM_Plex_Mono'] font-medium ${planB.netValue >= 0 ? (id === "mid" ? "text-[var(--accent)]" : "text-slate-500") : "text-rose-600"}`}>{fmtCurrency(planB.netValue)}/yr</div>
-                      ))}
-                    </div>
-                    <div className="mt-2 grid grid-cols-4 gap-3 text-[11px] text-slate-400">
-                      <div>Source</div>
-                      {all.map(({ id, sc: s }) => (
-                        <div key={id} className="text-center">{s.source}</div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* ── Alternatives comparison ── */}
-            <div className="mt-8 grid gap-4 md:grid-cols-2">
-              <div className={cardClass}>
-                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  ALTERNATIVE: DO NOTHING
-                </p>
-                  <div className="mt-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-700">
-                      Value created
-                      </span>
-                      <span className="font-['IBM_Plex_Mono'] font-medium text-slate-400">
-                        $0
-                      </span>
-                  </div>
-                  {results.currentAiSpend > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-700">
-                        Current AI spend (no measurable ROI)
-                      </span>
-                      <span className="font-['IBM_Plex_Mono'] font-medium text-rose-500">
-                        -{fmtCurrency(results.currentAiSpend)}/yr
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-700">Opportunity cost</span>
-                    <span className="font-['IBM_Plex_Mono'] font-medium text-rose-500">
-                      -{fmtCurrency(results.planA.annualValue)}/yr
-                    </span>
-                  </div>
-                </div>
-                <p className={`mt-3 ${statExplainClass}`}>
-                  Companies that delay structured AI implementation fall further
-                  behind each quarter. BCG 2025 shows top performers achieving
-                  materially stronger returns on invested capital than laggards.
-                </p>
+            {results.route === "constraint_sprint" ? (
+              <ConstraintSprintCards results={results} />
+            ) : (
+              <div className="mt-10 grid gap-6 lg:grid-cols-2">
+                <PlanCard
+                  eyebrow={results.route === "transformation_office"
+                    ? `FOUNDATION LANE - PORTFOLIO FOUNDATION - ${fmtCurrency(PLAN_A_MONTHLY)}/mo`
+                    : `START HERE - MEASURED ENTRY - ${fmtCurrency(PLAN_A_MONTHLY)}/mo`}
+                  title={results.route === "transformation_office"
+                    ? "Portfolio Foundation"
+                    : "Measured Entry"}
+                  result={results.planA}
+                  startHere={results.route === "transformation_office"
+                    ? undefined
+                    : "Recommended entry"}
+                  description={
+                    results.route === "transformation_office"
+                      ? "Build the governance baseline, portfolio controls, and the first production wins."
+                      : results.route === "not_now"
+                        ? "Transparent math for a larger entry point. Use it as a reference, not the immediate recommendation."
+                        : "A measured entry point that keeps the economics visible while avoiding decision paralysis."
+                  }
+                  emphasis={results.route === "transformation_office"
+                    ? "secondary"
+                    : results.route === "not_now"
+                      ? "warning"
+                      : "primary"}
+                />
+                <PlanCard
+                  eyebrow={results.route === "transformation_office"
+                    ? `PRIMARY RECOMMENDATION - TRANSFORMATION OFFICE - ${fmtCurrency(PLAN_B_MONTHLY)}/mo`
+                    : `SCALE UP - BROADER CUSTOM SYSTEMS - ${fmtCurrency(PLAN_B_MONTHLY)}/mo`}
+                  title={results.route === "transformation_office"
+                    ? "Enterprise Transformation Office"
+                    : "Broader Custom Systems"}
+                  result={results.planB}
+                  startHere={results.route === "transformation_office"
+                    ? "Primary recommendation"
+                    : undefined}
+                  description={
+                    results.route === "transformation_office"
+                      ? "Run the executive cadence, portfolio governance, and cross-functional implementation office."
+                      : "A broader roll-out once the first measured lane is working and the organization is ready for more change."
+                  }
+                  emphasis={results.route === "transformation_office" ? "primary" : "secondary"}
+                />
               </div>
+            )}
 
-              <div className={cardClass}>
-                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  ALTERNATIVE: BUILD IN-HOUSE
-                </p>
-                <div className="mt-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-700">
-                      Chief AI Officer hire
-                    </span>
-                    <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                      {fmtCurrency(CAIO_ANNUAL)}/yr
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-700">
-                      AI engineers ({PLAN_B_EQUIV_ENGINEERS} people)
-                    </span>
-                    <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
-                      {fmtCurrency(PLAN_B_EQUIV_ENGINEERS * AI_ENGINEER_ANNUAL)}
-                      /yr
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm border-t border-dashed border-[var(--line)] pt-2">
-                    <span className="font-medium text-slate-950">
-                      Total (comparable to 10X EMPIRE)
-                    </span>
-                    <span className="font-['IBM_Plex_Mono'] font-semibold text-slate-950">
-                      {fmtCurrency(results.buildInHouseB)}/yr
-                    </span>
-                  </div>
-                </div>
-                <p className={`mt-3 ${statExplainClass}`}>
-                  Plus 6-12 months hiring time before any output. Salary data
-                  from Glassdoor 2026 (CAIO) and Robert Half 2026 (AI/ML
-                  engineers), fully loaded with benefits and overhead.
-                </p>
-              </div>
-            </div>
+            {cta && handoffHref ? (
+              <ResultsNextStepCard
+                results={results}
+                cta={cta}
+                handoffHref={handoffHref}
+                selectedScenario={selectedScenario}
+                industryKey={industryKey}
+              />
+            ) : null}
 
-            {/* ── Growth leverage panel (bottleneck-specific) ── */}
-            {(() => {
-              const b = BOTTLENECKS[results.bottleneck];
-              return (
-                <div className={`mt-8 ${panelClass}`}>
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-                    GROWTH LEVERAGE — {b.label.toUpperCase()}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-700">
-                    {b.studyDetail}
-                  </p>
-                  <p className="mt-2 text-[11px] text-slate-400">
-                    Source: {b.study}
-                  </p>
-                  {results.isHighRPE && results.plannedHires > 0 && (
-                    <div className="mt-4 border-t border-[var(--line)] pt-4">
-                      <p className="text-sm leading-relaxed text-slate-700">
-                        You're planning to hire{" "}
-                        <span className="font-semibold text-slate-950">{results.plannedHires} people</span>{" "}
-                        in the next 12 months. Based on the productivity model, Plan A could let you avoid{" "}
-                        <span className="font-semibold text-slate-950">{results.hiresAvoidedA}</span>{" "}
-                        of those hires ({fmtCurrency(results.hiringAvoidanceValueA)}/yr saved), and Plan B could avoid{" "}
-                        <span className="font-semibold text-slate-950">{results.hiresAvoidedB}</span>{" "}
-                        ({fmtCurrency(results.hiringAvoidanceValueB)}/yr saved).
-                      </p>
-                      <p className={`mt-2 ${statExplainClass}`}>
-                        This is a planning scenario, not a guaranteed outcome. Actual hiring avoidance depends on role mix, growth targets, and implementation quality.
-                      </p>
+            <div className="mt-8">
+              <Expandable title="Supporting math, scenario comparison, and KPI overlays">
+                <ScenarioComparison inputs={inputs} />
+
+                <div className="mt-8 grid gap-4 md:grid-cols-2">
+                  <div className={cardClass}>
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">
+                      COST OF DOING NOTHING
+                    </p>
+                    <div className="mt-4 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-700">Annual opportunity cost</span>
+                        <span className="font-['IBM_Plex_Mono'] font-medium text-rose-500">
+                          -{fmtCurrency(opportunityAnnual)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-700">Quarterly opportunity cost</span>
+                        <span className="font-['IBM_Plex_Mono'] font-medium text-rose-500">
+                          -{fmtCurrency(opportunityAnnual / 4)}
+                        </span>
+                      </div>
+                      {results.currentAiSpend > 0 ? (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-slate-700">
+                            Current AI spend without clear ROI
+                          </span>
+                          <span className="font-['IBM_Plex_Mono'] font-medium text-rose-500">
+                            -{fmtCurrency(results.currentAiSpend)}/yr
+                          </span>
+                        </div>
+                      ) : null}
                     </div>
-                  )}
-                </div>
-              );
-            })()}
-
-            {/* ── Methodology ── */}
-            <div className="mt-10">
-              <Expandable title="How we calculated this — full methodology">
-                <div className="space-y-4 text-sm leading-relaxed text-slate-700">
-                  <div>
-                    <p className="font-medium text-slate-950">
-                      Step 1: Knowledge workers
-                    </p>
-                    <p>
-                      {parseNum(inputs.employees).toLocaleString()} employees x{" "}
-                      {inputs.knowledgeWorkerPct}% ={" "}
-                      {results.knowledgeWorkers.toLocaleString()} knowledge
-                      workers
-                    </p>
-                    <p className={statExplainClass}>
-                      Knowledge worker percentage based on our default planning
-                      estimate for {results.industryLabel}. Adjust the slider if
-                      you know your actual mix.
+                    <p className={`mt-3 ${statExplainClass}`}>
+                      Every quarter you wait, you forgo measurable value and widen
+                      the gap with teams that moved earlier with cleaner workflow
+                      design and governance.
                     </p>
                   </div>
 
-                  <div>
-                    <p className="font-medium text-slate-950">
-                      Step 2: Workers affected
+                  <div className={cardClass}>
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">
+                      ALTERNATIVE: BUILD IN-HOUSE
                     </p>
-                    <p>
-                      Plan A: {results.knowledgeWorkers.toLocaleString()} x 25%
-                      = {results.planA.affectedWorkers} workers
-                    </p>
-                    <p>
-                      Plan B: {results.knowledgeWorkers.toLocaleString()} x 40%
-                      = {results.planB.affectedWorkers} workers
-                    </p>
-                    <p className={statExplainClass}>
-                      25% reach is a planning estimate based on BCG 2025
-                      adoption data (16-33% actual usage range). 40% reach is a
-                      planning estimate; McKinsey 2025 reports 44% of work
-                      hours (not workers) are automatable by AI agents.
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-medium text-slate-950">
-                      Step 3: Productivity gain per worker
-                    </p>
-                    <p>
-                      Plan A: {fmtPct(results.planA.gainPct)} per affected
-                      worker ({sc.source})
-                    </p>
-                    <p>
-                      Plan B: {fmtPct(results.planB.gainPct)} per affected
-                      worker (custom-built systems deliver deeper gains;
-                      extrapolated from Copilot 55%, Anthropic ~80% per task)
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-medium text-slate-950">
-                      Step 4: Equivalent FTEs added
-                    </p>
-                    <p>
-                      Plan A: {results.planA.affectedWorkers} x{" "}
-                      {fmtPct(results.planA.gainPct)} ={" "}
-                      {results.planA.equivalentFTEs.toFixed(1)} FTEs
-                    </p>
-                    <p>
-                      Plan B: {results.planB.affectedWorkers} x{" "}
-                      {fmtPct(results.planB.gainPct)} ={" "}
-                      {results.planB.equivalentFTEs.toFixed(1)} FTEs
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-medium text-slate-950">
-                      Step 5: Annual value
-                    </p>
-                    <p>
-                      Equivalent FTEs x {fmtCurrency(results.fullyLoadedCost)}{" "}
-                      fully-loaded cost per {results.industryLabel} knowledge
-                      worker
-                    </p>
-                    <p className={statExplainClass}>
-                      Fully-loaded cost includes salary, benefits (29.8% per
-                      BLS), payroll taxes, equipment, and overhead.
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="font-medium text-slate-950">
-                      Step 6: ROI
-                    </p>
-                    <p>
-                      Annual productivity value / annual plan cost ={" "}
-                      {fmtX(results.planA.roi)} (Plan A) /{" "}
-                      {fmtX(results.planB.roi)} (Plan B)
-                    </p>
-                  </div>
-
-                  {results.isHighRPE && results.plannedHires > 0 && (
-                    <div>
-                      <p className="font-medium text-slate-950">
-                        Hiring avoidance (high-RPE companies)
-                      </p>
-                      <p>
-                        Equivalent FTEs translated to potential hires avoided.
-                        Plan A: {results.hiresAvoidedA} hires ({fmtCurrency(results.hiringAvoidanceValueA)}/yr).
-                        Plan B: {results.hiresAvoidedB} hires ({fmtCurrency(results.hiringAvoidanceValueB)}/yr).
-                      </p>
-                      <p className={statExplainClass}>
-                        This is a planning scenario, not a guaranteed outcome. Actual hiring
-                        avoidance depends on role mix, growth targets, and implementation quality.
-                      </p>
+                    <div className="mt-4 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-700">Chief AI Officer hire</span>
+                        <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
+                          {fmtCurrency(CAIO_ANNUAL)}/yr
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-700">
+                          AI engineers ({PLAN_B_EQUIV_ENGINEERS} people)
+                        </span>
+                        <span className="font-['IBM_Plex_Mono'] font-medium text-slate-950">
+                          {fmtCurrency(PLAN_B_EQUIV_ENGINEERS * AI_ENGINEER_ANNUAL)}/yr
+                        </span>
+                      </div>
+                      <div className="flex justify-between border-t border-dashed border-[var(--line)] pt-2 text-sm">
+                        <span className="font-medium text-slate-950">
+                          Total annual cost
+                        </span>
+                        <span className="font-['IBM_Plex_Mono'] font-semibold text-slate-950">
+                          {fmtCurrency(results.buildInHouseB)}/yr
+                        </span>
+                      </div>
                     </div>
-                  )}
+                    <p className={`mt-3 ${statExplainClass}`}>
+                      Plus hiring time before any output. This comparison is
+                      directional, but it keeps the alternative honest.
+                    </p>
+                  </div>
                 </div>
+
+                <RouteKpiPanel results={results} />
+
+                {results.route === "constraint_sprint" ? (
+                  <div className={`mt-8 ${panelClass}`}>
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--accent)]">
+                      TEAM-SHAPE FIT
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-700">
+                      Plan B stays visible for transparency, but the right move is a
+                      focused system for the {BOTTLENECKS[results.bottleneck].label.toLowerCase()} bottleneck.
+                      The broad program is intentionally de-emphasized until the
+                      first workflow win is in production.
+                    </p>
+                  </div>
+                ) : null}
               </Expandable>
             </div>
+
+            <Methodology
+              results={results}
+              inputs={inputs}
+              scenario={selectedScenario}
+            />
           </section>
         ) : null}
 
-        {/* ── Source Library ── */}
         <section className="reveal section-divider-full py-14 sm:py-16">
           <p className={sectionLabelClass}>RESEARCH & SOURCES</p>
           <h2 className={sectionHeadingClass}>
@@ -1575,8 +1367,8 @@ export default function RoiCalculatorApp() {
           </h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
             {TIER1_SOURCES.length + TIER2_SOURCES.length} sources from Harvard,
-            Stanford, MIT, BCG, McKinsey, Anthropic, Gartner, Deloitte, PwC, and
-            more. All publicly available.
+            Stanford, MIT, BCG, McKinsey, Anthropic, Gartner, Deloitte, PwC,
+            and more. All publicly available.
           </p>
 
           <SourceList
@@ -1590,21 +1382,17 @@ export default function RoiCalculatorApp() {
           />
         </section>
 
-        {/* ── Disclaimer ── */}
         <section className="reveal section-divider-full py-10">
           <div className={`${cardClass} border-slate-200 bg-slate-50`}>
-            <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+            <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">
               IMPORTANT DISCLAIMER
             </p>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
               All calculations use publicly available research data from
-              credible, peer-reviewed, or industry-published sources. The
-              results are estimates based on industry averages and documented
-              study outcomes. Actual results depend on organizational readiness,
-              implementation quality, workforce composition, and other
-              company-specific factors. These projections are not guarantees of
-              future performance. We recommend the complimentary AI Portfolio
-              Reality Scan for company-specific analysis.
+              credible, peer-reviewed, or industry-published sources. Results
+              are estimates based on documented study outcomes and planning
+              assumptions. Actual results depend on workflow design, adoption,
+              implementation quality, and company-specific constraints.
             </p>
             <p className="mt-2 text-[11px] text-slate-400">
               Last updated: March 2026. Sources are refreshed quarterly.
@@ -1612,34 +1400,25 @@ export default function RoiCalculatorApp() {
           </div>
         </section>
 
-        {/* ── CTA + Waitlist ── */}
-        <section className="reveal py-14 sm:py-16">
-          <div className="space-y-10">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className={sectionLabelClass}>NEXT STEP</p>
-              <h2 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-3xl">
-                These are estimates. Want your exact numbers?
-              </h2>
-              <p className="mx-auto mt-5 max-w-[48ch] text-base leading-relaxed text-slate-600">
-                The complimentary AI Portfolio Reality Scan analyzes your
-                specific company, workflows, and team to identify where AI will
-                create the most value. Valued at $15,000. Free for waitlist
-                members.
-              </p>
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-                <span className={metaChipClass}>2-minute form</span>
-                <span className={metaChipClass}>
-                  Complimentary scan (valued at $15,000) + 40-min call
-                </span>
-                <span className={metaChipClass}>Results in ~1 week</span>
+        {!results ? (
+          <section id="scan" className="reveal py-14 sm:py-16">
+            <div className="space-y-10">
+              <div className="mx-auto max-w-3xl text-center">
+                <p className={sectionLabelClass}>NEXT STEP</p>
+                <h2 className="mt-4 text-2xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-3xl">
+                  Want your exact numbers?
+                </h2>
+                <p className="mx-auto mt-5 max-w-[48ch] text-base leading-relaxed text-slate-600">
+                  If you want to talk before using the calculator, you can still
+                  apply directly below. Once you calculate, the recommendation
+                  becomes route-aware and carries the math into the next page.
+                </p>
               </div>
+              <WaitlistForm />
             </div>
+          </section>
+        ) : null}
 
-            <WaitlistForm />
-          </div>
-        </section>
-
-        {/* ── Footer ── */}
         <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
@@ -1648,7 +1427,8 @@ export default function RoiCalculatorApp() {
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            Fully booked. Complimentary scan available for waitlist members.
+            Calculator routes are transparent. Recommendations remain estimates
+            until confirmed in a diagnostic.
           </p>
         </footer>
       </main>

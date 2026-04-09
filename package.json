@@ -2,12 +2,14 @@
   "name": "consultancy-asca",
   "private": true,
   "version": "0.0.0",
+  "packageManager": "bun@1.2.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "bun scripts/run-calculator-tests.ts"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -25,6 +27,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "tailwindcss": "^4.2.1",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
     "vite": "^7.3.1"

@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Paper creator local datasets and exports (large generated artifacts, not for repo)
+scripts/paper-creator/data/

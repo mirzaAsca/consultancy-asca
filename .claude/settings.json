@@ -61,7 +61,7 @@
       "Bash(git checkout src/App.tsx)",
       "Bash(grep -n \"$\\\\|hourly\\\\|retainer\\\\|salary\\\\|per-head\\\\|engagement\\\\|cost\\\\|price\\\\|rate\" \"/Users/mirzaasceric/Desktop/consultancy-asca/3.Service System and Delivery Operating Model for an AI Implementation Consultancy.md\")",
       "Bash(grep -n \"$\\\\|hourly\\\\|salary\\\\|retainer\\\\|per-head\\\\|engagement fee\\\\|pricing\" \"/Users/mirzaasceric/Desktop/consultancy-asca/1. Enterprise AI Transformation Demand, ROI, and Deal Design.md\")",
-      "Bash(npm run build)",
+      "Bash(bun run build)",
       "Bash(ls -lah /Users/mirzaasceric/Desktop/consultancy-asca/*.md)",
       "Bash(grep -n \"useState\\\\|useEffect\\\\|useRef\" /Users/mirzaasceric/Desktop/consultancy-asca/src/components/*.tsx)",
       "Bash(wc -l /Users/mirzaasceric/Desktop/consultancy-asca/datasets/*.csv)",
@@ -79,7 +79,19 @@
       "WebFetch(domain:blog.quest.com)",
       "WebFetch(domain:www.in-parallel.com)",
       "WebFetch(domain:www.ziprecruiter.com)",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(ls -lh /Users/mirzaasceric/Desktop/consultancy-asca/100m-map/*.json*)",
+      "Bash(brew install:*)",
+      "Bash(brew list:*)",
+      "Bash(pdftotext '/Users/mirzaasceric/Desktop/consultancy-asca/alex hormozi/100m-offers.pdf' -)",
+      "Read(//Users/mirzaasceric/.cursor/projects/Users-mirzaasceric-Desktop-consultancy-asca/terminals/**)",
+      "Bash(lsof -ti:5173)",
+      "Bash(npx vite:*)",
+      "Bash(node -e \"import\\(''vite''\\).then\\(v => v.createServer\\(\\).then\\(s => s.listen\\(\\).then\\(\\(\\) => { console.log\\(''Server started on'', s.resolvedUrls\\); s.close\\(\\); process.exit\\(0\\); }\\)\\)\\)\")",
+      "Bash(bun --version)",
+      "Bash(timeout 10 bun vite --force)",
+      "Bash(perl -e 'alarm 10; exec @ARGV' bun vite --force)",
+      "Bash(bun add:*)"
     ],
     "additionalDirectories": [
       "/Users/mirzaasceric/Desktop/consultancy-asca/src/assets"
