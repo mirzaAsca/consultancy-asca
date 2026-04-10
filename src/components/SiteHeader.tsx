@@ -66,7 +66,7 @@ export default function SiteHeader({
             Home
           </a>
           <a href={whatWeDoHref} className="transition-colors hover:text-slate-900">
-            How We Work
+            How It Works
           </a>
           <a href={roiHref} className="transition-colors hover:text-slate-900">
             Research

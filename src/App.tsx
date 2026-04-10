@@ -61,7 +61,6 @@ const splitSectionNoDividerClass =
   "reveal py-14 sm:py-16 lg:grid lg:grid-cols-12 lg:gap-8";
 const compactStripSectionClass =
   "reveal delay-2 section-divider-short py-8 sm:py-10";
-const finalSectionClass = "reveal py-14 sm:py-16";
 const metaChipClass =
   "inline-flex w-fit items-center border border-[color:rgba(30,41,59,0.14)] bg-[rgba(255,255,255,0.7)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]";
 const gridSystemStyle = {
@@ -106,13 +105,6 @@ const alumniLogos = [
   { src: logoCarthook, name: "CartHook", png: false },
   { src: logoReleasit, name: "Releasit", png: false },
   { src: logoAccentuate, name: "Accentuate", png: false },
-];
-
-const dreamOutcomes = [
-  "Your highest-impact workflow is mapped end to end",
-  "You know exactly where the hours go and what to automate first",
-  "Your team has a scoped plan with before/after numbers",
-  "The first AI implementation is already underway",
 ];
 
 const newFeatureGroups = [
@@ -392,11 +384,11 @@ export default function App() {
           <SiteHeader
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
-            whatWeDoHref="/how-we-work/"
+            whatWeDoHref="/how-it-works/"
           />
         </div>
 
-        {/* ── 1. HERO: Split layout matching how-we-work ── */}
+        {/* ── 1. HERO: Split layout matching how-it-works ── */}
         <section
           id="overview"
           className={`${splitSectionNoDividerClass} gap-8`}
@@ -431,7 +423,7 @@ export default function App() {
             </div>
 
             <div className="mt-8 lg:mt-auto lg:pt-10">
-              <a href="#how-it-works" className={primaryButtonClass}>
+              <a href="#plans" className={primaryButtonClass}>
                 See how it works
               </a>
               <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-slate-500">
@@ -511,7 +503,9 @@ export default function App() {
               <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">
                 2,500+
               </span>
-              <span className="text-sm text-slate-500">hours working with AI</span>
+              <span className="text-sm text-slate-500">
+                hours working with AI
+              </span>
             </div>
           </div>
         </section>
@@ -1208,77 +1202,21 @@ export default function App() {
         </section>
 
         {/* ── 10. WAITLIST + FREE SCAN FORM ── */}
-        <section id="scan" className={finalSectionClass}>
-          <div className="space-y-10">
-            <div className="grid gap-8 lg:grid-cols-12">
-              <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
-                <div>
-                  <p className={sectionLabelClass}>TELL ME ABOUT YOUR TEAM</p>
-                  <h2 className={sectionHeadingClass}>
-                    When I have capacity, waitlist members get a free workflow
-                    review.
-                  </h2>
-                  <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-                    No pitch. Just an honest look at whether AI can save your
-                    team real time. Tell me about your company and the workflow
-                    that's costing you the most.
-                  </p>
-                </div>
-              </div>
+        <section id="scan" className="reveal py-14 sm:py-16">
+          <p className={sectionLabelClass}>TELL ME ABOUT YOUR TEAM</p>
+          <h2 className={sectionHeadingClass}>
+            When I have capacity, waitlist members get a
+            free workflow review.
+          </h2>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
+            No pitch. Just an honest look at whether AI can save your team real
+            time. Within 30 days you'll know exactly where the hours go, what to
+            automate first, and have a scoped plan with real numbers.
+          </p>
 
-              <aside
-                className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}
-              >
-                <p className={sectionLabelClass}>WHAT HAPPENS NEXT</p>
-                <div className="mt-5 flex flex-1 flex-col text-sm leading-relaxed text-slate-700">
-                  <div className="flex-1 pt-0">
-                    <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
-                      Within 48 hours
-                    </p>
-                    <p className="mt-2">I confirm your spot on the waitlist.</p>
-                  </div>
-                  <div className="flex-1 border-t border-[var(--line)] pt-4">
-                    <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
-                      When a spot opens
-                    </p>
-                    <p className="mt-2">
-                      I reach out for a quick call about your workflow.
-                    </p>
-                  </div>
-                  <div className="flex-1 border-t border-[var(--line)] pt-4">
-                    <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
-                      After the call
-                    </p>
-                    <p className="mt-2">
-                      You get a straight answer: is it worth fixing, and what
-                      would it take.
-                    </p>
-                  </div>
-                </div>
-              </aside>
-            </div>
+          
 
-            <div className={panelClass}>
-              <p className="text-xl font-semibold leading-snug tracking-[-0.02em] text-slate-950">
-                30 days from now
-              </p>
-              <div className="mt-5 border-t border-[var(--line)] pt-5">
-                <p className={sectionLabelClass}>
-                  WHAT YOUR COMPANY LOOKS LIKE
-                </p>
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {dreamOutcomes.map((outcome) => (
-                    <li key={outcome} className="flex items-start gap-2.5">
-                      <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 bg-[var(--accent)]" />
-                      <p className="text-sm leading-relaxed text-slate-700">
-                        {outcome}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
+          <div className="mt-10">
             <WaitlistForm />
           </div>
         </section>
@@ -1292,7 +1230,6 @@ export default function App() {
           </a>
           <p className="text-sm text-slate-600">
             I help growing teams implement AI where it saves the most time.
-            
           </p>
         </footer>
       </main>

@@ -10,10 +10,8 @@ const DEFAULT_CTA = "Join the Waitlist";
 
 const primaryButtonClass =
   "inline-flex items-center justify-center border border-[var(--accent)] bg-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-[var(--accent-hover)] hover:bg-[var(--accent-hover)] hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2";
-const inversePanelClass =
-  "border border-[var(--accent)] bg-[var(--accent)] px-6 py-6 text-slate-100 shadow-[0_18px_38px_rgba(15,23,42,0.12)]";
-const inverseSectionLabelClass =
-  "inline-flex w-fit items-center bg-[rgba(255,255,255,0.12)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-white";
+const formSectionLabelClass =
+  "inline-flex w-fit items-center bg-[var(--bg)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]";
 
 type Field =
   | "fullName"
@@ -46,10 +44,7 @@ const initialFormState: FormState = {
   reason: "",
 };
 
-function getSectionLabel(
-  heading: string,
-  context?: WaitlistContext,
-): string {
+function getSectionLabel(heading: string, context?: WaitlistContext): string {
   if (context) {
     return `${context.recommendedOffer.toUpperCase()} APPLICATION`;
   }
@@ -106,14 +101,14 @@ function buildMailto(form: FormState, context?: WaitlistContext): string {
 }
 
 function inputClass(hasError: boolean): string {
-  return `mt-1 w-full border bg-[rgba(255,255,255,0.08)] px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] transition-[border-color,box-shadow,background-color] duration-200 caret-white focus:border-white focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] ${
-    hasError ? "border-rose-400" : "border-[rgba(255,255,255,0.16)]"
+  return `mt-1 w-full border bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-slate-400 focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(30,41,59,0.06)] ${
+    hasError ? "border-rose-500" : "border-[var(--line)]"
   }`;
 }
 
 function selectClass(hasError: boolean): string {
-  return `w-full appearance-none border bg-[rgba(255,255,255,0.08)] px-3 py-2.5 pr-11 text-sm text-white outline-none [color-scheme:dark] transition-[border-color,box-shadow,background-color] duration-200 caret-white focus:border-white focus:bg-[rgba(255,255,255,0.12)] focus:shadow-[0_0_0_3px_rgba(255,255,255,0.08)] ${
-    hasError ? "border-rose-400" : "border-[rgba(255,255,255,0.16)]"
+  return `w-full appearance-none border bg-white px-3 py-2.5 pr-11 text-sm text-slate-900 outline-none transition-[border-color,box-shadow] duration-200 focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(30,41,59,0.06)] ${
+    hasError ? "border-rose-500" : "border-[var(--line)]"
   }`;
 }
 
@@ -178,24 +173,24 @@ export default function WaitlistForm({
         { label: "Scenario", value: context.scenario },
         { label: "Plan A payback", value: `${context.planAPayback} months` },
         { label: "Plan A ROI", value: fmtX(context.planARoi) },
-        { label: "Plan A annual value", value: fmtCurrency(context.planAAnnualValue) },
+        {
+          label: "Plan A annual value",
+          value: fmtCurrency(context.planAAnnualValue),
+        },
       ]
     : [];
 
   return (
-    <div className={inversePanelClass}>
-      <div className="flex flex-col gap-3 border-b border-[rgba(255,255,255,0.14)] pb-5 sm:flex-row sm:items-end sm:justify-between">
+    <div className="premium-panel border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shadow-panel)]">
+      <div className="flex flex-col gap-3 border-b border-[var(--line)] pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className={inverseSectionLabelClass}>
+          <p className={formSectionLabelClass}>
             {getSectionLabel(heading, context)}
           </p>
-          <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-100">
+          <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-600">
             {subheading}
           </p>
         </div>
-        <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300">
-          8 fields - that's it
-        </p>
       </div>
 
       {context ? (
@@ -203,12 +198,12 @@ export default function WaitlistForm({
           {summaryRows.map((row) => (
             <div
               key={row.label}
-              className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4"
+              className="border border-[var(--line)] bg-[rgba(15,23,42,0.02)] p-4"
             >
-              <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.12em] text-slate-300">
+              <p className="font-['IBM_Plex_Mono'] text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
                 {row.label}
               </p>
-              <p className="mt-2 text-sm text-white">{row.value}</p>
+              <p className="mt-2 text-sm text-slate-900">{row.value}</p>
             </div>
           ))}
         </div>
@@ -216,7 +211,7 @@ export default function WaitlistForm({
 
       <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-5">
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="text-sm font-medium text-slate-100">
+          <label className="text-sm font-medium text-slate-800">
             Your name
             <input
               className={inputClass(Boolean(errors.fullName))}
@@ -226,10 +221,10 @@ export default function WaitlistForm({
               required
             />
             {errors.fullName ? (
-              <span className="text-xs text-rose-400">{errors.fullName}</span>
+              <span className="text-xs text-rose-500">{errors.fullName}</span>
             ) : null}
           </label>
-          <label className="text-sm font-medium text-slate-100">
+          <label className="text-sm font-medium text-slate-800">
             Work email
             <input
               className={inputClass(Boolean(errors.workEmail))}
@@ -240,13 +235,13 @@ export default function WaitlistForm({
               required
             />
             {errors.workEmail ? (
-              <span className="text-xs text-rose-400">{errors.workEmail}</span>
+              <span className="text-xs text-rose-500">{errors.workEmail}</span>
             ) : null}
           </label>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <label className="text-sm font-medium text-slate-100">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="text-sm font-medium text-slate-800">
             Company name
             <input
               className={inputClass(Boolean(errors.company))}
@@ -256,29 +251,18 @@ export default function WaitlistForm({
               required
             />
             {errors.company ? (
-              <span className="text-xs text-rose-400">{errors.company}</span>
+              <span className="text-xs text-rose-500">{errors.company}</span>
             ) : null}
           </label>
-          <label className="text-sm font-medium text-slate-100">
-            Website
-            <span className="ml-1 text-[11px] font-normal text-slate-400">
-              (optional)
-            </span>
-            <input
-              className={inputClass(false)}
-              value={form.website}
-              onChange={(event) => updateField("website", event.target.value)}
-              placeholder="yourcompany.com"
-              autoComplete="url"
-            />
-          </label>
-          <label className="text-sm font-medium text-slate-100">
+          <label className="text-sm font-medium text-slate-800">
             Number of employees
             <div className="relative mt-1">
               <select
                 className={selectClass(Boolean(errors.employees))}
                 value={form.employees}
-                onChange={(event) => updateField("employees", event.target.value)}
+                onChange={(event) =>
+                  updateField("employees", event.target.value)
+                }
                 required
               >
                 <option value="">Select</option>
@@ -291,7 +275,7 @@ export default function WaitlistForm({
               <svg
                 aria-hidden="true"
                 viewBox="0 0 20 20"
-                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300"
+                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
               >
                 <path
                   d="M5 7.5L10 12.5L15 7.5"
@@ -304,13 +288,26 @@ export default function WaitlistForm({
               </svg>
             </div>
             {errors.employees ? (
-              <span className="text-xs text-rose-400">{errors.employees}</span>
+              <span className="text-xs text-rose-500">{errors.employees}</span>
             ) : null}
           </label>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="text-sm font-medium text-slate-100">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label className="text-sm font-medium text-slate-800">
+            Website
+            <span className="ml-1 text-[11px] font-normal text-slate-400">
+              (optional)
+            </span>
+            <input
+              className={inputClass(false)}
+              value={form.website}
+              onChange={(event) => updateField("website", event.target.value)}
+              placeholder="yourcompany.com"
+              autoComplete="url"
+            />
+          </label>
+          <label className="text-sm font-medium text-slate-800">
             LinkedIn
             <span className="ml-1 text-[11px] font-normal text-slate-400">
               (optional)
@@ -322,7 +319,7 @@ export default function WaitlistForm({
               placeholder="linkedin.com/in/yourname"
             />
           </label>
-          <label className="text-sm font-medium text-slate-100">
+          <label className="text-sm font-medium text-slate-800">
             AI budget
             <span className="ml-1 text-[11px] font-normal text-slate-400">
               (optional)
@@ -336,7 +333,7 @@ export default function WaitlistForm({
           </label>
         </div>
 
-        <label className="text-sm font-medium text-slate-100">
+        <label className="text-sm font-medium text-slate-800">
           What's the one workflow that costs you the most time?
           <textarea
             className={`${inputClass(Boolean(errors.reason))} min-h-[80px] resize-y`}
@@ -347,57 +344,69 @@ export default function WaitlistForm({
             required
           />
           {errors.reason ? (
-            <span className="text-xs text-rose-400">{errors.reason}</span>
+            <span className="text-xs text-rose-500">{errors.reason}</span>
           ) : null}
         </label>
 
-        <div className="flex flex-col gap-4 border-t border-[rgba(255,255,255,0.14)] pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-slate-300">
+        <div className="flex flex-col gap-4 border-t border-[var(--line)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-500">
             {context
               ? `${context.recommendedOffer} + 40-min strategy call. We keep the recommendation, numbers, and route context in the draft so the next step is specific from the first conversation.`
               : "We'll review your submission and reach out when a spot opens. First come, first served."}
           </p>
-          <button type="submit" className={primaryButtonClass}>
+          <button type="submit" className={`shrink-0 ${primaryButtonClass}`}>
             {ctaLabel}
           </button>
         </div>
 
         {submitted ? (
-          <div className="space-y-4 border-t border-[rgba(255,255,255,0.14)] pt-5">
-            <div className="space-y-4 border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-5">
-              <h3 className="text-lg font-semibold tracking-[-0.01em] text-white">
+          <div className="space-y-4 border-t border-[var(--line)] pt-5">
+            <div className="space-y-4 border border-[var(--line)] bg-[rgba(15,23,42,0.02)] p-5">
+              <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-950">
                 Your email draft is ready
               </h3>
-              <p className="text-sm leading-relaxed text-slate-100">
+              <p className="text-sm leading-relaxed text-slate-600">
                 If it did not open automatically, use the link below. We will
                 review the request and reply within 48 hours.
               </p>
-              <a href={buildMailto(form, context)} className={primaryButtonClass}>
+              <a
+                href={buildMailto(form, context)}
+                className={primaryButtonClass}
+              >
                 Open email draft again
               </a>
-              <div className="grid gap-3 text-sm text-slate-100 sm:grid-cols-3">
-                <div className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4">
-                  <p className="font-medium uppercase tracking-[0.08em] text-slate-300">
+              <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
+                <div className="border border-[var(--line)] bg-white p-4">
+                  <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
                     Within 48 hours
                   </p>
-                  <p className="mt-2">We confirm the next step and review the context.</p>
+                  <p className="mt-2">
+                    We confirm the next step and review the context.
+                  </p>
                 </div>
-                <div className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4">
-                  <p className="font-medium uppercase tracking-[0.08em] text-slate-300">
+                <div className="border border-[var(--line)] bg-white p-4">
+                  <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
                     Day 3-5
                   </p>
-                  <p className="mt-2">Quick call about your business and workflow priorities.</p>
+                  <p className="mt-2">
+                    Quick call about your business and workflow priorities.
+                  </p>
                 </div>
-                <div className="border border-[rgba(255,255,255,0.14)] bg-[rgba(255,255,255,0.06)] p-4">
-                  <p className="font-medium uppercase tracking-[0.08em] text-slate-300">
+                <div className="border border-[var(--line)] bg-white p-4">
+                  <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
                     Day 5-7
                   </p>
-                  <p className="mt-2">Recommended path, scope, and action plan.</p>
+                  <p className="mt-2">
+                    Recommended path, scope, and action plan.
+                  </p>
                 </div>
               </div>
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-slate-500">
                 Questions?{" "}
-                <a className="font-medium text-white" href={`mailto:${PRIMARY_EMAIL}`}>
+                <a
+                  className="font-medium text-slate-900"
+                  href={`mailto:${PRIMARY_EMAIL}`}
+                >
                   {PRIMARY_EMAIL}
                 </a>
               </p>

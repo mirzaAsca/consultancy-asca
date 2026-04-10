@@ -23,19 +23,19 @@ That can still work, but it is **not a tight translation** of the transcript.
 
 ## Side-by-side comparison
 
-| Dimension | Transcript | Website | Verdict |
-| --- | --- | --- | --- |
-| Core message | Clear after repetition: use AI with context, SOPs, data sources, and iteration. | Clear fast: enterprise AI transformation office that maps, governs, and ships AI. | Both clear, but they are not the same offer. |
-| Accuracy | **6.5/10**. Mostly solid heuristics, but some absolutes are overstated. | **6/10**. Some strong claims are supported, but several citations are stretched, mismatched, or unsupported. | Transcript slightly better. |
-| Specificity | **8.5/10**. Concrete workflows, folders, prompts, and examples. | **7.5/10** on `/how-we-work/`, **6.5/10** on home. Better than average, but still broad in places. | Transcript wins. |
-| Clarity / understandability | **6/10**. Good ideas, but too long, repetitive, and full of tangents. | **8/10**. Much easier to scan and understand quickly. | Website wins. |
-| Structure | **6/10**. Live-talk energy, weak editorial control. | **8.5/10**. Strong hierarchy, sections, and progressive explanation. | Website wins. |
-| Credibility / proof | **6/10**. Strong conviction, but many claims are anecdotal. | **5.5/10**. Better proof framing, but some public claims are not properly substantiated. | Both need tightening. |
-| Tone | Energetic, blunt, persuasive, personality-heavy. | Clean, premium, blunt, but sometimes mixes enterprise with slang. | Website is more controlled; transcript is more memorable. |
-| Enterprise fit | Moderate. Useful, but feels creator-led and workshop-style. | Good overall, especially on `/how-we-work/`, but slang weakens boardroom trust in spots. | Website wins, but should be cleaner. |
-| Differentiation | High. The SOP + data-source system is distinct. | Moderate. Governance + visibility is credible, but more common. | Transcript wins. |
-| Conversion readiness | Low as-is. Great source material, not landing-page copy. | High. It is already structured to sell. | Website wins. |
-| Alignment between the two | The transcript teaches an internal AI operating system. | The website sells an enterprise transformation/governance service. | Partial alignment only. |
+| Dimension                   | Transcript                                                                      | Website                                                                                                      | Verdict                                                   |
+| --------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| Core message                | Clear after repetition: use AI with context, SOPs, data sources, and iteration. | Clear fast: enterprise AI transformation office that maps, governs, and ships AI.                            | Both clear, but they are not the same offer.              |
+| Accuracy                    | **6.5/10**. Mostly solid heuristics, but some absolutes are overstated.         | **6/10**. Some strong claims are supported, but several citations are stretched, mismatched, or unsupported. | Transcript slightly better.                               |
+| Specificity                 | **8.5/10**. Concrete workflows, folders, prompts, and examples.                 | **7.5/10** on `/how-it-works/`, **6.5/10** on home. Better than average, but still broad in places.          | Transcript wins.                                          |
+| Clarity / understandability | **6/10**. Good ideas, but too long, repetitive, and full of tangents.           | **8/10**. Much easier to scan and understand quickly.                                                        | Website wins.                                             |
+| Structure                   | **6/10**. Live-talk energy, weak editorial control.                             | **8.5/10**. Strong hierarchy, sections, and progressive explanation.                                         | Website wins.                                             |
+| Credibility / proof         | **6/10**. Strong conviction, but many claims are anecdotal.                     | **5.5/10**. Better proof framing, but some public claims are not properly substantiated.                     | Both need tightening.                                     |
+| Tone                        | Energetic, blunt, persuasive, personality-heavy.                                | Clean, premium, blunt, but sometimes mixes enterprise with slang.                                            | Website is more controlled; transcript is more memorable. |
+| Enterprise fit              | Moderate. Useful, but feels creator-led and workshop-style.                     | Good overall, especially on `/how-it-works/`, but slang weakens boardroom trust in spots.                    | Website wins, but should be cleaner.                      |
+| Differentiation             | High. The SOP + data-source system is distinct.                                 | Moderate. Governance + visibility is credible, but more common.                                              | Transcript wins.                                          |
+| Conversion readiness        | Low as-is. Great source material, not landing-page copy.                        | High. It is already structured to sell.                                                                      | Website wins.                                             |
+| Alignment between the two   | The transcript teaches an internal AI operating system.                         | The website sells an enterprise transformation/governance service.                                           | Partial alignment only.                                   |
 
 ## Transcript validation
 
@@ -69,7 +69,7 @@ The transcript is **substantive and specific**, but it needs editing if you want
 
 - The visual system is clean, premium, and consistent.
 - The site is easy to scan.
-- `/how-we-work/` is the strongest page because it explains the mechanism instead of only making claims.
+- `/how-it-works/` is the strongest page because it explains the mechanism instead of only making claims.
 - The proof visuals are helpful and materially improve credibility.
 - The reading level is accessible for executives.
 

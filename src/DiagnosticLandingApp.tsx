@@ -38,9 +38,9 @@ function getLandingCopy(variant: DiagnosticVariant): LandingCopy {
   if (variant === "portfolio") {
     return {
       eyebrow: "AI PORTFOLIO REALITY SCAN",
-      heading: "Board-ready AI portfolio baseline and first scale-or-kill decisions.",
-      body:
-        "This diagnostic is for companies that already have scale, AI activity, or governance pressure and need a disciplined operating model instead of more pilot sprawl.",
+      heading:
+        "Board-ready AI portfolio baseline and first scale-or-kill decisions.",
+      body: "This diagnostic is for companies that already have scale, AI activity, or governance pressure and need a disciplined operating model instead of more pilot sprawl.",
       formHeading:
         "Want a board-ready view of which AI initiatives should scale, stop, or be governed first?",
       formSubheading:
@@ -58,9 +58,9 @@ function getLandingCopy(variant: DiagnosticVariant): LandingCopy {
   if (variant === "operational") {
     return {
       eyebrow: "OPERATIONAL DIAGNOSTIC",
-      heading: "Scope one bottleneck, one metric, and one production system that moves the needle.",
-      body:
-        "This diagnostic is for teams that do not need a transformation office yet. The goal is one measurable operational win, not a broad rollout.",
+      heading:
+        "Scope one bottleneck, one metric, and one production system that moves the needle.",
+      body: "This diagnostic is for teams that do not need a transformation office yet. The goal is one measurable operational win, not a broad rollout.",
       formHeading:
         "Want us to scope the one AI system that actually moves the needle?",
       formSubheading:
@@ -77,9 +77,9 @@ function getLandingCopy(variant: DiagnosticVariant): LandingCopy {
 
   return {
     eyebrow: "READINESS DIAGNOSTIC",
-    heading: "Clarify the first workflow worth measuring before you buy a bigger AI program.",
-    body:
-      "This path is for companies where the immediate blocker is readiness: unclear ownership, weak workflow definition, or no agreed measurable outcome yet.",
+    heading:
+      "Clarify the first workflow worth measuring before you buy a bigger AI program.",
+    body: "This path is for companies where the immediate blocker is readiness: unclear ownership, weak workflow definition, or no agreed measurable outcome yet.",
     formHeading: "Want help identifying the first workflow worth measuring?",
     formSubheading:
       "We use your calculator context to define one owner, one workflow, and one measurable outcome so the economics become actionable instead of staying theoretical.",
@@ -116,7 +116,7 @@ export default function DiagnosticLandingApp({
           <SiteHeader
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
-            whatWeDoHref="/how-we-work/"
+            whatWeDoHref="/how-it-works/"
           />
         </div>
 
@@ -143,9 +143,7 @@ export default function DiagnosticLandingApp({
                 {context ? context.recommendedOffer : copy.formHeading}
               </h2>
               <p className="mt-4 max-w-[58ch] text-sm leading-relaxed text-slate-700">
-                {context
-                  ? context.recommendationReason
-                  : copy.formSubheading}
+                {context ? context.recommendationReason : copy.formSubheading}
               </p>
             </div>
 

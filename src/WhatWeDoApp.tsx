@@ -154,7 +154,7 @@ export default function WhatWeDoApp() {
           <SiteHeader
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
-            whatWeDoHref="/how-we-work/"
+            whatWeDoHref="/how-it-works/"
           />
         </div>
 
@@ -455,11 +455,9 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        
-
         <section
           id="scan"
-          className="reveal section-divider-full py-14 sm:py-16"
+          className="reveal py-14 sm:py-16"
         >
           <div className="space-y-10">
             <div className="grid gap-8 lg:grid-cols-12">

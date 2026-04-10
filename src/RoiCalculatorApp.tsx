@@ -108,11 +108,7 @@ const researchSections = [
   },
 ];
 
-function SourceCard({
-  source,
-}: {
-  source: Source;
-}) {
+function SourceCard({ source }: { source: Source }) {
   return (
     <article className={cardClass}>
       <div className="flex flex-wrap items-center gap-2">
@@ -183,7 +179,7 @@ export default function ResearchApp() {
           <SiteHeader
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
-            whatWeDoHref="/how-we-work/"
+            whatWeDoHref="/how-it-works/"
           />
         </div>
 
@@ -195,9 +191,9 @@ export default function ResearchApp() {
           <p className="mt-6 max-w-[60ch] text-base leading-relaxed text-slate-700">
             Stanford, Harvard, McKinsey, Anthropic, and the St. Louis Fed all
             confirm real productivity gains from AI. In the same years, 56% of
-            CEOs report zero ROI and 42% of companies scrapped their AI
-            projects entirely. The gap between what works and what gets shipped
-            is where most teams lose.
+            CEOs report zero ROI and 42% of companies scrapped their AI projects
+            entirely. The gap between what works and what gets shipped is where
+            most teams lose.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <span className={metaChipClass}>
@@ -229,9 +225,9 @@ export default function ResearchApp() {
             </h2>
             <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
               Research keeps the work honest, but it is not the work itself. If
-              you have a specific workflow in mind, I scope it in weeks 1 and
-              2, help your team build and ship the fix through week 9, and
-              measure the before-and-after numbers in week 10.
+              you have a specific workflow in mind, I scope it in weeks 1 and 2,
+              help your team build and ship the fix through week 9, and measure
+              the before-and-after numbers in week 10.
             </p>
             <div className="mt-8">
               <a href="/#plans" className={primaryButtonClass}>
