@@ -100,22 +100,6 @@ const timeline = [
   },
 ];
 
-const proofEvidence = [
-  {
-    title: "Portfolio dashboard",
-    detail:
-      "Every project, every owner, every status - one view your board can actually read.",
-  },
-  {
-    title: "Scoring model",
-    detail: "The math we use to decide what gets resources and what gets cut.",
-  },
-  {
-    title: "Decision rules",
-    detail: "Who approves what, who reviews, and when. No ambiguity.",
-  },
-];
-
 const proofVisuals = [
   {
     title: "Portfolio dashboard",
@@ -157,15 +141,7 @@ const heroHighlights = [
   },
 ];
 
-const frameworkTags = [
-  "NIST AI RMF",
-  "ISO/IEC 42001",
-  "OWASP LLM Top 10",
-  "EU AI Act — Aug 2, 2026 deadline",
-];
-
 const featuredProof = proofVisuals[0];
-const supportingProofs = proofVisuals.slice(1);
 
 export default function WhatWeDoApp() {
   return (
@@ -176,7 +152,6 @@ export default function WhatWeDoApp() {
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
         <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
           <SiteHeader
-            applyHref="/#scan"
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
             whatWeDoHref="/how-we-work/"
@@ -551,7 +526,7 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"
@@ -559,7 +534,7 @@ export default function WhatWeDoApp() {
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            Fully booked. Join the waitlist. Get your complimentary scan now.
+            I help growing teams implement AI where it saves the most time.
           </p>
         </footer>
       </main>

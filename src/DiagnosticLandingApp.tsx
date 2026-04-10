@@ -114,7 +114,6 @@ export default function DiagnosticLandingApp({
       <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
         <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
           <SiteHeader
-            applyHref="#apply"
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
             whatWeDoHref="/how-we-work/"
@@ -257,8 +256,7 @@ export default function DiagnosticLandingApp({
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            Diagnostic applications are reviewed manually. Route context from
-            the calculator is preserved when available.
+            I help growing teams implement AI where it saves the most time.
           </p>
         </footer>
       </main>

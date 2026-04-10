@@ -115,131 +115,6 @@ const dreamOutcomes = [
   "The first AI implementation is already underway",
 ];
 
-const featureGroups = [
-  {
-    label: "THE SYSTEM",
-    features: [
-      "Full AI Portfolio Map",
-      "Priority Decisions: Keep, Kill, or Scale",
-      "Legal and Security Handled",
-      "Weekly Decision Meetings",
-    ],
-  },
-  {
-    label: "THE DASHBOARD",
-    features: ["Revenue & Cost Dashboard", "All Your Tools in One Place"],
-  },
-  {
-    label: "THE PEOPLE",
-    features: ["Training Your Team to Use It", "Making Sure It Ships"],
-  },
-  {
-    label: "THE ARMY",
-    features: [
-      "Up to 20–30 Dedicated AI Engineers",
-      "2–3x More Output Per Affected Team Member",
-      "Access to our in-house expert team for: design, copywriting, SEO, development, and more",
-    ],
-  },
-  {
-    label: "THE EMPIRE",
-    features: [
-      "AI Across All Your Companies",
-      "FlyRank Platform Integration",
-      "Dedicated Executive Partner",
-      "Priority Support & Custom Terms",
-    ],
-  },
-];
-
-const plans = [
-  {
-    name: "COMMAND ROOM",
-    subtitle: "We run AI with your team",
-    price: "$22,000",
-    period: "/mo",
-    anchor: "Replaces a $350K–$500K/yr internal AI strategy hire",
-    anchorSource: {
-      label: "Glassdoor 2026",
-      url: "https://www.glassdoor.com/Salaries/chief-ai-officer-salary-SRCH_KO0,16.htm",
-    },
-    scarcity: "0 spots available",
-    description:
-      "We sync with you every week and make decisions with your leaders. We define full strategy, fix what's broken, and train your team to run it without us",
-    cta: "Apply",
-    ctaDisabled: true,
-    highlighted: true,
-    includedGroups: 3,
-    valueStack: [
-      { name: "Fractional Chief AI Officer", value: "$15,000/mo" },
-      { name: "Weekly Executive Strategy Sessions", value: "$8,000/mo" },
-      { name: "AI Governance & Compliance Framework", value: "$5,000/mo" },
-      { name: "Revenue & Cost Dashboard", value: "$3,000/mo" },
-      { name: "Team Training & Enablement", value: "$4,000/mo" },
-    ],
-    valueStackOneTime: [
-      { name: "AI Portfolio Reality Scan", value: "$15,000" },
-    ],
-    totalMonthlyValue: "$35,000/mo",
-    savings: "You save $13,000/mo + $15,000 one-time",
-  },
-  {
-    name: "10X EMPIRE",
-    subtitle: "Your dedicated AI team",
-    price: "$290,000",
-    period: "/mo",
-    anchor: "Building this team in-house: $400K–$720K/mo in salary alone",
-    anchorSource: {
-      label: "Robert Half / Glassdoor AI Engineer Salary Data 2026",
-      url: "https://www.roberthalf.com/us/en/job-details/aiml-engineer",
-    },
-    scarcity: "Coming Q3 2026",
-    description:
-      "20–30 dedicated engineers building AI systems that make your existing team 2–3x more productive. They build it, deploy it, and make sure your people actually use it.",
-    cta: "Request Early Access",
-    ctaDisabled: false,
-    highlighted: false,
-    includedGroups: 4,
-    valueStack: [
-      { name: "20–30 Dedicated AI Engineers", value: "$400,000/mo" },
-      { name: "Full COMMAND ROOM Strategy Layer", value: "$35,000/mo" },
-      { name: "External Team (Design, Copy, SEO, Dev)", value: "$25,000/mo" },
-      { name: "Cross-Org Scaling & Integration", value: "$20,000/mo" },
-      { name: "Organization-Wide Leverage System", value: "$15,000/mo" },
-    ],
-    valueStackOneTime: [
-      { name: "AI Portfolio Reality Scan", value: "$15,000" },
-    ],
-    totalMonthlyValue: "$495,000/mo",
-    savings: "You save $205,000/mo + $15,000 one-time",
-  },
-  {
-    name: "PORTFOLIO ENGINE",
-    subtitle: "Custom solutions for your portfolio",
-    price: "Custom",
-    period: "",
-    anchor: "Base retainer + 10–20% of documented savings",
-    anchorSource: null,
-    scarcity: "By invitation only",
-    description:
-      "You own multiple companies. We run AI across all of them. Same system, shared learnings, one team running the whole thing. Optional Hybrid pricing: base retainer plus performance kicker tied to verified value created.",
-    cta: "Book a Portfolio Review",
-    ctaDisabled: false,
-    highlighted: false,
-    includedGroups: 5,
-    valueStack: [
-      { name: "Everything in 10X EMPIRE", value: "" },
-      { name: "Multi-Entity Portfolio Governance", value: "" },
-      { name: "FlyRank Platform Integration", value: "" },
-      { name: "Dedicated Executive Partner", value: "" },
-      { name: "Custom SLA & Priority Support", value: "" },
-    ],
-    valueStackOneTime: [{ name: "AI Portfolio Reality Scan", value: "" }],
-    totalMonthlyValue: null,
-    savings: null,
-  },
-];
-
 const newFeatureGroups = [
   {
     label: "THE PROCESS",
@@ -515,7 +390,6 @@ export default function App() {
       >
         <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
           <SiteHeader
-            applyHref="#scan"
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
             whatWeDoHref="/how-we-work/"
@@ -637,7 +511,7 @@ export default function App() {
               <span className="font-['IBM_Plex_Mono'] text-2xl font-semibold text-slate-950">
                 2,500+
               </span>
-              <span className="text-sm text-slate-500">hours working AI</span>
+              <span className="text-sm text-slate-500">hours working with AI</span>
             </div>
           </div>
         </section>
@@ -876,7 +750,7 @@ export default function App() {
         </section>
 
         {/* ── NEW PLANS (PROPOSED) ── */}
-        <section className={stackedSectionClass}>
+        <section id="plans" className={stackedSectionClass}>
           <p className={sectionLabelClass}>PLANS</p>
           <h2 className={sectionHeadingClass}>
             Two ways to save time & money.

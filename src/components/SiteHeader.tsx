@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
 type SiteHeaderProps = {
-  applyHref: string
   founderLinkedIn: string
   homeHref: string
   whatWeDoHref: string
@@ -25,7 +24,6 @@ function VerifiedBadge() {
 }
 
 export default function SiteHeader({
-  applyHref,
   founderLinkedIn,
   homeHref,
   whatWeDoHref,
@@ -71,10 +69,7 @@ export default function SiteHeader({
             How We Work
           </a>
           <a href={roiHref} className="transition-colors hover:text-slate-900">
-            ROI Calculator
-          </a>
-          <a href={applyHref} className="transition-colors hover:text-slate-900">
-            Apply
+            Research
           </a>
         </nav>
         <a
