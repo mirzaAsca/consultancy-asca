@@ -77,33 +77,26 @@ const mechanismFlow = [
 ];
 
 const firstMonthDeliverables = [
-  "One list of every AI project. Who owns it. What it costs. What it's worth.",
-  "A straight answer: keep this, kill that, fix this first.",
+  "A complete map of the workflow. Every step, every delay, every cost.",
+  "A straight answer: what to automate, what to leave alone, and why.",
   "A simple doc: who approves what, and when. No more guessing.",
   "Baseline numbers so you can tell if AI is making you money or burning it.",
-  "A 90-day plan your whole team can actually follow.",
+  "A clear next step: start the build, or don't. Either way you keep everything.",
 ];
 
 const timeline = [
   {
-    title: "First 30 Days",
-    detail:
-      "You know what you have, what matters, and exactly what to do next.",
+    title: "Weeks 1-2",
+    detail: "Workflow map. Baseline numbers. A plan your team can act on.",
   },
   {
-    title: "First 90 Days",
+    title: "Weeks 3-8",
     detail:
-      "Governance live. First projects in production or on a clear path to deployment.",
+      "Your team builds. I direct the architecture, review the work, and keep it on track.",
   },
   {
-    title: "6 Months",
-    detail:
-      "Many projects running in production. You can see the impact in your numbers.",
-  },
-  {
-    title: "12 Months",
-    detail:
-      "AI is part of how your company works. The board sees returns, not experiments.",
+    title: "Weeks 9-10",
+    detail: "Before and after numbers with handover.",
   },
 ];
 
@@ -147,18 +140,20 @@ const proofVisuals = [
 const heroHighlights = [
   {
     label: "01",
-    title: "The full picture",
-    detail: "Every AI project, who owns it, what it costs.",
+    title: "The map",
+    detail:
+      "Your process step by step. Every handoff, every delay, every manual step.",
   },
   {
     label: "02",
-    title: "The scorecard",
-    detail: "Is it actually making money or saving time? Yes or no.",
+    title: "The baseline",
+    detail:
+      "How long it takes now. How many people touch it. What it costs you every month.",
   },
   {
     label: "03",
     title: "The action list",
-    detail: "What to keep, what to kill, what to fix first.",
+    detail: "What to automate, what to leave alone, and what it costs to fix.",
   },
 ];
 
@@ -193,17 +188,16 @@ export default function WhatWeDoApp() {
             <div>
               <p className={sectionLabelClass}>WHAT WE DO</p>
               <h1 className="mt-6 max-w-[11ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
-                You hired consultants. Bought tools.{" "}
+                You hired freelancers. Bought tools.{" "}
                 <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-                  Still no results.
+                  Still no results?
                 </span>
               </h1>
               <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                Most companies spend six figures on AI and have nothing to show
-                for it. We come in, find what's broken, build what's missing,
-                and run it with you until the numbers move. No slide decks. No
-                "strategy sessions." Just working systems that make money or
-                save money.
+                Most companies try AI on their own or hire a freelancer. It
+                works for a bit, then breaks. I spend 10 weeks with your team —
+                figure out what to build, guide your people through it, and
+                measure whether it actually saved time. You keep everything.
               </p>
             </div>
 
@@ -256,7 +250,7 @@ export default function WhatWeDoApp() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className={sectionLabelClass}>START HERE</p>
               <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-                2-3 weeks
+                Weeks 1-2
               </p>
             </div>
             <figure className="artifact-shell mt-6 border border-[var(--line)]">
@@ -265,7 +259,7 @@ export default function WhatWeDoApp() {
                   Sample deliverable
                 </p>
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Client details hidden
+                  Client details
                 </p>
               </div>
               <img
@@ -276,7 +270,7 @@ export default function WhatWeDoApp() {
               />
             </figure>
             <h2 className="mt-5 text-2xl font-semibold leading-tight tracking-[-0.02em] [text-wrap:balance]">
-              One page that shows your board exactly where you stand.
+              One page that shows you where the time goes.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
               We look at everything you're running. In two weeks, you know
@@ -403,9 +397,10 @@ export default function WhatWeDoApp() {
 
         <section className={splitSectionClass}>
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
-            <p className={sectionLabelClass}>FIRST 30 DAYS</p>
+            <p className={sectionLabelClass}>FIRST 2 WEEKS</p>
             <h2 className={sectionHeadingClass}>
-              In 30 days, you'll know exactly what to do.
+              In 2 weeks, you know exactly what's worth fixing and what it
+              takes.
             </h2>
             <ul className="mt-7 space-y-3 text-sm leading-relaxed text-slate-700 lg:mt-auto">
               {firstMonthDeliverables.map((item) => (
@@ -438,19 +433,18 @@ export default function WhatWeDoApp() {
 
         <section className="reveal section-divider-full py-14 sm:py-16">
           <p className={sectionLabelClass}>WHAT YOU CAN DO TODAY</p>
-          <h2 className={sectionHeadingClass}>Before you even talk to us.</h2>
+          <h2 className={sectionHeadingClass}>Before you even talk to me.</h2>
           <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-            You don't need us to start. Do these three things this week and
-            you'll already know more than 90% of companies.
+            You don't need me to start. Do these three things this week.
           </p>
 
           <ol className="mt-8 space-y-4">
             {[
               {
                 step: "01",
-                title: "List every AI tool your company pays for",
+                title: "Write down the one process that wastes the most time",
                 detail:
-                  "Open a spreadsheet. Write down every AI tool, who uses it, and what it costs per month. Most companies can't do this in under an hour. That's the problem.",
+                  "Who does it? How long does it take? How often? Most people are surprised when they see the real number.",
               },
               {
                 step: "02",
@@ -481,142 +475,12 @@ export default function WhatWeDoApp() {
 
           <div className="mt-8 flex flex-wrap items-center gap-5">
             <a href="/#scan" className={primaryButtonClass}>
-              Or skip ahead — get your free scan
+              Or skip ahead — join the waitlist
             </a>
           </div>
         </section>
 
-        <section id="proof" className={splitSectionClass}>
-          <div className="flex h-full flex-col lg:col-span-5 lg:pr-4">
-            <div>
-              <p className={sectionLabelClass}>PROOF</p>
-              <h2 className={sectionHeadingClass}>
-                We show our work. Not slides.
-              </h2>
-              <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-slate-700">
-                You'll see real dashboards, real scorecards, and real documents
-                your board can use. We ensure that everything we build meets key
-                compliance standards. These include NIST, ISO 42001, OWASP, and
-                the EU AI Act.
-              </p>
-              <p className="mt-6 text-sm font-medium text-slate-700">
-                The standards your legal team will ask about. We build to all of
-                them.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {frameworkTags.map((tag) => (
-                  <span key={tag} className={metaChipClass}>
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-4 space-y-1 text-[11px] leading-relaxed text-slate-400">
-                <p>
-                  <a
-                    href="https://www.nist.gov/artificial-intelligence/executive-order-safe-secure-and-trustworthy-artificial-intelligence"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
-                  >
-                    NIST AI Risk Management Framework
-                  </a>
-                  {" · "}
-                  <a
-                    href="https://www.iso.org/standard/81230.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
-                  >
-                    ISO/IEC 42001:2023
-                  </a>
-                  {" · "}
-                  <a
-                    href="https://owasp.org/www-project-top-10-for-large-language-model-applications/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
-                  >
-                    OWASP LLM Top 10
-                  </a>
-                  {" · "}
-                  <a
-                    href="https://artificialintelligenceact.eu/high-level-summary/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600"
-                  >
-                    EU AI Act — high-risk obligations effective Aug 2, 2026
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-8 space-y-4 border-t border-[var(--line)] pt-5 lg:mt-auto">
-              {proofEvidence.map((item) => (
-                <article
-                  key={item.title}
-                  className="border-b border-[var(--line)] pb-4 last:border-b-0 last:pb-0"
-                >
-                  <p className="text-sm font-medium tracking-[-0.01em] text-slate-950">
-                    {item.title}
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                    {item.detail}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-4 lg:col-span-7 lg:mt-0 lg:grid-cols-12">
-            <article
-              className={`artifact-shell overflow-hidden lg:col-span-12 ${surfaceClass}`}
-            >
-              <img
-                src={featuredProof.src}
-                alt={featuredProof.title}
-                className="h-auto w-full"
-                loading="lazy"
-              />
-              <div className="border-t border-[var(--line)] px-5 py-4">
-                <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Main deliverable
-                </p>
-                <p className="text-base font-semibold tracking-[-0.01em] text-slate-900">
-                  {featuredProof.title}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                  {featuredProof.summary}
-                </p>
-              </div>
-            </article>
-
-            {supportingProofs.map((item) => (
-              <article
-                key={item.title}
-                className={`artifact-shell overflow-hidden lg:col-span-6 ${surfaceClass}`}
-              >
-                <img
-                  src={item.src}
-                  alt={item.title}
-                  className="h-auto w-full"
-                  loading="lazy"
-                />
-                <div className="border-t border-[var(--line)] px-4 py-3">
-                  <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                    Also included
-                  </p>
-                  <p className="text-sm font-medium text-slate-900">
-                    {item.title}
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                    {item.summary}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        
 
         <section
           id="scan"

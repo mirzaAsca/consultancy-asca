@@ -252,8 +252,8 @@ const newFeatureGroups = [
   {
     label: "THE BUILD",
     features: [
-      "AI / Automation Implementation",
-      "System Integration",
+      "Implementation Roadmap & Technical Direction",
+      "Integration Architecture & Review",
       "Before & After Measurement",
     ],
   },
@@ -273,8 +273,8 @@ const newFeatureGroups = [
 
 const newPlans = [
   {
-    name: "THE EMBEDDED AI OPERATIONS TEAM",
-    subtitle: "I embed a full team",
+    name: "AI OPERATIONS TEAM",
+    subtitle: "You get a full team",
     price: "$145,000",
     period: "/mo",
     anchor: "Building this team in-house: $300K–$600K/mo in salary alone",
@@ -284,7 +284,7 @@ const newPlans = [
     },
     scarcity: "Coming Q3 2026",
     description:
-      "I embed a full team across multiple workflows. 10-30 people. Strategy, implementation, measurement, training, ongoing.",
+      "When one bottleneck is not the problem and several workflows need fixing at once, I place a dedicated AI operations team inside the business to scope, implement, measure, and train until the fixes stick.",
     cta: "Request Early Access",
     ctaDisabled: false,
     highlighted: false,
@@ -304,38 +304,50 @@ const newPlans = [
     savings: "You save $175,000/mo vs. building in-house",
   },
   {
-    name: "THE 10-WEEK AI SPRINT",
-    subtitle: "For growing teams",
-    price: "$22,000",
+    name: "10-WEEK AI SPRINT",
+    subtitle: "For one clear workflow bottleneck",
+    price: "Starting at $22,000",
     period: "",
     anchor:
-      "Buying these services separately: $115K+ from agencies and freelancers",
+      "Hiring an AI advisory firm for this scope: $50K+ (Toptal / Catalant / Clutch)",
     anchorSource: {
-      label: "Clutch / Toptal / Robert Half 2025–2026",
+      label: "Toptal / Catalant / Clutch 2025–2026",
       url: "https://clutch.co/developers/artificial-intelligence",
     },
     scarcity: "0 spots available",
     description:
-      "I map your highest-impact workflow, implement the AI solution with your team, and measure the result. Starts with a 1-2 week diagnostic. Fixed scope. 10 weeks.",
+      "If one process is wasting hours every week, I start with a 1-2 week diagnostic, implement the fix with your team, and measure whether it saves real time before handover. Fixed scope. 10 weeks.",
     cta: "Apply",
     ctaDisabled: true,
     highlighted: true,
     includedGroups: 3,
     valueStack: [
-      { name: "Workflow Diagnostic & Mapping", value: "$15,000" },
-      { name: "AI / Automation Implementation", value: "$50,000" },
-      { name: "System Integration & Testing", value: "$30,000" },
-      { name: "Team Training & Enablement", value: "$10,000" },
-      { name: "Before & After Measurement", value: "$10,000" },
+      {
+        name: "Workflow Diagnostic & Process Mapping (30–45 hrs)",
+        value: "$10,000",
+      },
+      {
+        name: "AI Strategy, Architecture & Build Direction (50–75 hrs)",
+        value: "$18,000",
+      },
+      {
+        name: "Integration Planning & QA Review (25–40 hrs)",
+        value: "$10,000",
+      },
+      { name: "Team Training & Enablement (15–25 hrs)", value: "$6,000" },
+      {
+        name: "Performance Measurement & Optimization (15–25 hrs)",
+        value: "$6,000",
+      },
     ],
     valueStackOneTime: null,
-    totalMonthlyValue: "$115,000+",
-    savings: "You save $93,000+ vs. hiring separately",
+    totalMonthlyValue: "$50,000+",
+    savings: "You save $28,000+ vs. hiring an advisory firm",
   },
 ];
 
 const fitFor = [
-  "You run a growing team (20-150 people) and you know where AI could save the most time",
+  "You run a growing team (20-300 people) and you know where AI could save the most time",
   "You've tried to fix it yourself or with a freelancer and it didn't stick",
   "You can point to the workflow and the person who owns it",
 ];
@@ -369,7 +381,7 @@ const faqItems = [
   },
   {
     q: "What industries do you work with?",
-    a: "Ecommerce, SaaS, logistics, and services companies with 20-150 people. If your team has a process that's breaking and one person who owns it, we can probably help.",
+    a: "Ecommerce, SaaS, logistics, and services companies with 20-300 people. If your team has a process that's breaking and one person who owns it, we can probably help.",
   },
   {
     q: "How much of our time does this take?",
@@ -518,18 +530,29 @@ export default function App() {
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
               <p className={sectionLabelClass}>
-                AI IMPLEMENTATION FOR GROWING TEAMS
+                AI IMPLEMENTATION FOR 20-300 PERSON TEAMS
               </p>
               <h1 className="mt-6 max-w-[22ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
-                I help growing teams implement AI{" "}
+                I help teams do more work{" "}
                 <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-                  where it saves the most time.
+                  without hiring more people
                 </span>
               </h1>
-              <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                More revenue. Lower costs. Your team gets more done in less
-                time. We build the system, I run it with you every week, and we
-                don't stop until the numbers prove it's working.
+              <p className="mt-6 max-w-[58ch] text-sm font-medium leading-relaxed text-slate-500">
+                56% of CEOs report no revenue or cost benefit from AI.{" "}
+                <a
+                  href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-slate-300 underline-offset-2 hover:text-slate-700 hover:decoration-slate-500"
+                >
+                  PwC 2026
+                </a>
+              </p>
+              <p className="mt-4 max-w-[58ch] text-base leading-relaxed text-slate-700">
+                If one process is eating your team's capacity — or you're about
+                to hire just to keep up — I map it, guide your team through the
+                fix, and measure whether it actually reduced the workload.
               </p>
             </div>
 
@@ -546,23 +569,23 @@ export default function App() {
           <aside
             className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}
           >
-            {/* ── Floating label ── */}
-            <span className="absolute -top-3 right-6 z-10 bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white shadow-sm">
-              Free workflow review
-            </span>
-
             <p className="text-xl font-semibold leading-snug tracking-[-0.02em] text-slate-950">
-              30 days from now
+              Sound familiar?
             </p>
 
             <div className="mt-5 border-t border-[var(--line)] pt-5">
-              <p className={sectionLabelClass}>WHAT YOUR COMPANY LOOKS LIKE</p>
+              <p className={sectionLabelClass}>WHAT WE KEEP HEARING</p>
               <ul className="mt-4 space-y-3">
-                {dreamOutcomes.map((outcome) => (
-                  <li key={outcome} className="flex items-start gap-2.5">
+                {[
+                  "Your team wastes hours every day on one process — and you're about to hire someone just to keep up",
+                  "The person who owns it is too busy doing it to fix it",
+                  "You tried Zapier. Or a freelancer. It worked for a month, then it broke and nobody fixed it",
+                  "You know AI could help but you don't know where to start",
+                ].map((pain) => (
+                  <li key={pain} className="flex items-start gap-2.5">
                     <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 bg-[var(--accent)]" />
                     <p className="text-sm leading-relaxed text-slate-700">
-                      {outcome}
+                      {pain}
                     </p>
                   </li>
                 ))}
@@ -623,8 +646,8 @@ export default function App() {
         <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
-              If the system we implement doesn't measurably save your team time
-              within 60 days of going live{" "}
+              If the system we implement doesn't measurably reduce your team's
+              workload within 60 days of going live{" "}
               <span className="text-[var(--muted)]">
                 — I keep working for free until it does.
               </span>
@@ -705,61 +728,29 @@ export default function App() {
               </p>
             </article>
           </div>
-          <p className="mt-8 text-center text-base font-medium leading-relaxed text-slate-700">
-            The difference? They started with the tool. I start with the
-            workflow.
-          </p>
-        </section>
-
-        {/* ── QUICK CHECK: Self-assessment ── */}
-        <section className={shortDividerSectionClass}>
-          <p className={sectionLabelClass}>QUICK CHECK</p>
-          <h2 className={sectionHeadingClass}>
-            Does this sound like your company?
-          </h2>
-
-          <div className="mt-8 space-y-3">
-            {[
-              "Your team wastes hours every day on one process and everyone knows it",
-              "The person who owns it is too busy doing it to fix it",
-              "You tried Zapier. Or a freelancer. It worked for a month, then it broke and nobody fixed it",
-              "You know AI could help but you don't know where to start",
-              "Your business is growing but the problem is growing faster",
-            ].map((item) => (
-              <div key={item} className={`flex items-start gap-4 ${cardClass}`}>
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-[var(--line)] bg-white font-['IBM_Plex_Mono'] text-[10px] text-[var(--muted)]">
-                  &nbsp;
-                </span>
-                <p className="text-sm leading-relaxed text-slate-700">{item}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className={`mt-8 ${panelClass}`}>
-            <p className="text-sm leading-relaxed text-slate-700">
+          <div className="mt-10 border-t border-[var(--line)] pt-6 text-center">
+            <p className="text-base font-medium leading-relaxed text-slate-700">
+              The difference? They started with the tool. I start with the
+              workflow.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
               Companies with structured AI operating models achieve up to{" "}
-              <span className="font-semibold text-slate-950">
+              <span className="font-semibold text-slate-700">
                 2.7x return on invested capital
               </span>{" "}
-              compared to laggards.
-            </p>
-            <p className="mt-1.5 text-[11px] leading-relaxed text-slate-400">
+              compared to laggards.{" "}
               <a
                 href="https://www.bcg.com/publications/2025/are-you-generating-value-from-ai-the-widening-gap"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
+                className="text-[11px] underline decoration-slate-300 underline-offset-2 hover:text-slate-600 hover:decoration-slate-500"
               >
                 BCG 2025
               </a>
             </p>
-            <a href="#how-it-works" className={`mt-4 ${primaryButtonClass}`}>
-              See how it works
-            </a>
           </div>
         </section>
 
-     
         {/* ── FIT / NOT FIT ── */}
         <section className={stackedSectionClass}>
           <p className={sectionLabelClass}>IS THIS FOR YOU?</p>
@@ -811,14 +802,14 @@ export default function App() {
 
         {/* ── WHERE WE'VE COOKED ── */}
         <section className={stackedSectionClass}>
-          <p className={sectionLabelClass}>WHERE WE'VE COOKED</p>
+          <p className={sectionLabelClass}>AI INTEGRATION</p>
           <h2 className={sectionHeadingClass}>Teams I've worked with.</h2>
 
           {/* ── Client companies ── */}
           <div className="mt-12">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
-                Where I'm currently Cooking with AI
+                Current Client Work
               </p>
               <span className={metaChipClass}>{clientLogos.length}</span>
             </div>
@@ -841,7 +832,7 @@ export default function App() {
           <div className="mt-20">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
-                Our Own Portfolio Cooking Show
+                Portfolio Companies
               </p>
               <span className={metaChipClass}>{portfolioLogos.length}</span>
             </div>
@@ -864,7 +855,7 @@ export default function App() {
           <div className="mt-20">
             <div className="flex items-center gap-3">
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] bg-[var(--accent)] text-white px-2.5 py-1">
-                Where We Used to Cook
+                Past Work
               </p>
               <span className={metaChipClass}>{alumniLogos.length}</span>
             </div>
@@ -886,11 +877,14 @@ export default function App() {
 
         {/* ── NEW PLANS (PROPOSED) ── */}
         <section className={stackedSectionClass}>
-          <p className={sectionLabelClass}>NEW PLANS (PROPOSED)</p>
-          <h2 className={sectionHeadingClass}>Two ways to work with me.</h2>
+          <p className={sectionLabelClass}>PLANS</p>
+          <h2 className={sectionHeadingClass}>
+            Two ways to save time & money.
+          </h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
-            From weekly advisory to a full team of engineers inside your
-            business. We build it and run it with your people.
+            If one workflow is wasting hours every week, start with the sprint.
+            If several workflows are breaking at once, I embed a dedicated AI
+            operations team.
           </p>
 
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -974,6 +968,23 @@ export default function App() {
                     {plan.scarcity}
                   </span>
                 </div>
+
+                {/* ── After the sprint (only on highlighted/sprint card) ── */}
+                {plan.highlighted && (
+                  <div className="mt-4 border border-[var(--accent)] bg-[rgba(15,23,42,0.03)] p-4">
+                    <p className="font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+                      After the sprint
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                      If there's more to fix, I stay. Monthly. Same structure.
+                      No lock-in. We only continue if it makes sense for both of
+                      us.
+                    </p>
+                    <span className="mt-2 inline-flex w-fit items-center border border-[var(--accent)] bg-white px-2 py-0.5 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+                      Scoped per engagement
+                    </span>
+                  </div>
+                )}
 
                 {/* ── Value stack ── */}
                 <div className="mt-4 border-t border-[var(--line)] pt-4">
@@ -1373,6 +1384,27 @@ export default function App() {
               </aside>
             </div>
 
+            <div className={panelClass}>
+              <p className="text-xl font-semibold leading-snug tracking-[-0.02em] text-slate-950">
+                30 days from now
+              </p>
+              <div className="mt-5 border-t border-[var(--line)] pt-5">
+                <p className={sectionLabelClass}>
+                  WHAT YOUR COMPANY LOOKS LIKE
+                </p>
+                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {dreamOutcomes.map((outcome) => (
+                    <li key={outcome} className="flex items-start gap-2.5">
+                      <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 bg-[var(--accent)]" />
+                      <p className="text-sm leading-relaxed text-slate-700">
+                        {outcome}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             <WaitlistForm />
           </div>
         </section>
@@ -1386,7 +1418,7 @@ export default function App() {
           </a>
           <p className="text-sm text-slate-600">
             I help growing teams implement AI where it saves the most time.
-            Currently booked — join the waitlist.
+            
           </p>
         </footer>
       </main>

@@ -142,20 +142,7 @@ const leverFlows: LeverFlow[] = [
         "The goal is not a thinner payroll. It's a smaller, better-equipped team doing the work of a much larger one. Studies show 25–55% task speed gains (Harvard/BCG, GitHub Copilot) and up to 35% productivity improvement for less experienced workers (Stanford/MIT).",
     },
   },
-  {
-    lever: "Lever 03",
-    title: "Reduce risk",
-    interventions: [
-      "Build governance into delivery",
-      "Align to NIST AI RMF and EU AI Act",
-      "Automate compliance checks",
-    ],
-    effects: [
-      "Fewer audit failures",
-      "Faster regulatory approval",
-      "Lower legal exposure",
-    ],
-  },
+ 
 ];
 
 const bonusGain: BonusGain = {
@@ -302,27 +289,26 @@ const schoolSteps: PrimerStep[] = [
   },
   {
     step: "02",
-    eyebrow: "FOUR LEVERS",
-    title: "Sell more. Spend less. Reduce risk. Charge more.",
+    eyebrow: "THREE LEVERS",
+    title: "Sell more. Spend less. Charge more.",
     detail:
       "Price easily goes up once your customer experience, delivery speed, and reliability get better.",
     summaryItems: [
       "Lever 01: Sell more",
       "Lever 02: Lower unit cost",
-      "Lever 03: Reduce risk",
-      "Lever 04: Charge more",
+      "Lever 03: Charge more",
     ],
     leverFlows,
     bonusGain,
     closing:
-      "If a project doesn't help you sell more, spend less, reduce risk, or charge more - it's not a business case yet.",
+      "If a project doesn't help you sell more, spend less, or charge more - it's not a business case yet.",
   },
   {
     step: "03",
     eyebrow: "THE FOUNDATION",
     title: "Your AI is only as smart as what you feed it.",
     detail:
-      "Before AI can sell more, spend less, or reduce risk — it has to understand your company. That means collecting everything your business knows and putting it in one place your AI systems can actually use. Skip this step and nothing else works.",
+      "Before AI can sell more or spend less — it has to understand your company. That means collecting everything your business knows and putting it in one place your AI systems can actually use. Skip this step and nothing else works.",
     knowledgeLayers,
     tags: ["Hard prerequisite", "AI fails without this"],
     closing:
@@ -343,7 +329,7 @@ const schoolSteps: PrimerStep[] = [
     eyebrow: "WHERE TO START",
     title: "Start with whatever makes you the most money fastest.",
     detail:
-      "Map the work, run the numbers, ship the biggest wins first. That's the order.",
+      "Map the work, run the numbers, ship the biggest wins first.",
     sequence: integrationSteps,
   },
 ];
@@ -591,7 +577,7 @@ function KnowledgeLayerDiagram({ layers }: { layers: KnowledgeLayer[] }) {
         </div>
         <p className="mt-3 text-sm leading-relaxed text-slate-700">
           Every AI system you build — customer-facing or internal — pulls from
-          this single source. No hub, no context. No context, no results.
+          this single source.
         </p>
       </div>
 
