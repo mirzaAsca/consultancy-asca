@@ -7,6 +7,11 @@ const PRIMARY_EMAIL = "mirza@10x.ai";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const PROOF_LINK =
   "https://www.linkedin.com/posts/alenm_50-billion-tokens-later-honored-to-finally-activity-7399454409547657216-LEUi";
+const FLYRANK_CASE_STUDIES = "https://www.flyrank.com/blogs/case-studies";
+const TENX_URL = "https://10x.ai";
+
+const inlineLinkClass =
+  "font-medium text-[var(--accent)] underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent-strong)] hover:decoration-[var(--accent-strong)]";
 
 const surfaceClass = "border border-[var(--line)] bg-[var(--surface)]";
 const panelClass = `premium-panel ${surfaceClass} p-6`;
@@ -77,7 +82,24 @@ export default function AboutApp() {
               Hi, I'm Mirza Ašćerić.
             </h1>
             <p className="mt-4 max-w-[44ch] font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-              The director of AI Development over at FlyRank AI & 10x.ai
+              The director of AI Development over at{" "}
+              <a
+                href={FLYRANK_CASE_STUDIES}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent)]"
+              >
+                FlyRank AI
+              </a>{" "}
+              &{" "}
+              <a
+                href={TENX_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent)]"
+              >
+                10x.ai
+              </a>
             </p>
             <p className="mt-8 max-w-[56ch] text-base leading-relaxed text-slate-700">
               And I promise, I won't use AI to write this text. And I'm not a robot.
@@ -136,15 +158,31 @@ export default function AboutApp() {
               <p className="text-base leading-relaxed text-slate-700">
                 I had multiple small businesses over the past years, kept
                 building, learning, and failing, but now — we are doing stuff on
-                a whole new level. At FlyRank AI, we are doing the unimaginable
-                — creating the first AI content ecosystem. It's not like using
-                ChatGPT to create an article; we own the full architecture. In
-                short, it works.
+                a whole new level. At{" "}
+                <a
+                  href={FLYRANK_CASE_STUDIES}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={inlineLinkClass}
+                >
+                  FlyRank AI
+                </a>
+                , we are doing the unimaginable — creating the first AI content
+                ecosystem. It's not like using ChatGPT to create an article; we
+                own the full architecture. In short, it works.
               </p>
               <p className="mt-5 border-t border-dashed border-[var(--line)] pt-5 text-base leading-relaxed text-slate-800">
                 If a Guinness record existed for the fastest organic growth of a
                 website in record time, we would hold the title (I'm not even
-                exaggerating, I swear). And we keep beating it all the time.
+                exaggerating, I swear). And we keep beating it all the time.{" "}
+                <a
+                  href={FLYRANK_CASE_STUDIES}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={inlineLinkClass}
+                >
+                  See the case studies →
+                </a>
               </p>
             </div>
           </div>
@@ -163,16 +201,33 @@ export default function AboutApp() {
               <span className="bg-[var(--accent)] px-[0.12em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
                 bigger picture
               </span>{" "}
-              — 10x.ai.
+              —{" "}
+              <a
+                href={TENX_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:decoration-[var(--accent)]"
+              >
+                10x.ai
+              </a>
+              .
             </p>
 
             <div className="mt-8 space-y-5 text-left">
               <p className="text-base leading-relaxed text-slate-700">
-                10x.ai is a portfolio of AI-native products we develop or
-                acquire. Now we are operating differently, both in-house and
-                externally. At 10x.ai, we automate most and test everything. We
-                don't invent stuff so often, but you can bet we are executing
-                pretty damn fast.
+                <a
+                  href={TENX_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={inlineLinkClass}
+                >
+                  10x.ai
+                </a>{" "}
+                is a portfolio of AI-native products we develop or acquire. Now
+                we are operating differently, both in-house and externally. At
+                10x.ai, we automate most and test everything. We don't invent
+                stuff so often, but you can bet we are executing pretty damn
+                fast.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
                 We even have our own lab (20+ domains) as a playground to test
@@ -219,7 +274,16 @@ export default function AboutApp() {
                 at least 50+ hours.
               </p>
               <p className="text-base font-semibold leading-relaxed text-slate-950">
-                I want to change it. 10x.ai wants to change it.
+                I want to change it.{" "}
+                <a
+                  href={TENX_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={inlineLinkClass}
+                >
+                  10x.ai
+                </a>{" "}
+                wants to change it.
               </p>
             </div>
           </div>
@@ -244,7 +308,7 @@ export default function AboutApp() {
               <p className="text-base leading-relaxed text-slate-700">
                 And I will help you for free. Seriously. Nothing in my pocket is
                 being held back once you qualify for our strategy call. You can
-                do the stuff I explain in-house, or even with some other agency
+                do the stuff I explain in-house, or even with some agency
                 — we're good.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
@@ -294,9 +358,27 @@ export default function AboutApp() {
           >
             {PRIMARY_EMAIL}
           </a>
-          <p className="text-sm text-slate-600">
-            I help growing teams implement AI where it saves the most time.
-          </p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+            <p className="text-sm text-slate-600">
+              I help growing teams implement AI where it saves the most time.
+            </p>
+            <a
+              href={LINKEDIN_PROFILE}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Mirza Ašćerić on LinkedIn"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center border border-[var(--line)] bg-white text-[var(--accent)] transition-[background-color,border-color,color] duration-200 hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-[16px] w-[16px]"
+                aria-hidden="true"
+              >
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+            </a>
+          </div>
         </footer>
       </main>
     </div>
