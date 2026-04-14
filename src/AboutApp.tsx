@@ -7,6 +7,7 @@ const PRIMARY_EMAIL = "mirza@10x.ai";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const PROOF_LINK =
   "https://www.linkedin.com/posts/alenm_50-billion-tokens-later-honored-to-finally-activity-7399454409547657216-LEUi";
+const FLYRANK_URL = "https://www.flyrank.com";
 const FLYRANK_CASE_STUDIES = "https://www.flyrank.com/blogs/case-studies";
 const TENX_URL = "https://10x.ai";
 
@@ -84,7 +85,7 @@ export default function AboutApp() {
             <p className="mt-4 max-w-[44ch] font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
               The director of AI Development over at{" "}
               <a
-                href={FLYRANK_CASE_STUDIES}
+                href={FLYRANK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline decoration-[rgba(30,41,59,0.24)] underline-offset-4 transition-colors hover:text-[var(--accent)]"
@@ -159,7 +160,7 @@ export default function AboutApp() {
                 building, learning, and failing, but now — we are doing stuff on
                 a whole new level. At{" "}
                 <a
-                  href={FLYRANK_CASE_STUDIES}
+                  href={FLYRANK_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={inlineLinkClass}
