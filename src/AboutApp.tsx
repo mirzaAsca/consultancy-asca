@@ -103,7 +103,7 @@ export default function AboutApp() {
               </a>
             </p>
             <p className="mt-8 max-w-[56ch] text-base leading-relaxed text-slate-700">
-              And I promise, I won't use AI to write this text. And I'm not a robot.
+              And I promise, I won't use AI to write the following text. And I'm not a robot.
             </p>
           </div>
         </section>
