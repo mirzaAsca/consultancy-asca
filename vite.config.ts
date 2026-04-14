@@ -24,6 +24,7 @@ export default defineConfig({
           __dirname,
           "readiness-diagnostic/index.html",
         ),
+        about: resolve(__dirname, "about/index.html"),
       },
     },
   },

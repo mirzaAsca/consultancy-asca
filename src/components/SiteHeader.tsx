@@ -71,6 +71,9 @@ export default function SiteHeader({
           <a href={roiHref} className="transition-colors hover:text-slate-900">
             Research
           </a>
+          <a href="/about/" className="transition-colors hover:text-slate-900">
+            About
+          </a>
         </nav>
         <a
           href={founderLinkedIn}
