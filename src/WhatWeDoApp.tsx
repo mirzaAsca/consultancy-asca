@@ -13,7 +13,6 @@ const secondaryButtonClass =
 const surfaceClass = "border border-[var(--line)] bg-[var(--surface)]";
 const panelClass = `premium-panel ${surfaceClass} p-6`;
 const cardClass = `premium-card ${surfaceClass} p-5`;
-const listItemClass = `premium-card ${surfaceClass} px-4 py-3`;
 const sectionLabelClass =
   "inline-flex w-fit items-center bg-white px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]";
 const sectionHeadingClass =
@@ -44,104 +43,62 @@ const installBlocks = [
 
 const mechanismFlow = [
   {
-    step: "01",
-    title: "Collect",
+    step: "Week 1",
+    title: "Map the workflow",
     detail:
-      "We find every AI project running in your company and write it down.",
+      "Every step, handoff, exception, and manual touch. We find where the real bottleneck lives.",
   },
   {
-    step: "02",
-    title: "Rank",
-    detail: "Which ones can actually make money? Those go first.",
-  },
-  {
-    step: "03",
-    title: "Set the rules",
-    detail: 'Who decides what. No more "I thought you were handling that."',
-  },
-  {
-    step: "04",
-    title: "Build and ship",
-    detail: "We track every project until it's live and working.",
-  },
-  {
-    step: "05",
-    title: "Measure",
-    detail: "Is it doing what we said it would? Numbers don't lie.",
-  },
-  {
-    step: "06",
-    title: "Double down or kill it",
-    detail: "Winners get more resources. Losers get shut down.",
-  },
-];
-
-const firstMonthDeliverables = [
-  "A complete map of the workflow. Every step, every delay, every cost.",
-  "A straight answer: what to automate, what to leave alone, and why.",
-  "A simple doc: who approves what, and when. No more guessing.",
-  "Baseline numbers so you can tell if AI is making you money or burning it.",
-  "A clear next step: start the build, or don't. Either way you keep everything.",
-];
-
-const timeline = [
-  {
-    title: "Weeks 1-2",
-    detail: "Workflow map. Baseline numbers. A plan your team can act on.",
-  },
-  {
-    title: "Weeks 3-8",
+    step: "Week 2",
+    title: "Set the metric and build plan",
     detail:
-      "Your team builds. I direct the architecture, review the work, and keep it on track.",
+      "One success metric, one baseline number, and a clear scope for what to build.",
   },
   {
-    title: "Weeks 9-10",
-    detail: "Before and after numbers with handover.",
-  },
-];
-
-const proofVisuals = [
-  {
-    title: "Portfolio dashboard",
-    src: "/proof-portfolio-dashboard.svg",
-    summary:
-      "Every project, who owns it, what's at risk, and what the board needs to decide next.",
+    step: "Weeks 3-6",
+    title: "Build the system",
+    detail:
+      "Your team builds with me directing the architecture and reviewing the work.",
   },
   {
-    title: "Decision rules and ownership map",
-    src: "/proof-governance-charter.svg",
-    summary:
-      "Who owns what, who escalates to whom, and when reviews happen. No confusion.",
+    step: "Weeks 7-8",
+    title: "Test with real work",
+    detail:
+      "We run the system on real tasks, catch the edge cases, and fix what breaks.",
   },
   {
-    title: "Scorecard and baselines",
-    src: "/proof-kpi-tree.svg",
-    summary:
-      "The numbers that tell you if AI is saving money, making money, or wasting money.",
+    step: "Weeks 9-10",
+    title: "Launch and train",
+    detail: "Full rollout with your team. Training, documentation, handover.",
+  },
+  {
+    step: "After",
+    title: "Measure and decide what's next",
+    detail:
+      "Before and after numbers. Then we decide together whether workflow #2 is worth fixing.",
   },
 ];
 
 const heroHighlights = [
   {
     label: "01",
-    title: "The map",
+    title: "The real problem",
     detail:
-      "Your process step by step. Every handoff, every delay, every manual step.",
+      "What's actually causing the bottleneck — not what you think is causing it.",
   },
   {
     label: "02",
-    title: "The baseline",
+    title: "The honest answer",
     detail:
-      "How long it takes now. How many people touch it. What it costs you every month.",
+      "Whether AI is the right fix, or whether a hire, a tool, or a process change solves it cheaper.",
   },
   {
     label: "03",
-    title: "The action list",
-    detail: "What to automate, what to leave alone, and what it costs to fix.",
+    title: "The next step",
+    detail:
+      "If it's a fit: sprint scope and timing. If it isn't: exactly what to do instead.",
   },
 ];
-
-const featuredProof = proofVisuals[0];
 
 export default function WhatWeDoApp() {
   return (
@@ -169,10 +126,10 @@ export default function WhatWeDoApp() {
                 </span>
               </h1>
               <p className="mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                Most companies try AI on their own or hire a freelancer. It
-                works for a bit, then breaks. I spend 10 weeks with your team —
-                figure out what to build, guide your people through it, and
-                measure whether it actually saved time. You keep everything.
+                Freelancers build what you tell them — but scoping is the hard
+                part. I spend the first 2 weeks finding the real bottleneck,
+                then 8 weeks teaching and helping your team ship a fix that
+                measurably saves hours. You own the system at the end.
               </p>
             </div>
 
@@ -203,15 +160,15 @@ export default function WhatWeDoApp() {
               </div> */}
               <div className="flex flex-wrap items-center gap-5">
                 <a href="#scan" className={primaryButtonClass}>
-                  Get Your $15,000 Scan — Free
+                  Book a $500 Strategy Call — Free
                 </a>
                 <a href="#mechanism" className={secondaryButtonClass}>
                   {MECHANISM_CTA}
                 </a>
               </div>
               <p className="text-sm text-slate-600">
-                For companies already spending on AI that have nothing to show
-                the board yet.
+                For teams with one painful workflow and a real reason to fix it
+                now.
               </p>
             </div>
           </div>
@@ -220,37 +177,102 @@ export default function WhatWeDoApp() {
             className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}
           >
             <span className="absolute -top-3 right-6 z-10 bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white shadow-sm">
-              Valued at $15,000 — yours free
+              Free if you qualify
             </span>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className={sectionLabelClass}>START HERE</p>
+              <p className={sectionLabelClass}>BOOK A CALL</p>
               <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-                Weeks 1-2
+                45 minutes
               </p>
             </div>
-            <figure className="artifact-shell mt-6 border border-[var(--line)]">
+            <figure className="artifact-shell mt-6 border border-[var(--line)] bg-white">
               <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2">
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Sample deliverable
+                  Your calendar
                 </p>
                 <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
-                  Client details
+                  Next available
                 </p>
               </div>
-              <img
-                src={featuredProof.src}
-                alt={featuredProof.title}
-                className="h-auto w-full"
-                loading="eager"
-              />
+              <div className="px-5 py-6">
+                <div className="grid grid-cols-[36px_repeat(5,1fr)] gap-2">
+                  <div />
+                  {["MON", "TUE", "WED", "THU", "FRI"].map((day) => (
+                    <div
+                      key={day}
+                      className="text-center font-['IBM_Plex_Mono'] text-[10px] font-medium tracking-[0.16em] text-slate-500"
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 space-y-2">
+                  {/* 9:00 row */}
+                  <div className="grid grid-cols-[36px_repeat(5,1fr)] items-center gap-2">
+                    <span className="font-['IBM_Plex_Mono'] text-[10px] font-medium text-slate-400">
+                      9:00
+                    </span>
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8" />
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8" />
+                    <div className="h-8 bg-slate-100" />
+                  </div>
+                  {/* 10:00 row — highlighted strategy call on Wed */}
+                  <div className="grid grid-cols-[36px_repeat(5,1fr)] items-center gap-2">
+                    <span className="font-['IBM_Plex_Mono'] text-[10px] font-medium text-slate-400">
+                      10:00
+                    </span>
+                    <div className="h-8" />
+                    <div className="h-8" />
+                    <div className="h-8 bg-[var(--accent)] shadow-[0_6px_14px_rgba(30,41,59,0.18)]" />
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8" />
+                  </div>
+                  {/* 11:00 row */}
+                  <div className="grid grid-cols-[36px_repeat(5,1fr)] items-center gap-2">
+                    <span className="font-['IBM_Plex_Mono'] text-[10px] font-medium text-slate-400">
+                      11:00
+                    </span>
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8" />
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8" />
+                  </div>
+                  {/* 12:00 row */}
+                  <div className="grid grid-cols-[36px_repeat(5,1fr)] items-center gap-2">
+                    <span className="font-['IBM_Plex_Mono'] text-[10px] font-medium text-slate-400">
+                      12:00
+                    </span>
+                    <div className="h-8" />
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8" />
+                    <div className="h-8 bg-slate-100" />
+                    <div className="h-8 bg-slate-100" />
+                  </div>
+                </div>
+                <div className="mt-5 flex items-center justify-between gap-3 border-t border-dashed border-[var(--line)] pt-4">
+                  <div className="flex items-center gap-2">
+                    <span className="block h-2.5 w-2.5 bg-[var(--accent)]" />
+                    <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium tracking-[0.08em] text-slate-700">
+                      Wed 10:00 — 45-min strategy call
+                    </p>
+                  </div>
+                  <p className="font-['IBM_Plex_Mono'] text-[11px] tracking-[0.06em] text-slate-400">
+                    1 slot / week
+                  </p>
+                </div>
+              </div>
             </figure>
             <h2 className="mt-5 text-2xl font-semibold leading-tight tracking-[-0.02em] [text-wrap:balance]">
-              One page that shows you where the time goes.
+              45 minutes. One workflow. A straight answer.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              We look at everything you're running. In two weeks, you know
-              what's working, what's wasting money, and what to do about it. You
-              keep the whole thing whether you hire us or not.
+              On the call, we look at one workflow — the one that's costing you
+              the most time or forcing your next hire. I'll tell you what I'd
+              actually build, what it would cost, and whether the sprint is the
+              right move. If it's not, I'll tell you that too.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
               {heroHighlights.map((item) => (
@@ -274,7 +296,7 @@ export default function WhatWeDoApp() {
 
         <section
           id="mechanism"
-          className="reveal delay-4 section-divider-full py-14"
+          className="reveal delay-4 section-divider-short py-14"
         >
           <p className={sectionLabelClass}>WHAT WE BUILD INSIDE YOUR COMPANY</p>
           <h2 className={sectionHeadingClass}>
@@ -304,36 +326,52 @@ export default function WhatWeDoApp() {
             ))}
           </div>
 
-          <div className={panelClass + " mt-8"}>
+          <div className="mx-auto mt-14 max-w-3xl text-center sm:mt-16">
+            <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
+              In 2 weeks, you know exactly{" "}
+              <span className="text-[var(--muted)]">
+                what's worth fixing and what it takes.
+              </span>
+            </p>
+          </div>
+
+          <div className={panelClass + " mt-14 sm:mt-16"}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className={sectionLabelClass}>HOW IT WORKS</p>
                 <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-slate-700">
-                  Every project goes through the same six steps. No exceptions.
-                  That's how nothing falls through the cracks.
+                  Every sprint follows the same ten-week path. That's how
+                  nothing falls through the cracks.
                 </p>
               </div>
               <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-                6 steps, no shortcuts
+                10 weeks, step by step
               </p>
             </div>
 
-            <ol className="mt-8 space-y-5 lg:hidden">
+            <ol className="mt-8 space-y-6 lg:hidden">
               {mechanismFlow.map((item, index) => (
-                <li key={item.step} className="relative pl-12">
-                  {index < mechanismFlow.length - 1 ? (
-                    <div className="absolute bottom-[-1.4rem] left-4 top-9 border-l border-[var(--line)]" />
-                  ) : null}
-                  <div
-                    className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-medium tracking-[0.12em] ${
+                <li
+                  key={item.step}
+                  className="relative border-l-2 border-[var(--line)] pl-5"
+                >
+                  <span
+                    className={`absolute -left-[7px] top-1 block h-3 w-3 rounded-full border-2 ${
                       index === mechanismFlow.length - 1
-                        ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                        : "border-[var(--line)] bg-white text-[var(--muted)]"
-                    } font-['IBM_Plex_Mono']`}
+                        ? "border-[var(--accent)] bg-[var(--accent)]"
+                        : "border-[var(--line)] bg-white"
+                    }`}
+                  />
+                  <p
+                    className={`font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] ${
+                      index === mechanismFlow.length - 1
+                        ? "text-[var(--accent)]"
+                        : "text-[var(--muted)]"
+                    }`}
                   >
                     {item.step}
-                  </div>
-                  <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">
+                  </p>
+                  <p className="mt-2 text-base font-semibold tracking-[-0.01em] text-slate-950">
                     {item.title}
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-slate-700">
@@ -343,21 +381,20 @@ export default function WhatWeDoApp() {
               ))}
             </ol>
 
-            <ol className="relative mt-9 hidden lg:grid lg:grid-cols-6 lg:gap-4">
-              <div className="pointer-events-none absolute left-4 right-4 top-4 border-t border-[var(--line)]" />
+            <ol className="relative mt-9 hidden lg:grid lg:grid-cols-6 lg:gap-5">
               {mechanismFlow.map((item, index) => (
                 <li key={item.step} className="relative">
-                  <div
-                    className={`relative z-[1] flex h-8 w-8 items-center justify-center rounded-full border text-[10px] font-medium tracking-[0.12em] ${
+                  <span
+                    className={`inline-flex items-center border px-2.5 py-1 font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] ${
                       index === mechanismFlow.length - 1
                         ? "border-[var(--accent)] bg-[var(--accent)] text-white"
                         : "border-[var(--line)] bg-white text-[var(--muted)]"
-                    } font-['IBM_Plex_Mono']`}
+                    }`}
                   >
                     {item.step}
-                  </div>
-                  <div className="mt-5 max-w-[16ch]">
-                    <p className="text-base font-semibold tracking-[-0.01em] text-slate-950">
+                  </span>
+                  <div className="mt-5 border-t border-[var(--line)] pt-4">
+                    <p className="text-base font-semibold leading-tight tracking-[-0.01em] text-slate-950">
                       {item.title}
                     </p>
                     <p className="mt-2 text-sm leading-relaxed text-slate-700">
@@ -368,42 +405,6 @@ export default function WhatWeDoApp() {
               ))}
             </ol>
           </div>
-        </section>
-
-        <section className={splitSectionClass}>
-          <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
-            <p className={sectionLabelClass}>FIRST 2 WEEKS</p>
-            <h2 className={sectionHeadingClass}>
-              In 2 weeks, you know exactly what's worth fixing and what it
-              takes.
-            </h2>
-            <ul className="mt-7 space-y-3 text-sm leading-relaxed text-slate-700 lg:mt-auto">
-              {firstMonthDeliverables.map((item) => (
-                <li key={item} className={listItemClass}>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <aside className={`flex h-full flex-col lg:col-span-5 ${panelClass}`}>
-            <p className={sectionLabelClass}>TIMELINE</p>
-            <dl className="mt-5 flex flex-1 flex-col text-sm">
-              {timeline.map((item) => (
-                <div
-                  key={item.title}
-                  className="flex-1 border-t border-[var(--line)] pt-4 first:border-t-0 first:pt-0"
-                >
-                  <dt className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
-                    {item.title}
-                  </dt>
-                  <dd className="mt-2 leading-relaxed text-slate-800">
-                    {item.detail}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </aside>
         </section>
 
         <section className="reveal section-divider-full py-14 sm:py-16">
@@ -455,10 +456,7 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <section
-          id="scan"
-          className="reveal py-14 sm:py-16"
-        >
+        <section id="scan" className="reveal py-14 sm:py-16">
           <div className="space-y-10">
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="flex h-full flex-col lg:col-span-7 lg:pr-4">
@@ -467,7 +465,7 @@ export default function WhatWeDoApp() {
                     JOIN THE WAITLIST — COMPLIMENTARY SCAN INCLUDED
                   </p>
                   <h2 className={sectionHeadingClass}>
-                    Get on the list. Get your AI Portfolio Reality Scan now.
+                    Get on the list. Book a $500 Strategy Call — Free
                   </h2>
                   <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
                     Tell us about your company and what's happening with AI

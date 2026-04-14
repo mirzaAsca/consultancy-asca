@@ -157,22 +157,22 @@ const newPlans = [
     highlighted: false,
     includedGroups: 4,
     valueStack: [
-      { name: "10–30 Dedicated AI Engineers", value: "$250,000/mo" },
-      { name: "Full Strategy & Scoping Layer", value: "$25,000/mo" },
+      { name: "10–30 Dedicated AI Engineers", value: "" },
+      { name: "Full Strategy & Scoping Layer", value: "" },
       {
         name: "External Specialists (Design, Copy, SEO, Dev)",
-        value: "$20,000/mo",
+        value: "",
       },
-      { name: "Organization-Wide Training & Enablement", value: "$15,000/mo" },
-      { name: "Ongoing Measurement & Optimization", value: "$10,000/mo" },
+      { name: "Organization-Wide Training & Enablement", value: "" },
+      { name: "Ongoing Measurement & Optimization", value: "" },
     ],
-    valueStackOneTime: [{ name: "Full Workflow Audit", value: "$15,000" }],
+    valueStackOneTime: [{ name: "Full Workflow Audit", value: "" }],
     totalMonthlyValue: "$320,000/mo",
     savings: "You save $175,000/mo vs. building in-house",
   },
   {
     name: "10-WEEK AI SPRINT",
-    subtitle: "For one clear workflow bottleneck",
+    subtitle: "For one costly workflow",
     price: "Starting at $22,000",
     period: "",
     anchor:
@@ -190,21 +190,21 @@ const newPlans = [
     includedGroups: 3,
     valueStack: [
       {
-        name: "Workflow Diagnostic & Process Mapping (30–45 hrs)",
-        value: "$10,000",
+        name: "Workflow Diagnostic & Process Mapping",
+        value: "",
       },
       {
-        name: "AI Strategy, Architecture & Build Direction (50–75 hrs)",
-        value: "$18,000",
+        name: "AI Strategy, Architecture & Build Direction",
+        value: "",
       },
       {
-        name: "Integration Planning & QA Review (25–40 hrs)",
-        value: "$10,000",
+        name: "Integration Planning & QA Review",
+        value: "",
       },
-      { name: "Team Training & Enablement (15–25 hrs)", value: "$6,000" },
+      { name: "Team Training & Enablement", value: "" },
       {
-        name: "Performance Measurement & Optimization (15–25 hrs)",
-        value: "$6,000",
+        name: "Performance Measurement & Optimization",
+        value: "",
       },
     ],
     valueStackOneTime: null,
@@ -214,9 +214,9 @@ const newPlans = [
 ];
 
 const fitFor = [
-  "You run a growing team (20-300 people) and you know where AI could save the most time",
+  "You run an ecommerce team (20-80 people) and you know which workflow is costing you the most time",
   "You've tried to fix it yourself or with a freelancer and it didn't stick",
-  "You can point to the workflow and the person who owns it",
+  "One person owns the workflow and can work with me weekly",
 ];
 
 const fitNotFor = [
@@ -226,6 +226,10 @@ const fitNotFor = [
 ];
 
 const faqItems = [
+  {
+    q: "Why not just hire someone full-time?",
+    a: "Because this gets one painful workflow fixed in 10 weeks without recruiting, ramp time, or another full-time salary before you know what actually works.",
+  },
   {
     q: "How is this different from hiring a freelancer or using Zapier?",
     a: "A freelancer builds what you tell them. But most founders can't scope the work correctly — that's why it takes 4 months and solves the wrong thing. I diagnose first, then implement. Zapier works for simple stuff. If Zapier could fix your bottleneck, you would've done it already.",
@@ -248,7 +252,7 @@ const faqItems = [
   },
   {
     q: "What industries do you work with?",
-    a: "Ecommerce, SaaS, logistics, and services companies with 20-300 people. If your team has a process that's breaking and one person who owns it, we can probably help.",
+    a: "Ecommerce, SaaS, logistics, and services companies with 20-120 people. If your team has a process that's breaking and one person who owns it, we can probably help.",
   },
   {
     q: "How much of our time does this take?",
@@ -256,7 +260,7 @@ const faqItems = [
   },
   {
     q: "What happens after the workflow is fixed?",
-    a: "You own it. I hand it over. If you have another workflow worth improving, we do it again — same structure, same pricing. If you don't, we part as friends. No retainer, no lock-in.",
+    a: "You keep the system, the documentation, and the baseline. If workflow #2 is worth fixing, we scope a second sprint from the same foundation.",
   },
 ];
 
@@ -396,10 +400,10 @@ export default function App() {
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
               <p className={sectionLabelClass}>
-                AI IMPLEMENTATION FOR 20-300 PERSON TEAMS
+                AI IMPLEMENTATION FOR ECOMMERCE TEAMS (20-80 PEOPLE)
               </p>
               <h1 className="mt-6 max-w-[22ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
-                I help teams do more work{" "}
+                I remove #1 workflow bottleneck in 10 weeks{" "}
                 <span className="bg-[var(--accent)] px-[0.08em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
                   without hiring more people
                 </span>
@@ -416,9 +420,9 @@ export default function App() {
                 </a>
               </p>
               <p className="mt-4 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                If one process is eating your team's capacity — or you're about
-                to hire just to keep up — I map it, guide your team through the
-                fix, and measure whether it actually reduced the workload.
+                If one process is eating 20+ hours a week — or forcing your next
+                ops hire — I map it, fix it with your team, and measure the
+                before-and-after numbers.
               </p>
             </div>
 
@@ -514,8 +518,8 @@ export default function App() {
         <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
-              If the system we implement doesn't measurably reduce your team's
-              workload within 60 days of going live{" "}
+              If the system we implement doesn't solve your problem within 10
+              weeks,{" "}
               <span className="text-[var(--muted)]">
                 — I keep working for free until it does.
               </span>
@@ -751,8 +755,8 @@ export default function App() {
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
             If one workflow is wasting hours every week, start with the sprint.
-            If several workflows are breaking at once, I embed a dedicated AI
-            operations team.
+            If you want to fully automate 60-80% of your operations, start with
+            the AI operations team.
           </p>
 
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -1205,16 +1209,13 @@ export default function App() {
         <section id="scan" className="reveal py-14 sm:py-16">
           <p className={sectionLabelClass}>TELL ME ABOUT YOUR TEAM</p>
           <h2 className={sectionHeadingClass}>
-            When I have capacity, waitlist members get a
-            free workflow review.
+            When I have capacity, waitlist members get a free workflow review.
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
             No pitch. Just an honest look at whether AI can save your team real
             time. Within 30 days you'll know exactly where the hours go, what to
             automate first, and have a scoped plan with real numbers.
           </p>
-
-          
 
           <div className="mt-10">
             <WaitlistForm />
