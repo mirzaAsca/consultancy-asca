@@ -72,7 +72,7 @@ export default function SiteHeader({
             Research
           </a>
           <a href="/about/" className="transition-colors hover:text-slate-900">
-            About
+            About Me
           </a>
         </nav>
         <a
