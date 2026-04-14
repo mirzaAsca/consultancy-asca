@@ -43,9 +43,9 @@ const researchSections = [
   {
     id: "productivity",
     eyebrow: "01",
-    title: "The gains are real",
+    title: "AI really can make a team faster",
     intro:
-      "Every team I talk to asks the same thing: does AI actually make people faster? These eight studies answer that. The short version: yes. 14% in customer service. 25% across knowledge work. 55% in software. The number depends on which workflow you pick and how you set it up.",
+      "Yes, it works. AI can help people do more in less time. Sometimes the gain is small. Sometimes it is big. But the win depends on one thing: did you point it at the right job?",
     sources: pickSources([
       "Stanford/MIT - Generative AI Can Boost Productivity Without Replacing Workers",
       "Harvard/BCG - Navigating the Jagged Technological Frontier",
@@ -60,9 +60,9 @@ const researchSections = [
   {
     id: "failure",
     eyebrow: "02",
-    title: "But most teams get nothing from it",
+    title: "Most teams still get nothing from AI",
     intro:
-      "Here is the part nobody puts on their sales page. 56% of CEOs say AI has not helped revenue or costs. 42% of companies killed their AI projects. The technology works. The way most people roll it out does not. Wrong scope. No measurement. No one owns it. These studies show where it breaks.",
+      "This is the part most people skip. The tool is not the main problem. The rollout is. Teams try to fix too much at once, do not measure the result, and no one clearly owns the work.",
     sources: pickSources([
       "PwC - 28th Annual Global CEO Survey",
       "S&P Global - AI & Machine Learning Use Cases Survey",
@@ -77,9 +77,9 @@ const researchSections = [
   {
     id: "benchmarks",
     eyebrow: "03",
-    title: "What things actually cost",
+    title: "The math matters more than the hype",
     intro:
-      "Most teams guess at these numbers. They guess what a knowledge worker costs fully loaded. They guess what other companies spend on AI. They guess what a faster workflow is worth. These sources replace the guesswork so you know what a win is worth before you commit to anything.",
+      "Most teams guess at the numbers. They guess what a hire really costs. They guess what time saved is worth. They guess what AI should cost. Good decisions do not come from guessing. They come from simple math.",
     sources: pickSources([
       "BLS - Employer Costs for Employee Compensation (ECEC)",
       "Avasant/Computer Economics - IT Spending Benchmarks by Industry",
@@ -94,9 +94,9 @@ const researchSections = [
   {
     id: "market",
     eyebrow: "04",
-    title: "Where the pressure is coming from",
+    title: "Waiting costs more than it looks",
     intro:
-      "AI spending went up 44% last year. 88% of companies use it somewhere. The teams that move now compound the advantage. The teams that wait fall behind a little more each quarter. These studies show the pace so you can decide where you stand.",
+      "The cost of waiting is not just missing AI. The real cost is keeping the same slow work, the same extra pressure, and the same need to hire just to keep up. Teams that fix useful workflows now get stronger over time.",
     sources: pickSources([
       "McKinsey - State of AI 2025",
       "BCG - The Widening AI Value Gap",
@@ -184,21 +184,18 @@ export default function ResearchApp() {
         </div>
 
         <section className="reveal py-14 sm:py-16">
-          <p className={sectionLabelClass}>RESEARCH LIBRARY</p>
+          <p className={sectionLabelClass}>WHAT THE RESEARCH REALLY SAYS</p>
           <h1 className="mt-6 max-w-[16ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
-            The gains are real. Most implementations are not.
+            AI works. Most teams still get nothing.
           </h1>
           <p className="mt-6 max-w-[60ch] text-base leading-relaxed text-slate-700">
-            Stanford, Harvard, McKinsey, Anthropic, and the St. Louis Fed all
-            confirm real productivity gains from AI. In the same years, 56% of
-            CEOs report zero ROI and 42% of companies scrapped their AI projects
-            entirely. The gap between what works and what gets shipped is where
-            most teams lose.
+            I read the studies so you do not have to. Here is the simple truth:
+            AI can help a team move faster. But most teams get little or nothing
+            because they pick the wrong problem, do not measure the result, and
+            nobody owns the work.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <span className={metaChipClass}>
-              {allSources.length} peer-reviewed and industry sources
-            </span>
+            <span className={metaChipClass}>{allSources.length} studies read</span>
             <span className={metaChipClass}>
               Stanford · Harvard · McKinsey · Anthropic · BLS
             </span>
@@ -218,20 +215,20 @@ export default function ResearchApp() {
 
         <section className="reveal py-14 sm:py-16">
           <div className={`${panelClass} max-w-3xl`}>
-            <p className={sectionLabelClass}>NEXT STEP</p>
+            <p className={sectionLabelClass}>WHAT TO DO WITH THIS</p>
             <h2 className="mt-6 max-w-[18ch] text-3xl font-semibold leading-[1.08] tracking-[-0.025em] [text-wrap:balance] sm:text-4xl">
-              If you already know which workflow is costing you the most time,
-              that is the better place to start.
+              Reading more studies will not fix your workflow. Picking one will.
             </h2>
             <p className="mt-5 max-w-[58ch] text-base leading-relaxed text-slate-700">
-              Research keeps the work honest, but it is not the work itself. If
-              you have a specific workflow in mind, I scope it in weeks 1 and 2,
-              help your team build and ship the fix through week 9, and measure
-              the before-and-after numbers in week 10.
+              The research gives you the answer, not the result. If you can name
+              the one workflow costing your team the most time, that is where to
+              start. I map it in the first 2 weeks, help your team build the fix
+              over the next 7, and show you the before-and-after numbers at the
+              end.
             </p>
             <div className="mt-8">
               <a href="/#plans" className={primaryButtonClass}>
-                See How the Sprint Works
+                See the 10-week sprint
               </a>
             </div>
           </div>
@@ -245,7 +242,8 @@ export default function ResearchApp() {
             {PRIMARY_EMAIL}
           </a>
           <p className="text-sm text-slate-600">
-            I help growing teams implement AI where it saves the most time.
+            I read the research so you do not have to. Then I help you fix one
+            workflow.
           </p>
         </footer>
       </main>
