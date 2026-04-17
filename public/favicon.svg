@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="avatar-clip">
+      <circle cx="32" cy="32" r="25" />
+    </clipPath>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="#1e293b" />
+  <g clip-path="url(#avatar-clip)">
+    <image
+      href="/profile.png"
+      x="7"
+      y="7"
+      width="50"
+      height="50"
+      preserveAspectRatio="xMidYMid slice"
+    />
+  </g>
+</svg>

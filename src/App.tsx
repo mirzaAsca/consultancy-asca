@@ -440,11 +440,11 @@ export default function App() {
             className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}
           >
             <p className="text-xl font-semibold leading-snug tracking-[-0.02em] text-slate-950">
-              Sound familiar?
+            What I hear a lot
             </p>
 
             <div className="mt-5 border-t border-[var(--line)] pt-5">
-              <p className={sectionLabelClass}>WHAT WE KEEP HEARING</p>
+              <p className={sectionLabelClass}>SOUND FAMILIAR?</p>
               <ul className="mt-4 space-y-3">
                 {[
                   "Your team wastes hours every day on one process — and you're about to hire someone just to keep up",
