@@ -7,6 +7,31 @@ export type FormSubmitResult = {
 
 const FORM_SUBMIT_ENDPOINT = "https://formsubmit.co/ajax/mirza@flyrank.com";
 const activationPattern = /needs Activation|Activate Form/i;
+const CANONICAL_SUBMISSION_URL = "https://www.mirza-asceric.com/";
+const supportedSubmissionHosts = new Set([
+  "www.mirza-asceric.com",
+  "mirza-asceric.com",
+  "consultancy-asca.vercel.app",
+  "localhost",
+  "127.0.0.1",
+]);
+
+function appendSubmissionSource(formData: FormData): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const { hostname, href, origin } = window.location;
+  const sourceUrl = supportedSubmissionHosts.has(hostname) ? href : origin;
+
+  if (!formData.has("_url")) {
+    formData.append("_url", CANONICAL_SUBMISSION_URL);
+  }
+
+  formData.append("Submission domain", hostname);
+  formData.append("Submission URL", sourceUrl);
+  formData.append("Submission origin", origin);
+}
 
 export async function submitFormToInbox(
   fields: Record<string, string>,
@@ -20,9 +45,7 @@ export async function submitFormToInbox(
     }
   });
 
-  if (!formData.has("_url") && typeof window !== "undefined") {
-    formData.append("_url", window.location.href);
-  }
+  appendSubmissionSource(formData);
 
   formData.append("_template", "table");
 

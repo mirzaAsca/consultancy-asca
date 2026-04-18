@@ -174,8 +174,8 @@ export default function ResearchApp() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0))]" />
       <WarpedGrid />
 
-      <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
-        <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+      <main className="relative mx-auto w-full max-w-[1240px] px-4 pb-16 pt-6 sm:px-8 sm:pb-20 sm:pt-8 lg:px-10 lg:pt-10">
+        <div className="sticky top-0 z-50 -mx-4 -mt-6 px-4 sm:-mx-8 sm:-mt-8 sm:px-8 lg:-mx-10 lg:-mt-10 lg:px-10 lg:py-4">
           <SiteHeader
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
@@ -226,15 +226,18 @@ export default function ResearchApp() {
               over the next 7, and show you the before-and-after numbers at the
               end.
             </p>
-            <div className="mt-8">
-              <a href="/#plans" className={primaryButtonClass}>
+            <div className="mt-8 flex justify-center sm:justify-start">
+              <a
+                href="/#plans"
+                className={`${primaryButtonClass} w-full justify-center sm:w-auto`}
+              >
                 See the 10-week sprint
               </a>
             </div>
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col items-center gap-4 border-t-[3px] border-[var(--line)] pt-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"

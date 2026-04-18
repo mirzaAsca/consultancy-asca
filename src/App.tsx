@@ -141,37 +141,6 @@ const newFeatureGroups = [
 
 const newPlans = [
   {
-    name: "AI OPERATIONS TEAM",
-    subtitle: "You get a full team",
-    price: "$145,000",
-    period: "/mo",
-    anchor: "Building this team in-house: $300K–$600K/mo in salary alone",
-    anchorSource: {
-      label: "Robert Half / Glassdoor AI Engineer Salary Data 2026",
-      url: "https://www.roberthalf.com/us/en/job-details/aiml-engineer",
-    },
-    scarcity: "Coming Q3 2026",
-    description:
-      "When one bottleneck is not the problem and several workflows need fixing at once, I place a dedicated AI operations team inside the business to scope, implement, measure, and train until the fixes stick.",
-    cta: "Request Early Access",
-    ctaDisabled: false,
-    highlighted: false,
-    includedGroups: 4,
-    valueStack: [
-      { name: "10–30 Dedicated AI Engineers", value: "" },
-      { name: "Full Strategy & Scoping Layer", value: "" },
-      {
-        name: "External Specialists (Design, Copy, SEO, Dev)",
-        value: "",
-      },
-      { name: "Organization-Wide Training & Enablement", value: "" },
-      { name: "Ongoing Measurement & Optimization", value: "" },
-    ],
-    valueStackOneTime: [{ name: "Full Workflow Audit", value: "" }],
-    totalMonthlyValue: "$320,000/mo",
-    savings: "You save $175,000/mo vs. building in-house",
-  },
-  {
     name: "10-WEEK AI SPRINT",
     subtitle: "For one costly workflow",
     price: "Starting at $22,000",
@@ -211,6 +180,37 @@ const newPlans = [
     valueStackOneTime: null,
     totalMonthlyValue: "$50,000+",
     savings: "You save $28,000+ vs. hiring an advisory firm",
+  },
+  {
+    name: "AI OPERATIONS TEAM",
+    subtitle: "You get a full team",
+    price: "$145,000",
+    period: "/mo",
+    anchor: "Building this team in-house: $300K–$600K/mo in salary alone",
+    anchorSource: {
+      label: "Robert Half / Glassdoor AI Engineer Salary Data 2026",
+      url: "https://www.roberthalf.com/us/en/job-details/aiml-engineer",
+    },
+    scarcity: "Coming Q3 2026",
+    description:
+      "When one bottleneck is not the problem and several workflows need fixing at once, I place a dedicated AI operations team inside the business to scope, implement, measure, and train until the fixes stick.",
+    cta: "Request Early Access",
+    ctaDisabled: false,
+    highlighted: false,
+    includedGroups: 4,
+    valueStack: [
+      { name: "10–30 Dedicated AI Engineers", value: "" },
+      { name: "Full Strategy & Scoping Layer", value: "" },
+      {
+        name: "External Specialists (Design, Copy, SEO, Dev)",
+        value: "",
+      },
+      { name: "Organization-Wide Training & Enablement", value: "" },
+      { name: "Ongoing Measurement & Optimization", value: "" },
+    ],
+    valueStackOneTime: [{ name: "Full Workflow Audit", value: "" }],
+    totalMonthlyValue: "$320,000/mo",
+    savings: "You save $175,000/mo vs. building in-house",
   },
 ];
 
@@ -364,7 +364,7 @@ export default function App() {
     }
 
     const emergencyFields: Record<string, string> = {
-      _subject: `EMERGENCY AI Request — ${emergencyForm.name}`,
+      _subject: `[FORM] - Asca 10x.ai - Emergency - ${emergencyForm.name}`,
       name: emergencyForm.name,
       "Preferred contact": emergencyForm.contact,
       Problem: emergencyForm.problem,
@@ -391,10 +391,10 @@ export default function App() {
       <WarpedGrid />
 
       <main
-        className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10"
+        className="relative mx-auto w-full max-w-[1240px] px-4 pb-16 pt-6 sm:px-8 sm:pb-20 sm:pt-8 lg:px-10 lg:pt-10"
         style={gridSystemStyle}
       >
-        <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+        <div className="sticky top-0 z-50 -mx-4 -mt-6 px-4 sm:-mx-8 sm:-mt-8 sm:px-8 lg:-mx-10 lg:-mt-10 lg:px-10 lg:py-4">
           <SiteHeader
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
@@ -436,11 +436,14 @@ export default function App() {
               </p>
             </div>
 
-            <div className="mt-8 lg:mt-auto lg:pt-10">
-              <a href="#plans" className={primaryButtonClass}>
+            <div className="mt-8 text-center lg:mt-auto lg:pt-10 lg:text-left">
+              <a
+                href="#plans"
+                className={`${primaryButtonClass} w-full justify-center sm:w-auto`}
+              >
                 See how it works
               </a>
-              <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-slate-500">
+              <p className="mt-3 max-w-[42ch] text-sm leading-relaxed text-slate-500 lg:mx-0">
                 See what's included.
               </p>
             </div>
@@ -638,14 +641,65 @@ export default function App() {
           <p className={sectionLabelClass}>IS THIS FOR YOU?</p>
           <h2 className={sectionHeadingClass}>This isn't for everyone.</h2>
 
-          <div className="mt-8 premium-panel relative overflow-hidden border border-[var(--line)] bg-[var(--surface)]">
-            <div className="pointer-events-none absolute bottom-0 left-1/2 top-0 hidden border-l border-[var(--line)] lg:block" />
-
-            <div className="relative z-[1] grid lg:grid-cols-2">
-              <div className="border-b border-[var(--line)] px-6 py-4 lg:border-b-0">
+          {/* Mobile: stacked — all pros first, then all cons */}
+          <div className="mt-8 space-y-4 lg:hidden">
+            <div className="border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-panel)]">
+              <div className="border-b border-[var(--line)] px-5 py-4 sm:px-6">
                 <p className={sectionLabelClass}>GOOD FIT</p>
               </div>
-              <div className="border-b border-[var(--line)] bg-[var(--accent)] px-6 py-4 lg:border-b-0">
+              <ul>
+                {fitFor.map((item, index) => (
+                  <li
+                    key={item}
+                    className="border-b border-[var(--line)] px-5 py-4 last:border-b-0 sm:px-6"
+                  >
+                    <div className="flex items-start gap-3">
+                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
+                        0{index + 1}
+                      </p>
+                      <p className="text-sm leading-relaxed text-slate-800">
+                        {item}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border border-[var(--accent)] bg-[var(--accent)] shadow-[var(--shadow-panel)]">
+              <div className="border-b border-[rgba(255,255,255,0.12)] px-5 py-4 sm:px-6">
+                <p className="inline-flex w-fit items-center bg-[rgba(255,255,255,0.12)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-white">
+                  NOT A FIT
+                </p>
+              </div>
+              <ul>
+                {fitNotFor.map((item, index) => (
+                  <li
+                    key={item}
+                    className="border-b border-[rgba(255,255,255,0.12)] px-5 py-4 last:border-b-0 sm:px-6"
+                  >
+                    <div className="flex items-start gap-3">
+                      <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-slate-300">
+                        0{index + 1}
+                      </p>
+                      <p className="text-sm leading-relaxed text-slate-100">
+                        {item}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Desktop: side-by-side */}
+          <div className="mt-8 premium-panel relative hidden overflow-hidden border border-[var(--line)] bg-[var(--surface)] lg:block">
+            <div className="pointer-events-none absolute bottom-0 left-1/2 top-0 border-l border-[var(--line)]" />
+
+            <div className="relative z-[1] grid grid-cols-2">
+              <div className="px-6 py-4">
+                <p className={sectionLabelClass}>GOOD FIT</p>
+              </div>
+              <div className="bg-[var(--accent)] px-6 py-4">
                 <p className="inline-flex w-fit items-center bg-[rgba(255,255,255,0.12)] px-2.5 py-1 font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-white">
                   NOT A FIT
                 </p>
@@ -654,7 +708,7 @@ export default function App() {
 
             <div className="relative z-[1]">
               {fitFor.map((item, index) => (
-                <div key={item} className="relative grid lg:grid-cols-2">
+                <div key={item} className="relative grid grid-cols-2">
                   <div className="border-t border-[var(--line)] px-6 py-5">
                     <div className="flex items-start gap-4">
                       <p className="font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)]">
@@ -675,7 +729,7 @@ export default function App() {
                       </p>
                     </div>
                   </div>
-                  <div className="absolute left-1/2 top-1/2 hidden h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--line)] bg-white lg:block" />
+                  <div className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--line)] bg-white" />
                 </div>
               ))}
             </div>
@@ -695,7 +749,7 @@ export default function App() {
               </p>
               <span className={metaChipClass}>{clientLogos.length}</span>
             </div>
-            <div className="mt-5 flex flex-wrap items-center gap-x-20 gap-y-8">
+            <div className="mt-5 flex flex-wrap items-center gap-x-10 gap-y-6 sm:gap-x-14 lg:gap-x-20 lg:gap-y-8">
               {clientLogos.map((logo) => (
                 <img
                   key={logo.name}
@@ -718,7 +772,7 @@ export default function App() {
               </p>
               <span className={metaChipClass}>{portfolioLogos.length}</span>
             </div>
-            <div className="mt-5 flex flex-wrap items-center gap-x-20 gap-y-8">
+            <div className="mt-5 flex flex-wrap items-center gap-x-10 gap-y-6 sm:gap-x-14 lg:gap-x-20 lg:gap-y-8">
               {portfolioLogos.map((logo) => (
                 <img
                   key={logo.name}
@@ -741,7 +795,7 @@ export default function App() {
               </p>
               <span className={metaChipClass}>{alumniLogos.length}</span>
             </div>
-            <div className="mt-5 flex flex-wrap items-center gap-x-20 gap-y-8">
+            <div className="mt-5 flex flex-wrap items-center gap-x-10 gap-y-6 sm:gap-x-14 lg:gap-x-20 lg:gap-y-8">
               {alumniLogos.map((logo) => (
                 <img
                   key={logo.name}
@@ -769,11 +823,30 @@ export default function App() {
             the AI operations team.
           </p>
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <p className="mt-8 flex items-center justify-center gap-3 text-center font-['IBM_Plex_Mono'] text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--muted)] lg:hidden">
+            <svg
+              viewBox="0 0 20 20"
+              className="swipe-arrow swipe-arrow-left h-3.5 w-3.5"
+              aria-hidden="true"
+            >
+              <path d="M12 5l-5 5 5 5" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+            </svg>
+            Swipe to compare plans
+            <svg
+              viewBox="0 0 20 20"
+              className="swipe-arrow swipe-arrow-right h-3.5 w-3.5"
+              aria-hidden="true"
+            >
+              <path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+            </svg>
+          </p>
+
+          {/* Plans snap-scroll carousel on mobile/tablet, 2-col grid on desktop */}
+          <div className="plans-scroll mt-4 -mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 pt-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-10 lg:grid lg:snap-none lg:grid-cols-2 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0 lg:pt-0">
             {newPlans.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative flex flex-col border p-6 ${
+                className={`relative flex w-[86vw] max-w-[420px] shrink-0 snap-center flex-col border p-5 sm:p-6 lg:w-auto lg:max-w-none lg:shrink ${
                   plan.highlighted
                     ? "border-[var(--accent)] bg-[rgba(15,23,42,0.015)] shadow-[var(--shadow-panel)]"
                     : "border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-card)]"
@@ -1148,14 +1221,14 @@ export default function App() {
                     ) : null}
                   </label>
 
-                  <div className="flex items-center justify-between border-t border-rose-200 pt-4">
+                  <div className="flex flex-col gap-3 border-t border-rose-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-slate-600">
                       We review every request within 24 hours.
                     </p>
                     <button
                       type="submit"
                       disabled={emergencySubmitState === "submitting"}
-                      className="inline-flex items-center justify-center border border-rose-600 bg-rose-600 px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-rose-700 hover:bg-rose-700 hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+                      className="inline-flex w-full items-center justify-center border border-rose-600 bg-rose-600 px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-rose-700 hover:bg-rose-700 hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2 sm:w-auto"
                     >
                       {emergencySubmitState === "submitting"
                         ? "Sending..."
@@ -1260,7 +1333,7 @@ export default function App() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col items-center gap-4 border-t-[3px] border-[var(--line)] pt-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"

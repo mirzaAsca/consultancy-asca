@@ -39,6 +39,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+html {
+  overflow-x: clip;
 }
 
 ::selection {
@@ -186,6 +191,60 @@ body {
 .urgency-line.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.plans-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(15, 23, 42, 0.2) transparent;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-left: 1rem;
+  scroll-padding-right: 1rem;
+}
+
+@keyframes swipeArrowLeft {
+  0%, 100% { transform: translateX(0); opacity: 0.55; }
+  50% { transform: translateX(-4px); opacity: 1; }
+}
+
+@keyframes swipeArrowRight {
+  0%, 100% { transform: translateX(0); opacity: 0.55; }
+  50% { transform: translateX(4px); opacity: 1; }
+}
+
+.swipe-arrow {
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+.swipe-arrow-left {
+  animation-name: swipeArrowLeft;
+}
+
+.swipe-arrow-right {
+  animation-name: swipeArrowRight;
+}
+
+.plans-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.plans-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.plans-scroll::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.18);
+  border-radius: 999px;
+}
+
+@media (min-width: 1024px) {
+  .plans-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .plans-scroll {
+    scrollbar-width: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

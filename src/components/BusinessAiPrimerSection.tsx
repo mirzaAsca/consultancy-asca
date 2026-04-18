@@ -339,23 +339,25 @@ const schoolSteps: PrimerStep[] = [
 function ChevronIcon({ open, accent }: { open: boolean; accent?: boolean }) {
   return (
     <span
-      className={`inline-flex items-center justify-center border transition-[border-color,background-color] duration-300 ease-in-out ${
+      className={`inline-flex h-9 w-9 shrink-0 items-center justify-center border transition-[border-color,background-color] duration-300 ease-in-out ${
         accent
           ? open
             ? "border-[var(--accent)] bg-[var(--accent)]"
             : "border-[var(--line)] bg-transparent"
-          : "border-transparent bg-transparent"
-      } ${accent ? "h-9 w-9" : "h-5 w-5"}`}
+          : open
+            ? "border-[var(--accent)] bg-transparent"
+            : "border-[var(--line)] bg-transparent"
+      }`}
     >
       <svg
         aria-hidden="true"
         viewBox="0 0 20 20"
-        className={`shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""} ${
+        className={`h-4 w-4 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""} ${
           accent
             ? open
-              ? "h-4 w-4 text-white"
-              : "h-4 w-4 text-[var(--muted)]"
-            : "h-5 w-5 text-slate-400"
+              ? "text-white"
+              : "text-[var(--muted)]"
+            : "text-[var(--muted)]"
         }`}
       >
         <path
@@ -392,9 +394,9 @@ function Disclosure({
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="flex w-full cursor-pointer items-center justify-between gap-4 text-left"
+        className="flex w-full cursor-pointer items-start justify-between gap-4 text-left"
       >
-        {header}
+        <span className="min-w-0 flex-1">{header}</span>
         <ChevronIcon open={open} accent={accent} />
       </button>
       <div
@@ -677,12 +679,12 @@ function KnowledgeLayerDiagram({ layers }: { layers: KnowledgeLayer[] }) {
 function LeverImpactMap({
   rows,
   bonus,
-  openLever,
+  openLevers,
   toggleLever,
 }: {
   rows: LeverFlow[];
   bonus: BonusGain;
-  openLever: number;
+  openLevers: Set<number>;
   toggleLever: (index: number) => void;
 }) {
   return (
@@ -704,7 +706,7 @@ function LeverImpactMap({
       {rows.map((row, index) => (
         <Disclosure
           key={row.lever}
-          open={openLever === index}
+          open={openLevers.has(index)}
           onToggle={() => toggleLever(index)}
           className="border border-[var(--line)] bg-white/80 p-4"
           header={
@@ -837,7 +839,7 @@ function LeverImpactMap({
 
       {/* Bonus lever 04 — also collapsible */}
       <Disclosure
-        open={openLever === rows.length}
+        open={openLevers.has(rows.length)}
         onToggle={() => toggleLever(rows.length)}
         className={moduleAccentPanelClass}
         header={
@@ -880,16 +882,32 @@ function LeverImpactMap({
 // ── Main section ──
 
 export default function BusinessAiPrimerSection() {
-  const [openStep, setOpenStep] = useState<number>(0);
-  const [openLever, setOpenLever] = useState<number>(-1);
+  // Track each step independently — user toggles on demand, opening one never closes another.
+  const [openSteps, setOpenSteps] = useState<Set<number>>(() => new Set([0]));
+  const [openLevers, setOpenLevers] = useState<Set<number>>(() => new Set());
 
   const toggleStep = useCallback((index: number) => {
-    setOpenStep((prev) => (prev === index ? -1 : index));
-    setOpenLever(-1);
+    setOpenSteps((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
   }, []);
 
   const toggleLever = useCallback((index: number) => {
-    setOpenLever((prev) => (prev === index ? -1 : index));
+    setOpenLevers((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
   }, []);
 
   return (
@@ -919,7 +937,7 @@ export default function BusinessAiPrimerSection() {
           const bonus = step.bonusGain;
           const sequence = step.sequence;
           const summaryItems = step.summaryItems;
-          const isOpen = openStep === index;
+          const isOpen = openSteps.has(index);
 
           return (
             <li key={step.step}>
@@ -975,7 +993,7 @@ export default function BusinessAiPrimerSection() {
                         <LeverImpactMap
                           rows={leverMapRows}
                           bonus={bonus}
-                          openLever={openLever}
+                          openLevers={openLevers}
                           toggleLever={toggleLever}
                         />
                       ) : null}

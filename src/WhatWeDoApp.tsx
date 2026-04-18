@@ -106,8 +106,8 @@ export default function WhatWeDoApp() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0))]" />
       <WarpedGrid />
 
-      <main className="relative mx-auto w-full max-w-[1240px] px-6 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-10">
-        <div className="sticky top-0 z-50 -mx-6 px-6 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+      <main className="relative mx-auto w-full max-w-[1240px] px-4 pb-16 pt-6 sm:px-8 sm:pb-20 sm:pt-8 lg:px-10 lg:pt-10">
+        <div className="sticky top-0 z-50 -mx-4 -mt-6 px-4 sm:-mx-8 sm:-mt-8 sm:px-8 lg:-mx-10 lg:-mt-10 lg:px-10 lg:py-4">
           <SiteHeader
             founderLinkedIn={LINKEDIN_PROFILE}
             homeHref="/"
@@ -158,15 +158,18 @@ export default function WhatWeDoApp() {
                   <span className={metaChipClass}>You keep everything</span>
                 </div>
               </div> */}
-              <div className="flex flex-wrap items-center gap-5">
-                <a href="#scan" className={primaryButtonClass}>
+              <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5">
+                <a
+                  href="#scan"
+                  className={`${primaryButtonClass} w-full justify-center sm:w-auto`}
+                >
                   Book a $500 Strategy Call — Free
                 </a>
                 <a href="#mechanism" className={secondaryButtonClass}>
                   {MECHANISM_CTA}
                 </a>
               </div>
-              <p className="text-sm text-slate-600">
+              <p className="text-center text-sm text-slate-600 sm:text-left">
                 For teams with one painful workflow and a real reason to fix it
                 now.
               </p>
@@ -174,7 +177,7 @@ export default function WhatWeDoApp() {
           </div>
 
           <aside
-            className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}
+            className={`relative mt-10 flex h-full flex-col lg:col-span-5 lg:mt-0 ${panelClass}`}
           >
             <span className="absolute -top-3 right-6 z-10 bg-[var(--accent)] px-3 py-1 font-['IBM_Plex_Mono'] text-[10px] font-medium uppercase tracking-[0.14em] text-white shadow-sm">
               Free if you qualify
@@ -449,8 +452,11 @@ export default function WhatWeDoApp() {
             ))}
           </ol>
 
-          <div className="mt-8 flex flex-wrap items-center gap-5">
-            <a href="/#scan" className={primaryButtonClass}>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-5 sm:justify-start">
+            <a
+              href="/#scan"
+              className={`${primaryButtonClass} w-full justify-center sm:w-auto`}
+            >
               Or skip ahead — join the waitlist
             </a>
           </div>
@@ -522,7 +528,7 @@ export default function WhatWeDoApp() {
           </div>
         </section>
 
-        <footer className="reveal mt-4 flex flex-col gap-4 border-t-[3px] border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="reveal mt-4 flex flex-col items-center gap-4 border-t-[3px] border-[var(--line)] pt-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <a
             href={`mailto:${PRIMARY_EMAIL}`}
             className="text-sm font-medium text-slate-700 transition-colors hover:text-slate-950"

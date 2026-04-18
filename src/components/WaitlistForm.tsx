@@ -58,9 +58,8 @@ function getSectionLabel(heading: string, context?: WaitlistContext): string {
 }
 
 function buildSubjectLine(form: FormState, context?: WaitlistContext): string {
-  return context?.recommendedOffer
-    ? `${context.recommendedOffer} Request - ${form.company}`
-    : `Waitlist + Complimentary AI Portfolio Reality Scan - ${form.company}`;
+  void context;
+  return `[FORM] - Asca 10x.ai - ${form.company} - ${form.fullName}`;
 }
 
 function buildSubmissionFields(
@@ -360,7 +359,7 @@ export default function WaitlistForm({
         </label>
 
         <div className="flex flex-col gap-4 border-t border-[var(--line)] pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-slate-500">
+          <p className="text-center text-sm text-slate-500 sm:text-left">
             {context
               ? `${context.recommendedOffer} + 40-min strategy call. We keep the recommendation, numbers, and route context in the draft so the next step is specific from the first conversation.`
               : "We'll review your submission and reach out when a spot opens. First come, first served."}
@@ -368,7 +367,7 @@ export default function WaitlistForm({
           <button
             type="submit"
             disabled={submitState === "submitting"}
-            className={`shrink-0 ${primaryButtonClass} ${
+            className={`w-full shrink-0 ${primaryButtonClass} sm:w-auto ${
               submitState === "submitting" ? "cursor-wait opacity-70" : ""
             }`}
           >

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 type SiteHeaderProps = {
   founderLinkedIn: string
@@ -29,9 +30,16 @@ export default function SiteHeader({
   whatWeDoHref,
   roiHref = '/roi/',
 }: SiteHeaderProps) {
-  // 'top' = at page top (normal), 'hidden' = scrolled down & hidden, 'sticky' = scrolling up with blur
+  // Desktop hide/show on scroll. Mobile always stays visible — we only toggle
+  // the sticky blur style so the page content never tracks behind a translucent bar without context.
   const [mode, setMode] = useState<'top' | 'hidden' | 'sticky'>('top')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const lastY = useRef(0)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const onScroll = () => {
@@ -52,47 +60,135 @@ export default function SiteHeader({
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
+
+  const navLinks: { href: string; label: string }[] = [
+    { href: homeHref, label: 'Home' },
+    { href: whatWeDoHref, label: 'How It Works' },
+    { href: roiHref, label: 'Research' },
+    { href: '/about/', label: 'About Me' },
+  ]
+
+  // Desktop-only hide-on-scroll: never translate on <lg so the mobile bar stays put.
+  const desktopHiddenClass =
+    mode === 'hidden' ? 'lg:-translate-y-full lg:opacity-0' : 'lg:translate-y-0 lg:opacity-100'
+  const desktopStickyClass =
+    mode === 'sticky'
+      ? 'lg:backdrop-blur-md lg:bg-white/60 lg:-mx-10 lg:px-10 lg:py-2'
+      : ''
+
   return (
     <header
       className={[
-        'transition-all duration-300',
-        mode === 'hidden' ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100',
-        mode === 'sticky' ? 'backdrop-blur-md bg-white/60 -mx-6 px-6 py-2 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10' : '',
+        'relative transition-[transform,opacity,background-color] duration-300',
+        // Mobile: solid background + subtle divider so the sticky bar reads as a clear surface.
+        'bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--line)] -mx-4 px-4 py-2.5 sm:-mx-8 sm:px-8',
+        // Desktop: remove the mobile chrome so the original style holds.
+        'lg:bg-transparent lg:backdrop-blur-0 lg:border-0 lg:mx-0 lg:px-0 lg:py-0',
+        desktopHiddenClass,
+        desktopStickyClass,
       ].join(' ')}
     >
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-        <nav className="flex flex-wrap gap-5 text-[12px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-          <a href={homeHref} className="transition-colors hover:text-slate-900">
-            Home
-          </a>
-          <a href={whatWeDoHref} className="transition-colors hover:text-slate-900">
-            How It Works
-          </a>
-          <a href={roiHref} className="transition-colors hover:text-slate-900">
-            Research
-          </a>
-          <a href="/about/" className="transition-colors hover:text-slate-900">
-            About Me
-          </a>
+      <div className="flex items-center justify-between gap-4">
+        {/* Desktop nav */}
+        <nav className="hidden lg:flex flex-wrap gap-5 text-[12px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+          {navLinks.map((link) => (
+            <a key={link.label} href={link.href} className="transition-colors hover:text-slate-900">
+              {link.label}
+            </a>
+          ))}
         </nav>
+
+        {/* Mobile hamburger */}
+        <button
+          type="button"
+          aria-label="Open menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
+          className="lg:hidden inline-flex h-10 w-10 shrink-0 items-center justify-center border border-[var(--line)] bg-white text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
+        >
+          <svg viewBox="0 0 20 20" className="h-5 w-5" aria-hidden="true">
+            <path d="M3 6h14M3 10h14M3 14h14" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+          </svg>
+        </button>
+
         <a
           href={founderLinkedIn}
           target="_blank"
           rel="noreferrer"
-          className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-80"
+          className="flex min-w-0 shrink items-center gap-2 transition-opacity hover:opacity-80 sm:gap-2.5"
         >
           <img
             src="/profile.png"
             alt="Mirza (Ašća) Ašćerić"
-            className="h-8 w-8 rounded-full object-cover object-center ring-2 ring-[var(--accent)]"
+            className="h-8 w-8 shrink-0 rounded-full object-cover object-center ring-2 ring-[var(--accent)]"
           />
-          <span className="font-['IBM_Plex_Mono'] text-[14px] font-semibold tracking-[-0.01em] text-[var(--accent)]">
+          <span className="hidden min-w-0 truncate font-['IBM_Plex_Mono'] text-[13px] font-semibold tracking-[-0.01em] text-[var(--accent)] sm:inline sm:text-[14px]">
             Mirza (Ašća) Ašćerić
+          </span>
+          <span className="inline min-w-0 truncate font-['IBM_Plex_Mono'] text-[13px] font-semibold tracking-[-0.01em] text-[var(--accent)] sm:hidden">
+            Mirza Ašćerić
           </span>
           <VerifiedBadge />
           <LinkedInIcon />
         </a>
       </div>
+
+      {/* Mobile drawer — rendered via portal so it escapes any transformed ancestor. */}
+      {mounted && menuOpen
+        ? createPortal(
+            <div className="fixed inset-0 z-[100] lg:hidden">
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setMenuOpen(false)}
+                className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"
+              />
+              <div className="absolute inset-x-0 top-0 bg-white shadow-[0_18px_38px_rgba(15,23,42,0.18)]">
+                <div className="flex items-center justify-between border-b border-[var(--line)] px-6 py-4">
+                  <p className="font-['IBM_Plex_Mono'] text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+                    Menu
+                  </p>
+                  <button
+                    type="button"
+                    aria-label="Close menu"
+                    onClick={() => setMenuOpen(false)}
+                    className="inline-flex h-9 w-9 items-center justify-center border border-[var(--line)] bg-white text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
+                  >
+                    <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true">
+                      <path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+                    </svg>
+                  </button>
+                </div>
+                <nav className="flex flex-col px-2 py-2">
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="border-b border-[var(--line)] px-4 py-4 text-[14px] font-medium tracking-[-0.01em] text-slate-900 transition-colors last:border-b-0 hover:text-[var(--accent)]"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </header>
   )
 }
