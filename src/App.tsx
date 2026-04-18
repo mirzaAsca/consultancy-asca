@@ -462,7 +462,7 @@ export default function App() {
                 {[
                   "Your team wastes hours every day on one process — and you're about to hire someone just to keep up",
                   "The person who owns it is too busy doing it to fix it",
-                  "You tried Zapier. Or a freelancer. It worked for a month, then it broke and nobody fixed it",
+                  "You tried maybe Zapier. Or a freelancer. It worked for a month, then it broke and nobody fixed it",
                   "You know AI could help but you don't know where to start",
                 ].map((pain) => (
                   <li key={pain} className="flex items-start gap-2.5">
