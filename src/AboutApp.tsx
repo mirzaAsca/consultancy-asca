@@ -168,7 +168,7 @@ export default function AboutApp() {
                   FlyRank AI
                 </a>
                 , we are doing the unimaginable — creating the first AI content
-                ecosystem. It's not like using ChatGPT to create an article; we
+                ecosystem infrastructure. Currently, it is the most advanced platform for content management. It's not like using ChatGPT to create an article; we
                 own the full architecture. In short, it works.
               </p>
               <p className="mt-5 border-t border-dashed border-[var(--line)] pt-5 text-base leading-relaxed text-slate-800">
@@ -226,7 +226,7 @@ export default function AboutApp() {
                 is a portfolio of AI-native products we develop or acquire. Now
                 we are operating differently, both in-house and externally. At
                 10x.ai, we automate most and test everything. We don't invent
-                stuff so often, but you can bet we are executing pretty damn
+                stuff so often right now, but you can bet we are executing pretty damn
                 fast.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
