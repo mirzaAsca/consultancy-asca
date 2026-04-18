@@ -3,6 +3,7 @@ import type { CSSProperties, FormEvent } from "react";
 import SiteHeader from "./components/SiteHeader";
 import WarpedGrid from "./components/WarpedGrid";
 import WaitlistForm from "./components/WaitlistForm";
+import { submitFormToInbox, type FormSubmitStatus } from "./lib/formsubmit";
 import { GRID_CELL_PX, SHORT_DIVIDER_GRID_SPAN } from "./layout";
 
 // ── Client logos ──
@@ -270,6 +271,7 @@ type EmergencyField = "name" | "contact" | "problem" | "budget";
 
 type EmergencyFormState = Record<EmergencyField, string>;
 type EmergencyErrorState = Partial<Record<EmergencyField, string>>;
+type EmergencySubmitState = FormSubmitStatus | "idle" | "submitting";
 
 const initialEmergencyState: EmergencyFormState = {
   name: "",
@@ -277,21 +279,6 @@ const initialEmergencyState: EmergencyFormState = {
   problem: "",
   budget: "",
 };
-
-function buildEmergencyMailto(form: EmergencyFormState): string {
-  const subject = encodeURIComponent(`EMERGENCY AI Request — ${form.name}`);
-  const body = encodeURIComponent(
-    [
-      "Emergency AI Transformation Request",
-      "",
-      `Name / Company: ${form.name}`,
-      `Preferred contact: ${form.contact}`,
-      `Problem: ${form.problem}`,
-      `Budget: ${form.budget}`,
-    ].join("\n"),
-  );
-  return `mailto:${PRIMARY_EMAIL}?subject=${subject}&body=${body}`;
-}
 
 // ── SHARED UI ──
 
@@ -336,7 +323,9 @@ export default function App() {
   const [emergencyErrors, setEmergencyErrors] = useState<EmergencyErrorState>(
     {},
   );
-  const [emergencySubmitted, setEmergencySubmitted] = useState(false);
+  const [emergencySubmitState, setEmergencySubmitState] =
+    useState<EmergencySubmitState>("idle");
+  const [emergencySubmitMessage, setEmergencySubmitMessage] = useState("");
   const [showEmergency, setShowEmergency] = useState(false);
 
   const ctaHref = "#scan";
@@ -348,6 +337,10 @@ export default function App() {
       delete next[field];
       return next;
     });
+    if (emergencySubmitState === "error") {
+      setEmergencySubmitState("idle");
+      setEmergencySubmitMessage("");
+    }
   }
 
   function validateEmergency(
@@ -362,17 +355,34 @@ export default function App() {
     return nextErrors;
   }
 
-  function handleEmergencySubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleEmergencySubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextErrors = validateEmergency(emergencyForm);
     if (Object.keys(nextErrors).length > 0) {
       setEmergencyErrors(nextErrors);
       return;
     }
-    setEmergencySubmitted(true);
-    window.setTimeout(() => {
-      window.location.href = buildEmergencyMailto(emergencyForm);
-    }, 80);
+
+    const emergencyFields: Record<string, string> = {
+      _subject: `EMERGENCY AI Request — ${emergencyForm.name}`,
+      name: emergencyForm.name,
+      "Preferred contact": emergencyForm.contact,
+      Problem: emergencyForm.problem,
+      Budget: emergencyForm.budget,
+      Priority: "Emergency request from homepage",
+    };
+
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emergencyForm.contact.trim())) {
+      emergencyFields.email = emergencyForm.contact.trim();
+    }
+
+    setEmergencySubmitState("submitting");
+    setEmergencySubmitMessage("");
+
+    const result = await submitFormToInbox(emergencyFields);
+
+    setEmergencySubmitState(result.status);
+    setEmergencySubmitMessage(result.message);
   }
 
   return (
@@ -1144,28 +1154,56 @@ export default function App() {
                     </p>
                     <button
                       type="submit"
+                      disabled={emergencySubmitState === "submitting"}
                       className="inline-flex items-center justify-center border border-rose-600 bg-rose-600 px-5 py-2.5 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,23,42,0.14)] transition-[background-color,transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-rose-700 hover:bg-rose-700 hover:shadow-[0_18px_36px_rgba(15,23,42,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
                     >
-                      Send Emergency Request
+                      {emergencySubmitState === "submitting"
+                        ? "Sending..."
+                        : "Send Emergency Request"}
                     </button>
                   </div>
 
-                  {emergencySubmitted ? (
-                    <div className="border border-rose-200 bg-white p-5">
+                  {emergencySubmitState === "activation_required" ? (
+                    <div className="border border-amber-200 bg-white p-5">
                       <h3 className="text-lg font-semibold text-slate-900">
-                        Emergency request sent
+                        One-time form activation needed
                       </h3>
                       <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                        Your email draft is ready. If it didn't open
-                        automatically, use the link below. We'll review and
-                        respond within 24 hours.
+                        Automatic delivery to mirza@flyrank.com needs one
+                        activation click first. Check that inbox, activate the
+                        form, and this queued submission should be released.
                       </p>
-                      <a
-                        href={buildEmergencyMailto(emergencyForm)}
-                        className="mt-3 inline-flex text-sm font-medium text-rose-700 underline underline-offset-4 hover:text-rose-900"
-                      >
-                        Open email draft again
-                      </a>
+                      <p className="mt-3 text-sm text-slate-600">
+                        {emergencySubmitMessage}
+                      </p>
+                    </div>
+                  ) : null}
+
+                  {emergencySubmitState === "sent" ? (
+                    <div className="border border-rose-200 bg-white p-5">
+                      <h3 className="text-lg font-semibold text-slate-900">
+                        Emergency request submitted
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                        The form has been sent directly to our inbox. We'll
+                        review and respond within 24 hours.
+                      </p>
+                      {emergencySubmitMessage ? (
+                        <p className="mt-3 text-sm text-slate-600">
+                          {emergencySubmitMessage}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {emergencySubmitState === "error" ? (
+                    <div className="border border-rose-200 bg-white p-5">
+                      <h3 className="text-lg font-semibold text-slate-900">
+                        Could not submit the request
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                        {emergencySubmitMessage}
+                      </p>
                     </div>
                   ) : null}
                 </form>

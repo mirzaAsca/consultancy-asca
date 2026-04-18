@@ -1,4 +1,5 @@
 import { useCallback, useState, type FormEvent } from "react";
+import { submitFormToInbox, type FormSubmitStatus } from "../lib/formsubmit";
 import type { WaitlistContext } from "../lib/roi-calculator";
 import { fmtCurrency, fmtX, getPublicRouteLabel } from "../lib/roi-calculator";
 
@@ -33,6 +34,8 @@ export type WaitlistFormProps = {
   context?: WaitlistContext;
 };
 
+type SubmitUiState = FormSubmitStatus | "idle" | "submitting";
+
 const initialFormState: FormState = {
   fullName: "",
   linkedIn: "",
@@ -54,50 +57,49 @@ function getSectionLabel(heading: string, context?: WaitlistContext): string {
   return DEFAULT_HEADING;
 }
 
-function buildMailto(form: FormState, context?: WaitlistContext): string {
-  const subjectLine = context?.recommendedOffer
+function buildSubjectLine(form: FormState, context?: WaitlistContext): string {
+  return context?.recommendedOffer
     ? `${context.recommendedOffer} Request - ${form.company}`
     : `Waitlist + Complimentary AI Portfolio Reality Scan - ${form.company}`;
-  const lines = [
-    context?.recommendedOffer
-      ? `${context.recommendedOffer} Request`
-      : "Waitlist + Complimentary AI Portfolio Reality Scan Request",
-    "",
-    `Name: ${form.fullName}`,
-    `Email: ${form.workEmail}`,
-    `Company: ${form.company}`,
-    `Employees: ${form.employees}`,
-    `Why they need us: ${form.reason}`,
-  ];
+}
 
-  if (form.linkedIn.trim()) lines.push(`LinkedIn: ${form.linkedIn}`);
-  if (form.website.trim()) lines.push(`Website: ${form.website}`);
-  if (form.aiBudget.trim()) lines.push(`AI budget: ${form.aiBudget}`);
+function buildSubmissionFields(
+  form: FormState,
+  context?: WaitlistContext,
+): Record<string, string> {
+  const fields: Record<string, string> = {
+    _subject: buildSubjectLine(form, context),
+    name: form.fullName,
+    email: form.workEmail,
+    Company: form.company,
+    Employees: form.employees,
+    Website: form.website,
+    LinkedIn: form.linkedIn,
+    "AI budget": form.aiBudget,
+    "Primary workflow bottleneck": form.reason,
+  };
 
   if (context) {
-    lines.push("");
-    lines.push(`Route: ${getPublicRouteLabel(context.route)}`);
-    lines.push(`Recommended offer: ${context.recommendedOffer}`);
-    lines.push(`Why this route: ${context.recommendationReason}`);
-    lines.push(`Scenario: ${context.scenario}`);
-    lines.push(`Revenue: ${context.revenue}`);
-    lines.push(`Employees: ${context.employees}`);
-    lines.push(`Industry: ${context.industry}`);
-    lines.push(`Primary bottleneck: ${context.bottleneck}`);
-    lines.push(`Revenue per employee: ${context.revenuePerEmployee}`);
-    lines.push(`Current AI spend: ${context.currentAiSpend}`);
-    lines.push(`Planned hires: ${context.plannedHires}`);
-    lines.push(`Plan A ROI: ${context.planARoi}`);
-    lines.push(`Plan A payback: ${context.planAPayback}`);
-    lines.push(`Plan A annual value: ${context.planAAnnualValue}`);
+    fields.Route = getPublicRouteLabel(context.route);
+    fields["Recommended offer"] = context.recommendedOffer;
+    fields["Why this route"] = context.recommendationReason;
+    fields.Scenario = context.scenario;
+    fields.Revenue = String(context.revenue);
+    fields["Company employees"] = String(context.employees);
+    fields.Industry = context.industry;
+    fields["Primary bottleneck"] = context.bottleneck;
+    fields["Revenue per employee"] = String(context.revenuePerEmployee);
+    fields["Current AI spend"] = String(context.currentAiSpend);
+    fields["Planned hires"] = String(context.plannedHires);
+    fields["Plan A ROI"] = String(context.planARoi);
+    fields["Plan A payback"] = String(context.planAPayback);
+    fields["Plan A annual value"] = String(context.planAAnnualValue);
     if (typeof context.planBRoi === "number") {
-      lines.push(`Plan B ROI: ${context.planBRoi}`);
+      fields["Plan B ROI"] = String(context.planBRoi);
     }
   }
 
-  const subject = encodeURIComponent(subjectLine);
-  const body = encodeURIComponent(lines.join("\n"));
-  return `mailto:${PRIMARY_EMAIL}?subject=${subject}&body=${body}`;
+  return fields;
 }
 
 function inputClass(hasError: boolean): string {
@@ -120,7 +122,8 @@ export default function WaitlistForm({
 }: WaitlistFormProps) {
   const [form, setForm] = useState<FormState>(initialFormState);
   const [errors, setErrors] = useState<ErrorState>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [submitState, setSubmitState] = useState<SubmitUiState>("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const updateField = useCallback((field: Field, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -129,7 +132,11 @@ export default function WaitlistForm({
       delete next[field];
       return next;
     });
-  }, []);
+    if (submitState === "error") {
+      setSubmitState("idle");
+      setSubmitMessage("");
+    }
+  }, [submitState]);
 
   const requiredFields: Field[] = [
     "fullName",
@@ -155,15 +162,19 @@ export default function WaitlistForm({
     return nextErrors;
   }
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const nextErrors = validate(form);
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       return;
     }
-    window.location.href = buildMailto(form, context);
-    setSubmitted(true);
+    setSubmitState("submitting");
+    setSubmitMessage("");
+
+    const result = await submitFormToInbox(buildSubmissionFields(form, context));
+    setSubmitState(result.status);
+    setSubmitMessage(result.message);
   }
 
   const summaryRows = context
@@ -354,27 +365,44 @@ export default function WaitlistForm({
               ? `${context.recommendedOffer} + 40-min strategy call. We keep the recommendation, numbers, and route context in the draft so the next step is specific from the first conversation.`
               : "We'll review your submission and reach out when a spot opens. First come, first served."}
           </p>
-          <button type="submit" className={`shrink-0 ${primaryButtonClass}`}>
-            {ctaLabel}
+          <button
+            type="submit"
+            disabled={submitState === "submitting"}
+            className={`shrink-0 ${primaryButtonClass} ${
+              submitState === "submitting" ? "cursor-wait opacity-70" : ""
+            }`}
+          >
+            {submitState === "submitting" ? "Sending..." : ctaLabel}
           </button>
         </div>
 
-        {submitted ? (
+        {submitState === "activation_required" ? (
+          <div className="space-y-3 border-t border-[var(--line)] bg-amber-50/70 p-5">
+            <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-950">
+              One-time form activation needed
+            </h3>
+            <p className="text-sm leading-relaxed text-slate-700">
+              Form submissions for mirza@flyrank.com need one activation click
+              before automatic delivery starts. Check that inbox and confirm the
+              form. FormSubmit keeps this submission queued until activation.
+            </p>
+            <p className="text-sm text-slate-600">{submitMessage}</p>
+          </div>
+        ) : null}
+
+        {submitState === "sent" ? (
           <div className="space-y-4 border-t border-[var(--line)] pt-5">
             <div className="space-y-4 border border-[var(--line)] bg-[rgba(15,23,42,0.02)] p-5">
               <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-950">
-                Your email draft is ready
+                Request submitted
               </h3>
               <p className="text-sm leading-relaxed text-slate-600">
-                If it did not open automatically, use the link below. We will
-                review the request and reply within 48 hours.
+                The form has been sent directly to our inbox. We will review the
+                request and reply within 48 hours.
               </p>
-              <a
-                href={buildMailto(form, context)}
-                className={primaryButtonClass}
-              >
-                Open email draft again
-              </a>
+              {submitMessage ? (
+                <p className="text-sm text-slate-500">{submitMessage}</p>
+              ) : null}
               <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
                 <div className="border border-[var(--line)] bg-white p-4">
                   <p className="font-medium uppercase tracking-[0.08em] text-[var(--muted)]">
@@ -410,6 +438,14 @@ export default function WaitlistForm({
                   {PRIMARY_EMAIL}
                 </a>
               </p>
+            </div>
+          </div>
+        ) : null}
+
+        {submitState === "error" ? (
+          <div className="border-t border-[var(--line)] pt-5">
+            <div className="border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+              {submitMessage}
             </div>
           </div>
         ) : null}
