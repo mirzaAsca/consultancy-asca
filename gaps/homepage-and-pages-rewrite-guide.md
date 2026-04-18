@@ -264,7 +264,7 @@
 
 | Current                                                            | Suggestion                                                                                                                    | Action |
 | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------ |
-| Email: mirza@10x.ai                                                | Keep.                                                                                                                         | Keep   |
+| Email: mirza@flyrank.com                                           | Keep.                                                                                                                         | Keep   |
 | "Fully booked. Complimentary scan available for waitlist members." | "We fix broken workflows for growing companies. Currently booked — join the waitlist." — One-sentence positioning + scarcity. | Modify |
 
 ---

@@ -4,7 +4,7 @@ export type Service = {
   description: string;
 };
 
-export const contactEmail = "mirza@10x.ai";
+export const contactEmail = "mirza@flyrank.com";
 
 export const services: Service[] = [
   {

@@ -3,7 +3,7 @@ import { submitFormToInbox, type FormSubmitStatus } from "../lib/formsubmit";
 import type { WaitlistContext } from "../lib/roi-calculator";
 import { fmtCurrency, fmtX, getPublicRouteLabel } from "../lib/roi-calculator";
 
-const PRIMARY_EMAIL = "mirza@10x.ai";
+const PRIMARY_EMAIL = "mirza@flyrank.com";
 const DEFAULT_HEADING = "TELL US WHAT'S BROKEN";
 const DEFAULT_SUBHEADING =
   "Tell us about your company and the workflow that's costing you the most time. We'll review your submission and reach out when a spot opens.";
@@ -124,18 +124,21 @@ export default function WaitlistForm({
   const [submitState, setSubmitState] = useState<SubmitUiState>("idle");
   const [submitMessage, setSubmitMessage] = useState("");
 
-  const updateField = useCallback((field: Field, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => {
-      const next = { ...prev };
-      delete next[field];
-      return next;
-    });
-    if (submitState === "error") {
-      setSubmitState("idle");
-      setSubmitMessage("");
-    }
-  }, [submitState]);
+  const updateField = useCallback(
+    (field: Field, value: string) => {
+      setForm((prev) => ({ ...prev, [field]: value }));
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+      if (submitState === "error") {
+        setSubmitState("idle");
+        setSubmitMessage("");
+      }
+    },
+    [submitState],
+  );
 
   const requiredFields: Field[] = [
     "fullName",
@@ -171,7 +174,9 @@ export default function WaitlistForm({
     setSubmitState("submitting");
     setSubmitMessage("");
 
-    const result = await submitFormToInbox(buildSubmissionFields(form, context));
+    const result = await submitFormToInbox(
+      buildSubmissionFields(form, context),
+    );
     setSubmitState(result.status);
     setSubmitMessage(result.message);
   }

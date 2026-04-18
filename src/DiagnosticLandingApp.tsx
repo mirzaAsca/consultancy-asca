@@ -10,7 +10,7 @@ import {
   type WaitlistContext,
 } from "./lib/roi-calculator";
 
-const PRIMARY_EMAIL = "mirza@10x.ai";
+const PRIMARY_EMAIL = "mirza@flyrank.com";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const surfaceClass = "border border-[var(--line)] bg-[var(--surface)]";
 const panelClass = `premium-panel ${surfaceClass} p-6`;

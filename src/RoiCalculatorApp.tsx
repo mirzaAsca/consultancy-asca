@@ -4,7 +4,7 @@ import { TIER1_SOURCES, TIER2_SOURCES, type Source } from "./lib/roi-sources";
 import { GRID_CELL_PX, SHORT_DIVIDER_GRID_SPAN } from "./layout";
 import type { CSSProperties } from "react";
 
-const PRIMARY_EMAIL = "mirza@10x.ai";
+const PRIMARY_EMAIL = "mirza@flyrank.com";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const surfaceClass = "border border-[var(--line)] bg-[var(--surface)]";
 const panelClass = `premium-panel ${surfaceClass} p-6`;
@@ -195,7 +195,9 @@ export default function ResearchApp() {
             nobody owns the work.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <span className={metaChipClass}>{allSources.length} studies read</span>
+            <span className={metaChipClass}>
+              {allSources.length} studies read
+            </span>
             <span className={metaChipClass}>
               Stanford · Harvard · McKinsey · Anthropic · BLS
             </span>

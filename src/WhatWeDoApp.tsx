@@ -3,7 +3,7 @@ import SiteHeader from "./components/SiteHeader";
 import WarpedGrid from "./components/WarpedGrid";
 import WaitlistForm from "./components/WaitlistForm";
 
-const PRIMARY_EMAIL = "mirza@10x.ai";
+const PRIMARY_EMAIL = "mirza@flyrank.com";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const MECHANISM_CTA = "See how it works";
 const primaryButtonClass =

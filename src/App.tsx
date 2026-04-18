@@ -40,7 +40,7 @@ import logoCarthook from "./assets/logos-old/carthook.svg";
 import logoReleasit from "./assets/logos-old/releasit.svg";
 import logoAccentuate from "./assets/logos-old/accentuate.svg";
 
-const PRIMARY_EMAIL = "mirza@10x.ai";
+const PRIMARY_EMAIL = "mirza@flyrank.com";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const PRIMARY_CTA = "Join the Waitlist";
 const disabledButtonClass =
@@ -453,7 +453,7 @@ export default function App() {
             className={`relative flex h-full flex-col lg:col-span-5 ${panelClass}`}
           >
             <p className="text-xl font-semibold leading-snug tracking-[-0.02em] text-slate-950">
-            What I hear a lot
+              What I hear a lot
             </p>
 
             <div className="mt-5 border-t border-[var(--line)] pt-5">
@@ -829,7 +829,13 @@ export default function App() {
               className="swipe-arrow swipe-arrow-left h-3.5 w-3.5"
               aria-hidden="true"
             >
-              <path d="M12 5l-5 5 5 5" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+              <path
+                d="M12 5l-5 5 5 5"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="1.8"
+              />
             </svg>
             Swipe to compare plans
             <svg
@@ -837,7 +843,13 @@ export default function App() {
               className="swipe-arrow swipe-arrow-right h-3.5 w-3.5"
               aria-hidden="true"
             >
-              <path d="M8 5l5 5-5 5" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+              <path
+                d="M8 5l5 5-5 5"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="1.8"
+              />
             </svg>
           </p>
 

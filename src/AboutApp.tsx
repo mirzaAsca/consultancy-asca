@@ -3,7 +3,7 @@ import SiteHeader from "./components/SiteHeader";
 import WarpedGrid from "./components/WarpedGrid";
 import { GRID_CELL_PX, SHORT_DIVIDER_GRID_SPAN } from "./layout";
 
-const PRIMARY_EMAIL = "mirza@10x.ai";
+const PRIMARY_EMAIL = "mirza@flyrank.com";
 const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const PROOF_LINK =
   "https://www.linkedin.com/posts/alenm_50-billion-tokens-later-honored-to-finally-activity-7399454409547657216-LEUi";
@@ -103,7 +103,8 @@ export default function AboutApp() {
               </a>
             </p>
             <p className="mt-8 max-w-[56ch] text-base leading-relaxed text-slate-700">
-              And I promise, I won't use AI to write the following text. And I'm not a robot.
+              And I promise, I won't use AI to write the following text. And I'm
+              not a robot.
             </p>
           </div>
         </section>
@@ -141,7 +142,9 @@ export default function AboutApp() {
               </span>
             </p>
             <p className="mx-auto mt-6 max-w-[58ch] text-base leading-relaxed text-slate-700">
-              And that resulted in spending well over 2,500 hours creating, learning, iterating. At the moment of writing this, it is early 2026. 
+              And that resulted in spending well over 2,500 hours creating,
+              learning, iterating. At the moment of writing this, it is early
+              2026.
             </p>
           </div>
         </section>
@@ -168,8 +171,10 @@ export default function AboutApp() {
                   FlyRank AI
                 </a>
                 , we are doing the unimaginable — creating the first AI content
-                ecosystem infrastructure. Currently, it is the most advanced platform for content management. It's not like using ChatGPT to create an article; we
-                own the full architecture. In short, it works.
+                ecosystem infrastructure. Currently, it is the most advanced
+                platform for content management. It's not like using ChatGPT to
+                create an article; we own the full architecture. In short, it
+                works.
               </p>
               <p className="mt-5 border-t border-dashed border-[var(--line)] pt-5 text-base leading-relaxed text-slate-800">
                 If a Guinness record existed for the fastest organic growth of a
@@ -226,8 +231,8 @@ export default function AboutApp() {
                 is a portfolio of AI-native products we develop or acquire. Now
                 we are operating differently, both in-house and externally. At
                 10x.ai, we automate most and test everything. We don't invent
-                stuff so often right now, but you can bet we are executing pretty damn
-                fast.
+                stuff so often right now, but you can bet we are executing
+                pretty damn fast.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
                 We even have our own lab (20+ domains) as a playground to test
@@ -308,8 +313,8 @@ export default function AboutApp() {
               <p className="text-base leading-relaxed text-slate-700">
                 And I will help you for free. Seriously. Nothing in my pocket is
                 being held back once you qualify for our strategy call. You can
-                do the stuff I explain in-house, or even with some agency
-                — we're good.
+                do the stuff I explain in-house, or even with some agency —
+                we're good.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
                 Extremely useful knowledge has been online and free for a while.
@@ -325,7 +330,9 @@ export default function AboutApp() {
           <div
             className={`mx-auto max-w-4xl text-center ${panelClass} py-12 sm:py-16`}
           >
-            <p className={`${sectionLabelClass} mx-auto`}>sounds interesting?</p>
+            <p className={`${sectionLabelClass} mx-auto`}>
+              sounds interesting?
+            </p>
             <p className="mx-auto mt-6 max-w-[32ch] text-3xl font-semibold leading-[1.1] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl">
               I talk on LinkedIn.{" "}
               <span className="bg-[var(--accent)] px-[0.12em] text-white [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
