@@ -1,0 +1,918 @@
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ReactNode,
+} from 'react';
+import {
+  AlertTriangle,
+  Download,
+  FileUp,
+  Filter,
+  Loader2,
+  Pause,
+  Play,
+  Radar,
+  RefreshCw,
+  Upload,
+} from 'lucide-react';
+import {
+  summarizeCsvFile,
+  type CsvImportSummary,
+} from '@/shared/csv';
+import { sendMessage } from '@/shared/messaging';
+import type {
+  ActivityKind,
+  AutoPauseReason,
+  ProspectLevel,
+  ProspectQuery,
+  ProspectStats,
+  ScanState,
+  ScanStatus,
+  ScanWorkerStatus,
+} from '@/shared/types';
+
+type PreviewState = {
+  filename: string;
+  summary: CsvImportSummary;
+};
+
+type ToastState =
+  | { kind: 'idle' }
+  | { kind: 'error'; text: string }
+  | { kind: 'success'; text: string };
+
+const EMPTY_STATS: ProspectStats = {
+  total: 0,
+  by_level: { NONE: 0, '1st': 0, '2nd': 0, '3rd': 0, OUT_OF_NETWORK: 0 },
+  by_scan_status: {
+    pending: 0,
+    in_progress: 0,
+    done: 0,
+    failed: 0,
+    skipped: 0,
+  },
+};
+
+const STATUS_DOT: Record<ScanWorkerStatus, { color: string; label: string }> = {
+  idle: { color: 'bg-gray-500', label: 'Idle' },
+  running: { color: 'bg-blue-500 animate-pulse', label: 'Scanning' },
+  paused: { color: 'bg-yellow-500', label: 'Paused' },
+  auto_paused: { color: 'bg-red-500', label: 'Auto-paused' },
+};
+
+const AUTO_PAUSE_COPY: Record<NonNullable<AutoPauseReason>, string> = {
+  captcha: 'LinkedIn challenge / CAPTCHA detected. Solve it in a visible tab and resume.',
+  rate_limit: 'Rate limit detected. Wait a while before resuming.',
+  auth_wall: 'LinkedIn auth wall hit. Log back in, then resume.',
+};
+
+const FILTER_LEVEL_OPTIONS: Array<{ value: ProspectLevel; label: string }> = [
+  { value: '1st', label: '1st' },
+  { value: '2nd', label: '2nd' },
+  { value: '3rd', label: '3rd' },
+  { value: 'OUT_OF_NETWORK', label: 'OOO' },
+  { value: 'NONE', label: 'Unscanned' },
+];
+
+const FILTER_STATUS_OPTIONS: Array<{ value: ScanStatus; label: string }> = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'done', label: 'Done' },
+  { value: 'failed', label: 'Failed' },
+  { value: 'in_progress', label: 'In progress' },
+  { value: 'skipped', label: 'Skipped' },
+];
+
+const FILTER_ACTIVITY_OPTIONS: Array<{ kind: keyof ActivityKind; label: string }> = [
+  { kind: 'connected', label: 'Connected' },
+  { kind: 'commented', label: 'Commented' },
+  { kind: 'messaged', label: 'Messaged' },
+];
+
+interface ExportFilterDraft {
+  levels: Set<ProspectLevel>;
+  scan_statuses: Set<ScanStatus>;
+  activity: Set<keyof ActivityKind>;
+}
+
+const EMPTY_EXPORT_FILTER: ExportFilterDraft = {
+  levels: new Set(),
+  scan_statuses: new Set(),
+  activity: new Set(),
+};
+
+function exportFilterToQuery(draft: ExportFilterDraft): ProspectQuery | null {
+  const levels = Array.from(draft.levels);
+  const scan_statuses = Array.from(draft.scan_statuses);
+  const activity = Array.from(draft.activity);
+  if (levels.length === 0 && scan_statuses.length === 0 && activity.length === 0) {
+    return null;
+  }
+  const activityObj: ProspectQuery['activity'] = {};
+  activity.forEach((k) => {
+    activityObj[k] = true;
+  });
+  return {
+    levels: levels.length > 0 ? levels : undefined,
+    scan_statuses: scan_statuses.length > 0 ? scan_statuses : undefined,
+    activity: activity.length > 0 ? activityObj : undefined,
+    page: 0,
+    page_size: Number.MAX_SAFE_INTEGER,
+  };
+}
+
+function downloadCsv(csv: string, filename: string): void {
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function buildExportFilename(suffix: string): string {
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
+  return `investor-scout-${suffix}-${stamp}.csv`;
+}
+
+export default function App() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [stats, setStats] = useState<ProspectStats>(EMPTY_STATS);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [scanState, setScanState] = useState<ScanState | null>(null);
+  const [scanBusy, setScanBusy] = useState(false);
+  const [preview, setPreview] = useState<PreviewState | null>(null);
+  const [parsing, setParsing] = useState(false);
+  const [committing, setCommitting] = useState(false);
+  const [toast, setToast] = useState<ToastState>({ kind: 'idle' });
+  const [exportBusy, setExportBusy] = useState(false);
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
+
+  const refreshStats = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const res = await sendMessage({ type: 'STATS_QUERY' });
+      if (res.ok) {
+        setStats(res.data);
+      }
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+
+  const refreshScanState = useCallback(async () => {
+    const res = await sendMessage({ type: 'SCAN_STATE_QUERY' });
+    if (res.ok) setScanState(res.data);
+  }, []);
+
+  useEffect(() => {
+    void refreshStats();
+    void refreshScanState();
+    const listener = (msg: { type?: string; payload?: unknown }) => {
+      if (msg?.type === 'PROSPECTS_UPDATED') {
+        void refreshStats();
+      }
+      if (msg?.type === 'SCAN_STATE_CHANGED' && msg.payload) {
+        setScanState(msg.payload as ScanState);
+        // Updates to scan_status touch the status counts as well.
+        void refreshStats();
+      }
+    };
+    chrome.runtime.onMessage.addListener(listener);
+    return () => chrome.runtime.onMessage.removeListener(listener);
+  }, [refreshStats, refreshScanState]);
+
+  useEffect(() => {
+    if (toast.kind === 'idle') return;
+    const t = setTimeout(() => setToast({ kind: 'idle' }), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      setToast({ kind: 'error', text: 'Please select a .csv file.' });
+      return;
+    }
+
+    setParsing(true);
+    try {
+      const summary = await summarizeCsvFile(file);
+      setPreview({ filename: file.name, summary });
+    } catch (error) {
+      console.error('[investor-scout] CSV parse failed', {
+        error: error instanceof Error ? error.message : error,
+        timestamp: new Date().toISOString(),
+      });
+      setToast({
+        kind: 'error',
+        text: 'Failed to parse CSV. Check the file format.',
+      });
+    } finally {
+      setParsing(false);
+    }
+  };
+
+  const handleCommit = async () => {
+    if (!preview) return;
+    if (preview.summary.valid === 0) {
+      setToast({ kind: 'error', text: 'No valid URLs to import.' });
+      return;
+    }
+
+    setCommitting(true);
+    try {
+      const res = await sendMessage({
+        type: 'CSV_COMMIT',
+        payload: {
+          filename: preview.filename,
+          urls: preview.summary.urls,
+        },
+      });
+      if (res.ok) {
+        setToast({
+          kind: 'success',
+          text: `Imported ${res.data.inserted.toLocaleString()} prospects.`,
+        });
+        setPreview(null);
+        await refreshStats();
+      } else {
+        setToast({ kind: 'error', text: res.error });
+      }
+    } finally {
+      setCommitting(false);
+    }
+  };
+
+  const openDashboard = () => {
+    chrome.runtime.openOptionsPage?.();
+  };
+
+  const runExport = useCallback(
+    async (filter: ProspectQuery | null, suffix: string) => {
+      if (exportBusy) return;
+      setExportBusy(true);
+      try {
+        const res = await sendMessage({
+          type: 'EXPORT_CSV',
+          payload: { filter },
+        });
+        if (!res.ok) {
+          setToast({ kind: 'error', text: res.error });
+          return;
+        }
+        if (res.data.row_count === 0) {
+          setToast({ kind: 'error', text: 'No rows match — nothing to export.' });
+          return;
+        }
+        downloadCsv(res.data.csv, buildExportFilename(suffix));
+        setToast({
+          kind: 'success',
+          text: `Exported ${res.data.row_count.toLocaleString()} rows.`,
+        });
+      } catch (error) {
+        console.error('[investor-scout] export failed', {
+          error: error instanceof Error ? error.message : error,
+          timestamp: new Date().toISOString(),
+        });
+        setToast({ kind: 'error', text: 'Export failed.' });
+      } finally {
+        setExportBusy(false);
+      }
+    },
+    [exportBusy],
+  );
+
+  const handleExportAll = () => {
+    void runExport(null, 'all');
+  };
+
+  const handleOpenFilterModal = () => {
+    if (stats.total === 0) {
+      setToast({ kind: 'error', text: 'No prospects to export yet.' });
+      return;
+    }
+    setFilterModalOpen(true);
+  };
+
+  const handleExportFiltered = async (draft: ExportFilterDraft) => {
+    const query = exportFilterToQuery(draft);
+    if (!query) {
+      setToast({
+        kind: 'error',
+        text: 'Pick at least one filter, or use Export all.',
+      });
+      return;
+    }
+    setFilterModalOpen(false);
+    await runExport(query, 'filtered');
+  };
+
+  const openPicker = () => fileInputRef.current?.click();
+
+  const willReplace = useMemo(() => stats.total > 0, [stats.total]);
+
+  const scanStatus: ScanWorkerStatus = scanState?.status ?? 'idle';
+  const dot = STATUS_DOT[scanStatus];
+
+  const scanned = stats.by_scan_status.done + stats.by_scan_status.failed;
+  const total = stats.total;
+  const pending = stats.by_scan_status.pending + stats.by_scan_status.in_progress;
+  const progressPct = total > 0 ? Math.min(100, Math.round((scanned / total) * 100)) : 0;
+
+  const handleScanAction = async (action: 'SCAN_START' | 'SCAN_PAUSE' | 'SCAN_RESUME') => {
+    if (scanBusy) return;
+    setScanBusy(true);
+    try {
+      const res = await sendMessage({ type: action });
+      if (res.ok) {
+        setScanState(res.data);
+      } else {
+        setToast({ kind: 'error', text: res.error });
+      }
+    } finally {
+      setScanBusy(false);
+    }
+  };
+
+  const canStart = scanStatus === 'idle' && pending > 0;
+  const canPause = scanStatus === 'running';
+  const canResume = scanStatus === 'paused' || scanStatus === 'auto_paused';
+
+  return (
+    <div className="flex h-full w-full flex-col bg-bg text-gray-100">
+      <header className="flex items-center gap-2 border-b border-gray-800 bg-bg-card px-4 py-3">
+        <span
+          className={`inline-block h-2 w-2 rounded-full ${dot.color}`}
+          aria-label={`Status: ${dot.label}`}
+          title={dot.label}
+        />
+        <Radar className="h-4 w-4 text-blue-400" />
+        <h1 className="text-sm font-semibold tracking-wide">
+          LinkedIn Investor Scout
+        </h1>
+        <span className="ml-auto text-[10px] uppercase tracking-wide text-gray-500">
+          {dot.label}
+        </span>
+      </header>
+
+      <main className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
+        <section className="rounded-md border border-gray-800 bg-bg-card p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xs uppercase tracking-wide text-gray-500">
+                Prospects loaded
+              </div>
+              <div className="text-xl font-semibold text-gray-100">
+                {statsLoading ? '—' : stats.total.toLocaleString()}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => void refreshStats()}
+              className="rounded-md border border-gray-700 p-1.5 text-gray-400 hover:border-blue-500 hover:text-white"
+              title="Refresh"
+              aria-label="Refresh stats"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${statsLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={openPicker}
+            disabled={parsing || committing}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {parsing ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Parsing CSV…
+              </>
+            ) : (
+              <>
+                <Upload className="h-3.5 w-3.5" />
+                Upload new CSV
+              </>
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <p className="mt-2 text-[10px] leading-snug text-gray-500">
+            Single column, no header. Up to 50,000 LinkedIn <code className="text-gray-400">/in/</code> URLs.
+          </p>
+        </section>
+
+        {scanState?.status === 'auto_paused' && scanState.auto_pause_reason && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-md border border-red-700 bg-red-900/40 px-3 py-2 text-[11px] text-red-100"
+          >
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <div className="flex-1">
+              <div className="font-semibold">Scan auto-paused</div>
+              <p className="mt-0.5 text-red-200/80">
+                {AUTO_PAUSE_COPY[scanState.auto_pause_reason]}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <section className="rounded-md border border-gray-800 bg-bg-card p-3">
+          <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-wide text-gray-500">
+            <span>Scan</span>
+            <span>
+              {scanned.toLocaleString()} / {total.toLocaleString()}
+            </span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-800">
+            <div
+              className="h-full bg-blue-500 transition-[width]"
+              style={{ width: `${progressPct}%` }}
+              aria-label={`Progress ${progressPct}%`}
+            />
+          </div>
+          <div className="mt-2 flex items-center justify-between text-[10px] text-gray-500">
+            <span>
+              {pending.toLocaleString()} pending · {stats.by_scan_status.failed.toLocaleString()} failed
+            </span>
+            <span>
+              {scanState ? `${scanState.scans_today} today` : '—'}
+            </span>
+          </div>
+          <div className="mt-3 flex gap-2">
+            {canStart && (
+              <ScanButton
+                onClick={() => void handleScanAction('SCAN_START')}
+                disabled={scanBusy}
+                tone="primary"
+                icon={<Play className="h-3.5 w-3.5" />}
+                label="Start scan"
+              />
+            )}
+            {canPause && (
+              <ScanButton
+                onClick={() => void handleScanAction('SCAN_PAUSE')}
+                disabled={scanBusy}
+                tone="muted"
+                icon={<Pause className="h-3.5 w-3.5" />}
+                label="Pause scan"
+              />
+            )}
+            {canResume && (
+              <ScanButton
+                onClick={() => void handleScanAction('SCAN_RESUME')}
+                disabled={scanBusy}
+                tone="primary"
+                icon={<Play className="h-3.5 w-3.5" />}
+                label="Resume scan"
+              />
+            )}
+            {!canStart && !canPause && !canResume && (
+              <div className="flex-1 rounded-md border border-gray-800 bg-bg px-2 py-1.5 text-center text-[11px] text-gray-500">
+                {total === 0
+                  ? 'Upload a CSV to begin scanning.'
+                  : 'All prospects scanned.'}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section>
+          <div className="mb-1.5 text-[10px] uppercase tracking-wide text-gray-500">
+            By connection level
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            <StatTile label="1st" value={stats.by_level['1st']} color="bg-level-first" />
+            <StatTile label="2nd" value={stats.by_level['2nd']} color="bg-level-second" />
+            <StatTile label="3rd" value={stats.by_level['3rd']} color="bg-level-third" />
+            <StatTile label="OOO" value={stats.by_level.OUT_OF_NETWORK} color="bg-level-oon" />
+          </div>
+        </section>
+
+        <section>
+          <div className="mb-1.5 text-[10px] uppercase tracking-wide text-gray-500">
+            Scan status
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <StatusRow label="Pending" value={stats.by_scan_status.pending} />
+            <StatusRow label="Done" value={stats.by_scan_status.done} />
+            <StatusRow label="Failed" value={stats.by_scan_status.failed} />
+            <StatusRow label="In progress" value={stats.by_scan_status.in_progress} />
+          </div>
+        </section>
+
+        <section className="mt-auto">
+          <div className="mb-1.5 text-[10px] uppercase tracking-wide text-gray-500">
+            Quick actions
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={handleExportAll}
+              disabled={exportBusy || stats.total === 0}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              title="Download a CSV of every prospect"
+            >
+              {exportBusy ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+              Export (all)
+            </button>
+            <button
+              type="button"
+              onClick={handleOpenFilterModal}
+              disabled={exportBusy || stats.total === 0}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              title="Pick filters then download the matching rows"
+            >
+              <Filter className="h-3.5 w-3.5" />
+              Export (filtered…)
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={openDashboard}
+            className="mt-2 w-full rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white"
+          >
+            Open dashboard
+          </button>
+        </section>
+      </main>
+
+      <footer className="border-t border-gray-800 px-4 py-2 text-[10px] text-gray-500">
+        v{chrome.runtime?.getManifest?.().version ?? '1.0.0'}
+      </footer>
+
+      {toast.kind !== 'idle' && (
+        <div
+          role="status"
+          className={`absolute inset-x-3 bottom-10 rounded-md border px-3 py-2 text-xs shadow-lg ${
+            toast.kind === 'error'
+              ? 'border-red-700 bg-red-900/80 text-red-100'
+              : 'border-green-700 bg-green-900/80 text-green-100'
+          }`}
+        >
+          {toast.text}
+        </div>
+      )}
+
+      {preview && (
+        <PreviewModal
+          filename={preview.filename}
+          summary={preview.summary}
+          willReplace={willReplace}
+          existingCount={stats.total}
+          committing={committing}
+          onCancel={() => (committing ? undefined : setPreview(null))}
+          onConfirm={() => void handleCommit()}
+        />
+      )}
+
+      {filterModalOpen && (
+        <ExportFilterModal
+          busy={exportBusy}
+          onCancel={() => (exportBusy ? undefined : setFilterModalOpen(false))}
+          onConfirm={(draft) => void handleExportFiltered(draft)}
+        />
+      )}
+    </div>
+  );
+}
+
+function ScanButton({
+  onClick,
+  disabled,
+  tone,
+  icon,
+  label,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  tone: 'primary' | 'muted';
+  icon: ReactNode;
+  label: string;
+}) {
+  const base =
+    'flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-50';
+  const classes =
+    tone === 'primary'
+      ? `${base} bg-blue-600 text-white hover:bg-blue-500`
+      : `${base} border border-gray-700 bg-bg text-gray-200 hover:border-gray-500 hover:text-white`;
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} className={classes}>
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+function StatTile({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: string;
+}) {
+  return (
+    <div className="rounded-md border border-gray-800 bg-bg-card p-2 text-center">
+      <div className="mx-auto mb-1 flex items-center justify-center gap-1">
+        <span className={`inline-block h-1.5 w-1.5 rounded-full ${color}`} />
+        <span className="text-[10px] font-medium uppercase tracking-wide text-gray-400">
+          {label}
+        </span>
+      </div>
+      <div className="text-sm font-semibold text-gray-100">
+        {value.toLocaleString()}
+      </div>
+    </div>
+  );
+}
+
+function StatusRow({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex items-center justify-between rounded-md border border-gray-800 bg-bg-card px-2 py-1.5">
+      <span className="text-gray-400">{label}</span>
+      <span className="font-medium text-gray-100">{value.toLocaleString()}</span>
+    </div>
+  );
+}
+
+function PreviewModal({
+  filename,
+  summary,
+  willReplace,
+  existingCount,
+  committing,
+  onCancel,
+  onConfirm,
+}: {
+  filename: string;
+  summary: CsvImportSummary;
+  willReplace: boolean;
+  existingCount: number;
+  committing: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="absolute inset-0 z-10 flex items-end bg-black/60 backdrop-blur-sm">
+      <div className="max-h-full w-full overflow-y-auto border-t border-gray-700 bg-bg-card p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <FileUp className="h-4 w-4 text-blue-400" />
+          <h2 className="text-sm font-semibold">Review import</h2>
+        </div>
+        <p className="mb-3 truncate text-[11px] text-gray-400" title={filename}>
+          {filename}
+        </p>
+
+        <dl className="mb-3 grid grid-cols-2 gap-2 text-xs">
+          <SummaryRow label="Total rows" value={summary.total} />
+          <SummaryRow label="Valid" value={summary.valid} accent="text-green-400" />
+          <SummaryRow label="Invalid" value={summary.invalid} accent={summary.invalid > 0 ? 'text-yellow-400' : undefined} />
+          <SummaryRow label="Duplicates" value={summary.duplicates} />
+        </dl>
+
+        <div
+          className={`mb-3 rounded-md border px-3 py-2 text-[11px] ${
+            willReplace
+              ? 'border-yellow-700 bg-yellow-900/30 text-yellow-100'
+              : 'border-gray-700 bg-bg text-gray-300'
+          }`}
+        >
+          {willReplace ? (
+            <>
+              Will replace the current list of{' '}
+              <strong>{existingCount.toLocaleString()}</strong> prospect
+              {existingCount === 1 ? '' : 's'}.
+            </>
+          ) : (
+            <>No existing list — this will be the first import.</>
+          )}
+        </div>
+
+        {summary.invalid > 0 && summary.invalid_samples.length > 0 && (
+          <details className="mb-3 text-[11px] text-gray-400">
+            <summary className="cursor-pointer text-gray-300 hover:text-white">
+              View invalid samples ({summary.invalid_samples.length})
+            </summary>
+            <ul className="mt-2 space-y-1 rounded-md border border-gray-800 bg-bg p-2 font-mono text-[10px] text-gray-400">
+              {summary.invalid_samples.map((raw, i) => (
+                <li key={`${i}-${raw}`} className="truncate" title={raw}>
+                  {raw}
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
+
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={committing}
+            className="rounded-md border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:border-gray-500 hover:text-white disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={committing || summary.valid === 0}
+            className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {committing && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {willReplace ? 'Replace & import' : 'Import'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SummaryRow({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: number;
+  accent?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-md border border-gray-800 bg-bg px-2 py-1.5">
+      <span className="text-gray-400">{label}</span>
+      <span className={`font-semibold ${accent ?? 'text-gray-100'}`}>
+        {value.toLocaleString()}
+      </span>
+    </div>
+  );
+}
+
+function ExportFilterModal({
+  busy,
+  onCancel,
+  onConfirm,
+}: {
+  busy: boolean;
+  onCancel: () => void;
+  onConfirm: (draft: ExportFilterDraft) => void;
+}) {
+  const [draft, setDraft] = useState<ExportFilterDraft>(() => ({
+    levels: new Set(EMPTY_EXPORT_FILTER.levels),
+    scan_statuses: new Set(EMPTY_EXPORT_FILTER.scan_statuses),
+    activity: new Set(EMPTY_EXPORT_FILTER.activity),
+  }));
+
+  const toggleLevel = (value: ProspectLevel) => {
+    setDraft((d) => {
+      const next = new Set(d.levels);
+      next.has(value) ? next.delete(value) : next.add(value);
+      return { ...d, levels: next };
+    });
+  };
+  const toggleStatus = (value: ScanStatus) => {
+    setDraft((d) => {
+      const next = new Set(d.scan_statuses);
+      next.has(value) ? next.delete(value) : next.add(value);
+      return { ...d, scan_statuses: next };
+    });
+  };
+  const toggleActivity = (value: keyof ActivityKind) => {
+    setDraft((d) => {
+      const next = new Set(d.activity);
+      next.has(value) ? next.delete(value) : next.add(value);
+      return { ...d, activity: next };
+    });
+  };
+
+  const pickedCount =
+    draft.levels.size + draft.scan_statuses.size + draft.activity.size;
+
+  return (
+    <div className="absolute inset-0 z-10 flex items-end bg-black/60 backdrop-blur-sm">
+      <div className="max-h-full w-full overflow-y-auto border-t border-gray-700 bg-bg-card p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <Filter className="h-4 w-4 text-blue-400" />
+          <h2 className="text-sm font-semibold">Export filtered CSV</h2>
+        </div>
+        <p className="mb-3 text-[11px] text-gray-400">
+          Pick one or more filters. Rows matching any selection in each group are included.
+        </p>
+
+        <FilterGroup label="Connection level">
+          {FILTER_LEVEL_OPTIONS.map((opt) => (
+            <FilterChip
+              key={opt.value}
+              label={opt.label}
+              selected={draft.levels.has(opt.value)}
+              onClick={() => toggleLevel(opt.value)}
+            />
+          ))}
+        </FilterGroup>
+
+        <FilterGroup label="Scan status">
+          {FILTER_STATUS_OPTIONS.map((opt) => (
+            <FilterChip
+              key={opt.value}
+              label={opt.label}
+              selected={draft.scan_statuses.has(opt.value)}
+              onClick={() => toggleStatus(opt.value)}
+            />
+          ))}
+        </FilterGroup>
+
+        <FilterGroup label="Activity">
+          {FILTER_ACTIVITY_OPTIONS.map((opt) => (
+            <FilterChip
+              key={opt.kind}
+              label={opt.label}
+              selected={draft.activity.has(opt.kind)}
+              onClick={() => toggleActivity(opt.kind)}
+            />
+          ))}
+        </FilterGroup>
+
+        <div className="mt-4 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={busy}
+            className="rounded-md border border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:border-gray-500 hover:text-white disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => onConfirm(draft)}
+            disabled={busy || pickedCount === 0}
+            className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            <Download className="h-3.5 w-3.5" />
+            Export {pickedCount > 0 ? `(${pickedCount})` : ''}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FilterGroup({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mb-3">
+      <div className="mb-1 text-[10px] uppercase tracking-wide text-gray-500">
+        {label}
+      </div>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
+    </div>
+  );
+}
+
+function FilterChip({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={
+        'rounded-full border px-2.5 py-1 text-[11px] font-medium transition ' +
+        (selected
+          ? 'border-blue-500/70 bg-blue-900/40 text-blue-100'
+          : 'border-gray-700 bg-bg text-gray-300 hover:border-gray-500 hover:text-white')
+      }
+      aria-pressed={selected}
+    >
+      {label}
+    </button>
+  );
+}
