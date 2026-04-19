@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "batch": "009_lines_24-60",
+    "method": "web_search_subagent",
+    "description": "Folk all VCs — lines 24–60"
+  },
+  "people": {
+    "alejandro hill::7bc venture capital": ["https://www.linkedin.com/in/alejandrohills"],
+    "andy mcgibbon::sonder capital": ["https://www.linkedin.com/in/amcgibbon"],
+    "artur davydenko::flyer one ventures": ["https://www.linkedin.com/in/davydenko-artur"],
+    "bob cramer::johnson venture partners": ["https://www.linkedin.com/in/cramerbob"],
+    "chad witherell::43north": ["https://www.linkedin.com/in/chadwitherell"],
+    "chenoa farnsworth::blue startups": ["https://www.linkedin.com/in/chenoafarnsworth"],
+    "dayton miller::boulder food group ('bfg')": ["https://www.linkedin.com/in/daytonlmiller"],
+    "esteban reyes::las olas vc": ["https://www.linkedin.com/in/reyesesteban"],
+    "james thomas::thomas, mcnerney & partners": ["https://www.linkedin.com/in/jethomasco"],
+    "jeffrey evans::mantis venture capital": ["https://www.linkedin.com/in/jeffrey-evans-57b88511"],
+    "joe beard::perot jain": ["https://www.linkedin.com/in/josephabeard"],
+    "john kim::amasia": ["https://www.linkedin.com/in/john-kim-6241a16"],
+    "marissa campise::rucker park capital": ["https://www.linkedin.com/in/marissacampise"],
+    "matthew hartman::betaworks": ["https://www.linkedin.com/in/matthewforresthartman"],
+    "ned sherman::goal ventures": ["https://www.linkedin.com/in/nedsherman"],
+    "rachel wang::qiming venture partners": ["https://www.linkedin.com/in/rachel-wang-4a73065a"],
+    "rich kleiman::thirty five ventures": ["https://www.linkedin.com/in/richkleiman"],
+    "roger chabra::rho capital partners": ["https://www.linkedin.com/in/rchabra"],
+    "robert bell::ideaship": ["https://www.linkedin.com/in/robertclaytonbell"],
+    "ryan kim": ["https://www.linkedin.com/in/ryansunghokim"],
+    "sarah kunst::cleo capital": ["https://www.linkedin.com/in/sarahkunst"],
+    "teppei tsutsui::gfr fund": ["https://www.linkedin.com/in/teppeitsutsui"]
+  },
+  "companies": {
+    "linkedin.com/company/3070249": [
+      "https://www.linkedin.com/in/jethomasco",
+      "https://www.linkedin.com/in/michael-mcnerney-8b4775169"
+    ],
+    "linkedin.com/company/43north": ["https://www.linkedin.com/in/chadwitherell"],
+    "linkedin.com/company/7bc-vc": ["https://www.linkedin.com/in/alejandrohills"],
+    "linkedin.com/company/betaworks-ventures": ["https://www.linkedin.com/in/matthewforresthartman"],
+    "linkedin.com/company/blue-startups-llc": ["https://www.linkedin.com/in/chenoafarnsworth"],
+    "linkedin.com/company/cleo-capital": [
+      "https://www.linkedin.com/in/sarahkunst",
+      "https://www.linkedin.com/in/racheltipograph",
+      "https://www.linkedin.com/in/alexandrazatarain",
+      "https://www.linkedin.com/in/yannis-yu-68a522326"
+    ],
+    "linkedin.com/company/flyer-one-vc": ["https://www.linkedin.com/in/davydenko-artur"],
+    "linkedin.com/company/gfrfund": ["https://www.linkedin.com/in/teppeitsutsui"],
+    "linkedin.com/company/gvr-fund": ["https://www.linkedin.com/in/teppeitsutsui"],
+    "linkedin.com/company/goalventures": ["https://www.linkedin.com/in/nedsherman"],
+    "linkedin.com/company/hashedfund": ["https://www.linkedin.com/in/ryansunghokim"],
+    "linkedin.com/company/ideaship": ["https://www.linkedin.com/in/robertclaytonbell"],
+    "linkedin.com/company/johnson-venture-partners": ["https://www.linkedin.com/in/cramerbob"],
+    "linkedin.com/company/las-olas-venture-capital": ["https://www.linkedin.com/in/reyesesteban"],
+    "linkedin.com/company/mantis-venture-capital": ["https://www.linkedin.com/in/jeffrey-evans-57b88511"],
+    "linkedin.com/company/malk-organics": ["https://www.linkedin.com/in/daytonlmiller"],
+    "linkedin.com/company/perot-jain-l.p.": ["https://www.linkedin.com/in/josephabeard"],
+    "linkedin.com/company/qiming-venture-partners": ["https://www.linkedin.com/in/rachel-wang-4a73065a"],
+    "linkedin.com/company/rho-ventures": ["https://www.linkedin.com/in/rchabra"],
+    "linkedin.com/company/rpvc": ["https://www.linkedin.com/in/marissacampise"],
+    "linkedin.com/company/thirty-five-ventures": [
+      "https://www.linkedin.com/in/richkleiman",
+      "https://www.linkedin.com/in/easymoneysniper"
+    ]
+  },
+  "firms": {
+    "43north": ["https://www.linkedin.com/in/chadwitherell"],
+    "7bc venture capital": ["https://www.linkedin.com/in/alejandrohills"],
+    "amasia": ["https://www.linkedin.com/in/john-kim-6241a16"],
+    "betaworks": ["https://www.linkedin.com/in/matthewforresthartman"],
+    "blue startups": ["https://www.linkedin.com/in/chenoafarnsworth"],
+    "boulder food group ('bfg')": ["https://www.linkedin.com/in/daytonlmiller"],
+    "cleo capital": [
+      "https://www.linkedin.com/in/sarahkunst",
+      "https://www.linkedin.com/in/racheltipograph",
+      "https://www.linkedin.com/in/alexandrazatarain",
+      "https://www.linkedin.com/in/yannis-yu-68a522326"
+    ],
+    "flyer one ventures": ["https://www.linkedin.com/in/davydenko-artur"],
+    "gfr fund": ["https://www.linkedin.com/in/teppeitsutsui"],
+    "goal ventures": ["https://www.linkedin.com/in/nedsherman"],
+    "hashed": ["https://www.linkedin.com/in/ryansunghokim"],
+    "ideaship": ["https://www.linkedin.com/in/robertclaytonbell"],
+    "johnson venture partners": ["https://www.linkedin.com/in/cramerbob"],
+    "las olas vc": ["https://www.linkedin.com/in/reyesesteban"],
+    "mantis venture capital": ["https://www.linkedin.com/in/jeffrey-evans-57b88511"],
+    "perot jain": ["https://www.linkedin.com/in/josephabeard"],
+    "qiming venture partners": ["https://www.linkedin.com/in/rachel-wang-4a73065a"],
+    "rho capital partners": ["https://www.linkedin.com/in/rchabra"],
+    "rucker park capital": ["https://www.linkedin.com/in/marissacampise"],
+    "sonder capital": ["https://www.linkedin.com/in/amcgibbon"],
+    "thirty five ventures": [
+      "https://www.linkedin.com/in/richkleiman",
+      "https://www.linkedin.com/in/easymoneysniper"
+    ],
+    "thomas, mcnerney & partners": [
+      "https://www.linkedin.com/in/jethomasco",
+      "https://www.linkedin.com/in/michael-mcnerney-8b4775169"
+    ]
+  }
+}

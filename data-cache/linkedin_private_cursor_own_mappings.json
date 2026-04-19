@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "description": "Cursor-session LinkedIn /in/ mappings only. Do not merge with other agents' JSON files.",
+    "updated": "2026-04-18"
+  },
+  "firms": {},
+  "people": {
+    "carey ransom": [
+      "https://www.linkedin.com/in/careyransom"
+    ],
+    "neal conlon": [
+      "https://www.linkedin.com/in/nealconlon"
+    ],
+    "kyle gluskin": [
+      "https://www.linkedin.com/in/kylegluskin"
+    ],
+    "ethan meyer": [
+      "https://www.linkedin.com/in/ejm05"
+    ],
+    "harrison remler": [
+      "https://www.linkedin.com/in/harrison-remler-238804128"
+    ],
+    "neil vangala": [
+      "https://www.linkedin.com/in/neilvangala"
+    ],
+    "nate cooper": [
+      "https://www.linkedin.com/in/nathan-cooper-2ba9aa19"
+    ],
+    "rohit bhatia": [
+      "https://www.linkedin.com/in/rohit-b-b9067b83"
+    ],
+    "michael kliska": [
+      "https://www.linkedin.com/in/michaelkliska"
+    ],
+    "eric desai": [
+      "https://www.linkedin.com/in/ericdesai"
+    ],
+    "ari paul": [
+      "https://www.linkedin.com/in/ari-paul-8895a57"
+    ],
+    "tilman ehrbeck": [
+      "https://www.linkedin.com/in/tilman-ehrbeck"
+    ],
+    "adam e fine": [
+      "https://www.linkedin.com/in/adam-fine-01b6378"
+    ],
+    "mark zerlang": [
+      "https://www.linkedin.com/in/markzerlang"
+    ],
+    "krish jagirdar": [
+      "https://www.linkedin.com/in/kjagirdar"
+    ],
+    "seth ellis": [
+      "https://www.linkedin.com/in/seth-ellis-b6510126"
+    ],
+    "jason lettmann": [
+      "https://www.linkedin.com/in/jason-lettmann-ba3ab7"
+    ],
+    "chad gomes": [
+      "https://www.linkedin.com/in/chadgomes"
+    ],
+    "david birnbaum": [
+      "https://www.linkedin.com/in/dbirnbaum1"
+    ],
+    "john diekman": [
+      "https://www.linkedin.com/in/john-diekman-38096036"
+    ],
+    "thanos papadimitriou": [
+      "https://www.linkedin.com/in/thanospapadimitriou"
+    ],
+    "yamen al hajjar": [
+      "https://www.linkedin.com/in/yamenalhajjar"
+    ],
+    "graham hunter": [
+      "https://www.linkedin.com/in/graham-hunter-07062846"
+    ],
+    "mark ladd": [
+      "https://www.linkedin.com/in/markjladd"
+    ],
+    "nish patel": [
+      "https://www.linkedin.com/in/nish1"
+    ],
+    "james pavlik": [
+      "https://www.linkedin.com/in/jim-pavlik-b471663"
+    ],
+    "jamie seltzer": [
+      "https://www.linkedin.com/in/jamie-roberts-seltzer-a57a6934"
+    ],
+    "logan allin": [
+      "https://www.linkedin.com/in/loganallin"
+    ],
+    "jesse walden": [
+      "https://www.linkedin.com/in/jessewalden"
+    ],
+    "sumeet shah": [
+      "https://www.linkedin.com/in/sumeethshah"
+    ],
+    "alexander chapman": [
+      "https://www.linkedin.com/in/alexander-chapman-993819b"
+    ],
+    "miles a": [
+      "https://www.linkedin.com/in/miles-a-123176b5"
+    ]
+  },
+  "companies": {
+    "https://www.linkedin.com/company/11186126": [
+      "https://www.linkedin.com/in/ari-paul-8895a57"
+    ],
+    "https://www.linkedin.com/company/charge-ventures": [
+      "https://www.linkedin.com/in/thanospapadimitriou"
+    ],
+    "https://www.linkedin.com/company/olive-tree-capital": [
+      "https://www.linkedin.com/in/yamenalhajjar"
+    ]
+  }
+}

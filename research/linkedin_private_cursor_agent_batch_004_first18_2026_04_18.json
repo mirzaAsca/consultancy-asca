@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "description": "Web-research merge: first qualifying empty linkedin-private-cursor rows in 004 micro-VC CSV (generalPurpose agent 2026-04-18). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_agent_batch_004_first18_2026_04_18.json"
+  },
+  "firms": {
+    "accele biopharma": [
+      "https://www.linkedin.com/in/elaine-hamm-phd"
+    ],
+    "angels unleashed": [
+      "https://www.linkedin.com/in/premkumarbarthasarathy",
+      "https://www.linkedin.com/in/arunkumarkrishnakumar",
+      "https://www.linkedin.com/in/kirankumarpillala"
+    ],
+    "blangkond ventures": [
+      "https://www.linkedin.com/in/vsubandhi"
+    ],
+    "brightpath capital partners": [
+      "https://www.linkedin.com/in/alana-dis-6977162a6"
+    ],
+    "capital a partners": [
+      "https://www.linkedin.com/in/vcdavidmendez",
+      "https://www.linkedin.com/in/tmhnycsthlm",
+      "https://www.linkedin.com/in/carlos-estrada-07a66b20",
+      "https://www.linkedin.com/in/vincentbellaran"
+    ],
+    "cassius family": [
+      "https://www.linkedin.com/in/emmanuel-seugé-7197285",
+      "https://www.linkedin.com/in/gabby-cambanis-80587a52"
+    ],
+    "cloud apps capital partners": [
+      "https://www.linkedin.com/in/matt-holleran-291a773",
+      "https://www.linkedin.com/in/judyloehr",
+      "https://www.linkedin.com/in/rachel-r-03801147"
+    ],
+    "cloudstone venture fund": [
+      "https://www.linkedin.com/in/yong-tao-2b3a0913",
+      "https://www.linkedin.com/in/alexa-willson",
+      "https://www.linkedin.com/in/tom-krummel-bb957a124"
+    ],
+    "defy partners": [
+      "https://www.linkedin.com/in/neil-sequeira-76739a40",
+      "https://www.linkedin.com/in/traevassallo",
+      "https://www.linkedin.com/in/amyyin",
+      "https://www.linkedin.com/in/brianrothenberg",
+      "https://www.linkedin.com/in/stevemiller18"
+    ],
+    "donovan ventures": [
+      "https://www.linkedin.com/in/willpage",
+      "https://www.linkedin.com/in/jason-holton-018a8bb1",
+      "https://www.linkedin.com/in/johndonovanjr"
+    ],
+    "drk foundation": [
+      "https://www.linkedin.com/in/holly-kuzmich",
+      "https://www.linkedin.com/in/timothy-sung-cho",
+      "https://www.linkedin.com/in/daniel-torres-balauro",
+      "https://www.linkedin.com/in/ananya-bhattacharya-drk",
+      "https://www.linkedin.com/in/mandysprice",
+      "https://www.linkedin.com/in/oliverrothschild"
+    ],
+    "ecosystem integrity fund": [
+      "https://www.linkedin.com/in/geoffeisenberg",
+      "https://www.linkedin.com/in/devin-whatley-62245716",
+      "https://www.linkedin.com/in/stwine",
+      "https://www.linkedin.com/in/bblaesser",
+      "https://www.linkedin.com/in/sethudelson"
+    ],
+    "energy innovation capital": [
+      "https://www.linkedin.com/in/kevin-skillern-864131",
+      "https://www.linkedin.com/in/chris00smith",
+      "https://www.linkedin.com/in/yucen-xie",
+      "https://www.linkedin.com/in/andrewlackner",
+      "https://www.linkedin.com/in/chad-gardner-085bb43",
+      "https://www.linkedin.com/in/john-freer-pe-7b07281"
+    ]
+  },
+  "people": {},
+  "companies": {}
+}

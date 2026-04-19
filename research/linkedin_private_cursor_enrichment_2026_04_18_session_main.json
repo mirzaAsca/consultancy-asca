@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "description": "Web-researched personal LinkedIn /in/ URLs (agent session 2026-04-18). Sources: indexed web search (Crunchbase, Tracxn, firm sites, LinkedIn public snippets). Apply with: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_enrichment_2026_04_18_session_main.json",
+    "notes": "Seven Seas: partners Jeff Xiong, Jack Xu, Ivy Li (ivywli), Justin Tsang per Crunchbase/Tracxn/RocketReach; Henry Meng omitted (no verified /in/). Maltseva CSV row mapped to Mila Maltseva (Osage analyst background) as best public match. J Choi → Jai Choi (Tekton) is plausible given job title but remains a weak name match. Continuation: Cofounders Capital (NC) team from cofounderscapital.com/people + LinkedIn; Cayuga Venture Fund from company employee list + FuzeHub venture partner note for Ken Rother; Cardinal Venture Capital (Menlo cardinal-vc) Spencer Chandlee + indexed teammates; CityBlock Capital Rob Nance + Jon Avidor (Crunchbase CityBlock + indexed /in/). Batch: Congruent Ventures (company page + team bios); CoVenture as Treville rebrand (Ali Hamed, Harwitt, Strulowitz, Ostrander); Corazon Capital (corazon.com/team + company); Chilango Ventures Carlos Ochoa (NFX MD + press); Brilliant Ventures (company employee list — verify Lindi vs Santa Monica VC); Bronze / BRONZE bronzevc company list (investment principals + ops chief of staff)."
+  },
+  "firms": {
+    "7 seas ventures": [
+      "https://www.linkedin.com/in/jeff-xiong-09a77b1",
+      "https://www.linkedin.com/in/jack-xu-b72017a0",
+      "https://www.linkedin.com/in/ivywli",
+      "https://www.linkedin.com/in/justintsang"
+    ],
+    "authentic ventures": [
+      "https://www.linkedin.com/in/lindsaylee",
+      "https://www.linkedin.com/in/brianabillingham",
+      "https://www.linkedin.com/in/arthurj"
+    ],
+    "caerus ventures": [
+      "https://www.linkedin.com/in/brodi-jackson-39207a12",
+      "https://www.linkedin.com/in/gregory-borchardt-73a3484",
+      "https://www.linkedin.com/in/rick-grow-jr-71117411",
+      "https://www.linkedin.com/in/sarah-hassan-467b1a93"
+    ],
+    "maltseva": [
+      "https://www.linkedin.com/in/mila-maltseva"
+    ],
+    "arcus ventures": [
+      "https://www.linkedin.com/in/chad-hellmann-7b12ba6",
+      "https://www.linkedin.com/in/steven-soignet-md-5a0567a"
+    ],
+    "blueberry ventures": [
+      "https://www.linkedin.com/in/arif-fazal-sanfrancisco"
+    ],
+    "cofounders capital": [
+      "https://www.linkedin.com/in/davidgardner4",
+      "https://www.linkedin.com/in/tobiaswalter",
+      "https://www.linkedin.com/in/mcloughlintimothy",
+      "https://www.linkedin.com/in/danielacoley",
+      "https://www.linkedin.com/in/leahbtownsend",
+      "https://www.linkedin.com/in/scott-albert-aba87",
+      "https://www.linkedin.com/in/samuelchinonsoubechu"
+    ],
+    "cayuga venture fund": [
+      "https://www.linkedin.com/in/cliff-lardin-7a9b61",
+      "https://www.linkedin.com/in/bill-rhodes-7a32451",
+      "https://www.linkedin.com/in/kim-stedman-05702b123",
+      "https://www.linkedin.com/in/ken-rother"
+    ],
+    "cardinal venture capital": [
+      "https://www.linkedin.com/in/spencer-chandlee",
+      "https://www.linkedin.com/in/charlottehe25",
+      "https://www.linkedin.com/in/michaelyu7"
+    ],
+    "cityblock capital": [
+      "https://www.linkedin.com/in/robertjnance",
+      "https://il.linkedin.com/in/avidor-jonathan-1729b8bb"
+    ],
+    "congruent ventures": [
+      "https://www.linkedin.com/in/abe-yokell",
+      "https://www.linkedin.com/in/posamentier",
+      "https://www.linkedin.com/in/tanuj-dutta",
+      "https://www.linkedin.com/in/kevin-kopczynski",
+      "https://www.linkedin.com/in/mariannewu",
+      "https://www.linkedin.com/in/kate-a-lee"
+    ],
+    "coventure": [
+      "https://www.linkedin.com/in/alihamed",
+      "https://www.linkedin.com/in/brian-harwitt-7338bb54",
+      "https://www.linkedin.com/in/isaacstrulowitzcpa",
+      "https://www.linkedin.com/in/elizabeth-ostrander-cfa"
+    ],
+    "corazon capital": [
+      "https://www.linkedin.com/in/samyagan",
+      "https://www.linkedin.com/in/farsht",
+      "https://www.linkedin.com/in/philschwarz",
+      "https://www.linkedin.com/in/greg-johnston",
+      "https://www.linkedin.com/in/smritijayaraman",
+      "https://www.linkedin.com/in/alison-stillman-31b97b56"
+    ],
+    "chilango ventures": [
+      "https://www.linkedin.com/in/carlosochoaai"
+    ],
+    "brilliant ventures": [
+      "https://www.linkedin.com/in/lizzie-francis-8255b21",
+      "https://www.linkedin.com/in/lindi-thomas-a00a44326"
+    ],
+    "bronze investments": [
+      "https://www.linkedin.com/in/stephendeberry",
+      "https://www.linkedin.com/in/chaddyer",
+      "https://www.linkedin.com/in/rayslu",
+      "https://www.linkedin.com/in/wren-herman-651b83102"
+    ]
+  },
+  "people": {
+    "j choi": [
+      "https://www.linkedin.com/in/jaichoi"
+    ]
+  },
+  "companies": {
+    "linkedin.com/company/authenticventures": [
+      "https://www.linkedin.com/in/lindsaylee",
+      "https://www.linkedin.com/in/brianabillingham",
+      "https://www.linkedin.com/in/arthurj"
+    ],
+    "linkedin.com/company/caerus-ventures-llc": [
+      "https://www.linkedin.com/in/brodi-jackson-39207a12",
+      "https://www.linkedin.com/in/gregory-borchardt-73a3484",
+      "https://www.linkedin.com/in/rick-grow-jr-71117411",
+      "https://www.linkedin.com/in/sarah-hassan-467b1a93"
+    ],
+    "linkedin.com/company/blueberryventures": [
+      "https://www.linkedin.com/in/arif-fazal-sanfrancisco"
+    ],
+    "linkedin.com/company/cofounders-capital": [
+      "https://www.linkedin.com/in/davidgardner4",
+      "https://www.linkedin.com/in/tobiaswalter",
+      "https://www.linkedin.com/in/mcloughlintimothy",
+      "https://www.linkedin.com/in/danielacoley",
+      "https://www.linkedin.com/in/leahbtownsend",
+      "https://www.linkedin.com/in/scott-albert-aba87",
+      "https://www.linkedin.com/in/samuelchinonsoubechu"
+    ],
+    "linkedin.com/company/cayuga-venture-fund": [
+      "https://www.linkedin.com/in/cliff-lardin-7a9b61",
+      "https://www.linkedin.com/in/bill-rhodes-7a32451",
+      "https://www.linkedin.com/in/kim-stedman-05702b123",
+      "https://www.linkedin.com/in/ken-rother"
+    ],
+    "linkedin.com/company/cardinal-vc": [
+      "https://www.linkedin.com/in/spencer-chandlee",
+      "https://www.linkedin.com/in/charlottehe25",
+      "https://www.linkedin.com/in/michaelyu7"
+    ],
+    "linkedin.com/company/congruent-ventures": [
+      "https://www.linkedin.com/in/abe-yokell",
+      "https://www.linkedin.com/in/posamentier",
+      "https://www.linkedin.com/in/tanuj-dutta",
+      "https://www.linkedin.com/in/kevin-kopczynski",
+      "https://www.linkedin.com/in/mariannewu",
+      "https://www.linkedin.com/in/kate-a-lee"
+    ],
+    "linkedin.com/company/trevillecapitalgroup": [
+      "https://www.linkedin.com/in/alihamed",
+      "https://www.linkedin.com/in/brian-harwitt-7338bb54",
+      "https://www.linkedin.com/in/isaacstrulowitzcpa",
+      "https://www.linkedin.com/in/elizabeth-ostrander-cfa"
+    ],
+    "linkedin.com/company/corazoncap": [
+      "https://www.linkedin.com/in/samyagan",
+      "https://www.linkedin.com/in/farsht",
+      "https://www.linkedin.com/in/philschwarz",
+      "https://www.linkedin.com/in/greg-johnston",
+      "https://www.linkedin.com/in/smritijayaraman",
+      "https://www.linkedin.com/in/alison-stillman-31b97b56"
+    ],
+    "linkedin.com/company/brilliant-ventures": [
+      "https://www.linkedin.com/in/lizzie-francis-8255b21",
+      "https://www.linkedin.com/in/lindi-thomas-a00a44326"
+    ],
+    "linkedin.com/company/bronzevc": [
+      "https://www.linkedin.com/in/stephendeberry",
+      "https://www.linkedin.com/in/chaddyer",
+      "https://www.linkedin.com/in/rayslu",
+      "https://www.linkedin.com/in/wren-herman-651b83102"
+    ]
+  }
+}

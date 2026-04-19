@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "file": "datasets/004__html__micro_vc_seed_fund_spreadsheet_google_drive.csv",
+    "date": "2026-04-18",
+    "batch": 1,
+    "method": "Web search + LinkedIn public profile/company previews (no login). Multiple /in/ URLs per fund where team was verified.",
+    "agent": "cursor-session"
+  },
+  "by_firm_name": {
+    "7 Seas Ventures": {
+      "note": "Crunchbase / web: Seven Seas Venture Partners (Menlo Park) behind 7seasvc.com; partner profiles verified via LinkedIn preview (Seven Seas Partners in headline or experience).",
+      "urls": [
+        "https://www.linkedin.com/in/jeff-xiong-09a77b1",
+        "https://www.linkedin.com/in/jack-xu-b72017a0",
+        "https://www.linkedin.com/in/ivywli"
+      ]
+    },
+    "Amaranthine Partners": {
+      "note": "David Kelly LinkedIn lists General Partner at Amaranthine (company slug semblevc); Patrick Murphy co-founder Tapestry VC same lineage per press/Crunchbase.",
+      "urls": [
+        "https://www.linkedin.com/in/davidkelly1000",
+        "https://www.linkedin.com/in/pmurphyirl"
+      ]
+    },
+    "Arcus Ventures": {
+      "note": "Oncology VC arcusventures.com team; Steven Soignet Founding GP and Chad Hellmann CFO verified on LinkedIn previews.",
+      "urls": [
+        "https://www.linkedin.com/in/steven-soignet-md-5a0567a",
+        "https://www.linkedin.com/in/chad-hellmann-7b12ba6"
+      ]
+    },
+    "Authentic Ventures": {
+      "note": "Arthur Johnson Venture Partner; Briana Billingham Chief of Staff — both list Authentic Ventures Oakland.",
+      "urls": [
+        "https://www.linkedin.com/in/arthurj",
+        "https://www.linkedin.com/in/brianabillingham"
+      ]
+    },
+    "Autochrome Ventures": {
+      "note": "Public team page + LinkedIn: Vaughn Blake Managing Director at Autochrome Ventures (also Blue Bear Capital).",
+      "urls": ["https://www.linkedin.com/in/vaughn-blake-13050a7"]
+    },
+    "Be Great Partners": {
+      "note": "LinkedIn company employee list + profile previews: Kelly Mi Li General Partner; Aleksandra Stojkovic Account Manager.",
+      "urls": [
+        "https://www.linkedin.com/in/ikellymili",
+        "https://www.linkedin.com/in/aleksandra-stojkovic-35021284"
+      ]
+    }
+  }
+}

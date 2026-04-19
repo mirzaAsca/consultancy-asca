@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "description": "001+004 batch4 (agents + key normalization). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch4_2026_04_18.json",
+    "notes": [
+      "001 agent firm keys rewritten to match normalize_key(Name) only (e.g. beenext not beenext vc singapore).",
+      "001 companies block omitted (agent used relative /in/ paths).",
+      "004: GoodAI row keyed as goodai; Hanover Capital as hanover capital; Great North full legal name key added.",
+      "Fifth Season Ventures + First Access Fund omitted — no credible fund-team /in/ match in search; no '-' placeholder."
+    ]
+  },
+  "firms": {
+    "beenext": [
+      "https://www.linkedin.com/in/hironorimaeda",
+      "https://www.linkedin.com/in/dirkvanquaquebeke",
+      "https://www.linkedin.com/in/jeremymarksoh"
+    ],
+    "belle michigan fund": [
+      "https://www.linkedin.com/in/nancyphilippart",
+      "https://www.linkedin.com/in/marybrevard"
+    ],
+    "beyond next ventures": [
+      "https://www.linkedin.com/in/ito-beyondnextventures",
+      "https://www.linkedin.com/in/ueha"
+    ],
+    "bharat innovation fund": [
+      "https://www.linkedin.com/in/ashwinraguraman",
+      "https://www.linkedin.com/in/shyam-menon-b908314",
+      "https://www.linkedin.com/in/somshubhro"
+    ],
+    "bhp ventures": [
+      "https://www.linkedin.com/in/ryanbfuller",
+      "https://www.linkedin.com/in/michaelbuzzo",
+      "https://www.linkedin.com/in/alexandra-iljadica"
+    ],
+    "bioeconomy capital": [
+      "https://www.linkedin.com/in/rob-carlson-22a9792",
+      "https://www.linkedin.com/in/rik-wehbring-731889"
+    ],
+    "bionova": ["https://www.linkedin.com/in/ricardoph"],
+    "bioqube ventures": [
+      "https://www.linkedin.com/in/nico-vandervelpen-7772814",
+      "https://www.linkedin.com/in/alexander-demoulin"
+    ],
+    "bioverge": [
+      "https://www.linkedin.com/in/neil-littman",
+      "https://www.linkedin.com/in/rick-gibb"
+    ],
+    "bits x bites": [
+      "https://www.linkedin.com/in/joseph-zhou-674257122",
+      "https://www.linkedin.com/in/matildaho",
+      "https://www.linkedin.com/in/dee-zheng-339a80133"
+    ],
+    "black bay energy capital": [
+      "https://www.linkedin.com/in/michael-lebourgeois-73a17b5",
+      "https://www.linkedin.com/in/guy-cook-32b26881"
+    ],
+    "black pearls": [
+      "https://www.linkedin.com/in/maciejskorkiewicz",
+      "https://www.linkedin.com/in/alexanderlubanski",
+      "https://www.linkedin.com/in/mpkowalik"
+    ],
+    "foley ventures": ["https://www.linkedin.com/in/susan-pravda-2004098"],
+    "frontcourt ventures": [
+      "https://www.linkedin.com/in/robert-sawicki-92b1758b",
+      "https://www.linkedin.com/in/michael-lacount-b904a7b"
+    ],
+    "g squared": [
+      "https://www.linkedin.com/in/larry-aschebrook-54724629",
+      "https://www.linkedin.com/in/spencermcleod",
+      "https://www.linkedin.com/in/tyson-morgan-8a7912"
+    ],
+    "goodai": [
+      "https://www.linkedin.com/in/darwinling",
+      "https://www.linkedin.com/in/daniel-kwan-md-mba-3531b03"
+    ],
+    "gpb capital": [
+      "https://www.linkedin.com/in/david-gentile-cpa-1212a59a",
+      "https://www.linkedin.com/in/gerald-butrimovitz-b728101a4"
+    ],
+    "great north labs": [
+      "https://www.linkedin.com/in/robertjweber",
+      "https://www.linkedin.com/in/ryweber",
+      "https://www.linkedin.com/in/grantcgibson"
+    ],
+    "great north labs and great north capital fund": [
+      "https://www.linkedin.com/in/robertjweber",
+      "https://www.linkedin.com/in/ryweber",
+      "https://www.linkedin.com/in/grantcgibson"
+    ],
+    "hangar ventures": [
+      "https://www.linkedin.com/in/joshmendelsohn",
+      "https://www.linkedin.com/in/juliepsamuels"
+    ],
+    "hanover capital": [
+      "https://www.linkedin.com/in/allison-ball-62b48a43",
+      "https://www.linkedin.com/in/josephmalchow"
+    ]
+  },
+  "people": {},
+  "companies": {}
+}

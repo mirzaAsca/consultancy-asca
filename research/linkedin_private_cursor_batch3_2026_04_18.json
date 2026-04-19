@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "description": "001+004 batch3 (agents + QA). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch3_2026_04_18.json",
+    "notes": [
+      "001 agent companies block dropped — values were /company/ pages, not /in/ URLs (clean_url would strip them).",
+      "Bedrock Capital: extended with Sid Vashist and Benjamin Kany from bedrockcap.com/team + indexed LinkedIn.",
+      "Base10 Partners: added jasonykong from indexed company/team results."
+    ]
+  },
+  "firms": {
+    "bain capital": [
+      "https://www.linkedin.com/in/ajay1agarwal",
+      "https://www.linkedin.com/in/rakgarg",
+      "https://www.linkedin.com/in/aarefhilaly",
+      "https://www.linkedin.com/in/mattcharris",
+      "https://www.linkedin.com/in/merritt-hummer-aa187712"
+    ],
+    "baltic sandbox ventures": [
+      "https://www.linkedin.com/in/sandra-golbreich",
+      "https://www.linkedin.com/in/andriusmil",
+      "https://www.linkedin.com/in/erikbhullar"
+    ],
+    "bandgap ventures": [
+      "https://www.linkedin.com/in/samuelkim",
+      "https://www.linkedin.com/in/michael-falcon-1b047"
+    ],
+    "baruch future ventures": [
+      "https://www.linkedin.com/in/tombaruch",
+      "https://www.linkedin.com/in/augustfern"
+    ],
+    "base10 partners": [
+      "https://www.linkedin.com/in/adeyemiajao",
+      "https://www.linkedin.com/in/rexhep-dollaku",
+      "https://www.linkedin.com/in/laurawp",
+      "https://www.linkedin.com/in/tj-nahigian-478a803",
+      "https://www.linkedin.com/in/jasonykong"
+    ],
+    "batshit crazy ventures": ["https://www.linkedin.com/in/amyniglio"],
+    "bay bridge ventures": [
+      "https://www.linkedin.com/in/joealanblair",
+      "https://www.linkedin.com/in/kimkolt",
+      "https://www.linkedin.com/in/andrewkarsh"
+    ],
+    "baybg": [
+      "https://www.linkedin.com/in/marcus-gulder-24066bb5",
+      "https://www.linkedin.com/in/andreas-heubl",
+      "https://www.linkedin.com/in/leonvelten"
+    ],
+    "bayernkapital": [
+      "https://www.linkedin.com/in/monika-steger-3932a9232",
+      "https://www.linkedin.com/in/arielgolan",
+      "https://www.linkedin.com/in/martin-redl-84b976131",
+      "https://www.linkedin.com/in/dr-nathalie-weitemeyer-64337944"
+    ],
+    "bdc capital": [
+      "https://www.linkedin.com/in/steven-abrams-258bab",
+      "https://www.linkedin.com/in/joseph-regan-21b98b3"
+    ],
+    "beable capital": [
+      "https://www.linkedin.com/in/almudenatrigolorenzo",
+      "https://www.linkedin.com/in/lopezgarciadavid",
+      "https://www.linkedin.com/in/alberto-díaz-gonzález-72796063"
+    ],
+    "bedrock capital": [
+      "https://www.linkedin.com/in/geofflewis1",
+      "https://www.linkedin.com/in/sidvashist",
+      "https://www.linkedin.com/in/ben-kany-a84320179"
+    ],
+    "accele biopharma": [
+      "https://www.linkedin.com/in/elaine-hamm-phd",
+      "https://www.linkedin.com/in/tami-owens-08b43413"
+    ],
+    "cross valley": [
+      "https://www.linkedin.com/in/jongos",
+      "https://www.linkedin.com/in/joshirj"
+    ],
+    "defy partners": [
+      "https://www.linkedin.com/in/neil-sequeira-76739a40",
+      "https://www.linkedin.com/in/brianrothenberg",
+      "https://www.linkedin.com/in/medhakagarwal",
+      "https://www.linkedin.com/in/pcshah",
+      "https://www.linkedin.com/in/amyyin",
+      "https://www.linkedin.com/in/adam-s-park",
+      "https://www.linkedin.com/in/noah-lin17",
+      "https://www.linkedin.com/in/brosin",
+      "https://www.linkedin.com/in/stevemiller18"
+    ],
+    "donovan ventures": [
+      "https://www.linkedin.com/in/johndonovanjr",
+      "https://www.linkedin.com/in/willpage",
+      "https://www.linkedin.com/in/jason-holton-018a8bb1",
+      "https://www.linkedin.com/in/colin-donovan-3a228a133"
+    ],
+    "drk foundation": [
+      "https://www.linkedin.com/in/jim-bildner",
+      "https://www.linkedin.com/in/mandysprice",
+      "https://www.linkedin.com/in/timothy-sung-cho",
+      "https://www.linkedin.com/in/daniel-torres-balauro",
+      "https://www.linkedin.com/in/ananya-bhattacharya-drk",
+      "https://www.linkedin.com/in/bill-draper-945b67b",
+      "https://www.linkedin.com/in/lisa-jordan-57339520"
+    ],
+    "ecosystem integrity fund": [
+      "https://www.linkedin.com/in/devin-whatley-62245716",
+      "https://www.linkedin.com/in/geoffeisenberg",
+      "https://www.linkedin.com/in/sashanovogradbrown",
+      "https://www.linkedin.com/in/sjessica",
+      "https://www.linkedin.com/in/ca-kamal-maloo-6b867b1ab",
+      "https://www.linkedin.com/in/nishant-batra"
+    ],
+    "energy innovation capital": [
+      "https://www.linkedin.com/in/kevin-skillern-864131",
+      "https://www.linkedin.com/in/george-coyle-232b7421",
+      "https://www.linkedin.com/in/andrewlackner",
+      "https://www.linkedin.com/in/chris00smith",
+      "https://www.linkedin.com/in/pauldickerson",
+      "https://www.linkedin.com/in/stevetaub"
+    ],
+    "exponent": [
+      "https://www.linkedin.com/in/charleyma",
+      "https://www.linkedin.com/in/mahdiraza92"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/bain-capital-ventures": [
+      "https://www.linkedin.com/in/ajay1agarwal",
+      "https://www.linkedin.com/in/rakgarg",
+      "https://www.linkedin.com/in/aarefhilaly",
+      "https://www.linkedin.com/in/mattcharris",
+      "https://www.linkedin.com/in/merritt-hummer-aa187712"
+    ],
+    "linkedin.com/company/base10-partners": [
+      "https://www.linkedin.com/in/adeyemiajao",
+      "https://www.linkedin.com/in/rexhep-dollaku",
+      "https://www.linkedin.com/in/laurawp",
+      "https://www.linkedin.com/in/tj-nahigian-478a803",
+      "https://www.linkedin.com/in/jasonykong"
+    ],
+    "linkedin.com/company/bedrockcap": [
+      "https://www.linkedin.com/in/geofflewis1",
+      "https://www.linkedin.com/in/sidvashist",
+      "https://www.linkedin.com/in/ben-kany-a84320179"
+    ]
+  }
+}

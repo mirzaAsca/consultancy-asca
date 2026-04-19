@@ -1,0 +1,53 @@
+{
+  "generated": "2026-04-18",
+  "scope": "Column linkedin-private-cursor only; web search + public LinkedIn page fetches for verification.",
+  "totals_last_count": {
+    "total_rows_all_datasets_csv": 22079,
+    "empty_linkedin_private_cursor_before_session": 12784,
+    "files_fully_filled_before_session": [
+      "002 partial",
+      "003",
+      "005",
+      "008-027 except gaps noted"
+    ]
+  },
+  "session_continued_2026_04_18": [
+    {
+      "file": "datasets/004__html__micro_vc_seed_fund_spreadsheet_google_drive.csv",
+      "batch": 2,
+      "rows_filled": 3,
+      "firms": [
+        "Counterview Capital",
+        "Cross Culture Ventures",
+        "Core Ventures Group"
+      ],
+      "detail_json": "research/cursor_enrichment_004_batch2_web_2026_04_18.json"
+    }
+  ],
+  "session_completed": [
+    {
+      "file": "datasets/023__zip__folk_early_stage_web_3_us_investors_2026_02_15_people.csv",
+      "rows_touched": 18,
+      "detail_json": "research/cursor_enrichment_023_web_2026_04_18.json",
+      "notes": "3 rows got verified multi-URL strings (Pledgecamp team + Evan Huddleson + Dan O'Regan); 15 rows marked '-' after search with no unique verifiable /in/ match."
+    },
+    {
+      "file": "datasets/004__html__micro_vc_seed_fund_spreadsheet_google_drive.csv",
+      "rows_touched_web_batch": 3,
+      "detail_json": "research/cursor_enrichment_004_batch1_web_2026_04_18.json",
+      "notes": "Many 004 rows were already populated by prior work. This session added/confirmed web-researched mappings for Amaranthine Partners, Arcus Ventures, and aligned research JSON for funds already filled (7 Seas, Authentic, Autochrome, Be Great)."
+    }
+  ],
+  "largest_remaining_empty_counts_reference": {
+    "012__native__list_5000_vc_family_office_angel_networks_accelerators_5_000_vc_250_fos_accelerators_angel_networks.csv": 4052,
+    "007__html__vc_firms_that_accept_cold_outreach_from_founders_google_drive.csv": 1902,
+    "009__native__folk_all_vcs_2026_02_15_people.csv": 1568,
+    "014__native__people.csv": 1368,
+    "010__native__folk_corporate_venture_arms_2026_02_15_companies.csv": 1382,
+    "001__html__deep_tech_investors_mapping_public_version_google_drive.csv": 1254,
+    "002__html__euro_tech_vc_funds_from_1_2016_please_read_first_tab_google_drive.csv": 538,
+    "006__html__the_ultimate_list_of_750_seed_funds_google_drive.csv": 372,
+    "004__html__micro_vc_seed_fund_spreadsheet_google_drive.csv": 322
+  },
+  "do_not_edit": "research/cursor_payload_*.json, linkedin_batch_*.json, wave*.json (other agents)"
+}

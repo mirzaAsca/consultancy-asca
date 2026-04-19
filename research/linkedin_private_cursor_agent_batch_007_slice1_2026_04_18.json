@@ -1,0 +1,198 @@
+{
+  "meta": {
+    "description": "007 empty-row slice1 (continuation). Web research 2026-04-18. Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_agent_batch_007_slice1_2026_04_18.json"
+  },
+  "firms": {
+    "random forest vc": [
+      "https://www.linkedin.com/in/ami-dagan-95a81ba",
+      "https://www.linkedin.com/in/roy-zwebner-20694917",
+      "https://www.linkedin.com/in/michael-kerbis-316a901a2"
+    ],
+    "salesforce ventures": [
+      "https://www.linkedin.com/in/pauldrews",
+      "https://www.linkedin.com/in/emilyyangzhao",
+      "https://www.linkedin.com/in/enkitoto",
+      "https://www.linkedin.com/in/kwu1250"
+    ],
+    "teknasyon": [
+      "https://www.linkedin.com/in/mstfvrdl",
+      "https://www.linkedin.com/in/onur-kurugol-9a91449"
+    ],
+    "vinci venture capital": [
+      "https://www.linkedin.com/in/holgerheinen",
+      "https://www.linkedin.com/in/mehmettunckanat",
+      "https://www.linkedin.com/in/yavuzcan-eroglu-28429884"
+    ],
+    "seb alliance": [
+      "https://www.linkedin.com/in/charles-henri-deneck"
+    ],
+    "indian angel network": [
+      "https://www.linkedin.com/in/alok-mittal-590a",
+      "https://www.linkedin.com/in/priyankgarg",
+      "https://www.linkedin.com/in/kapurrajnish"
+    ],
+    "creditease fintech investment fund": [
+      "https://www.linkedin.com/in/zheng-cui-37260b11",
+      "https://www.linkedin.com/in/minnie-sehgal-11895920"
+    ],
+    "skylake capital": [
+      "https://www.linkedin.com/in/marcos-battisti-6482b"
+    ],
+    "newalpha asset management": [
+      "https://www.linkedin.com/in/lior-derhy-491a891b",
+      "https://www.linkedin.com/in/philippe-paquet-newalpha",
+      "https://www.linkedin.com/in/paul-buigues",
+      "https://www.linkedin.com/in/marta-duque-simoes"
+    ],
+    "sharpstone capital": [
+      "https://www.linkedin.com/in/germain-gaschet",
+      "https://www.linkedin.com/in/lena-ambroise"
+    ],
+    "maersk growth": [
+      "https://www.linkedin.com/in/adsmout",
+      "https://www.linkedin.com/in/madshebbelstrup",
+      "https://www.linkedin.com/in/nikita-dolgov-06b263a3"
+    ],
+    "unpopular ventures": [
+      "https://www.linkedin.com/in/pliv",
+      "https://www.linkedin.com/in/podkhodov",
+      "https://www.linkedin.com/in/gabriel-fotsing-88503030"
+    ],
+    "moneta vc": [
+      "https://www.linkedin.com/in/adoramgaash",
+      "https://www.linkedin.com/in/meirav-harnoy",
+      "https://www.linkedin.com/in/oztalmor"
+    ],
+    "primecrowd": [
+      "https://www.linkedin.com/in/markuskainz"
+    ],
+    "SFINE - Société de Financement de l'Innovation Numérique en Essonne": [
+      "https://www.linkedin.com/in/cyrilreinhard",
+      "https://www.linkedin.com/in/eric-valat"
+    ],
+    "leyden ventures": [
+      "https://www.linkedin.com/in/sheynkman"
+    ],
+    "seed4soft": [
+      "https://www.linkedin.com/in/frederichalley",
+      "https://www.linkedin.com/in/oliviernjamfa",
+      "https://www.linkedin.com/in/ericboustouller"
+    ],
+    "kerala ventures": [
+      "https://www.linkedin.com/in/antoinefreysz",
+      "https://www.linkedin.com/in/samuel-lenoble-66905b64"
+    ],
+    "smok ventures": [
+      "https://www.linkedin.com/in/bragiel",
+      "https://www.linkedin.com/in/dianakoziarska",
+      "https://www.linkedin.com/in/musielak",
+      "https://www.linkedin.com/in/pawelkopinski"
+    ],
+    "london venture partners": [
+      "https://www.linkedin.com/in/david-gardner-7395662",
+      "https://www.linkedin.com/in/david-lau-kee",
+      "https://www.linkedin.com/in/gus-curley-329559218"
+    ],
+    "riverpark ventures": [
+      "https://www.linkedin.com/in/andy-appelbaum-3306237",
+      "https://www.linkedin.com/in/dhcohen727"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/random-forest-fund/": [
+      "https://www.linkedin.com/in/ami-dagan-95a81ba",
+      "https://www.linkedin.com/in/roy-zwebner-20694917",
+      "https://www.linkedin.com/in/michael-kerbis-316a901a2"
+    ],
+    "http://www.linkedin.com/company/salesforce": [
+      "https://www.linkedin.com/in/pauldrews",
+      "https://www.linkedin.com/in/emilyyangzhao",
+      "https://www.linkedin.com/in/enkitoto",
+      "https://www.linkedin.com/in/kwu1250"
+    ],
+    "https://www.linkedin.com/company/teknasyon": [
+      "https://www.linkedin.com/in/mstfvrdl",
+      "https://www.linkedin.com/in/onur-kurugol-9a91449"
+    ],
+    "https://www.linkedin.com/company/vinci-venture-capital/": [
+      "https://www.linkedin.com/in/holgerheinen",
+      "https://www.linkedin.com/in/mehmettunckanat",
+      "https://www.linkedin.com/in/yavuzcan-eroglu-28429884"
+    ],
+    "https://www.linkedin.com/company/groupe-seb/": [
+      "https://www.linkedin.com/in/charles-henri-deneck"
+    ],
+    "https://in.linkedin.com/company/indian-angel-network": [
+      "https://www.linkedin.com/in/alok-mittal-590a",
+      "https://www.linkedin.com/in/priyankgarg",
+      "https://www.linkedin.com/in/kapurrajnish"
+    ],
+    "https://www.linkedin.com/company/creditease-fintech-investment-fund/": [
+      "https://www.linkedin.com/in/zheng-cui-37260b11",
+      "https://www.linkedin.com/in/minnie-sehgal-11895920"
+    ],
+    "https://www.linkedin.com/company/skylakecapital/": [
+      "https://www.linkedin.com/in/marcos-battisti-6482b"
+    ],
+    "https://www.linkedin.com/company/newalpha-asset-management/": [
+      "https://www.linkedin.com/in/lior-derhy-491a891b",
+      "https://www.linkedin.com/in/philippe-paquet-newalpha",
+      "https://www.linkedin.com/in/paul-buigues",
+      "https://www.linkedin.com/in/marta-duque-simoes"
+    ],
+    "https://www.linkedin.com/company/sharpstone-capital": [
+      "https://www.linkedin.com/in/germain-gaschet",
+      "https://www.linkedin.com/in/lena-ambroise"
+    ],
+    "https://www.linkedin.com/company/maersk-growth/": [
+      "https://www.linkedin.com/in/adsmout",
+      "https://www.linkedin.com/in/madshebbelstrup",
+      "https://www.linkedin.com/in/nikita-dolgov-06b263a3"
+    ],
+    "https://www.linkedin.com/company/unpopular-ventures/": [
+      "https://www.linkedin.com/in/pliv",
+      "https://www.linkedin.com/in/podkhodov",
+      "https://www.linkedin.com/in/gabriel-fotsing-88503030"
+    ],
+    "https://www.linkedin.com/company/monetavc/": [
+      "https://www.linkedin.com/in/adoramgaash",
+      "https://www.linkedin.com/in/meirav-harnoy",
+      "https://www.linkedin.com/in/oztalmor"
+    ],
+    "https://www.linkedin.com/company/primecrowd": [
+      "https://www.linkedin.com/in/markuskainz"
+    ],
+    "https://www.linkedin.com/company/sfine/": [
+      "https://www.linkedin.com/in/cyrilreinhard",
+      "https://www.linkedin.com/in/eric-valat"
+    ],
+    "https://www.linkedin.com/company/71098211": [
+      "https://www.linkedin.com/in/sheynkman"
+    ],
+    "https://fr.linkedin.com/company/seed4soft": [
+      "https://www.linkedin.com/in/frederichalley",
+      "https://www.linkedin.com/in/oliviernjamfa",
+      "https://www.linkedin.com/in/ericboustouller"
+    ],
+    "https://www.linkedin.com/company/kerala-ventures/": [
+      "https://www.linkedin.com/in/antoinefreysz",
+      "https://www.linkedin.com/in/samuel-lenoble-66905b64"
+    ],
+    "https://www.linkedin.com/company/smok-ventures/": [
+      "https://www.linkedin.com/in/bragiel",
+      "https://www.linkedin.com/in/dianakoziarska",
+      "https://www.linkedin.com/in/musielak",
+      "https://www.linkedin.com/in/pawelkopinski"
+    ],
+    "https://www.linkedin.com/company/london-venture-partners/": [
+      "https://www.linkedin.com/in/david-gardner-7395662",
+      "https://www.linkedin.com/in/david-lau-kee",
+      "https://www.linkedin.com/in/gus-curley-329559218"
+    ],
+    "https://www.linkedin.com/company/riverpark-ventures": [
+      "https://www.linkedin.com/in/andy-appelbaum-3306237",
+      "https://www.linkedin.com/in/dhcohen727"
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "description": "Parallel agent web-research batch (2026-04-18). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_parallel_batch_2026_04_18.json",
+    "notes": [
+      "001 batch from subagent: firm keys are normalize_key(Name). Omitted astera institute from merge payload due to high identity ambiguity vs CSV row; re-research in a follow-up if needed.",
+      "001 asymmetry ventures: Rob Ness /in/robnessdc cross-checked via indexed search as GP at asymmetry.vc.",
+      "004 batch from subagent: conservative omissions documented in agent notes (Angels Unleashed, Brightpath, Capella Space, Come Up Capital, partial Cloudstone)."
+    ]
+  },
+  "firms": {
+    "aria": [
+      "https://www.linkedin.com/in/dariusz-lewandowski-9232801",
+      "https://www.linkedin.com/in/daniel-kulaszewski-429b0b59",
+      "https://www.linkedin.com/in/wojciech-najmrodzki-86919195",
+      "https://www.linkedin.com/in/anna-wac%C5%82awek-ptaszek-89a894139"
+    ],
+    "asha ventures": [
+      "https://www.linkedin.com/in/amit-mehta-6b90b92",
+      "https://www.linkedin.com/in/vikram-gandhi-121460295",
+      "https://www.linkedin.com/in/nishtha-gaur-a78684127",
+      "https://www.linkedin.com/in/vatsal-chitalia-900879157",
+      "https://www.linkedin.com/in/arpita-gujrati-132384167",
+      "https://www.linkedin.com/in/aayush-khutate-096a47192"
+    ],
+    "aster capital": [
+      "https://www.linkedin.com/in/jean-marc-bally-ab444",
+      "https://www.linkedin.com/in/fabio-lancellotti-9662621",
+      "https://www.linkedin.com/in/vincentpretet",
+      "https://www.linkedin.com/in/cecile-tirbonod"
+    ],
+    "asymmetry ventures": [
+      "https://www.linkedin.com/in/robnessdc",
+      "https://www.linkedin.com/in/kellycarroll",
+      "https://www.linkedin.com/in/alex-shlyankevich-38bba52",
+      "https://www.linkedin.com/in/matteo-palama",
+      "https://www.linkedin.com/in/gouldmusic",
+      "https://www.linkedin.com/in/dragodimitrov"
+    ],
+    "athera ventures partners": [
+      "https://www.linkedin.com/in/rutvikd",
+      "https://www.linkedin.com/in/anshupandey007",
+      "https://www.linkedin.com/in/rajivmehta",
+      "https://www.linkedin.com/in/ishansinhaiimb"
+    ],
+    "atinum investment": [
+      "https://www.linkedin.com/in/cheuk-kim-07622a5b",
+      "https://www.linkedin.com/in/sung-hyun-baek-a255aa128",
+      "https://www.linkedin.com/in/jinho-kim-ba56a315",
+      "https://www.linkedin.com/in/peter-na-4b7aba33",
+      "https://www.linkedin.com/in/sun-young-park-64aa9280"
+    ],
+    "atlantic labs": [
+      "https://www.linkedin.com/in/christophe-maire",
+      "https://www.linkedin.com/in/marc-olivier-luecke-0507854",
+      "https://www.linkedin.com/in/alice-bardon-catineau",
+      "https://www.linkedin.com/in/daniel-niemi-75649541",
+      "https://www.linkedin.com/in/quentincalleja"
+    ],
+    "atlas ventures": [
+      "https://www.linkedin.com/in/brucebooth",
+      "https://www.linkedin.com/in/kbitterman",
+      "https://www.linkedin.com/in/peter-barrett-a2580a20",
+      "https://www.linkedin.com/in/michael-gladstone-85a62815",
+      "https://www.linkedin.com/in/aimeeraleigh",
+      "https://www.linkedin.com/in/jeff-albers-b6a77325"
+    ],
+    "atmosclear": [
+      "https://www.linkedin.com/in/hdsykes",
+      "https://www.linkedin.com/in/antoine-royer-cfa-854873",
+      "https://www.linkedin.com/in/nick-staheyeff-04159",
+      "https://www.linkedin.com/in/yveskarcher",
+      "https://www.linkedin.com/in/graham-bell-5a0499b4",
+      "https://www.linkedin.com/in/nicholas-sykes-1a650617"
+    ],
+    "atx venture partners": [
+      "https://www.linkedin.com/in/danielleweiss1",
+      "https://www.linkedin.com/in/chrisshonk",
+      "https://www.linkedin.com/in/kevin-fiur-438341",
+      "https://www.linkedin.com/in/emerson-slade-miller-116081136",
+      "https://www.linkedin.com/in/sophia-onat-257a642a8",
+      "https://www.linkedin.com/in/spencer-lucas-cpa"
+    ],
+    "blangkond ventures": ["https://www.linkedin.com/in/vsubandhi"],
+    "capital a partners": [
+      "https://www.linkedin.com/in/vcdavidmendez",
+      "https://www.linkedin.com/in/emilyheintz",
+      "https://www.linkedin.com/in/vincentbellaran",
+      "https://www.linkedin.com/in/carlos-estrada-07a66b20"
+    ],
+    "cassius family": [
+      "https://www.linkedin.com/in/emmanuel-seugé-7197285",
+      "https://www.linkedin.com/in/jeandlr"
+    ],
+    "cloud apps capital partners": [
+      "https://www.linkedin.com/in/matt-holleran-291a773",
+      "https://www.linkedin.com/in/judyloehr"
+    ],
+    "cloudstone venture fund": ["https://www.linkedin.com/in/yong-tao-2b3a0913"],
+    "connectivity ventures": [
+      "https://www.linkedin.com/in/denmarkwest",
+      "https://www.linkedin.com/in/joyce-fensterstock-96326a"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/aria-private-equity": [
+      "https://www.linkedin.com/in/dariusz-lewandowski-9232801",
+      "https://www.linkedin.com/in/daniel-kulaszewski-429b0b59",
+      "https://www.linkedin.com/in/wojciech-najmrodzki-86919195",
+      "https://www.linkedin.com/in/anna-wac%C5%82awek-ptaszek-89a894139"
+    ],
+    "linkedin.com/company/atx-venture-partners": [
+      "https://www.linkedin.com/in/danielleweiss1",
+      "https://www.linkedin.com/in/chrisshonk",
+      "https://www.linkedin.com/in/kevin-fiur-438341",
+      "https://www.linkedin.com/in/emerson-slade-miller-116081136",
+      "https://www.linkedin.com/in/sophia-onat-257a642a8",
+      "https://www.linkedin.com/in/spencer-lucas-cpa"
+    ]
+  }
+}

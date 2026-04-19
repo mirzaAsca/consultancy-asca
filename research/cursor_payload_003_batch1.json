@@ -1,0 +1,58 @@
+{
+  "firms": {},
+  "companies": {},
+  "people": {
+    "kofi ampadu": ["https://www.linkedin.com/in/kofiampadu"],
+    "andrew gluck": ["https://www.linkedin.com/in/azg"],
+    "mikael keremes": ["https://www.linkedin.com/in/mikael-keremes-19206414"],
+    "jason hunt": ["https://www.linkedin.com/in/jasonchrishunt"],
+    "james ruben": ["https://www.linkedin.com/in/jamesruben"],
+    "sari azout": [
+      "https://www.linkedin.com/in/saraazout",
+      "https://www.linkedin.com/in/albertazout",
+      "https://www.linkedin.com/in/lshalon",
+      "https://www.linkedin.com/in/jakekupperman"
+    ],
+    "sari azout level ventures": [
+      "https://www.linkedin.com/in/saraazout",
+      "https://www.linkedin.com/in/albertazout",
+      "https://www.linkedin.com/in/lshalon",
+      "https://www.linkedin.com/in/jakekupperman"
+    ],
+    "eric scott lavin": ["https://www.linkedin.com/in/ericscottlavin"],
+    "pooja chokshi": ["https://www.linkedin.com/in/pooja-chokshi"],
+    "hani azzam": ["https://www.linkedin.com/in/hani-azzam-90b5764b"],
+    "hani azzam plus vc": [
+      "https://www.linkedin.com/in/hani-azzam-90b5764b",
+      "https://www.linkedin.com/in/hasanhaider"
+    ],
+    "sean heilweil": ["https://www.linkedin.com/in/seanheilweil"],
+    "jeff silverstein": ["https://www.linkedin.com/in/jeff-silverstein"],
+    "paul sethi": ["https://www.linkedin.com/in/paulsethi"],
+    "sara livingston": ["https://www.linkedin.com/in/saralivingston"],
+    "michael nov": ["https://www.linkedin.com/in/michael-nov-b5574b37"],
+    "kevin siskar": ["https://www.linkedin.com/in/kevinsiskar"],
+    "gyan kapur": ["https://www.linkedin.com/in/gyankapur"],
+    "ben tomaszewski": ["https://www.linkedin.com/in/bentomaszewski"],
+    "zachary friedman": ["https://www.linkedin.com/in/zachary-friedman-7961b49"],
+    "chris moreno": ["https://www.linkedin.com/in/chrismoreno"],
+    "emrah yalaz": ["https://www.linkedin.com/in/emrahyalaz"],
+    "george goognin": ["https://www.linkedin.com/in/georgegoognin"],
+    "andrew levy": ["https://www.linkedin.com/in/andrwlvy"],
+    "roger dasilva": ["https://www.linkedin.com/in/rogerdasilva1"],
+    "eli cole": ["https://www.linkedin.com/in/eli-cole"],
+    "matt burton": ["https://www.linkedin.com/in/matthewdanielburton"],
+    "seth hittman": ["https://www.linkedin.com/in/seth-hittman-67017a4"],
+    "erik de stefanis": [
+      "https://www.linkedin.com/in/erikdestefanis",
+      "https://www.linkedin.com/in/vincent-diallo",
+      "https://www.linkedin.com/in/josephsartre"
+    ],
+    "erik de stefanis interlace ventures": [
+      "https://www.linkedin.com/in/erikdestefanis",
+      "https://www.linkedin.com/in/vincent-diallo",
+      "https://www.linkedin.com/in/josephsartre"
+    ],
+    "trace cohen": ["https://www.linkedin.com/in/tracecohen"]
+  }
+}

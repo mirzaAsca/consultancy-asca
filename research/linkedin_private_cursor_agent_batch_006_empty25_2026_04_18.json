@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "description": "006 seed funds: first 25 file-order rows with empty linkedin-private-cursor (agent web research 2026-04-18). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_agent_batch_006_empty25_2026_04_18.json"
+  },
+  "firms": {
+    "come up capital": [
+      "https://www.linkedin.com/in/davemao"
+    ],
+    "early impact ventures": [
+      "https://www.linkedin.com/in/andrewtrader",
+      "https://www.linkedin.com/in/jonsoberg"
+    ],
+    "lakeland ventures development llc": [
+      "https://www.linkedin.com/in/matthewdgeiger",
+      "https://www.linkedin.com/in/scotthflood"
+    ],
+    "launch capital": [
+      "https://www.linkedin.com/in/elonboms",
+      "https://www.linkedin.com/in/billmccullen",
+      "https://www.linkedin.com/in/cliff-sirlin-11051030"
+    ],
+    "launch house": [
+      "https://www.linkedin.com/in/toddgoldstein"
+    ],
+    "launchpad la": [
+      "https://www.linkedin.com/in/marksuster",
+      "https://www.linkedin.com/in/adamlilling"
+    ],
+    "launchpad long island": [
+      "https://www.linkedin.com/in/andrewhazen",
+      "https://www.linkedin.com/in/rjfoster",
+      "https://www.linkedin.com/in/jane-soto-a685b36b"
+    ],
+    "lavrock ventures": [
+      "https://www.linkedin.com/in/steve-smoot-605a5a8",
+      "https://www.linkedin.com/in/jdanielhanks",
+      "https://www.linkedin.com/in/alex-s-poulin",
+      "https://www.linkedin.com/in/juliane-gallina-b736244"
+    ],
+    "ldj capital vc division": [
+      "https://www.linkedin.com/in/david-drake-68103515",
+      "https://www.linkedin.com/in/mikelorrey"
+    ],
+    "ldr ventures": [
+      "https://www.linkedin.com/in/akoven",
+      "https://www.linkedin.com/in/maxine-kozler-7573633"
+    ],
+    "lemnos": [
+      "https://www.linkedin.com/in/ericklein",
+      "https://www.linkedin.com/in/helenzelman",
+      "https://www.linkedin.com/in/scottkosch"
+    ],
+    "lombardstreet io": [
+      "https://www.linkedin.com/in/luigibajetti",
+      "https://www.linkedin.com/in/massimosgrelli"
+    ],
+    "missouri technology corporation": [
+      "https://www.linkedin.com/in/kyle-hlavacek"
+    ],
+    "mobility ventures": [
+      "https://www.linkedin.com/in/davidsymsmith",
+      "https://www.linkedin.com/in/roygunter"
+    ],
+    "monstro vc": [
+      "https://www.linkedin.com/in/dlprager",
+      "https://www.linkedin.com/in/maubrowncow"
+    ],
+    "moonshots capital": [
+      "https://www.linkedin.com/in/kellyperdew",
+      "https://www.linkedin.com/in/unleashcraig"
+    ],
+    "new ground ventures": [
+      "https://www.linkedin.com/in/zaczeitlin",
+      "https://www.linkedin.com/in/anthonyzxu"
+    ],
+    "new richmond ventures": [
+      "https://www.linkedin.com/in/theodore-l-chandler-jr-33891460",
+      "https://www.linkedin.com/in/bob-mooney-303611152",
+      "https://www.linkedin.com/in/scottukrop"
+    ],
+    "new york angels": [
+      "https://www.linkedin.com/in/pbodenheimer",
+      "https://www.linkedin.com/in/cindy-cook",
+      "https://www.linkedin.com/in/brianscohen",
+      "https://www.linkedin.com/in/seth-masters",
+      "https://www.linkedin.com/in/aelindsey"
+    ],
+    "next frontier capital": [
+      "https://www.linkedin.com/in/pricew",
+      "https://www.linkedin.com/in/richard-harjes",
+      "https://www.linkedin.com/in/les-craig",
+      "https://www.linkedin.com/in/scott-holton-65873110"
+    ],
+    "next wave ventures": [
+      "https://www.linkedin.com/in/alicia-robb-a888228",
+      "https://www.linkedin.com/in/marciadawood"
+    ],
+    "nextwave ventures": [
+      "https://www.linkedin.com/in/jeff-slosar-2542624",
+      "https://www.linkedin.com/in/duke-olrich-9095886a"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/come-up-capital": [
+      "https://www.linkedin.com/in/davemao"
+    ],
+    "linkedin.com/company/early-impact-ventures": [
+      "https://www.linkedin.com/in/andrewtrader",
+      "https://www.linkedin.com/in/jonsoberg"
+    ],
+    "linkedin.com/company/2663380": [
+      "https://www.linkedin.com/in/matthewdgeiger",
+      "https://www.linkedin.com/in/scotthflood"
+    ],
+    "linkedin.com/company/2254267": [
+      "https://www.linkedin.com/in/elonboms",
+      "https://www.linkedin.com/in/billmccullen",
+      "https://www.linkedin.com/in/cliff-sirlin-11051030"
+    ],
+    "linkedin.com/company/1288647": [
+      "https://www.linkedin.com/in/toddgoldstein"
+    ],
+    "linkedin.com/company/launchpad-la": [
+      "https://www.linkedin.com/in/marksuster",
+      "https://www.linkedin.com/in/adamlilling"
+    ],
+    "linkedin.com/company/2932836": [
+      "https://www.linkedin.com/in/andrewhazen",
+      "https://www.linkedin.com/in/rjfoster",
+      "https://www.linkedin.com/in/jane-soto-a685b36b"
+    ],
+    "linkedin.com/company/lavrock-ventures": [
+      "https://www.linkedin.com/in/steve-smoot-605a5a8",
+      "https://www.linkedin.com/in/jdanielhanks",
+      "https://www.linkedin.com/in/alex-s-poulin",
+      "https://www.linkedin.com/in/juliane-gallina-b736244"
+    ],
+    "linkedin.com/company/436265": [
+      "https://www.linkedin.com/in/david-drake-68103515",
+      "https://www.linkedin.com/in/mikelorrey"
+    ],
+    "linkedin.com/company/6419171": [
+      "https://www.linkedin.com/in/akoven",
+      "https://www.linkedin.com/in/maxine-kozler-7573633"
+    ],
+    "linkedin.com/company/1731127": [
+      "https://www.linkedin.com/in/ericklein",
+      "https://www.linkedin.com/in/helenzelman",
+      "https://www.linkedin.com/in/scottkosch"
+    ],
+    "linkedin.com/company/10700436": [
+      "https://www.linkedin.com/in/luigibajetti",
+      "https://www.linkedin.com/in/massimosgrelli"
+    ],
+    "linkedin.com/company/25080012": [
+      "https://www.linkedin.com/in/kyle-hlavacek"
+    ],
+    "linkedin.com/company/1112817": [
+      "https://www.linkedin.com/in/davidsymsmith",
+      "https://www.linkedin.com/in/roygunter"
+    ],
+    "linkedin.com/company/monstro-ventures": [
+      "https://www.linkedin.com/in/dlprager",
+      "https://www.linkedin.com/in/maubrowncow"
+    ],
+    "linkedin.com/company/moonshots-capital": [
+      "https://www.linkedin.com/in/kellyperdew",
+      "https://www.linkedin.com/in/unleashcraig"
+    ],
+    "linkedin.com/company/new-ground-ventures": [
+      "https://www.linkedin.com/in/zaczeitlin",
+      "https://www.linkedin.com/in/anthonyzxu"
+    ],
+    "linkedin.com/company/new-richmond-ventures": [
+      "https://www.linkedin.com/in/theodore-l-chandler-jr-33891460",
+      "https://www.linkedin.com/in/bob-mooney-303611152",
+      "https://www.linkedin.com/in/scottukrop"
+    ],
+    "linkedin.com/company/new-york-angels": [
+      "https://www.linkedin.com/in/pbodenheimer",
+      "https://www.linkedin.com/in/cindy-cook",
+      "https://www.linkedin.com/in/brianscohen",
+      "https://www.linkedin.com/in/seth-masters",
+      "https://www.linkedin.com/in/aelindsey"
+    ],
+    "linkedin.com/company/next-frontier-caiptal": [
+      "https://www.linkedin.com/in/pricew",
+      "https://www.linkedin.com/in/richard-harjes",
+      "https://www.linkedin.com/in/les-craig",
+      "https://www.linkedin.com/in/scott-holton-65873110"
+    ],
+    "linkedin.com/company/next-wave-ventures": [
+      "https://www.linkedin.com/in/alicia-robb-a888228",
+      "https://www.linkedin.com/in/marciadawood"
+    ],
+    "linkedin.com/company/7592901": [
+      "https://www.linkedin.com/in/jeff-slosar-2542624",
+      "https://www.linkedin.com/in/duke-olrich-9095886a"
+    ]
+  }
+}

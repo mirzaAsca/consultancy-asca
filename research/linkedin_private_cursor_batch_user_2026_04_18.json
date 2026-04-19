@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "description": "Web-researched personal LinkedIn /in/ URLs (user session 2026-04-18). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch_user_2026_04_18.json",
+    "method": "Indexed web_search only; CVP = Converge Venture Partners (converge.vc, Cambridge MA micro-VC row in 004); team from public LinkedIn company page listings. Router Ventures: Jeff Slobotski founder (Tracxn + third-party investor profiles citing linkedin.com/in/jeffslobotski).",
+    "no_match_placeholder": "Rows researched with no verifiable /in/ stay '-' or empty; merge script unions with existing cells."
+  },
+  "firms": {
+    "CVP": [
+      "https://www.linkedin.com/in/jackderby",
+      "https://www.linkedin.com/in/billledingham",
+      "https://www.linkedin.com/in/miperlmutter",
+      "https://www.linkedin.com/in/davidmcfarlaneurl"
+    ],
+    "Router Ventures": [
+      "https://www.linkedin.com/in/jeffslobotski"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/converge-venture-partners": [
+      "https://www.linkedin.com/in/jackderby",
+      "https://www.linkedin.com/in/billledingham",
+      "https://www.linkedin.com/in/miperlmutter",
+      "https://www.linkedin.com/in/davidmcfarlaneurl"
+    ]
+  }
+}

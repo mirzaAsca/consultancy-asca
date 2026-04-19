@@ -1,0 +1,767 @@
+{
+  "firms": {
+    "7percent Ventures": [
+      "https://uk.linkedin.com/in/harryemorgan",
+      "https://uk.linkedin.com/in/dylanbourguignon"
+    ],
+    "645 Ventures": [
+      "https://www.linkedin.com/in/aholidayiii",
+      "https://www.linkedin.com/in/nnamdiokike",
+      "https://www.linkedin.com/in/parulsingh"
+    ],
+    "1517 Fund": [
+      "https://www.linkedin.com/in/daniellestrachman",
+      "https://www.linkedin.com/in/nick-arnett-632b1222",
+      "https://www.linkedin.com/in/alexanderschwarzkopf"
+    ],
+    "5AM Ventures": [
+      "https://www.linkedin.com/in/kush-parmar-m-d-ph-d-5165582",
+      "https://www.linkedin.com/in/anna-cosslett-yaeger-533b7917a"
+    ],
+    "Abingworth": [
+      "https://uk.linkedin.com/in/balimuralidhar",
+      "https://www.linkedin.com/in/robert-debenedetto-670ba55",
+      "https://uk.linkedin.com/in/natalie-mount-080a423"
+    ],
+    "Almaz Capital": [
+      "https://nl.linkedin.com/in/alexander-sasha-galitsky"
+    ],
+    "Artiman Ventures": [
+      "https://www.linkedin.com/in/farzinfiroozmand"
+    ],
+    "Array Ventures": [
+      "https://www.linkedin.com/in/shrutigandhi"
+    ],
+    "Astanor": [
+      "https://ch.linkedin.com/in/ericarchambeau"
+    ],
+    "Astanor Ventures": [
+      "https://ch.linkedin.com/in/ericarchambeau"
+    ],
+    "Anzu Partners": [
+      "https://www.linkedin.com/in/wharings"
+    ],
+    "Azure Capital Partners": [
+      "https://www.linkedin.com/in/michael-kwatinetz-6a936219",
+      "https://www.linkedin.com/in/paulweinstein",
+      "https://www.linkedin.com/in/andrea-drager-53a5463"
+    ],
+    "B37 Ventures": [
+      "https://www.linkedin.com/in/rodrigo-sanchez-servitje-34935210",
+      "https://www.linkedin.com/in/santiagosanchezbadia"
+    ],
+    "Base Ventures": [
+      "https://www.linkedin.com/in/erikhmoore",
+      "https://www.linkedin.com/in/ryandiew"
+    ],
+    "Basis Set Ventures": [
+      "https://www.linkedin.com/in/lanxuezhao",
+      "https://www.linkedin.com/in/johnmannes",
+      "https://www.linkedin.com/in/wilsonkyi"
+    ],
+    "Blackhorn Ventures": [
+      "https://www.linkedin.com/in/melissa-cheong-813a5bb",
+      "https://www.linkedin.com/in/philip-o-connor-a0a48635"
+    ],
+    "Better Food Ventures": [
+      "https://www.linkedin.com/in/robtrice",
+      "https://www.linkedin.com/in/jmichaelrose"
+    ],
+    "Blumberg Capital": [
+      "https://www.linkedin.com/in/davidjblumberg",
+      "https://il.linkedin.com/in/yodfat-harel-buchris",
+      "https://www.linkedin.com/in/brucetaragin"
+    ],
+    "BoxGroup": [
+      "https://www.linkedin.com/in/davetisch",
+      "https://www.linkedin.com/in/adamrothenberg"
+    ],
+    "BootstrapLabs": [
+      "https://www.linkedin.com/in/nicolaiwadstrom",
+      "https://www.linkedin.com/in/benjamin-levy-415191",
+      "https://www.linkedin.com/in/markmavroudis"
+    ],
+    "Bowery Capital": [
+      "https://www.linkedin.com/in/lorenstraub",
+      "https://www.linkedin.com/in/pwmcgovern"
+    ],
+    "Bullpen Capital": [
+      "https://www.linkedin.com/in/pauljmartino",
+      "https://www.linkedin.com/in/duncandavi",
+      "https://www.linkedin.com/in/ewiesen",
+      "https://www.linkedin.com/in/tj-hurst"
+    ],
+    "Breakout Ventures": [
+      "https://www.linkedin.com/in/lindy-morris-fishburne-076157",
+      "https://www.linkedin.com/in/juliatmoore",
+      "https://www.linkedin.com/in/dana-watt-phd",
+      "https://www.linkedin.com/in/nima-ronaghi"
+    ],
+    "Camber Creek": [
+      "https://www.linkedin.com/in/caseyberman",
+      "https://www.linkedin.com/in/jeffreyelyberman",
+      "https://www.linkedin.com/in/jake-broder-fingert-a4388b3"
+    ],
+    "Causeway Media Partners": [
+      "https://www.linkedin.com/in/david-poltack-4b88a647",
+      "https://www.linkedin.com/in/wyc-grousbeck-516699126",
+      "https://www.linkedin.com/in/mark-wan-5052b919"
+    ],
+    "Chicago Ventures": [
+      "https://www.linkedin.com/in/robchesney",
+      "https://www.linkedin.com/in/lindsayclaireknight",
+      "https://www.linkedin.com/in/stuartlarkins",
+      "https://www.linkedin.com/in/kwiller"
+    ],
+    "Capricorn Partners": [
+      "https://be.linkedin.com/in/filippintelon",
+      "https://be.linkedin.com/in/antoinedhollander",
+      "https://be.linkedin.com/in/stevenlambert1"
+    ],
+    "Chaac Ventures": [
+      "https://www.linkedin.com/in/luarmour",
+      "https://www.linkedin.com/in/andrew-armour-64a0b33",
+      "https://www.linkedin.com/in/charlie-boyd-90027"
+    ],
+    "City Light Capital": [
+      "https://www.linkedin.com/in/joshecohen",
+      "https://www.linkedin.com/in/grace-g-cushman",
+      "https://www.linkedin.com/in/avery-kayle"
+    ],
+    "Communitas Capital": [
+      "https://www.linkedin.com/in/parkerodrich",
+      "https://www.linkedin.com/in/tom-glocer-66729",
+      "https://www.linkedin.com/in/duncan-l-niederauer-429a711a"
+    ],
+    "Collaborative Fund": [
+      "https://www.linkedin.com/in/craigjshapiro",
+      "https://www.linkedin.com/in/guy-vidra-b0585",
+      "https://www.linkedin.com/in/morgan-housel-5b473821"
+    ],
+    "Cota Capital": [
+      "https://www.linkedin.com/in/bobby-yazdani-015a13a",
+      "https://www.linkedin.com/in/raviravikumar"
+    ],
+    "Cowboy Ventures": [
+      "https://www.linkedin.com/in/aileenwlee",
+      "https://www.linkedin.com/in/caroline-duffy-vc",
+      "https://www.linkedin.com/in/rohan-puranik-75554090"
+    ],
+    "Contour Venture Partners": [
+      "https://www.linkedin.com/in/owendavisnyc",
+      "https://www.linkedin.com/in/bob-greene-66a19411"
+    ],
+    "Credo Ventures": [
+      "https://cz.linkedin.com/in/obartos",
+      "https://cz.linkedin.com/in/janhabermann",
+      "https://cz.linkedin.com/in/vladojez",
+      "https://cz.linkedin.com/in/matejmicek",
+      "https://cz.linkedin.com/in/guillaumefour"
+    ],
+    "CRV": [
+      "https://www.linkedin.com/in/saargur",
+      "https://www.linkedin.com/in/mbicer",
+      "https://www.linkedin.com/in/jennypsun"
+    ],
+    "Cultivation Capital": [
+      "https://www.linkedin.com/in/cliffholekamp",
+      "https://www.linkedin.com/in/kylewelborn",
+      "https://www.linkedin.com/in/camilapetignat"
+    ],
+    "DHVC": [
+      "https://www.linkedin.com/in/charlotte-lee-b91a1095",
+      "https://www.linkedin.com/in/lingyao-gao-272247b3"
+    ],
+    "DN Capital": [
+      "https://uk.linkedin.com/in/nenadmarovac",
+      "https://uk.linkedin.com/in/guy-ward-thomas",
+      "https://de.linkedin.com/in/guelsahwilke/de",
+      "https://de.linkedin.com/in/matteoluoni",
+      "https://www.linkedin.com/in/joem-serrano-9083218"
+    ],
+    "Darling Ventures": [
+      "https://www.linkedin.com/in/danieldarling",
+      "https://www.linkedin.com/in/pascal-unger"
+    ],
+    "Dynamk Capital": [
+      "https://www.linkedin.com/in/herve-bekale-90176389",
+      "https://www.linkedin.com/in/dkranjac",
+      "https://de.linkedin.com/in/reinhard-vogt-46babb182"
+    ],
+    "Day One Capital": [
+      "https://hu.linkedin.com/in/elek-straub-9069744",
+      "https://www.linkedin.com/in/zsolt-weiszbart-2a769713"
+    ],
+    "Downing Ventures": [
+      "https://www.linkedin.com/in/jjraffa"
+    ],
+    "East Ventures": [
+      "https://sg.linkedin.com/in/willsoncuaca",
+      "https://jp.linkedin.com/in/takeshi-kaneko-94207173",
+      "https://id.linkedin.com/in/rpurwana"
+    ],
+    "Eight Roads Ventures": [
+      "https://uk.linkedin.com/in/michaeltreskow",
+      "https://in.linkedin.com/in/abhishjain89",
+      "https://jp.linkedin.com/in/lienasuzuki"
+    ],
+    "Emerald Technology Ventures": [
+      "https://ch.linkedin.com/in/helgedaebel",
+      "https://ch.linkedin.com/in/gina-domanig",
+      "https://www.linkedin.com/in/terrychuah"
+    ],
+    "Endeit Capital": [
+      "https://nl.linkedin.com/in/jellejanbruinsma",
+      "https://nl.linkedin.com/in/jonnedeleeuw"
+    ],
+    "Energy Impact Partners": [
+      "https://www.linkedin.com/in/adam-james-energy",
+      "https://www.linkedin.com/in/shaylekann",
+      "https://www.linkedin.com/in/evanpittman"
+    ],
+    "Domain Associates": [
+      "https://www.linkedin.com/in/jim-blair-2869a226",
+      "https://www.linkedin.com/in/brian-halak-06111612"
+    ],
+    "Dorm Room Fund": [
+      "https://www.linkedin.com/in/molly-fowler",
+      "https://www.linkedin.com/in/saras-agrawal",
+      "https://www.linkedin.com/in/catherinemek"
+    ],
+    "EQT Ventures": [
+      "https://www.linkedin.com/in/tedwpersson",
+      "https://www.linkedin.com/in/doreenhuber",
+      "https://www.linkedin.com/in/conradschoo"
+    ],
+    "Expa": [
+      "https://www.linkedin.com/in/garrettcamp",
+      "https://www.linkedin.com/in/zachlipson",
+      "https://www.linkedin.com/in/naveen"
+    ],
+    "ff Venture Capital": [
+      "https://www.linkedin.com/in/johnfrankel"
+    ],
+    "Fifty Years": [
+      "https://www.linkedin.com/in/sethbannon",
+      "https://www.linkedin.com/in/dscottphoenix"
+    ],
+    "Future Food Fund": [
+      "https://www.linkedin.com/in/peter-arensman-2853038/",
+      "https://www.linkedin.com/in/jaap-strengers-4625274/",
+      "https://www.linkedin.com/in/silla-scheepens-7977a41/",
+      "https://www.linkedin.com/in/jeroenkimmels/"
+    ],
+    "Founder Collective": [
+      "https://www.linkedin.com/in/micah-rosenbloom-a0350",
+      "https://www.linkedin.com/in/davidafrankel1",
+      "https://www.linkedin.com/in/epaley"
+    ],
+    "Forerunner Ventures": [
+      "https://www.linkedin.com/in/kirstengreen",
+      "https://www.linkedin.com/in/jason-bornstein",
+      "https://www.linkedin.com/in/euriekim",
+      "https://www.linkedin.com/in/kiramccroden"
+    ],
+    "Foundry Group": [
+      "https://www.linkedin.com/in/bfeld",
+      "https://www.linkedin.com/in/cmoody",
+      "https://www.linkedin.com/in/sethjlevine"
+    ],
+    "Hiro Capital": [
+      "https://uk.linkedin.com/in/luke-alvarez-699988171",
+      "https://uk.linkedin.com/in/cherryfree",
+      "https://uk.linkedin.com/in/spikelaurie",
+      "https://www.linkedin.com/in/nickclegg"
+    ],
+    "Freestyle Capital": [
+      "https://www.linkedin.com/in/jennylefcourt",
+      "https://www.linkedin.com/in/thedjdave",
+      "https://www.linkedin.com/in/mapalma"
+    ],
+    "Frog Capital": [
+      "https://uk.linkedin.com/in/andrewbetteley"
+    ],
+    "Fung Capital": [
+      "https://www.linkedin.com/in/janieyu",
+      "https://www.linkedin.com/in/johnseung"
+    ],
+    "Fusion Fund": [
+      "https://www.linkedin.com/in/luzhangvc",
+      "https://www.linkedin.com/in/gerster",
+      "https://www.linkedin.com/in/ivneet-bhullar"
+    ],
+    "Fuel Capital": [
+      "https://www.linkedin.com/in/chrisfhoward",
+      "https://www.linkedin.com/in/leahsolivan"
+    ],
+    "Foundation Capital": [
+      "https://www.linkedin.com/in/ashugargvc",
+      "https://www.linkedin.com/in/joanne-chen-8486677",
+      "https://www.linkedin.com/in/jayagupta10",
+      "https://www.linkedin.com/in/alejandramartinezc"
+    ],
+    "Generation Ventures": [
+      "https://www.linkedin.com/in/johnkutay"
+    ],
+    "Genoa Ventures": [
+      "https://www.linkedin.com/in/jennyrooke",
+      "https://www.linkedin.com/in/alexandra-de-paz",
+      "https://www.linkedin.com/in/chaudhery",
+      "https://www.linkedin.com/in/landonmerrill"
+    ],
+    "GGV Capital": [
+      "https://www.linkedin.com/in/hans-tung",
+      "https://www.linkedin.com/in/glennsolomon",
+      "https://sg.linkedin.com/in/jixun-foo-a25aba21"
+    ],
+    "Gradient Ventures": [
+      "https://www.linkedin.com/in/darian314",
+      "https://www.linkedin.com/in/eylulk",
+      "https://www.linkedin.com/in/kylerduffy",
+      "https://www.linkedin.com/in/zachary-bratun-glennon-b4a16026"
+    ],
+    "gener8tor": [
+      "https://www.linkedin.com/in/joekirgues",
+      "https://www.linkedin.com/in/troyvosseller"
+    ],
+    "GoAhead Ventures": [
+      "https://www.linkedin.com/in/clanceystahr",
+      "https://www.linkedin.com/in/philbrady",
+      "https://www.linkedin.com/in/tkmori"
+    ],
+    "Highland Capital Partners": [
+      "https://www.linkedin.com/in/dan-nova-bba09946",
+      "https://www.linkedin.com/in/paul-maeder-24420097"
+    ],
+    "HOF Capital": [
+      "https://www.linkedin.com/in/richard-kandel-15619ba",
+      "https://www.linkedin.com/in/victorwang1",
+      "https://www.linkedin.com/in/hansae-catlett-436a9b21"
+    ],
+    "Ignite Farm": [
+      "https://www.linkedin.com/in/joe-rainero-38720231"
+    ],
+    "Hyde Park Venture Partners": [
+      "https://www.linkedin.com/in/allison-lechnir",
+      "https://www.linkedin.com/in/caroline-mcmanus",
+      "https://www.linkedin.com/in/guyhturner"
+    ],
+    "Illumina Ventures": [
+      "https://www.linkedin.com/in/nick-naclerio-68235b8",
+      "https://www.linkedin.com/in/wouter-meuleman",
+      "https://www.linkedin.com/in/ron-mazumder-57b656a"
+    ],
+    "Kima Ventures": [
+      "https://fr.linkedin.com/in/jeandlr",
+      "https://fr.linkedin.com/in/robertalexis",
+      "https://fr.linkedin.com/in/chloe-timsit-561658a0"
+    ],
+    "Kleiner Perkins": [
+      "https://www.linkedin.com/in/ilyafushman",
+      "https://www.linkedin.com/in/mamoonha"
+    ],
+    "Hustle Fund": [
+      "https://www.linkedin.com/in/elizabethyin",
+      "https://www.linkedin.com/in/ericbahn",
+      "https://www.linkedin.com/in/haleymbryant",
+      "https://www.linkedin.com/in/shiyankoh"
+    ],
+    "Laconia": [
+      "https://www.linkedin.com/in/jeffreyleesilverman",
+      "https://www.linkedin.com/in/miritlugassi",
+      "https://www.linkedin.com/in/scott-berrie-46978"
+    ],
+    "Liquid 2 Ventures": [
+      "https://www.linkedin.com/in/joe-montana-464701b",
+      "https://www.linkedin.com/in/michaelma8"
+    ],
+    "Lowercase Capital": [
+      "https://www.linkedin.com/in/chrissacca",
+      "https://www.linkedin.com/in/crystalenglishsacca"
+    ],
+    "Lux Capital": [
+      "https://www.linkedin.com/in/shahinf",
+      "https://www.linkedin.com/in/deenashakir",
+      "https://www.linkedin.com/in/peter-hebert-ab4925"
+    ],
+    "Moderne Ventures": [
+      "https://www.linkedin.com/in/cfreedman",
+      "https://www.linkedin.com/in/davidtal",
+      "https://www.linkedin.com/in/toddwcarpenter"
+    ],
+    "Max Ventures": [
+      "https://www.linkedin.com/in/matthewjweinberg",
+      "https://www.linkedin.com/in/ryan-darnell-9728013b"
+    ],
+    "Menlo Ventures": [
+      "https://www.linkedin.com/in/scarolan",
+      "https://www.linkedin.com/in/debarghyadas",
+      "https://www.linkedin.com/in/derekgxiao"
+    ],
+    "MMC Ventures": [
+      "https://uk.linkedin.com/in/simonmenashy",
+      "https://uk.linkedin.com/in/charlotte-barttelot-aa395038",
+      "https://bm.linkedin.com/in/allan-cockell-475a6114"
+    ],
+    "Mighty Capital": [
+      "https://www.linkedin.com/in/scmoatti",
+      "https://www.linkedin.com/in/jennifer-vancini-2765b4"
+    ],
+    "Mindset Ventures": [
+      "https://www.linkedin.com/in/nemerrahal",
+      "https://www.linkedin.com/in/drewthurlow"
+    ],
+    "Moneta Ventures": [
+      "https://www.linkedin.com/in/lokeshsikaria",
+      "https://www.linkedin.com/in/brentvkelton",
+      "https://www.linkedin.com/in/nishant-banka-7b5431135"
+    ],
+    "Precursor Ventures": [
+      "https://www.linkedin.com/in/chudson"
+    ],
+    "Phyto Partners": [
+      "https://www.linkedin.com/in/brettfinkelstein"
+    ],
+    "Presight Capital": [
+      "https://gr.linkedin.com/in/constantinbisanz",
+      "https://www.linkedin.com/in/fabianhansen",
+      "https://uk.linkedin.com/in/christian-angermayer"
+    ],
+    "Progression Fund": [
+      "https://www.linkedin.com/in/marklinao",
+      "https://www.linkedin.com/in/matt-lee-2358b628",
+      "https://jp.linkedin.com/in/tomoya-ogawa-5539663a"
+    ],
+    "Mucker Capital": [
+      "https://www.linkedin.com/in/omar-hamoui-2165",
+      "https://www.linkedin.com/in/gregisaacs"
+    ],
+    "Mouro Capital": [
+      "https://www.linkedin.com/in/msilvamartinez",
+      "https://es.linkedin.com/in/raesco"
+    ],
+    "NFX": [
+      "https://www.linkedin.com/in/peteflint",
+      "https://www.linkedin.com/in/jamescurrier",
+      "https://www.linkedin.com/in/morganbeller"
+    ],
+    "OCA Ventures": [
+      "https://www.linkedin.com/in/rob-brandt",
+      "https://www.linkedin.com/in/nick-schoewe-3bb686",
+      "https://www.linkedin.com/in/rashika-rahman"
+    ],
+    "OS Fund": [
+      "https://www.linkedin.com/in/bryanrjohnson"
+    ],
+    "New Crop Capital": [
+      "https://www.linkedin.com/in/nickcooney1"
+    ],
+    "NewSchools Venture Fund": [
+      "https://www.linkedin.com/in/frances-messano",
+      "https://www.linkedin.com/in/valeriebraimah",
+      "https://www.linkedin.com/in/vmonterosa"
+    ],
+    "NextView Ventures": [
+      "https://www.linkedin.com/in/davidbeisel",
+      "https://www.linkedin.com/in/robgo",
+      "https://www.linkedin.com/in/leehower"
+    ],
+    "Notation Capital": [
+      "https://www.linkedin.com/in/alexlines"
+    ],
+    "One Way Ventures": [
+      "https://www.linkedin.com/in/semyondukach",
+      "https://www.linkedin.com/in/lexzh",
+      "https://www.linkedin.com/in/afeugene"
+    ],
+    "Pear VC": [
+      "https://www.linkedin.com/in/pejman",
+      "https://www.linkedin.com/in/kestreich",
+      "https://www.linkedin.com/in/ryansells"
+    ],
+    "Pegasus Tech Ventures": [
+      "https://www.linkedin.com/in/billreichert",
+      "https://www.linkedin.com/in/mtantow"
+    ],
+    "Peterson Ventures": [
+      "https://www.linkedin.com/in/bencapell",
+      "https://www.linkedin.com/in/taylorcjones"
+    ],
+    "PJC": [
+      "https://www.linkedin.com/in/mattlhayes",
+      "https://www.linkedin.com/in/zaid-ahmad-ashai-aa1683"
+    ],
+    "Promus Ventures": [
+      "https://www.linkedin.com/in/mikecollett",
+      "https://lu.linkedin.com/in/johnlusk"
+    ],
+    "Refactor Capital": [
+      "https://www.linkedin.com/in/zalzally"
+    ],
+    "Quiet Capital": [
+      "https://www.linkedin.com/in/michaelxbloch",
+      "https://www.linkedin.com/in/astasiamyers",
+      "https://www.linkedin.com/in/david-greenbaum-59017a57"
+    ],
+    "Radical Ventures": [
+      "https://www.linkedin.com/in/mewelch",
+      "https://www.linkedin.com/in/robtoews",
+      "https://ca.linkedin.com/in/jordanjacobs1"
+    ],
+    "Redline Capital": [
+      "https://uk.linkedin.com/in/tatiana-evtushenkova-49408a94",
+      "https://uk.linkedin.com/in/anastasiaputilova",
+      "https://uk.linkedin.com/in/david-spector-22a0443"
+    ],
+    "Revolution": [
+      "https://www.linkedin.com/in/steve-case-0973524",
+      "https://www.linkedin.com/in/david-golden-128b2020",
+      "https://www.linkedin.com/in/tigesavage"
+    ],
+    "Romulus Capital": [
+      "https://www.linkedin.com/in/gustai"
+    ],
+    "Scrum Ventures": [
+      "https://www.linkedin.com/in/takmiyata/ja",
+      "https://jp.linkedin.com/in/michael-hideki-matsumura-cfa-0987319",
+      "https://www.linkedin.com/in/michael-yan-8564b83bb"
+    ],
+    "RRE Ventures": [
+      "https://www.linkedin.com/in/stuartellman",
+      "https://www.linkedin.com/in/rajurishi",
+      "https://www.linkedin.com/in/wporteous",
+      "https://www.linkedin.com/in/vicsingh"
+    ],
+    "Scania Growth Capital": [
+      "https://de.linkedin.com/in/vonstackelberg"
+    ],
+    "Schematic Ventures": [
+      "https://www.linkedin.com/in/juliancounihan",
+      "https://www.linkedin.com/in/alexeyfreed"
+    ],
+    "SE Ventures": [
+      "https://www.linkedin.com/in/jainvarun",
+      "https://www.linkedin.com/in/carloskokron",
+      "https://fr.linkedin.com/in/juliencristiani"
+    ],
+    "Serena": [
+      "https://fr.linkedin.com/in/xlorphelin",
+      "https://fr.linkedin.com/in/philippe-hayat-a2480490",
+      "https://fr.linkedin.com/in/sebastienleroy1"
+    ],
+    "SaaS Ventures": [
+      "https://www.linkedin.com/in/collingutman",
+      "https://www.linkedin.com/in/sethshuldiner",
+      "https://www.linkedin.com/in/brian-gaister-8999a418"
+    ],
+    "Shrug Capital": [
+      "https://www.linkedin.com/in/nivdror"
+    ],
+    "Signia Venture Partners": [
+      "https://www.linkedin.com/in/sundhillon",
+      "https://www.linkedin.com/in/zawthet",
+      "https://www.linkedin.com/in/rlthompson"
+    ],
+    "Sinai Ventures": [
+      "https://www.linkedin.com/in/eric-reiner",
+      "https://www.linkedin.com/in/mike-raab"
+    ],
+    "SET Ventures": [
+      "https://nl.linkedin.com/in/antonarts",
+      "https://nl.linkedin.com/in/julia-padberg-a31b3525",
+      "https://de.linkedin.com/in/drtillstenzel",
+      "https://nl.linkedin.com/in/wouter-jonk-804119",
+      "https://nl.linkedin.com/in/ren%C3%A9-savelsberg-0a154b2"
+    ],
+    "Shasta Ventures": [
+      "https://nz.linkedin.com/in/robconeybeer",
+      "https://www.linkedin.com/in/issacroth",
+      "https://www.linkedin.com/in/jacobmullins"
+    ],
+    "SOSV": [
+      "https://www.linkedin.com/in/parikshit-sharma-indiebio",
+      "https://www.linkedin.com/in/sean-sosv",
+      "https://pt.linkedin.com/in/benjaminjoffe",
+      "https://www.linkedin.com/in/neddesmond",
+      "https://www.linkedin.com/in/mohansiyer",
+      "https://sa.linkedin.com/in/williambaobean"
+    ],
+    "Streamlined Ventures": [
+      "https://www.linkedin.com/in/ullas-naik-007ba7358"
+    ],
+    "Structure Capital": [
+      "https://www.linkedin.com/in/jacobshea"
+    ],
+    "SV Latam Capital": [
+      "https://www.linkedin.com/in/consuelovalverde",
+      "https://www.linkedin.com/in/angelikablendstrup"
+    ],
+    "SV Angel": [
+      "https://www.linkedin.com/in/ronny-conway-a4a38815",
+      "https://www.linkedin.com/in/topherc",
+      "https://www.linkedin.com/in/ashvinb"
+    ],
+    "Sova VC": [
+      "https://uk.linkedin.com/in/alexanderchikunov",
+      "https://www.linkedin.com/in/atuknov",
+      "https://uk.linkedin.com/in/aabulygin"
+    ],
+    "TPG": [
+      "https://in.linkedin.com/in/ankurthadani",
+      "https://www.linkedin.com/in/todd-sisitsky-174a31178",
+      "https://www.linkedin.com/in/jim-coulter-64a197281"
+    ],
+    "Torch Capital": [
+      "https://www.linkedin.com/in/jonathan-keidan-b76515",
+      "https://www.linkedin.com/in/katie-reiner-peykar-24542483",
+      "https://www.linkedin.com/in/jake-moross"
+    ],
+    "Reach Capital": [
+      "https://www.linkedin.com/in/jencwu",
+      "https://www.linkedin.com/in/wayeechu",
+      "https://www.linkedin.com/in/shauntelpoulson",
+      "https://www.linkedin.com/in/tonycwan",
+      "https://www.linkedin.com/in/enzo-cavalie",
+      "https://www.linkedin.com/in/jcarolan"
+    ],
+    "Root Ventures": [
+      "https://www.linkedin.com/in/avidanross",
+      "https://www.linkedin.com/in/leeredwards"
+    ],
+    "Sandalphon Capital": [
+      "https://www.linkedin.com/in/claude-cimeus-37550874",
+      "https://www.linkedin.com/in/ellisjr",
+      "https://cl.linkedin.com/in/domingoclaroc"
+    ],
+    "Sunbridge Partners": [
+      "https://jp.linkedin.com/in/allenminer"
+    ],
+    "SWaN & Legend Venture Partners": [
+      "https://www.linkedin.com/in/percy-g-li-9b685836",
+      "https://www.linkedin.com/in/aaron-pollock-59758922"
+    ],
+    "TenOneTen Ventures": [
+      "https://www.linkedin.com/in/dwaxman",
+      "https://www.linkedin.com/in/mingersoll",
+      "https://www.linkedin.com/in/epakravan"
+    ],
+    "Team8": [
+      "https://il.linkedin.com/in/lirangr",
+      "https://il.linkedin.com/in/alonhuri",
+      "https://il.linkedin.com/in/assaf-mischari"
+    ],
+    "The Fund": [
+      "https://www.linkedin.com/in/jennyfielding",
+      "https://www.linkedin.com/in/scotthartley",
+      "https://www.linkedin.com/in/mobrimer"
+    ],
+    "The House Fund": [
+      "https://www.linkedin.com/in/jfiance",
+      "https://www.linkedin.com/in/davidbloom5"
+    ],
+    "Trind Ventures": [
+      "https://www.linkedin.com/in/joel-aasmae-b8a1a44",
+      "https://www.linkedin.com/in/taavilepmets",
+      "https://www.linkedin.com/in/kimmo-irpola-6954a",
+      "https://www.linkedin.com/in/ivar-siimar-9498307"
+    ],
+    "Trinity Ventures": [
+      "https://www.linkedin.com/in/gustai",
+      "https://www.linkedin.com/in/pnakache",
+      "https://www.linkedin.com/in/ajaychopra"
+    ],
+    "True Wealth Ventures": [
+      "https://www.linkedin.com/in/kerryrupp",
+      "https://www.linkedin.com/in/saratbrand"
+    ],
+    "Unshackled Ventures": [
+      "https://www.linkedin.com/in/shaherose",
+      "https://www.linkedin.com/in/npachisia"
+    ],
+    "Uncork Capital": [
+      "https://www.linkedin.com/in/jeffclavier",
+      "https://www.linkedin.com/in/andymcloughlin",
+      "https://www.linkedin.com/in/tripp-jones-8341255",
+      "https://www.linkedin.com/in/amysaper"
+    ],
+    "Underscore VC": [
+      "https://www.linkedin.com/in/dulude",
+      "https://www.linkedin.com/in/mjskok",
+      "https://www.linkedin.com/in/zynetta"
+    ],
+    "Unusual Ventures": [
+      "https://www.linkedin.com/in/niamh-o-donnell",
+      "https://www.linkedin.com/in/sandhyahegde",
+      "https://www.linkedin.com/in/jyotibansal"
+    ],
+    "UpHonest Capital": [
+      "https://www.linkedin.com/in/wei-guo-b9b76038",
+      "https://www.linkedin.com/in/violet-tan-961a5921",
+      "https://www.linkedin.com/in/yang-zhou-a24971203"
+    ],
+    "Ulu Ventures": [
+      "https://www.linkedin.com/in/miriamrivera",
+      "https://www.linkedin.com/in/clintkorver",
+      "https://www.linkedin.com/in/andreabogarin"
+    ],
+    "Urban Innovation Fund": [
+      "https://www.linkedin.com/in/julie-lein-76a0679",
+      "https://www.linkedin.com/in/jenieri-cyrus",
+      "https://www.linkedin.com/in/andrewfelbinger",
+      "https://www.linkedin.com/in/clara-brenner-10824828"
+    ],
+    "UVC Partners": [
+      "https://de.linkedin.com/in/andreasunseld",
+      "https://de.linkedin.com/in/alexanderkiltz",
+      "https://de.linkedin.com/in/benjaminerhart",
+      "https://de.linkedin.com/in/johannesvonborries"
+    ],
+    "White Star Capital": [
+      "https://www.linkedin.com/in/ericmartineaufortin",
+      "https://www.linkedin.com/in/jean-francois-marcoux-3875924",
+      "https://www.linkedin.com/in/matthieulattes"
+    ],
+    "Vast Ventures": [
+      "https://www.linkedin.com/in/aniqrahman",
+      "https://www.linkedin.com/in/seanmccroskey"
+    ],
+    "Version One Ventures": [
+      "https://www.linkedin.com/in/angela-tran-38262131",
+      "https://www.linkedin.com/in/bwertz"
+    ],
+    "XSeed Capital": [
+      "https://www.linkedin.com/in/jthermond",
+      "https://www.linkedin.com/in/alanchiu",
+      "https://www.linkedin.com/in/robertesiegel"
+    ],
+    "ZhenFund": [
+      "https://cn.linkedin.com/in/annaaifang",
+      "https://cn.linkedin.com/in/xiaopingxu",
+      "https://cn.linkedin.com/in/yuan-liu-08798512"
+    ],
+    "Wavemaker Partners": [
+      "https://www.linkedin.com/in/ericmanlunas",
+      "https://sg.linkedin.com/in/andyhwang",
+      "https://sg.linkedin.com/in/ngrachel"
+    ],
+    "Winklevoss Capital": [
+      "https://www.linkedin.com/in/joepopson",
+      "https://www.linkedin.com/in/cora-alvi"
+    ],
+    "Atomico": [
+      "https://uk.linkedin.com/in/thomaswehmeier",
+      "https://uk.linkedin.com/in/andreashelbig",
+      "https://uk.linkedin.com/in/niklaszennstrom"
+    ],
+    "Joyance Partners": [
+      "https://www.linkedin.com/in/bgw"
+    ],
+    "Afore Capital": [
+      "https://www.linkedin.com/in/gjainvc"
+    ],
+    "XG Ventures": [
+      "https://www.linkedin.com/in/andreazurek"
+    ]
+  },
+  "people": {}
+}

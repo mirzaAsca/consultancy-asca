@@ -1,0 +1,45 @@
+{
+  "firms": {},
+  "people": {
+    "adam besvinick": ["https://www.linkedin.com/in/besvinick"],
+    "adrienne l palm": [
+      "https://www.linkedin.com/in/adriennepalm",
+      "https://www.linkedin.com/in/troyvosseller"
+    ],
+    "ben zises": ["https://www.linkedin.com/in/bzises"],
+    "brandon bryant": ["https://www.linkedin.com/in/bbryantwsp"],
+    "brett martin": ["https://www.linkedin.com/in/brettlucasmartin"],
+    "eric schoenbach": ["https://www.linkedin.com/in/eric-schoenbach-05b12a50"],
+    "faraz fatemi": ["https://www.linkedin.com/in/ffatemi21"],
+    "hiro shinn": ["https://www.linkedin.com/in/hiro-shinn-77139a69"],
+    "jed ng": ["https://www.linkedin.com/in/jedng"],
+    "jonathan wasserstrum": ["https://www.linkedin.com/in/jonathan-wasserstrum-8a77533"],
+    "jordan odinsky": ["https://www.linkedin.com/in/jordanodinsky"],
+    "joseph sartre": [
+      "https://www.linkedin.com/in/josephsartre",
+      "https://www.linkedin.com/in/vincent-diallo"
+    ],
+    "jesse sung": ["https://www.linkedin.com/in/357js"],
+    "kris brower": ["https://www.linkedin.com/in/kbrower"],
+    "kristopher brown": ["https://www.linkedin.com/in/kristopher-brown-8124128"],
+    "mehrad yaghmai": ["https://www.linkedin.com/in/mehrady"],
+    "oliver blakey": ["https://www.linkedin.com/in/oliverblakey"],
+    "oren kozlowski": ["https://www.linkedin.com/in/orenkoz"],
+    "robert licalzi": ["https://www.linkedin.com/in/robert-licalzi-65723241"],
+    "roope marttila": ["https://www.linkedin.com/in/roopem"],
+    "saim mert ozyurek": ["https://www.linkedin.com/in/mertozyurek"],
+    "samuel lee": ["https://www.linkedin.com/in/samuel-y-lee"],
+    "shomik ghosh": ["https://www.linkedin.com/in/shomik-ghosh-a5a71319"],
+    "sunny parikh": ["https://www.linkedin.com/in/sunnyparikh"],
+    "tanay modi": ["https://www.linkedin.com/in/tanay-modi-03422486"],
+    "tarik abbas": ["https://www.linkedin.com/in/tarik-abbas"],
+    "thomas sparico": ["https://www.linkedin.com/in/thomasmsparico"],
+    "turner novak": ["https://www.linkedin.com/in/turnernovak"],
+    "zann ali": [
+      "https://www.linkedin.com/in/zannali",
+      "https://www.linkedin.com/in/iskold",
+      "https://www.linkedin.com/in/juliemariewolf"
+    ]
+  },
+  "companies": {}
+}

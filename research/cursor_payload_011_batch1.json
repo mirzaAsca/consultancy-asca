@@ -1,0 +1,39 @@
+{
+  "firms": {},
+  "people": {
+    "thomas matter": ["https://www.linkedin.com/in/thomas-matter-28a339"],
+    "thomas matter matter group": ["https://www.linkedin.com/in/thomas-matter-28a339"],
+    "alan morris": ["https://www.linkedin.com/in/alan-morris-88b7541a"],
+    "alan morris londinium family office": ["https://www.linkedin.com/in/alan-morris-88b7541a"]
+  },
+  "companies": {
+    "linkedin.com/company/harald-quandt-holding-gmbh": [
+      "https://www.linkedin.com/in/malte-rippel-45b364213",
+      "https://www.linkedin.com/in/gregor-may-749640121"
+    ],
+    "linkedin.com/company/lj-partnership": [
+      "https://www.linkedin.com/in/christopher-shin-ba723730",
+      "https://www.linkedin.com/in/james-cave-14471a168",
+      "https://www.linkedin.com/in/tim-alexander-7209b074"
+    ],
+    "linkedin.com/company/alpheus-capital-limited": [
+      "https://www.linkedin.com/in/james-plant",
+      "https://www.linkedin.com/in/mike-pappas-442a317b",
+      "https://www.linkedin.com/in/robin-winning-680620190"
+    ],
+    "linkedin.com/company/w-investments": [
+      "https://www.linkedin.com/in/linda-warwick-cornes-3547371"
+    ],
+    "linkedin.com/company/groupe-arnault": [
+      "https://www.linkedin.com/in/mathieu-le-bozec-4029083"
+    ],
+    "linkedin.com/company/souter-investments-limited": [
+      "https://www.linkedin.com/in/johnberthinussen",
+      "https://www.linkedin.com/in/calum-cusiter-63705268",
+      "https://www.linkedin.com/in/maurice-shamash-cfa-650a6b3b"
+    ],
+    "linkedin.com/company/ferguson-partners-family-office-limited": [
+      "https://www.linkedin.com/in/abigail-laufer-242251359"
+    ]
+  }
+}

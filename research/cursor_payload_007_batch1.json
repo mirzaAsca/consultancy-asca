@@ -1,0 +1,91 @@
+{
+  "firms": {
+    "CommerzVentures": [
+      "https://www.linkedin.com/in/assadollahi",
+      "https://www.linkedin.com/in/gernot-kleckner-9449b17",
+      "https://www.linkedin.com/in/judithvogel",
+      "https://www.linkedin.com/in/patrickmeisberger",
+      "https://www.linkedin.com/in/schwenderheiko",
+      "https://www.linkedin.com/in/stirtey",
+      "https://www.linkedin.com/in/sunil-kappagoda-a60539124"
+    ],
+    "Go Capital": [
+      "https://www.linkedin.com/in/aude-kermarrec-a9103848",
+      "https://www.linkedin.com/in/david-leray-14489093",
+      "https://www.linkedin.com/in/fredericlebrun",
+      "https://www.linkedin.com/in/lucas-perez-emlyon",
+      "https://www.linkedin.com/in/theophilegallon",
+      "https://www.linkedin.com/in/tristan-garde"
+    ],
+    "MeOhr Ventures": [
+      "https://www.linkedin.com/in/nissim-darvish-a82028222"
+    ],
+    "Astorya": [
+      "https://www.linkedin.com/in/florian-graillot",
+      "https://www.linkedin.com/in/laurentgibert42",
+      "https://www.linkedin.com/in/montaigu",
+      "https://www.linkedin.com/in/wilczynski"
+    ],
+    "South Central Ventures": [
+      "https://www.linkedin.com/in/eli-zhabevska-3131034",
+      "https://www.linkedin.com/in/jan-kobler-615433",
+      "https://www.linkedin.com/in/jurem",
+      "https://www.linkedin.com/in/lordan-hristov-767268b0",
+      "https://www.linkedin.com/in/saraoluic",
+      "https://www.linkedin.com/in/tatjanazabasu",
+      "https://www.linkedin.com/in/tina-kastrevc-cfa-59579793",
+      "https://www.linkedin.com/in/xiaomin-mou-81b4044"
+    ],
+    "BGV Bethnal Green Ventures": [
+      "https://www.linkedin.com/in/cansudb",
+      "https://www.linkedin.com/in/damayanthysathianathan",
+      "https://www.linkedin.com/in/melanie-hayes-8b42769",
+      "https://www.linkedin.com/in/paulmiller"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/commerzventures": [
+      "https://www.linkedin.com/in/assadollahi",
+      "https://www.linkedin.com/in/gernot-kleckner-9449b17",
+      "https://www.linkedin.com/in/judithvogel",
+      "https://www.linkedin.com/in/patrickmeisberger",
+      "https://www.linkedin.com/in/schwenderheiko",
+      "https://www.linkedin.com/in/stirtey",
+      "https://www.linkedin.com/in/sunil-kappagoda-a60539124"
+    ],
+    "linkedin.com/company/gocapital": [
+      "https://www.linkedin.com/in/aude-kermarrec-a9103848",
+      "https://www.linkedin.com/in/david-leray-14489093",
+      "https://www.linkedin.com/in/fredericlebrun",
+      "https://www.linkedin.com/in/lucas-perez-emlyon",
+      "https://www.linkedin.com/in/theophilegallon",
+      "https://www.linkedin.com/in/tristan-garde"
+    ],
+    "linkedin.com/company/meohr-ventures": [
+      "https://www.linkedin.com/in/nissim-darvish-a82028222"
+    ],
+    "linkedin.com/company/astorya-vc": [
+      "https://www.linkedin.com/in/florian-graillot",
+      "https://www.linkedin.com/in/laurentgibert42",
+      "https://www.linkedin.com/in/montaigu",
+      "https://www.linkedin.com/in/wilczynski"
+    ],
+    "linkedin.com/company/south-central-ventures": [
+      "https://www.linkedin.com/in/eli-zhabevska-3131034",
+      "https://www.linkedin.com/in/jan-kobler-615433",
+      "https://www.linkedin.com/in/jurem",
+      "https://www.linkedin.com/in/lordan-hristov-767268b0",
+      "https://www.linkedin.com/in/saraoluic",
+      "https://www.linkedin.com/in/tatjanazabasu",
+      "https://www.linkedin.com/in/tina-kastrevc-cfa-59579793",
+      "https://www.linkedin.com/in/xiaomin-mou-81b4044"
+    ],
+    "linkedin.com/company/bethnal-green-ventures": [
+      "https://www.linkedin.com/in/cansudb",
+      "https://www.linkedin.com/in/damayanthysathianathan",
+      "https://www.linkedin.com/in/melanie-hayes-8b42769",
+      "https://www.linkedin.com/in/paulmiller"
+    ]
+  }
+}

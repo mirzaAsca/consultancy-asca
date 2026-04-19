@@ -1,0 +1,237 @@
+{
+  "meta": {
+    "description": "001+004 continuation batch (agents + manual QA). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch2_2026_04_18.json",
+    "notes": [
+      "AXA Venture Partners: dropped /in/growthcapital (ambiguous slug); kept AVP team per indexed company avpcap.",
+      "004 CVP + convergevp.com: replaced mistaken unrelated CVP roster with Converge VC Cambridge team from converge.vc/team + company convergevc.",
+      "B Capital Group: added Gabe Greenbaum /in/gabe-greenbaum-008167 (indexed B Capital Group).",
+      "Astera Institute: nonprofit/research leadership URLs per prior agent pass — CSV Type says VC; treat as best-effort public roster."
+    ]
+  },
+  "firms": {
+    "asha impact": [
+      "https://www.linkedin.com/in/kartikeya-desai",
+      "https://www.linkedin.com/in/aparna-dua-793a313"
+    ],
+    "astera institute": [
+      "https://www.linkedin.com/in/jed-mccaleb-4052a4",
+      "https://www.linkedin.com/in/seemay-chou-4b30a812",
+      "https://www.linkedin.com/in/elidourado",
+      "https://www.linkedin.com/in/dileep-george"
+    ],
+    "autism impact fund": [
+      "https://www.linkedin.com/in/chrismale",
+      "https://www.linkedin.com/in/brian-a-o-callaghan-14a8305",
+      "https://www.linkedin.com/in/robertsarrazin",
+      "https://www.linkedin.com/in/michellexhe",
+      "https://www.linkedin.com/in/lauren-ingram-06b960106",
+      "https://www.linkedin.com/in/nikhitakulkarni",
+      "https://www.linkedin.com/in/robbieallen7"
+    ],
+    "avaana capital": [
+      "https://www.linkedin.com/in/anjali-bansal-8489091",
+      "https://www.linkedin.com/in/vikas-verma-aa14974",
+      "https://www.linkedin.com/in/shruti-srivastava-42752113",
+      "https://www.linkedin.com/in/rahul-bhapkar-35700b5"
+    ],
+    "avalancha ventures": [
+      "https://www.linkedin.com/in/rodrigoocejo",
+      "https://www.linkedin.com/in/lorenzo-garza-8140764",
+      "https://www.linkedin.com/in/wilber-palenque-8a75532b"
+    ],
+    "avant global": [
+      "https://www.linkedin.com/in/justinfiggins",
+      "https://www.linkedin.com/in/faye-concejero-709b3b64",
+      "https://www.linkedin.com/in/stefania-lyras-604b9371",
+      "https://www.linkedin.com/in/jessica-evans-864413ab",
+      "https://www.linkedin.com/in/amylitsiou"
+    ],
+    "avoro ventures": [
+      "https://www.linkedin.com/in/behzad-aghazadeh-13a494",
+      "https://www.linkedin.com/in/scott-epstein-08610648",
+      "https://www.linkedin.com/in/uya-chuluunbaatar-ph-d-7355803",
+      "https://www.linkedin.com/in/davidxiang",
+      "https://www.linkedin.com/in/susana-wilson-hawken-bbb92512a"
+    ],
+    "axa venture partners": [
+      "https://www.linkedin.com/in/francoisrobinet",
+      "https://www.linkedin.com/in/heidimesser",
+      "https://www.linkedin.com/in/elizabeth-de-saint-aignan",
+      "https://www.linkedin.com/in/benoitfosseprez",
+      "https://www.linkedin.com/in/raghavventurecapital",
+      "https://www.linkedin.com/in/arthur-brasseur",
+      "https://www.linkedin.com/in/alexanderpires",
+      "https://www.linkedin.com/in/marin-chauvin-7a22a01b"
+    ],
+    "azolla ventures": [
+      "https://www.linkedin.com/in/matthewnordan",
+      "https://www.linkedin.com/in/johannawolfson",
+      "https://www.linkedin.com/in/amy-duffuor-7b1a6224",
+      "https://www.linkedin.com/in/nolan-english-b5195476",
+      "https://www.linkedin.com/in/yao-eric",
+      "https://www.linkedin.com/in/ally-harada"
+    ],
+    "b capital group": [
+      "https://www.linkedin.com/in/rajganguly",
+      "https://www.linkedin.com/in/hlmorgan",
+      "https://www.linkedin.com/in/robertmittendorffmd",
+      "https://www.linkedin.com/in/jeffreyjohnson",
+      "https://www.linkedin.com/in/gabe-greenbaum-008167"
+    ],
+    "babel ventures": [
+      "https://www.linkedin.com/in/baminuzzi",
+      "https://www.linkedin.com/in/bethencourt",
+      "https://www.linkedin.com/in/marcelo-valente-69a3a5133"
+    ],
+    "backing minds": [
+      "https://www.linkedin.com/in/susannenajafi",
+      "https://www.linkedin.com/in/sara-wimmercranz-398b891",
+      "https://www.linkedin.com/in/alexanderhjertstrom"
+    ],
+    "baidu ventures": [
+      "https://www.linkedin.com/in/samanfarid",
+      "https://www.linkedin.com/in/bowen-li-9b48a71a3",
+      "https://www.linkedin.com/in/luo-xihuan-53a4543a",
+      "https://www.linkedin.com/in/siwei-xie",
+      "https://www.linkedin.com/in/shui-liu-13677047"
+    ],
+    "come up capital": ["https://www.linkedin.com/in/davemao"],
+    "coplex ventures": [
+      "https://www.linkedin.com/in/bizguy",
+      "https://www.linkedin.com/in/torenmatthew"
+    ],
+    "craftsman capital partners": [
+      "https://www.linkedin.com/in/barrett-dean-226780",
+      "https://www.linkedin.com/in/will-walters-860ab9124"
+    ],
+    "crystal towers capital": [
+      "https://www.linkedin.com/in/tikhonbernstam",
+      "https://www.linkedin.com/in/alexbangash"
+    ],
+    "cvp": [
+      "https://www.linkedin.com/in/nilanjanabhowmik",
+      "https://www.linkedin.com/in/maiaheymann",
+      "https://www.linkedin.com/in/anshuagarwal",
+      "https://www.linkedin.com/in/jamesfalkoff",
+      "https://www.linkedin.com/in/jason-king-cpa-081a2b2"
+    ],
+    "diversis capital": [
+      "https://www.linkedin.com/in/kevin-ma-0785507",
+      "https://www.linkedin.com/in/ron-nayot-a0b7b967",
+      "https://www.linkedin.com/in/mcamassa",
+      "https://www.linkedin.com/in/greg-chou-7423"
+    ],
+    "dot capital corp": [
+      "https://www.linkedin.com/in/joseph-r-saviano-1393aa11",
+      "https://www.linkedin.com/in/larry-bettino-98023674"
+    ],
+    "elab vc": [
+      "https://www.linkedin.com/in/dougneal",
+      "https://www.linkedin.com/in/rickbolander",
+      "https://www.linkedin.com/in/bob-stefanski-a56085171",
+      "https://www.linkedin.com/in/paul-stefanski-03a22a132"
+    ],
+    "elementum ventures": [
+      "https://www.linkedin.com/in/bpattersonca",
+      "https://www.linkedin.com/in/ben-chelf-726b7",
+      "https://www.linkedin.com/in/keilhacker",
+      "https://www.linkedin.com/in/tedcallahan"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/ashaimpact": [
+      "https://www.linkedin.com/in/kartikeya-desai",
+      "https://www.linkedin.com/in/aparna-dua-793a313"
+    ],
+    "linkedin.com/company/astera-institute": [
+      "https://www.linkedin.com/in/jed-mccaleb-4052a4",
+      "https://www.linkedin.com/in/seemay-chou-4b30a812",
+      "https://www.linkedin.com/in/elidourado",
+      "https://www.linkedin.com/in/dileep-george"
+    ],
+    "linkedin.com/company/autismimpactfund": [
+      "https://www.linkedin.com/in/chrismale",
+      "https://www.linkedin.com/in/brian-a-o-callaghan-14a8305",
+      "https://www.linkedin.com/in/robertsarrazin",
+      "https://www.linkedin.com/in/michellexhe",
+      "https://www.linkedin.com/in/lauren-ingram-06b960106",
+      "https://www.linkedin.com/in/nikhitakulkarni",
+      "https://www.linkedin.com/in/robbieallen7"
+    ],
+    "linkedin.com/company/avaana-capital": [
+      "https://www.linkedin.com/in/anjali-bansal-8489091",
+      "https://www.linkedin.com/in/vikas-verma-aa14974",
+      "https://www.linkedin.com/in/shruti-srivastava-42752113",
+      "https://www.linkedin.com/in/rahul-bhapkar-35700b5"
+    ],
+    "linkedin.com/company/avalancha-ventures": [
+      "https://www.linkedin.com/in/rodrigoocejo",
+      "https://www.linkedin.com/in/lorenzo-garza-8140764",
+      "https://www.linkedin.com/in/wilber-palenque-8a75532b"
+    ],
+    "linkedin.com/company/avant-global-llc": [
+      "https://www.linkedin.com/in/justinfiggins",
+      "https://www.linkedin.com/in/faye-concejero-709b3b64",
+      "https://www.linkedin.com/in/stefania-lyras-604b9371",
+      "https://www.linkedin.com/in/jessica-evans-864413ab",
+      "https://www.linkedin.com/in/amylitsiou"
+    ],
+    "linkedin.com/company/venbio-select-advisor": [
+      "https://www.linkedin.com/in/behzad-aghazadeh-13a494",
+      "https://www.linkedin.com/in/scott-epstein-08610648",
+      "https://www.linkedin.com/in/uya-chuluunbaatar-ph-d-7355803",
+      "https://www.linkedin.com/in/davidxiang",
+      "https://www.linkedin.com/in/susana-wilson-hawken-bbb92512a"
+    ],
+    "linkedin.com/company/avpcap": [
+      "https://www.linkedin.com/in/francoisrobinet",
+      "https://www.linkedin.com/in/heidimesser",
+      "https://www.linkedin.com/in/elizabeth-de-saint-aignan",
+      "https://www.linkedin.com/in/benoitfosseprez",
+      "https://www.linkedin.com/in/raghavventurecapital",
+      "https://www.linkedin.com/in/arthur-brasseur",
+      "https://www.linkedin.com/in/alexanderpires",
+      "https://www.linkedin.com/in/marin-chauvin-7a22a01b"
+    ],
+    "linkedin.com/company/azolla-ventures": [
+      "https://www.linkedin.com/in/matthewnordan",
+      "https://www.linkedin.com/in/johannawolfson",
+      "https://www.linkedin.com/in/amy-duffuor-7b1a6224",
+      "https://www.linkedin.com/in/nolan-english-b5195476",
+      "https://www.linkedin.com/in/yao-eric",
+      "https://www.linkedin.com/in/ally-harada"
+    ],
+    "linkedin.com/company/b-capital-group": [
+      "https://www.linkedin.com/in/rajganguly",
+      "https://www.linkedin.com/in/hlmorgan",
+      "https://www.linkedin.com/in/robertmittendorffmd",
+      "https://www.linkedin.com/in/jeffreyjohnson",
+      "https://www.linkedin.com/in/gabe-greenbaum-008167"
+    ],
+    "linkedin.com/company/babel-ventures": [
+      "https://www.linkedin.com/in/baminuzzi",
+      "https://www.linkedin.com/in/bethencourt",
+      "https://www.linkedin.com/in/marcelo-valente-69a3a5133"
+    ],
+    "linkedin.com/company/backingminds": [
+      "https://www.linkedin.com/in/susannenajafi",
+      "https://www.linkedin.com/in/sara-wimmercranz-398b891",
+      "https://www.linkedin.com/in/alexanderhjertstrom"
+    ],
+    "linkedin.com/company/bv-baidu-venture": [
+      "https://www.linkedin.com/in/samanfarid",
+      "https://www.linkedin.com/in/bowen-li-9b48a71a3",
+      "https://www.linkedin.com/in/luo-xihuan-53a4543a",
+      "https://www.linkedin.com/in/siwei-xie",
+      "https://www.linkedin.com/in/shui-liu-13677047"
+    ],
+    "linkedin.com/company/convergevc": [
+      "https://www.linkedin.com/in/nilanjanabhowmik",
+      "https://www.linkedin.com/in/maiaheymann",
+      "https://www.linkedin.com/in/anshuagarwal",
+      "https://www.linkedin.com/in/jamesfalkoff",
+      "https://www.linkedin.com/in/jason-king-cpa-081a2b2"
+    ]
+  }
+}

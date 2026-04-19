@@ -1,0 +1,25 @@
+{
+  "session": "2026-04-18",
+  "research_json": "research/linkedin_private_cursor_enrichment_2026_04_18_session_main.json",
+  "method": "Indexed web search only; URLs merged via scripts/apply_linkedin_private_cursor_research_merge.py",
+  "firms_covered_this_session": [
+    "7 Seas Ventures (Seven Seas Partners partners)",
+    "Authentic Ventures",
+    "Caerus Ventures",
+    "Arcus Ventures (oncology-focused arcusventures.com team)",
+    "Blueberry Ventures",
+    "Maltseva (018 company row → Mila Maltseva best-effort)"
+  ],
+  "people_covered": [
+    "J Choi (023) → /in/jaichoi (weak name-only match; row also had other URLs from prior work)"
+  ],
+  "rows_not_resolved_this_session": [
+    "008 Corner Table — no distinct VC fund found; existing dash kept",
+    "011 Arnold Krüger, Ramiz Haddad — no verified personal /in/ distinct from name collisions",
+    "018 Private Angel — generic label, no entity",
+    "023 remaining blanks: ambiguous names, junk profiles, or no indexed LinkedIn match"
+  ],
+  "merge_outputs_cumulative": "Run apply script after each JSON edit; second run added Arcus + Blueberry where firm keys matched.",
+  "continuation_2026_04_18": "Added firm+company maps: Cofounders Capital, Cayuga Venture Fund, Cardinal Venture Capital (cardinal-vc Menlo), CityBlock Capital (Nance + Avidor). Re-ran apply_linkedin_private_cursor_research_merge.py.",
+  "continuation_batch_2": "Congruent Ventures, CoVenture (Treville team), Corazon Capital, Chilango Ventures (Carlos Ochoa), Brilliant Ventures, Bronze Investments + matching company slugs. Merge touched 004 (6 rows), 001/006/007/009/012/014 where same names appear. 004 empty 318→312."
+}

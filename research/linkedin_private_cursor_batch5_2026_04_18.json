@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "description": "001+004 batch5; no_match_firms uses apply script dash rule. Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch5_2026_04_18.json",
+    "notes": [
+      "001 companies block omitted (agent slugs risk cross-matching unrelated rows).",
+      "Bae Systems: accelerator row — no verified investor /in/ roster; no_match_firms marks researched empty rows with '-'.",
+      "Boğaziçi Ventures normalizes to firm key 'bo azi i ventures' (non-ASCII stripped in normalize_key)."
+    ]
+  },
+  "firms": {
+    "aube management": ["https://www.linkedin.com/in/jean-yves-aub%C3%A9-b1217a22"],
+    "blackbird ventures": ["https://www.linkedin.com/in/niki-scevak-15856"],
+    "blue bear capital": ["https://www.linkedin.com/in/vaughn-blake-13050a7"],
+    "blue earth ventures": ["https://www.linkedin.com/in/linley-lewis-b8000510"],
+    "blue horizon": ["https://www.linkedin.com/in/roger-lienhard"],
+    "blueio": ["https://www.linkedin.com/in/davefurneauxblueio"],
+    "blueocean ventures": ["https://www.linkedin.com/in/emmanueldewatteville"],
+    "boehringer ingelheim venture": [
+      "https://www.linkedin.com/in/dr-niklas-czeloth-ab4ab22a",
+      "https://www.linkedin.com/in/kevin-white-phd-8a5a5a12"
+    ],
+    "boeing horizonx": ["https://www.linkedin.com/in/brian-schettler-4ab87a5"],
+    "bo azi i ventures": ["https://www.linkedin.com/in/baris-ozistek-b071374"],
+    "boka group": ["https://www.linkedin.com/in/richjulien"],
+    "healthfundr": ["https://www.linkedin.com/in/htwilkinsiv"],
+    "hemi ventures": ["https://www.linkedin.com/in/amygu"],
+    "highlander fund": ["https://www.linkedin.com/in/david-schwab-b9532620"],
+    "hinge capital": ["https://www.linkedin.com/in/brandonzeuner"],
+    "i2a fund": ["https://www.linkedin.com/in/ellen-carnahan-0aa5b011"],
+    "id ventures ameriva": ["https://www.linkedin.com/in/ronald-chwang-7762359"],
+    "imaginary ventures": ["https://www.linkedin.com/in/nickbrownimaginary"],
+    "incube ventures": ["https://www.linkedin.com/in/andrewfarq"],
+    "infinite road capital": [
+      "https://www.linkedin.com/in/preetisampat",
+      "https://www.linkedin.com/in/jaida-yang"
+    ],
+    "insite partners": ["https://www.linkedin.com/in/marla-sanchez-5635799"]
+  },
+  "people": {},
+  "companies": {},
+  "no_match_firms": [
+    "Capella Space",
+    "Fifth Season Ventures",
+    "First Access Fund",
+    "Inception Sciences",
+    "Bae Systems"
+  ]
+}

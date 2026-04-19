@@ -1,0 +1,248 @@
+{
+  "meta": {
+    "description": "007 empty-row slice0 (CSV rows ~123–215). Web research 2026-04-18. Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_agent_batch_007_slice0_2026_04_18.json"
+  },
+  "firms": {
+    "nova": [
+      "https://www.linkedin.com/in/andrewjdean",
+      "https://www.linkedin.com/in/markdlally"
+    ],
+    "mrpink vc": [
+      "https://www.linkedin.com/in/hernanharo",
+      "https://www.linkedin.com/in/ernestogarciamontesano",
+      "https://www.linkedin.com/in/glopezsuriano"
+    ],
+    "creadev": [
+      "https://www.linkedin.com/in/joelfilippi",
+      "https://www.linkedin.com/in/charlfrancois",
+      "https://www.linkedin.com/in/brieuc-sartorius-107571b6",
+      "https://www.linkedin.com/in/victor-izard",
+      "https://www.linkedin.com/in/theo-levacher",
+      "https://www.linkedin.com/in/tom-rostand-282a1418",
+      "https://www.linkedin.com/in/alexia-lingart-meltz-14316b85"
+    ],
+    "pl iade venture": [
+      "https://www.linkedin.com/in/constancerietzler",
+      "https://www.linkedin.com/in/maximilienoursel",
+      "https://www.linkedin.com/in/bertrand-begin-97a544",
+      "https://www.linkedin.com/in/rdelachapelle",
+      "https://www.linkedin.com/in/julien-watry-vc-ba-venture-capital-entrepreneur-dirigeant",
+      "https://www.linkedin.com/in/hector-peribere-4a1504175"
+    ],
+    "bip capital": [
+      "https://www.linkedin.com/in/bipmarkbuffington",
+      "https://www.linkedin.com/in/mark-flickinger-24295538",
+      "https://www.linkedin.com/in/cjohnsonatlanta",
+      "https://www.linkedin.com/in/rtwyatt"
+    ],
+    "lventure group": [
+      "https://www.linkedin.com/in/fabriziominei",
+      "https://www.linkedin.com/in/guidopezzin",
+      "https://www.linkedin.com/in/andreagenovese",
+      "https://www.linkedin.com/in/christianmarchesi"
+    ],
+    "velocity partners": [
+      "https://www.linkedin.com/in/dkalavros",
+      "https://www.linkedin.com/in/grpapastergiou",
+      "https://www.linkedin.com/in/etparks",
+      "https://www.linkedin.com/in/konstantinos-mavros-6b05038",
+      "https://www.linkedin.com/in/dmaris"
+    ],
+    "madrona venture group": [
+      "https://www.linkedin.com/in/portertim",
+      "https://www.linkedin.com/in/s-somasegar-113791a5"
+    ],
+    "join capital": [
+      "https://www.linkedin.com/in/tobiasschirmer",
+      "https://www.linkedin.com/in/sebastian-von-ribbentrop-0406a591",
+      "https://www.linkedin.com/in/janborgstaedt",
+      "https://www.linkedin.com/in/flavialevi",
+      "https://www.linkedin.com/in/manuel-effenberg-ph-d-50461980",
+      "https://www.linkedin.com/in/simone-lavizzari-7a82b93"
+    ],
+    "anaxago": [
+      "https://www.linkedin.com/in/caroline-lamaud-dupont-5967182a",
+      "https://www.linkedin.com/in/joachim-dupont-71507314",
+      "https://www.linkedin.com/in/oscarkra"
+    ],
+    "scalex ventures": [
+      "https://www.linkedin.com/in/dilek-dayinlarli-kocaata-8a0594131",
+      "https://www.linkedin.com/in/safaktufekci",
+      "https://www.linkedin.com/in/sinem-eser",
+      "https://www.linkedin.com/in/orcundogmazer"
+    ],
+    "no such ventures": [
+      "https://www.linkedin.com/in/thijn-van-helvoirt",
+      "https://www.linkedin.com/in/janssenbas",
+      "https://www.linkedin.com/in/jazz-de-greeve",
+      "https://www.linkedin.com/in/loetvanettinger",
+      "https://www.linkedin.com/in/reinderlubbers"
+    ],
+    "lego ventures": [
+      "https://www.linkedin.com/in/roblowe3"
+    ],
+    "collider ventures": [
+      "https://www.linkedin.com/in/adambenayoun",
+      "https://www.linkedin.com/in/avishayovadia",
+      "https://www.linkedin.com/in/eylonaviv",
+      "https://www.linkedin.com/in/adiel-y-1718b75a",
+      "https://www.linkedin.com/in/oferrotem"
+    ],
+    "flashpoint": [
+      "https://www.linkedin.com/in/michael-szalontay-219542",
+      "https://www.linkedin.com/in/alexander-konoplyasty-22b72523",
+      "https://www.linkedin.com/in/martonszaloky",
+      "https://www.linkedin.com/in/persia-georgiadou-cfa-30a58057",
+      "https://www.linkedin.com/in/lukas-harustiak-8791974",
+      "https://www.linkedin.com/in/tony-fedorov"
+    ],
+    "signals pre seed": [
+      "https://www.linkedin.com/in/paul-müller-95a29325",
+      "https://www.linkedin.com/in/christina-schlüter-a4897941",
+      "https://www.linkedin.com/in/moritz-gerdes-a85763140",
+      "https://www.linkedin.com/in/lisa-knab-674a6a151"
+    ],
+    "point72 ventures": [
+      "https://www.linkedin.com/in/tara-stokes-63793154",
+      "https://www.linkedin.com/in/chrisjmorales",
+      "https://www.linkedin.com/in/ishan-sinha-3977562b",
+      "https://www.linkedin.com/in/curtis-alexander-2a31a1127",
+      "https://www.linkedin.com/in/christianjambora"
+    ],
+    "insurtech capital": [
+      "https://www.linkedin.com/in/minhtran"
+    ],
+    "acronym venture capital": [
+      "https://www.linkedin.com/in/joshuabsiegel",
+      "https://www.linkedin.com/in/matkaliski"
+    ],
+    "ourcrowd": [
+      "https://www.linkedin.com/in/jonathanmedved",
+      "https://www.linkedin.com/in/cali-chill-2a29874",
+      "https://www.linkedin.com/in/mosheraines",
+      "https://www.linkedin.com/in/roy-shapira-54576"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/wearenova": [
+      "https://www.linkedin.com/in/andrewjdean",
+      "https://www.linkedin.com/in/markdlally"
+    ],
+    "https://www.linkedin.com/company/mrpink-vc": [
+      "https://www.linkedin.com/in/hernanharo",
+      "https://www.linkedin.com/in/ernestogarciamontesano",
+      "https://www.linkedin.com/in/glopezsuriano"
+    ],
+    "https://www.linkedin.com/company/creadev-investissements": [
+      "https://www.linkedin.com/in/joelfilippi",
+      "https://www.linkedin.com/in/charlfrancois",
+      "https://www.linkedin.com/in/brieuc-sartorius-107571b6",
+      "https://www.linkedin.com/in/victor-izard",
+      "https://www.linkedin.com/in/theo-levacher",
+      "https://www.linkedin.com/in/tom-rostand-282a1418",
+      "https://www.linkedin.com/in/alexia-lingart-meltz-14316b85"
+    ],
+    "https://www.linkedin.com/company/pleiade-venture": [
+      "https://www.linkedin.com/in/constancerietzler",
+      "https://www.linkedin.com/in/maximilienoursel",
+      "https://www.linkedin.com/in/bertrand-begin-97a544",
+      "https://www.linkedin.com/in/rdelachapelle",
+      "https://www.linkedin.com/in/julien-watry-vc-ba-venture-capital-entrepreneur-dirigeant",
+      "https://www.linkedin.com/in/hector-peribere-4a1504175"
+    ],
+    "https://www.linkedin.com/company/bip-capital": [
+      "https://www.linkedin.com/in/bipmarkbuffington",
+      "https://www.linkedin.com/in/mark-flickinger-24295538",
+      "https://www.linkedin.com/in/cjohnsonatlanta",
+      "https://www.linkedin.com/in/rtwyatt"
+    ],
+    "https://www.linkedin.com/company/lventure-group": [
+      "https://www.linkedin.com/in/fabriziominei",
+      "https://www.linkedin.com/in/guidopezzin",
+      "https://www.linkedin.com/in/andreagenovese",
+      "https://www.linkedin.com/in/christianmarchesi"
+    ],
+    "https://www.linkedin.com/company/velocity-partners-vc": [
+      "https://www.linkedin.com/in/dkalavros",
+      "https://www.linkedin.com/in/grpapastergiou",
+      "https://www.linkedin.com/in/etparks",
+      "https://www.linkedin.com/in/konstantinos-mavros-6b05038",
+      "https://www.linkedin.com/in/dmaris"
+    ],
+    "https://www.linkedin.com/company/madrona-venture-group": [
+      "https://www.linkedin.com/in/portertim",
+      "https://www.linkedin.com/in/s-somasegar-113791a5"
+    ],
+    "https://www.linkedin.com/company/join-capital": [
+      "https://www.linkedin.com/in/tobiasschirmer",
+      "https://www.linkedin.com/in/sebastian-von-ribbentrop-0406a591",
+      "https://www.linkedin.com/in/janborgstaedt",
+      "https://www.linkedin.com/in/flavialevi",
+      "https://www.linkedin.com/in/manuel-effenberg-ph-d-50461980",
+      "https://www.linkedin.com/in/simone-lavizzari-7a82b93"
+    ],
+    "https://www.linkedin.com/company/anaxago": [
+      "https://www.linkedin.com/in/caroline-lamaud-dupont-5967182a",
+      "https://www.linkedin.com/in/joachim-dupont-71507314",
+      "https://www.linkedin.com/in/oscarkra"
+    ],
+    "https://www.linkedin.com/company/scalex": [
+      "https://www.linkedin.com/in/dilek-dayinlarli-kocaata-8a0594131",
+      "https://www.linkedin.com/in/safaktufekci",
+      "https://www.linkedin.com/in/sinem-eser",
+      "https://www.linkedin.com/in/orcundogmazer"
+    ],
+    "https://www.linkedin.com/company/nosuchventures": [
+      "https://www.linkedin.com/in/thijn-van-helvoirt",
+      "https://www.linkedin.com/in/janssenbas",
+      "https://www.linkedin.com/in/jazz-de-greeve",
+      "https://www.linkedin.com/in/loetvanettinger",
+      "https://www.linkedin.com/in/reinderlubbers"
+    ],
+    "https://www.linkedin.com/showcase/lego-ventures": [
+      "https://www.linkedin.com/in/roblowe3"
+    ],
+    "https://www.linkedin.com/company/colliderventures": [
+      "https://www.linkedin.com/in/adambenayoun",
+      "https://www.linkedin.com/in/avishayovadia",
+      "https://www.linkedin.com/in/eylonaviv",
+      "https://www.linkedin.com/in/adiel-y-1718b75a",
+      "https://www.linkedin.com/in/oferrotem"
+    ],
+    "https://www.linkedin.com/company/flashpointvc": [
+      "https://www.linkedin.com/in/michael-szalontay-219542",
+      "https://www.linkedin.com/in/alexander-konoplyasty-22b72523",
+      "https://www.linkedin.com/in/martonszaloky",
+      "https://www.linkedin.com/in/persia-georgiadou-cfa-30a58057",
+      "https://www.linkedin.com/in/lukas-harustiak-8791974",
+      "https://www.linkedin.com/in/tony-fedorov"
+    ],
+    "https://www.linkedin.com/company/hellosignals": [
+      "https://www.linkedin.com/in/paul-müller-95a29325",
+      "https://www.linkedin.com/in/christina-schlüter-a4897941",
+      "https://www.linkedin.com/in/moritz-gerdes-a85763140",
+      "https://www.linkedin.com/in/lisa-knab-674a6a151"
+    ],
+    "https://www.linkedin.com/company/point72-ventures": [
+      "https://www.linkedin.com/in/tara-stokes-63793154",
+      "https://www.linkedin.com/in/chrisjmorales",
+      "https://www.linkedin.com/in/ishan-sinha-3977562b",
+      "https://www.linkedin.com/in/curtis-alexander-2a31a1127",
+      "https://www.linkedin.com/in/christianjambora"
+    ],
+    "https://www.linkedin.com/company/insurtechcapital": [
+      "https://www.linkedin.com/in/minhtran"
+    ],
+    "https://www.linkedin.com/company/acronymvc": [
+      "https://www.linkedin.com/in/joshuabsiegel",
+      "https://www.linkedin.com/in/matkaliski"
+    ],
+    "https://www.linkedin.com/company/ourcrowd-llc": [
+      "https://www.linkedin.com/in/jonathanmedved",
+      "https://www.linkedin.com/in/cali-chill-2a29874",
+      "https://www.linkedin.com/in/mosheraines",
+      "https://www.linkedin.com/in/roy-shapira-54576"
+    ]
+  }
+}

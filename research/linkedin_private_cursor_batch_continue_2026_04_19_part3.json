@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "description": "Web-researched /in/ URLs batch 3 (2026-04-19): Loup/Deepwater lineage, Longwood, Hemi, Imaginary, Diversis, Fathom, Hanover (HNVR), Interlock, MI Ventures LLC. Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch_continue_2026_04_19_part3.json"
+  },
+  "firms": {
+    "loup ventures": [
+      "https://www.linkedin.com/in/gene-munster-0710439",
+      "https://www.linkedin.com/in/andrew-murphy-b56b3754",
+      "https://www.linkedin.com/in/douglasclinton",
+      "https://www.linkedin.com/in/will-thompson-008a8874",
+      "https://www.linkedin.com/in/stevenvansloun"
+    ],
+    "longwood fund": [
+      "https://www.linkedin.com/in/christoph-westphal-00885288",
+      "https://www.linkedin.com/in/vikas-goyal-83733b7",
+      "https://www.linkedin.com/in/roger-tung-a602a934",
+      "https://www.linkedin.com/in/liz-jacobson-37a81230",
+      "https://www.linkedin.com/in/lea-hachigian",
+      "https://www.linkedin.com/in/rich-aldrich-b99772258",
+      "https://www.linkedin.com/in/john-mccabe-5732454"
+    ],
+    "hemi ventures": [
+      "https://www.linkedin.com/in/xiangamygu",
+      "https://www.linkedin.com/in/justin-zli"
+    ],
+    "imaginary ventures": [
+      "https://www.linkedin.com/in/nickbrownimaginary",
+      "https://www.linkedin.com/in/logan-langberg-a92493a3",
+      "https://www.linkedin.com/in/andrewmaxman",
+      "https://www.linkedin.com/in/kelly-dill",
+      "https://www.linkedin.com/in/natalie-massenet-77a732157"
+    ],
+    "diversis capital": [
+      "https://www.linkedin.com/in/kevin-ma-0785507",
+      "https://www.linkedin.com/in/ron-nayot-a0b7b967",
+      "https://www.linkedin.com/in/devinscott",
+      "https://www.linkedin.com/in/scottallengraham",
+      "https://www.linkedin.com/in/mcamassa",
+      "https://www.linkedin.com/in/greg-chou-7423"
+    ],
+    "fathom capital": [
+      "https://www.linkedin.com/in/johnkomkov"
+    ],
+    "hanover capital": [
+      "https://www.linkedin.com/in/josephmalchow",
+      "https://www.linkedin.com/in/allison-ball-62b48a43"
+    ],
+    "interlock partners": [
+      "https://www.linkedin.com/in/jeff-williams-6899553",
+      "https://www.linkedin.com/in/carl-sparks-836241",
+      "https://www.linkedin.com/in/harry-t-hawks"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/longwoodfund": [
+      "https://www.linkedin.com/in/christoph-westphal-00885288",
+      "https://www.linkedin.com/in/vikas-goyal-83733b7",
+      "https://www.linkedin.com/in/roger-tung-a602a934",
+      "https://www.linkedin.com/in/liz-jacobson-37a81230",
+      "https://www.linkedin.com/in/john-mccabe-5732454"
+    ],
+    "https://www.linkedin.com/company/hemi-ventures": [
+      "https://www.linkedin.com/in/xiangamygu",
+      "https://www.linkedin.com/in/justin-zli"
+    ],
+    "https://www.linkedin.com/company/imaginary": [
+      "https://www.linkedin.com/in/nickbrownimaginary",
+      "https://www.linkedin.com/in/logan-langberg-a92493a3",
+      "https://www.linkedin.com/in/andrewmaxman",
+      "https://www.linkedin.com/in/kelly-dill",
+      "https://www.linkedin.com/in/natalie-massenet-77a732157"
+    ],
+    "https://www.linkedin.com/company/diversis-capital": [
+      "https://www.linkedin.com/in/kevin-ma-0785507",
+      "https://www.linkedin.com/in/ron-nayot-a0b7b967",
+      "https://www.linkedin.com/in/devinscott",
+      "https://www.linkedin.com/in/scottallengraham"
+    ],
+    "https://www.linkedin.com/company/fathomcap": [
+      "https://www.linkedin.com/in/johnkomkov"
+    ],
+    "https://www.linkedin.com/company/hnvr": [
+      "https://www.linkedin.com/in/josephmalchow",
+      "https://www.linkedin.com/in/allison-ball-62b48a43"
+    ],
+    "https://www.linkedin.com/company/interlock-partners": [
+      "https://www.linkedin.com/in/jeff-williams-6899553",
+      "https://www.linkedin.com/in/carl-sparks-836241",
+      "https://www.linkedin.com/in/harry-t-hawks"
+    ],
+    "https://www.linkedin.com/company/deepwatermgmt": [
+      "https://www.linkedin.com/in/gene-munster-0710439",
+      "https://www.linkedin.com/in/andrew-murphy-b56b3754",
+      "https://www.linkedin.com/in/douglasclinton",
+      "https://www.linkedin.com/in/will-thompson-008a8874",
+      "https://www.linkedin.com/in/stevenvansloun"
+    ],
+    "https://www.linkedin.com/company/3237947": [
+      "https://www.linkedin.com/in/aamerabdullah"
+    ]
+  }
+}

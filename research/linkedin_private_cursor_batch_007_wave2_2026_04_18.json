@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "description": "007 continuation: Emerge Education/VC, Redwood Ventures MX, Arc Ventures NYC — web_search verified /in/ URLs (2026-04-18).",
+    "apply": "python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch_007_wave2_2026_04_18.json",
+    "notes": "Emerge: 007 uses linkedin.com/company/emergeeducation; canonical VC page is emergecapitalvc — both keys get the same London Emerge VC team. Redwood: row slug redwoodventuresmx."
+  },
+  "firms": {},
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/emergeeducation": [
+      "https://www.linkedin.com/in/janlynnmatern",
+      "https://www.linkedin.com/in/newmannic",
+      "https://www.linkedin.com/in/mario-baros",
+      "https://www.linkedin.com/in/zara-zaman"
+    ],
+    "https://www.linkedin.com/company/emergecapitalvc": [
+      "https://www.linkedin.com/in/janlynnmatern",
+      "https://www.linkedin.com/in/newmannic",
+      "https://www.linkedin.com/in/mario-baros",
+      "https://www.linkedin.com/in/zara-zaman"
+    ],
+    "https://www.linkedin.com/company/redwoodventuresmx": [
+      "https://www.linkedin.com/in/alex-redwood",
+      "https://mx.linkedin.com/in/marco-villasenor-mba",
+      "https://www.linkedin.com/in/wglazier"
+    ],
+    "https://www.linkedin.com/company/arc-vc": [
+      "https://www.linkedin.com/in/joe-korff-8309395",
+      "https://www.linkedin.com/in/irene-susmano-3194768",
+      "https://www.linkedin.com/in/mmehta8",
+      "https://www.linkedin.com/in/lindseyflorek",
+      "https://www.linkedin.com/in/edtalanian",
+      "https://www.linkedin.com/in/antoni-bandachowicz-0141b2202"
+    ]
+  }
+}

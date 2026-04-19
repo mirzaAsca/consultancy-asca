@@ -1,0 +1,352 @@
+{
+  "meta": {
+    "description": "007 batch3 + 012 batch3 + 021 accelerators (agents). SFINE: companies map only (no garbled firm key). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_continue_2026_04_18_batch3.json"
+  },
+  "firms": {
+    "creditease fintech investment fund": [
+      "https://hk.linkedin.com/in/zheng-cui-37260b11",
+      "https://sg.linkedin.com/in/minnie-sehgal-11895920",
+      "https://www.linkedin.com/in/taolan-junior-zhu-152a71166"
+    ],
+    "skylake capital": [
+      "https://uk.linkedin.com/in/johnrlake",
+      "https://uk.linkedin.com/in/dean-lake-3b3326"
+    ],
+    "newalpha asset management": [
+      "https://fr.linkedin.com/in/antoine-rolland-26a2051",
+      "https://fr.linkedin.com/in/paul-buigues",
+      "https://fr.linkedin.com/in/philippe-paquet-newalpha",
+      "https://fr.linkedin.com/in/christophe-hassez-5595609",
+      "https://fr.linkedin.com/in/romain-torregrossa",
+      "https://fr.linkedin.com/in/rozenn-peres-19b4728"
+    ],
+    "sharpstone capital": [
+      "https://fr.linkedin.com/in/germain-gaschet",
+      "https://fr.linkedin.com/in/lena-ambroise",
+      "https://www.linkedin.com/in/antoineeroux"
+    ],
+    "maersk growth": [
+      "https://www.linkedin.com/in/matthewrturner",
+      "https://dk.linkedin.com/in/adsmout",
+      "https://dk.linkedin.com/in/idachristinebrun",
+      "https://www.linkedin.com/in/elizabeth-gunner-schermer"
+    ],
+    "unpopular ventures": [
+      "https://www.linkedin.com/in/pliv",
+      "https://ae.linkedin.com/in/thibault-reichelt-4740b7365",
+      "https://www.linkedin.com/in/sergiizhuk",
+      "https://ph.linkedin.com/in/kim-yun-448863282"
+    ],
+    "moneta vc": [
+      "https://il.linkedin.com/in/adoramgaash",
+      "https://il.linkedin.com/in/meirav-harnoy"
+    ],
+    "primecrowd": [
+      "https://at.linkedin.com/in/markuskainz",
+      "https://at.linkedin.com/in/christian-gerencser-915a881a9",
+      "https://at.linkedin.com/in/georgweber"
+    ],
+    "leyden ventures": ["https://www.linkedin.com/in/sheynkman"],
+    "seed4soft": [
+      "https://www.linkedin.com/in/frederichalley",
+      "https://fr.linkedin.com/in/oliviernjamfa",
+      "https://fr.linkedin.com/in/carla-cavalli"
+    ],
+    "kerala ventures": [
+      "https://fr.linkedin.com/in/antoinefreysz",
+      "https://fr.linkedin.com/in/olivier-occelli-5807784"
+    ],
+    "smok ventures": [
+      "https://www.linkedin.com/in/musielak",
+      "https://pl.linkedin.com/in/dianakoziarska",
+      "https://www.linkedin.com/in/bragiel"
+    ],
+    "london venture partners": [
+      "https://uk.linkedin.com/in/david-gardner-7395662",
+      "https://uk.linkedin.com/in/david-lau-kee",
+      "https://de.linkedin.com/in/aremackgrowen",
+      "https://uk.linkedin.com/in/gus-curley-329559218"
+    ],
+    "riverpark ventures": [
+      "https://www.linkedin.com/in/andy-appelbaum-3306237",
+      "https://www.linkedin.com/in/dhcohen727",
+      "https://www.linkedin.com/in/santi-park-a15020266"
+    ],
+    "entrepreneur invest": [
+      "https://fr.linkedin.com/in/marouane-bahri-8a7ba019",
+      "https://fr.linkedin.com/in/frederic-zablocki"
+    ],
+    "kennet partners": [
+      "https://uk.linkedin.com/in/hzidel",
+      "https://uk.linkedin.com/in/cillianhilliard",
+      "https://fr.linkedin.com/in/capucineviard",
+      "https://uk.linkedin.com/in/anila-repaj-2267521b9",
+      "https://uk.linkedin.com/in/alex-meintjes-b25b071a6"
+    ],
+    "evolution equity partners": [
+      "https://www.linkedin.com/in/richardseewald",
+      "https://ch.linkedin.com/in/dennis-smith-871986",
+      "https://cz.linkedin.com/in/karelobluk",
+      "https://www.linkedin.com/in/aronkhurana",
+      "https://www.linkedin.com/in/samantha-f-7309a112a"
+    ],
+    "ab private credit investors": [
+      "https://www.linkedin.com/in/brent-humphries-794b9988",
+      "https://www.linkedin.com/in/drewmiller1",
+      "https://www.linkedin.com/in/simpsonrl"
+    ],
+    "accel partners": [
+      "https://www.linkedin.com/in/skgandhi",
+      "https://www.linkedin.com/in/harry-nelis-429801",
+      "https://www.linkedin.com/in/vas-natarajan-0b09588",
+      "https://www.linkedin.com/in/ivanzhou"
+    ],
+    "access medical ventures": [
+      "https://www.linkedin.com/in/limor-sandach-13319327",
+      "https://www.linkedin.com/in/michael-tal-4a60532"
+    ],
+    "access2net": ["https://www.linkedin.com/in/denislafonttrevisan"],
+    "ace management by tikehau capital": [
+      "https://www.linkedin.com/in/michel-lazure-292823b",
+      "https://www.linkedin.com/in/vincent-meheut-772a51b5"
+    ],
+    "acecap acequia capital": [
+      "https://www.linkedin.com/in/leif-danielsen-35a56550",
+      "https://www.linkedin.com/in/mackhopen",
+      "https://www.linkedin.com/in/divya-biswal-97aa4581"
+    ],
+    "achieve partners": ["https://www.linkedin.com/in/ryan-craig-b4617a80"],
+    "acorn capital": [
+      "https://www.linkedin.com/in/ben-dalling-81651425",
+      "https://www.linkedin.com/in/matthew-sheehan-56a34120",
+      "https://www.linkedin.com/in/paul-palumbo-61579935"
+    ],
+    "acquis capital": [
+      "https://www.linkedin.com/in/markgonsalves",
+      "https://www.linkedin.com/in/samuel-kotch-88922326",
+      "https://www.linkedin.com/in/benjaminkotch"
+    ],
+    "acre impact capital": [
+      "https://www.linkedin.com/in/chris-mitman-05266218",
+      "https://www.linkedin.com/in/hussein-sefian"
+    ],
+    "acrew capital": [
+      "https://www.linkedin.com/in/theresiagouw",
+      "https://www.linkedin.com/in/mmervana",
+      "https://www.linkedin.com/in/asadkhaliq"
+    ],
+    "acronym venture capital": [
+      "https://www.linkedin.com/in/joshuabsiegel",
+      "https://www.linkedin.com/in/matkaliski",
+      "https://www.linkedin.com/in/jeffrey-ze-chong-hang"
+    ],
+    "act one ventures": [
+      "https://www.linkedin.com/in/michaelsilton",
+      "https://www.linkedin.com/in/alguerrero",
+      "https://www.linkedin.com/in/gabrielacamilli"
+    ],
+    "acta technologies": ["https://www.linkedin.com/in/deniz-korzay"],
+    "activant capital group": [
+      "https://www.linkedin.com/in/andrew-steele-562308a0",
+      "https://www.linkedin.com/in/malek-debrabander-5351681a6"
+    ],
+    "active capital": [
+      "https://www.linkedin.com/in/pat-matthews",
+      "https://www.linkedin.com/in/chris-saum-84938047"
+    ],
+    "alphalab": [
+      "https://www.linkedin.com/in/atainter",
+      "https://www.linkedin.com/in/sararlongo",
+      "https://www.linkedin.com/in/milanminott"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/creditease-fintech-investment-fund": [
+      "https://hk.linkedin.com/in/zheng-cui-37260b11",
+      "https://sg.linkedin.com/in/minnie-sehgal-11895920",
+      "https://www.linkedin.com/in/taolan-junior-zhu-152a71166"
+    ],
+    "linkedin.com/company/skylakecapital": [
+      "https://uk.linkedin.com/in/johnrlake",
+      "https://uk.linkedin.com/in/dean-lake-3b3326"
+    ],
+    "linkedin.com/company/newalpha-asset-management": [
+      "https://fr.linkedin.com/in/antoine-rolland-26a2051",
+      "https://fr.linkedin.com/in/paul-buigues",
+      "https://fr.linkedin.com/in/philippe-paquet-newalpha",
+      "https://fr.linkedin.com/in/christophe-hassez-5595609",
+      "https://fr.linkedin.com/in/romain-torregrossa",
+      "https://fr.linkedin.com/in/rozenn-peres-19b4728"
+    ],
+    "linkedin.com/company/sharpstone-capital": [
+      "https://fr.linkedin.com/in/germain-gaschet",
+      "https://fr.linkedin.com/in/lena-ambroise",
+      "https://www.linkedin.com/in/antoineeroux"
+    ],
+    "linkedin.com/company/maersk-growth": [
+      "https://www.linkedin.com/in/matthewrturner",
+      "https://dk.linkedin.com/in/adsmout",
+      "https://dk.linkedin.com/in/idachristinebrun",
+      "https://www.linkedin.com/in/elizabeth-gunner-schermer"
+    ],
+    "linkedin.com/company/unpopular-ventures": [
+      "https://www.linkedin.com/in/pliv",
+      "https://ae.linkedin.com/in/thibault-reichelt-4740b7365",
+      "https://www.linkedin.com/in/sergiizhuk",
+      "https://ph.linkedin.com/in/kim-yun-448863282"
+    ],
+    "linkedin.com/company/monetavc": [
+      "https://il.linkedin.com/in/adoramgaash",
+      "https://il.linkedin.com/in/meirav-harnoy"
+    ],
+    "linkedin.com/company/primecrowd": [
+      "https://at.linkedin.com/in/markuskainz",
+      "https://at.linkedin.com/in/christian-gerencser-915a881a9",
+      "https://at.linkedin.com/in/georgweber"
+    ],
+    "linkedin.com/company/sfine": [
+      "https://www.linkedin.com/in/jimmybarens",
+      "https://www.linkedin.com/in/stgarnier",
+      "https://www.linkedin.com/in/xaviercharpentier"
+    ],
+    "linkedin.com/company/71098211": ["https://www.linkedin.com/in/sheynkman"],
+    "linkedin.com/company/seed4soft": [
+      "https://www.linkedin.com/in/frederichalley",
+      "https://fr.linkedin.com/in/oliviernjamfa",
+      "https://fr.linkedin.com/in/carla-cavalli"
+    ],
+    "linkedin.com/company/kerala-ventures": [
+      "https://fr.linkedin.com/in/antoinefreysz",
+      "https://fr.linkedin.com/in/olivier-occelli-5807784"
+    ],
+    "linkedin.com/company/smok-ventures": [
+      "https://www.linkedin.com/in/musielak",
+      "https://pl.linkedin.com/in/dianakoziarska",
+      "https://www.linkedin.com/in/bragiel"
+    ],
+    "linkedin.com/company/london-venture-partners": [
+      "https://uk.linkedin.com/in/david-gardner-7395662",
+      "https://uk.linkedin.com/in/david-lau-kee",
+      "https://de.linkedin.com/in/aremackgrowen",
+      "https://uk.linkedin.com/in/gus-curley-329559218"
+    ],
+    "linkedin.com/company/riverpark-ventures": [
+      "https://www.linkedin.com/in/andy-appelbaum-3306237",
+      "https://www.linkedin.com/in/dhcohen727",
+      "https://www.linkedin.com/in/santi-park-a15020266"
+    ],
+    "linkedin.com/company/entrepreneur-venture": [
+      "https://fr.linkedin.com/in/marouane-bahri-8a7ba019",
+      "https://fr.linkedin.com/in/frederic-zablocki"
+    ],
+    "linkedin.com/company/kennet-partners": [
+      "https://uk.linkedin.com/in/hzidel",
+      "https://uk.linkedin.com/in/cillianhilliard",
+      "https://fr.linkedin.com/in/capucineviard",
+      "https://uk.linkedin.com/in/anila-repaj-2267521b9",
+      "https://uk.linkedin.com/in/alex-meintjes-b25b071a6"
+    ],
+    "linkedin.com/company/evolution-equity-partners": [
+      "https://www.linkedin.com/in/richardseewald",
+      "https://ch.linkedin.com/in/dennis-smith-871986",
+      "https://cz.linkedin.com/in/karelobluk",
+      "https://www.linkedin.com/in/aronkhurana",
+      "https://www.linkedin.com/in/samantha-f-7309a112a"
+    ],
+    "linkedin.com/company/ab-private-credit-investors-llc": [
+      "https://www.linkedin.com/in/brent-humphries-794b9988",
+      "https://www.linkedin.com/in/drewmiller1",
+      "https://www.linkedin.com/in/simpsonrl"
+    ],
+    "linkedin.com/company/accel-vc": [
+      "https://www.linkedin.com/in/skgandhi",
+      "https://www.linkedin.com/in/harry-nelis-429801",
+      "https://www.linkedin.com/in/vas-natarajan-0b09588",
+      "https://www.linkedin.com/in/ivanzhou"
+    ],
+    "linkedin.com/company/access2net": ["https://www.linkedin.com/in/denislafonttrevisan"],
+    "linkedin.com/company/tikehau-investment-management": [
+      "https://www.linkedin.com/in/michel-lazure-292823b",
+      "https://www.linkedin.com/in/vincent-meheut-772a51b5"
+    ],
+    "linkedin.com/company/acequia-capital": [
+      "https://www.linkedin.com/in/leif-danielsen-35a56550",
+      "https://www.linkedin.com/in/mackhopen",
+      "https://www.linkedin.com/in/divya-biswal-97aa4581"
+    ],
+    "linkedin.com/company/achieve-partners-llc": ["https://www.linkedin.com/in/ryan-craig-b4617a80"],
+    "linkedin.com/company/acorn-capital-ltd": [
+      "https://www.linkedin.com/in/ben-dalling-81651425",
+      "https://www.linkedin.com/in/matthew-sheehan-56a34120",
+      "https://www.linkedin.com/in/paul-palumbo-61579935"
+    ],
+    "linkedin.com/company/acquis-capital": [
+      "https://www.linkedin.com/in/markgonsalves",
+      "https://www.linkedin.com/in/samuel-kotch-88922326",
+      "https://www.linkedin.com/in/benjaminkotch"
+    ],
+    "linkedin.com/company/acre-impact-capital": [
+      "https://www.linkedin.com/in/chris-mitman-05266218",
+      "https://www.linkedin.com/in/hussein-sefian"
+    ],
+    "linkedin.com/company/acrew-capital": [
+      "https://www.linkedin.com/in/theresiagouw",
+      "https://www.linkedin.com/in/mmervana",
+      "https://www.linkedin.com/in/asadkhaliq"
+    ],
+    "linkedin.com/company/acronymvc": [
+      "https://www.linkedin.com/in/joshuabsiegel",
+      "https://www.linkedin.com/in/matkaliski",
+      "https://www.linkedin.com/in/jeffrey-ze-chong-hang"
+    ],
+    "linkedin.com/company/act-one-ventures": [
+      "https://www.linkedin.com/in/michaelsilton",
+      "https://www.linkedin.com/in/alguerrero",
+      "https://www.linkedin.com/in/gabrielacamilli"
+    ],
+    "linkedin.com/company/activant": [
+      "https://www.linkedin.com/in/andrew-steele-562308a0",
+      "https://www.linkedin.com/in/malek-debrabander-5351681a6"
+    ],
+    "linkedin.com/company/activecapital": [
+      "https://www.linkedin.com/in/pat-matthews",
+      "https://www.linkedin.com/in/chris-saum-84938047"
+    ],
+    "linkedin.com/company/28595100": [
+      "https://www.linkedin.com/in/erezlahav",
+      "https://www.linkedin.com/in/pbouaziz",
+      "https://www.linkedin.com/in/yelstein",
+      "https://www.linkedin.com/in/moravihanan",
+      "https://www.linkedin.com/in/rachel-e-bouaziz-53ba25188",
+      "https://www.linkedin.com/in/ran-bar-sella"
+    ],
+    "linkedin.com/company/910ths": [
+      "https://www.linkedin.com/in/sami-alsultan-02a4437a",
+      "https://www.linkedin.com/in/atheer-alhumaidi-alqahtani"
+    ],
+    "linkedin.com/company/accelerateus": [
+      "https://www.linkedin.com/in/luke-kohlmoos",
+      "https://www.linkedin.com/in/kevin-huffman-793937a"
+    ],
+    "linkedin.com/company/accelerate-ny-seed-fund": [
+      "https://www.linkedin.com/in/pete-donnelly-288345",
+      "https://www.linkedin.com/in/mark-lesko-0153b416"
+    ],
+    "linkedin.com/company/amplifi-angels": [
+      "https://www.linkedin.com/in/sudarshan-narayan-6252622",
+      "https://www.linkedin.com/in/ajay-kotkar-6a774b13",
+      "https://www.linkedin.com/in/gonzalo-ilabaca-y%C3%A1%C3%B1ez-1b477934"
+    ],
+    "linkedin.com/company/19091927": [
+      "https://www.linkedin.com/in/dominik-dymecki",
+      "https://www.linkedin.com/in/cameronhassid"
+    ],
+    "linkedin.com/company/arctic-15": [
+      "https://www.linkedin.com/in/janameri",
+      "https://www.linkedin.com/in/bikash-gurung"
+    ],
+    "linkedin.com/company/ariane-capital": ["https://www.linkedin.com/in/benjamin-guez-7140ab175"],
+    "linkedin.com/company/bj-invest-private-equity": ["https://www.linkedin.com/in/benjaminjayet"]
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "description": "Web search (2026-04-18): 007 cold-outreach CSV batch 2 — M12, MetaProp, Hi Inov, SeedBlink, Shadow Ventures, Unitus Ventures.",
+    "sources": "m12.vc/team, metaprop.com/about, hiinov.com/team, seedblink.com/about-us, shadow.vc/team, capria.vc / Unitus rebrand posts, LinkedIn company listings."
+  },
+  "firms": {
+    "m12 microsoft s venture fund": [
+      "https://www.linkedin.com/in/mpstewart",
+      "https://www.linkedin.com/in/plenke",
+      "https://www.linkedin.com/in/alandu",
+      "https://www.linkedin.com/in/james-wu-69bb2b4b",
+      "https://www.linkedin.com/in/chengcheryl"
+    ],
+    "metaprop ventures": [
+      "https://www.linkedin.com/in/zachaarons",
+      "https://www.linkedin.com/in/aaronnblock",
+      "https://www.linkedin.com/in/zschwarzman",
+      "https://www.linkedin.com/in/wes-mizell",
+      "https://www.linkedin.com/in/evan-petitt-a6256293"
+    ],
+    "hi inov by dentressangle": [
+      "https://www.linkedin.com/in/phdentressangle",
+      "https://www.linkedin.com/in/valeriegombart",
+      "https://www.linkedin.com/in/wolfgang-krause-4b1b93",
+      "https://www.linkedin.com/in/juliusjuerging"
+    ],
+    "seedblink": [
+      "https://www.linkedin.com/in/andrei-dudoiu",
+      "https://www.linkedin.com/in/radugeorgescu",
+      "https://www.linkedin.com/in/ionut-patrahau-41b4b7137",
+      "https://www.linkedin.com/in/carmensebe"
+    ],
+    "shadow ventures": [
+      "https://www.linkedin.com/in/kpreddy",
+      "https://www.linkedin.com/in/nick-durham-a3708724",
+      "https://www.linkedin.com/in/matthewohlman"
+    ],
+    "unitus ventures": [
+      "https://www.linkedin.com/in/wpoole8",
+      "https://www.linkedin.com/in/kl-mukesh-4a5a16"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/m12vc": [
+      "https://www.linkedin.com/in/mpstewart",
+      "https://www.linkedin.com/in/plenke",
+      "https://www.linkedin.com/in/alandu",
+      "https://www.linkedin.com/in/james-wu-69bb2b4b",
+      "https://www.linkedin.com/in/chengcheryl"
+    ],
+    "linkedin.com/company/metaprop-nyc": [
+      "https://www.linkedin.com/in/zachaarons",
+      "https://www.linkedin.com/in/aaronnblock",
+      "https://www.linkedin.com/in/zschwarzman",
+      "https://www.linkedin.com/in/wes-mizell",
+      "https://www.linkedin.com/in/evan-petitt-a6256293"
+    ],
+    "linkedin.com/company/metaprop": [
+      "https://www.linkedin.com/in/zachaarons",
+      "https://www.linkedin.com/in/aaronnblock",
+      "https://www.linkedin.com/in/zschwarzman",
+      "https://www.linkedin.com/in/wes-mizell",
+      "https://www.linkedin.com/in/evan-petitt-a6256293"
+    ],
+    "linkedin.com/company/hi-inov": [
+      "https://www.linkedin.com/in/phdentressangle",
+      "https://www.linkedin.com/in/valeriegombart",
+      "https://www.linkedin.com/in/wolfgang-krause-4b1b93",
+      "https://www.linkedin.com/in/juliusjuerging"
+    ],
+    "linkedin.com/company/seedblink": [
+      "https://www.linkedin.com/in/andrei-dudoiu",
+      "https://www.linkedin.com/in/radugeorgescu",
+      "https://www.linkedin.com/in/ionut-patrahau-41b4b7137",
+      "https://www.linkedin.com/in/carmensebe"
+    ],
+    "linkedin.com/company/shadowvc": [
+      "https://www.linkedin.com/in/kpreddy",
+      "https://www.linkedin.com/in/nick-durham-a3708724",
+      "https://www.linkedin.com/in/matthewohlman"
+    ],
+    "linkedin.com/company/unitus-ventures": [
+      "https://www.linkedin.com/in/wpoole8",
+      "https://www.linkedin.com/in/kl-mukesh-4a5a16"
+    ]
+  }
+}

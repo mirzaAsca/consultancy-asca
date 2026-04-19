@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "description": "Web-researched personal LinkedIn /in/ URLs (session 2026-04-18). Applied via scripts/apply_linkedin_private_cursor_research_json.py",
+    "sources": "Web search only; firm/company pages and public bios cross-checked where possible.",
+    "no_match_placeholder": "Set linkedin-private-cursor to '-' when researched and no verified /in/ URL; apply scripts treat '-' like empty for URL merges."
+  },
+  "firms": {
+    "de pury pictet turrettini and sie": [
+      "https://ch.linkedin.com/in/valerie-soirat-ch",
+      "https://ch.linkedin.com/in/christopher-quast-63843420a",
+      "https://ch.linkedin.com/in/florian-ducrey-8bb41b",
+      "https://ch.linkedin.com/in/pbozzo",
+      "https://ch.linkedin.com/in/melchior-de-muralt-b663a834"
+    ],
+    "1875 finance": [
+      "https://lu.linkedin.com/in/johnnybisgaard",
+      "https://ch.linkedin.com/in/mustafa-karadag-924b67b4",
+      "https://ch.linkedin.com/in/burcu-minas-balta-60043a184",
+      "https://ch.linkedin.com/in/stefanmeyerballester",
+      "https://lu.linkedin.com/in/jørn-tilsted-55a0764"
+    ],
+    "praxis": [
+      "https://be.linkedin.com/in/gwen-maud-de-souter-175588",
+      "https://be.linkedin.com/in/sten-albertijn-a0b81a2",
+      "https://be.linkedin.com/in/gilles-van-hulle-511889a8"
+    ],
+    "atag private and corporate services": [
+      "https://ch.linkedin.com/in/claude-usteri-27a78b11",
+      "https://ch.linkedin.com/in/dr-igor-t-rusek-047697187"
+    ],
+    "faktum b": [
+      "https://www.linkedin.com/in/melissa-ma",
+      "https://www.linkedin.com/in/gaborszecsi",
+      "https://de.linkedin.com/in/thomas-racky-a358643"
+    ],
+    "smc trust office": [
+      "https://ch.linkedin.com/in/max-spiess-0015a2119",
+      "https://ch.linkedin.com/in/ludovica-david-98050296",
+      "https://ch.linkedin.com/in/augusto-bizzini-b0a6343b"
+    ],
+    "datainsight": [
+      "https://www.linkedin.com/in/josephjacob93",
+      "https://www.linkedin.com/in/rheakarimpanal",
+      "https://www.linkedin.com/in/chandrushanmugasundaram"
+    ]
+  },
+  "people": {
+    "hans bruderer h bruderer verm gensverwaltung": [
+      "https://ch.linkedin.com/in/hansjürg-bruderer-b11524"
+    ],
+    "hans bruderer": [
+      "https://ch.linkedin.com/in/hansjürg-bruderer-b11524"
+    ],
+    "wade strickland": [
+      "https://www.linkedin.com/in/wade-strickland-383551354"
+    ]
+  },
+  "companies": {
+    "linkedin.com/company/1875-finance-sa": [
+      "https://lu.linkedin.com/in/johnnybisgaard",
+      "https://ch.linkedin.com/in/mustafa-karadag-924b67b4",
+      "https://ch.linkedin.com/in/burcu-minas-balta-60043a184",
+      "https://ch.linkedin.com/in/stefanmeyerballester",
+      "https://lu.linkedin.com/in/jørn-tilsted-55a0764"
+    ],
+    "linkedin.com/company/de-pury-pictet-turrettini": [
+      "https://ch.linkedin.com/in/valerie-soirat-ch",
+      "https://ch.linkedin.com/in/christopher-quast-63843420a",
+      "https://ch.linkedin.com/in/florian-ducrey-8bb41b",
+      "https://ch.linkedin.com/in/pbozzo",
+      "https://ch.linkedin.com/in/melchior-de-muralt-b663a834"
+    ],
+    "linkedin.com/company/atag-private-corporate-services-ag": [
+      "https://ch.linkedin.com/in/claude-usteri-27a78b11",
+      "https://ch.linkedin.com/in/dr-igor-t-rusek-047697187"
+    ],
+    "linkedin.com/company/praxis-nv": [
+      "https://be.linkedin.com/in/gwen-maud-de-souter-175588",
+      "https://be.linkedin.com/in/sten-albertijn-a0b81a2",
+      "https://be.linkedin.com/in/gilles-van-hulle-511889a8"
+    ]
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "description": "001+004 batch6. Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch6_2026_04_18.json",
+    "notes": [
+      "001: BOLD L'Oréal row key is normalize_key('BOLD - L\\'OREAL') → 'bold l oreal'.",
+      "004: Kairos VC marked no_match_firms — sheet URL www.kairos.com is identity company, not a disambiguated Miami VC roster."
+    ]
+  },
+  "firms": {
+    "bold l oreal": [
+      "https://www.linkedin.com/in/presca",
+      "https://www.linkedin.com/in/architparikh",
+      "https://www.linkedin.com/in/samantha-etienne-b1504a1"
+    ],
+    "bold capital partners": [
+      "https://www.linkedin.com/in/teymourb",
+      "https://www.linkedin.com/in/peterdiamandis",
+      "https://www.linkedin.com/in/neal-bhadkamkar-b501051",
+      "https://www.linkedin.com/in/will-borthwick-8b756922"
+    ],
+    "bootstrap europe": [
+      "https://www.linkedin.com/in/diagnefatou",
+      "https://www.linkedin.com/in/stephaniehellergalantine",
+      "https://www.linkedin.com/in/eliottsabauk"
+    ],
+    "bootstrap labs": [
+      "https://www.linkedin.com/in/nicolaiwadstrom",
+      "https://www.linkedin.com/in/benjamin-levy-415191",
+      "https://www.linkedin.com/in/markmavroudis"
+    ],
+    "bosch ventures": [
+      "https://www.linkedin.com/in/dr-ingo-ramesohl-603a7492",
+      "https://www.linkedin.com/in/adam-l-jackson",
+      "https://www.linkedin.com/in/nicholasmwheeler"
+    ],
+    "bouygues developpement": [
+      "https://www.linkedin.com/in/charles-antoine-saltiel-302a1816",
+      "https://www.linkedin.com/in/benoit-michard-27502356"
+    ],
+    "bpifrance": [
+      "https://www.linkedin.com/in/baptiste-proveau",
+      "https://www.linkedin.com/in/denistalaron",
+      "https://www.linkedin.com/in/jacqueminicolas"
+    ],
+    "braemar energy ventures": [
+      "https://www.linkedin.com/in/neil-suslak-385992191",
+      "https://www.linkedin.com/in/dennis-costello-4013554",
+      "https://www.linkedin.com/in/jiong-ma-ph-d"
+    ],
+    "bread and butter ventures": [
+      "https://www.linkedin.com/in/brett-brohl-7478851",
+      "https://www.linkedin.com/in/marygrove",
+      "https://www.linkedin.com/in/stephanieprich"
+    ],
+    "break off": ["https://www.linkedin.com/in/hamish-magoffin"],
+    "breakthrough energy ventures": [
+      "https://www.linkedin.com/in/eric-toone-97243b21",
+      "https://www.linkedin.com/in/libbywayman",
+      "https://www.linkedin.com/in/szlatev"
+    ],
+    "brick and mortar ventures": [
+      "https://www.linkedin.com/in/darrenbechtel",
+      "https://www.linkedin.com/in/kaustubh-pandya",
+      "https://www.linkedin.com/in/austinyount"
+    ],
+    "interlock partners": [
+      "https://www.linkedin.com/in/harry-t-hawks",
+      "https://www.linkedin.com/in/courtneyline",
+      "https://www.linkedin.com/in/jeff-williams-6899553"
+    ],
+    "l2 capital": [
+      "https://www.linkedin.com/in/bob-levine-99279412",
+      "https://www.linkedin.com/in/lorin-cassidy-wolfe-318208",
+      "https://www.linkedin.com/in/joshuaspair"
+    ],
+    "lifeforce capital": [
+      "https://www.linkedin.com/in/adam-pelavin",
+      "https://www.linkedin.com/in/jonoonan",
+      "https://www.linkedin.com/in/jamiedaves"
+    ],
+    "linse capital": [
+      "https://www.linkedin.com/in/mlinse",
+      "https://www.linkedin.com/in/janmaat",
+      "https://www.linkedin.com/in/darioconstantine"
+    ],
+    "longwood fund": [
+      "https://www.linkedin.com/in/christoph-westphal-00885288",
+      "https://www.linkedin.com/in/vikas-goyal-83733b7",
+      "https://www.linkedin.com/in/david-h-donabedian"
+    ],
+    "loup ventures": [
+      "https://www.linkedin.com/in/gene-munster-0710439",
+      "https://www.linkedin.com/in/douglasclinton"
+    ],
+    "luminari capital": ["https://www.linkedin.com/in/daniel-leff"],
+    "manifest growth": [
+      "https://www.linkedin.com/in/pauljfalzone",
+      "https://www.linkedin.com/in/melissabouma"
+    ],
+    "mark 2 capital": [
+      "https://www.linkedin.com/in/meshal",
+      "https://www.linkedin.com/in/rennick-palley-b8747838"
+    ],
+    "material impact fund": [
+      "https://www.linkedin.com/in/adamsharkawy",
+      "https://www.linkedin.com/in/melissafensterstock",
+      "https://www.linkedin.com/in/ben-schlatka-85bb251"
+    ],
+    "mccune capital": ["https://www.linkedin.com/in/jason-c-0271b012"]
+  },
+  "people": {},
+  "companies": {},
+  "no_match_firms": ["Kairos VC"]
+}

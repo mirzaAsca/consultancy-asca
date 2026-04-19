@@ -1,0 +1,261 @@
+{
+  "meta": {
+    "description": "Continuation batch: 007+012+009 web research (agents 2026-04-18). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_continue_2026_04_18_batch2.json",
+    "notes": "QA: signals pre seed firm key; colliderventures company map; david samuel samuel freestyle capital person key; dropped linkedin.com/in/financeinvestment from vinci list."
+  },
+  "firms": {
+    "lego ventures": [
+      "https://www.linkedin.com/in/alexis-horowitz-burdick-26a3b44",
+      "https://www.linkedin.com/in/jamie-beaumont-a009b09",
+      "https://www.linkedin.com/in/micsta",
+      "https://www.linkedin.com/in/roblowe3",
+      "https://www.linkedin.com/in/josh-j-zhou",
+      "https://www.linkedin.com/in/parin1"
+    ],
+    "seb alliance": [
+      "https://www.linkedin.com/in/charles-henri-deneck",
+      "https://www.linkedin.com/in/lorraine-schmit-2980874a"
+    ],
+    "signals pre seed": [
+      "https://www.linkedin.com/in/paul-m%C3%BCller-95a29325",
+      "https://www.linkedin.com/in/moritz-gerdes-a85763140",
+      "https://www.linkedin.com/in/christina-schl%C3%BCter-a4897941"
+    ],
+    "1776 ventures": ["https://www.linkedin.com/in/eburfield"],
+    "1863 ventures": ["https://www.linkedin.com/in/melissalbradley"],
+    "1955 capital": ["https://www.linkedin.com/in/achung"],
+    "1984 vc": [
+      "https://www.linkedin.com/in/ramyadeeb",
+      "https://www.linkedin.com/in/samit-kalra-a6179365",
+      "https://www.linkedin.com/in/aaronmmichel"
+    ],
+    "4490 ventures": [
+      "https://www.linkedin.com/in/danmalven",
+      "https://www.linkedin.com/in/toni-brown-5535814",
+      "https://www.linkedin.com/in/gian-fulgoni-0380b96"
+    ],
+    "a capital": [
+      "https://www.linkedin.com/in/ronny-conway-a4a38815",
+      "https://www.linkedin.com/in/ramuarunachalam"
+    ],
+    "a plus finance": [
+      "https://www.linkedin.com/in/olivier-huon-5b70a817",
+      "https://www.linkedin.com/in/alexisfrancois"
+    ],
+    "a 6684 capital": ["https://www.linkedin.com/in/mordyrapaport"],
+    "a force ventures": ["https://www.linkedin.com/in/vlasso"],
+    "a2b ventures": ["https://www.linkedin.com/in/rumpelsells"],
+    "aaf group": [
+      "https://www.linkedin.com/in/hillel-milo",
+      "https://www.linkedin.com/in/granit-chen-oppenheimer"
+    ],
+    "ab private credit investors alliancebernstein": [
+      "https://www.linkedin.com/in/brent-humphries-794b9988",
+      "https://www.linkedin.com/in/drewmiller1",
+      "https://www.linkedin.com/in/simpsonrl"
+    ],
+    "abac capital": [
+      "https://www.linkedin.com/in/oriolpinya",
+      "https://www.linkedin.com/in/borja-martinez-de-la-rosa",
+      "https://www.linkedin.com/in/marcfaiges"
+    ],
+    "abbott ventures": [
+      "https://www.linkedin.com/in/mark-gent-432b7148",
+      "https://www.linkedin.com/in/yousufmazhar",
+      "https://www.linkedin.com/in/bill-welch-a38b95a",
+      "https://www.linkedin.com/in/scott-leinenweber-5557489"
+    ],
+    "abbvie biotech ventures": ["https://www.linkedin.com/in/crs79"],
+    "abc dream ventures": ["https://www.linkedin.com/in/ryohei-shirai-75629852"],
+    "abs ventures": [
+      "https://www.linkedin.com/in/muhammed-aminu-4a0781b4",
+      "https://www.linkedin.com/in/sarah-donnelly-4779487"
+    ]
+  },
+  "people": {
+    "brianne gaultiere carta": ["https://www.linkedin.com/in/brianne-gaultiere-8889a437"],
+    "robin chan robin chan": ["https://www.linkedin.com/in/robinchan"],
+    "tammy kiely goldman sachs investment partners": ["https://www.linkedin.com/in/tkiely"],
+    "john vecchio mosley ventures": ["https://www.linkedin.com/in/johndvecchio"],
+    "chris pacitti elsewhere partners": ["https://www.linkedin.com/in/chris-pacitti"],
+    "daniel ibri mindset ventures": ["https://www.linkedin.com/in/danielibri"],
+    "kihong bae strong ventures": ["https://www.linkedin.com/in/kihongbae"],
+    "wally wang scale asia ventures": ["https://www.linkedin.com/in/wallyyingxiaowang"],
+    "peter robert casey jds sports": ["https://www.linkedin.com/in/peterrobertcasey"],
+    "jonathan ellis sandalphon capital": ["https://www.linkedin.com/in/ellisjr"],
+    "arama kukutai finistere ventures": ["https://www.linkedin.com/in/arama-kukutai"],
+    "aftab kherani aisling capital": ["https://www.linkedin.com/in/aftab-kherani-3403915"],
+    "mike suchsland legaltech": ["https://www.linkedin.com/in/msuchsland"],
+    "david samuel samuel freestyle capital": ["https://www.linkedin.com/in/thedjdave"],
+    "david samuel freestyle capital": ["https://www.linkedin.com/in/thedjdave"],
+    "moshe lichtman israel growth partners": ["https://www.linkedin.com/in/moshelichtman"],
+    "mike pellini section 32": ["https://www.linkedin.com/in/michael-pellini-57a1b919"],
+    "aaron applbaum mizmaa": ["https://www.linkedin.com/in/aaron-applbaum"],
+    "john stobo abs capital partners": ["https://www.linkedin.com/in/john-stobo-8a08a6"]
+  },
+  "companies": {
+    "linkedin.com/company/anaxago": [
+      "https://www.linkedin.com/in/caroline-lamaud-dupont-5967182a",
+      "https://www.linkedin.com/in/joachim-dupont-71507314",
+      "https://www.linkedin.com/in/oscarkra"
+    ],
+    "linkedin.com/company/scalex": [
+      "https://www.linkedin.com/in/dilek-dayinlarli-kocaata-8a0594131",
+      "https://www.linkedin.com/in/safaktufekci",
+      "https://www.linkedin.com/in/sinem-eser",
+      "https://www.linkedin.com/in/orcundogmazer",
+      "https://www.linkedin.com/in/alpermat",
+      "https://www.linkedin.com/in/berkay",
+      "https://www.linkedin.com/in/cansen-ba%C5%9Faran-symes-3a6b424"
+    ],
+    "linkedin.com/company/nosuchventures": [
+      "https://www.linkedin.com/in/thijn-van-helvoirt",
+      "https://www.linkedin.com/in/janssenbas",
+      "https://www.linkedin.com/in/reinderlubbers",
+      "https://www.linkedin.com/in/loetvanettinger",
+      "https://www.linkedin.com/in/jazz-de-greeve"
+    ],
+    "linkedin.com/company/colliderventures": [
+      "https://il.linkedin.com/in/adambenayoun",
+      "https://il.linkedin.com/in/eylonaviv",
+      "https://il.linkedin.com/in/adiel-y-1718b75a",
+      "https://il.linkedin.com/in/shlomo-kraus-35169322",
+      "https://il.linkedin.com/in/gal-guatta-754b39233"
+    ],
+    "linkedin.com/company/flashpointvc": [
+      "https://www.linkedin.com/in/michael-szalontay-219542",
+      "https://www.linkedin.com/in/alexander-konoplyasty-22b72523",
+      "https://www.linkedin.com/in/igor-bilous",
+      "https://www.linkedin.com/in/maria-savelieva-cpa-7868065",
+      "https://www.linkedin.com/in/tony-fedorov",
+      "https://www.linkedin.com/in/ozh",
+      "https://www.linkedin.com/in/persia-georgiadou-cfa-30a58057"
+    ],
+    "linkedin.com/company/hellosignals": [
+      "https://www.linkedin.com/in/paul-m%C3%BCller-95a29325",
+      "https://www.linkedin.com/in/moritz-gerdes-a85763140",
+      "https://www.linkedin.com/in/christina-schl%C3%BCter-a4897941"
+    ],
+    "linkedin.com/company/point72-ventures": [
+      "https://www.linkedin.com/in/tara-stokes-63793154",
+      "https://www.linkedin.com/in/ishan-sinha-3977562b",
+      "https://www.linkedin.com/in/curtis-alexander-2a31a1127",
+      "https://www.linkedin.com/in/avigandhi",
+      "https://www.linkedin.com/in/jefra-bradish-70519112",
+      "https://www.linkedin.com/in/jordanbgreene",
+      "https://www.linkedin.com/in/cassiepless"
+    ],
+    "linkedin.com/company/insurtechcapital": ["https://www.linkedin.com/in/minhtran"],
+    "linkedin.com/company/acronymvc": [
+      "https://www.linkedin.com/in/joshuabsiegel",
+      "https://www.linkedin.com/in/matkaliski",
+      "https://www.linkedin.com/in/jeffrey-ze-chong-hang"
+    ],
+    "linkedin.com/company/ourcrowd-llc": [
+      "https://www.linkedin.com/in/jonathanmedved",
+      "https://www.linkedin.com/in/josh-hersch-85599769",
+      "https://www.linkedin.com/in/guy-dassa-417b91a"
+    ],
+    "linkedin.com/company/random-forest-fund": [
+      "https://www.linkedin.com/in/ami-dagan-95a81ba",
+      "https://www.linkedin.com/in/gideon-bar-sinai-62441b1",
+      "https://www.linkedin.com/in/michael-kerbis-316a901a2",
+      "https://www.linkedin.com/in/roy-zwebner-20694917",
+      "https://www.linkedin.com/in/joav-orovitz-063344150",
+      "https://www.linkedin.com/in/allie-shepard-14a385236"
+    ],
+    "linkedin.com/company/salesforce": [
+      "https://www.linkedin.com/in/pauldrews",
+      "https://www.linkedin.com/in/dpusateri",
+      "https://www.linkedin.com/in/emilyyangzhao",
+      "https://www.linkedin.com/in/willychu",
+      "https://www.linkedin.com/in/kwu1250",
+      "https://www.linkedin.com/in/kallennowi",
+      "https://www.linkedin.com/in/kartikeyagupta9",
+      "https://www.linkedin.com/in/robert-keith-01a7712a"
+    ],
+    "linkedin.com/company/teknasyon": [
+      "https://www.linkedin.com/in/onur-kurugol-9a91449",
+      "https://www.linkedin.com/in/emrecicek",
+      "https://www.linkedin.com/in/kemal-sehoglu-3733b782"
+    ],
+    "linkedin.com/company/hirschvogel-ventures": [
+      "https://www.linkedin.com/in/thomas-br%C3%BCcher-942073161"
+    ],
+    "linkedin.com/company/vinci-venture-capital": [
+      "https://www.linkedin.com/in/holgerheinen",
+      "https://www.linkedin.com/in/mehmettunckanat",
+      "https://www.linkedin.com/in/yavuzcan-ero%C4%9Flu-28429884"
+    ],
+    "linkedin.com/company/groupe-seb": [
+      "https://www.linkedin.com/in/charles-henri-deneck",
+      "https://www.linkedin.com/in/lorraine-schmit-2980874a"
+    ],
+    "linkedin.com/company/indian-angel-network": [
+      "https://www.linkedin.com/in/alok-mittal-590a",
+      "https://www.linkedin.com/in/ajaymian",
+      "https://www.linkedin.com/in/jvbakshi",
+      "https://www.linkedin.com/in/nitinzamre"
+    ],
+    "linkedin.com/company/1776-ventures": ["https://www.linkedin.com/in/eburfield"],
+    "linkedin.com/company/1955-capital": ["https://www.linkedin.com/in/achung"],
+    "linkedin.com/company/1984-ventures": [
+      "https://www.linkedin.com/in/ramyadeeb",
+      "https://www.linkedin.com/in/samit-kalra-a6179365",
+      "https://www.linkedin.com/in/aaronmmichel"
+    ],
+    "linkedin.com/company/4490-ventures": [
+      "https://www.linkedin.com/in/danmalven",
+      "https://www.linkedin.com/in/toni-brown-5535814",
+      "https://www.linkedin.com/in/gian-fulgoni-0380b96"
+    ],
+    "linkedin.com/company/a-capital-ventures": [
+      "https://www.linkedin.com/in/ronny-conway-a4a38815",
+      "https://www.linkedin.com/in/ramuarunachalam"
+    ],
+    "linkedin.com/company/a-plus-finance": [
+      "https://www.linkedin.com/in/olivier-huon-5b70a817",
+      "https://www.linkedin.com/in/alexisfrancois"
+    ],
+    "linkedin.com/company/a6684": ["https://www.linkedin.com/in/mordyrapaport"],
+    "linkedin.com/company/a-force-ventures": ["https://www.linkedin.com/in/vlasso"],
+    "linkedin.com/company/a2b-ventures": ["https://www.linkedin.com/in/rumpelsells"],
+    "linkedin.com/company/aquagro-fund-lp": [
+      "https://www.linkedin.com/in/hillel-milo",
+      "https://www.linkedin.com/in/granit-chen-oppenheimer"
+    ],
+    "linkedin.com/company/ab-private-credit-investors-llc": [
+      "https://www.linkedin.com/in/brent-humphries-794b9988",
+      "https://www.linkedin.com/in/drewmiller1",
+      "https://www.linkedin.com/in/simpsonrl"
+    ],
+    "linkedin.com/company/abac-capital": [
+      "https://www.linkedin.com/in/oriolpinya",
+      "https://www.linkedin.com/in/borja-martinez-de-la-rosa",
+      "https://www.linkedin.com/in/marcfaiges"
+    ],
+    "linkedin.com/company/abbvie": ["https://www.linkedin.com/in/crs79"],
+    "linkedin.com/company/abc-dream-ventures-inc.": [
+      "https://www.linkedin.com/in/ryohei-shirai-75629852"
+    ],
+    "linkedin.com/company/abs-ventures": [
+      "https://www.linkedin.com/in/muhammed-aminu-4a0781b4",
+      "https://www.linkedin.com/in/sarah-donnelly-4779487"
+    ],
+    "linkedin.com/company/11203486": ["https://www.linkedin.com/in/chris-pacitti"],
+    "linkedin.com/company/974274": ["https://www.linkedin.com/in/aftab-kherani-3403915"],
+    "linkedin.com/company/11184619": ["https://www.linkedin.com/in/aaron-applbaum"],
+    "linkedin.com/company/the-legaltech-fund": ["https://www.linkedin.com/in/msuchsland"],
+    "linkedin.com/company/goatcapital": ["https://www.linkedin.com/in/robinchan"],
+    "linkedin.com/company/mindset-ventures": ["https://www.linkedin.com/in/danielibri"],
+    "linkedin.com/company/strong-ventures-llc": ["https://www.linkedin.com/in/kihongbae"],
+    "linkedin.com/company/scale-asia-ventures": ["https://www.linkedin.com/in/wallyyingxiaowang"],
+    "linkedin.com/company/jds-sports": ["https://www.linkedin.com/in/peterrobertcasey"],
+    "linkedin.com/company/sandalphon-capital": ["https://www.linkedin.com/in/ellisjr"],
+    "linkedin.com/company/finistereventures": ["https://www.linkedin.com/in/arama-kukutai"],
+    "linkedin.com/company/israel-growth-partners": ["https://www.linkedin.com/in/moshelichtman"],
+    "linkedin.com/company/freestyle-capital": ["https://www.linkedin.com/in/thedjdave"],
+    "linkedin.com/company/section-32": ["https://www.linkedin.com/in/michael-pellini-57a1b919"],
+    "linkedin.com/company/abs-capital": ["https://www.linkedin.com/in/john-stobo-8a08a6"]
+  }
+}

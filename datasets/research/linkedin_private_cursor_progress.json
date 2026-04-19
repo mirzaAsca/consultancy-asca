@@ -1,0 +1,85 @@
+{
+  "goal": "Populate linkedin-private-cursor with personal /in/ URLs; when source is company LinkedIn, add comma-separated team URLs from public web research.",
+  "method": "Web search only (no direct LinkedIn browsing).",
+  "updated_files": [
+    "datasets/020__zip__folk_all_vcs_2026_02_15_people_2.csv",
+    "datasets/023__zip__folk_early_stage_web_3_us_investors_2026_02_15_people.csv",
+    "datasets/004__html__micro_vc_seed_fund_spreadsheet_google_drive.csv",
+    "datasets/021__zip__folk_all_accelerators_2026_02_15_companies.csv",
+    "datasets/024__zip__folk_gen_ai_investors_in_asia_2026_02_15_people.csv"
+  ],
+  "sessions": [
+    {
+      "date": "2026-04-18",
+      "notes": "Continuation: research/_tmp_007_empty_slice0/1 fed to agents; saved linkedin_private_cursor_agent_batch_007_slice0 + slice1 + 006_empty25 JSON; three merge runs. 007 slice0: DU Angels + Copilot Ventures omitted by agent (no verifiable team); slice1: Hirschvogel Ventures omitted. Cross-file updates on 001/002/004/006/007/009/010/012/013/014/015/018/019/020/026/027."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "Cursor session: applied research/linkedin_private_cursor_agent_batch_007_first20_2026_04_18.json + agent_batch_004_first18 (generalPurpose web research). Merge touched 007,004 plus cross-file matches on 001/002/009/010/012/014/025. 008 Corner Table set to '-' after web search found no verifiable fund/team distinct from unrelated names. 023 empty 14-row pass: agent found no snippet-verified /in/ matches (ambiguous identities). Empty linkedin-private-cursor count reduced ~236 toward full coverage."
+    },
+    {
+      "date": "2026-04-19",
+      "notes": "Re-applied batch1 JSON: 006 had 7 rows (e.g. Antecedent) not written on first pass — second merge run fixed. part3.json: Loup Ventures↔Deepwater team, Longwood Fund, Hemi Ventures, Imaginary, Diversis, Fathom, Hanover HNVR, Interlock, MI Ventures numeric company 3237947 + company pages; +30 rows across 001/004/006/009/012/014."
+    },
+    {
+      "date": "2026-04-19",
+      "notes": "Cursor continuation: research/linkedin_private_cursor_batch_continue_2026_04_19.json + part2.json (web_search). Batch1: 006/004 company+firm maps — Antecedent (sbberg1), ConsenSys (Lubin+Rush), Marker LLC team, Metamorphic/Compound (Hirsch+Nussbaum+Dempsey), MHS Capital, Madrona partners slice, Laconia extra partners, Defy Partners, DRK Foundation. Batch2: Elementum, Energy Innovation Capital, eLab Ventures, Coplex (firms+companies). apply_linkedin_private_cursor_research_merge.py twice; cross-file updates on 001/009/012/014/020 where company slugs matched."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "After batch6: re-ran apply_linkedin_private_cursor_research_merge.py sequentially on research/linkedin_private_cursor_parallel_batch_2026_04_18.json through batch6 to refresh any cursor cells that had drifted empty (e.g. Atlas Ventures) while keeping batch6 additions."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "batch6: research/linkedin_private_cursor_batch6_2026_04_18.json — 001 BOLD L'Oréal→Brick & Mortar slice + 004 Interlock→McCune; no_match_firms: Kairos VC (ambiguous sheet URL)."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "batch5: research/linkedin_private_cursor_batch5_2026_04_18.json + apply_linkedin_private_cursor_research_merge.py extended with JSON no_match_firms → '-' on blank rows. Filled 001 (AUBE→BOKA slice) + 004 Healthfundr→InSite; dashed Capella Space, Fifth Season Ventures, First Access Fund, Inception Sciences (004), Bae Systems accelerator (001)."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "batch4: research/linkedin_private_cursor_batch4_2026_04_18.json — 001 BEENEXT→Black Pearls slice + 004 Foley→Hanover slice; re-applied parallel batch1 for straggler 004 rows; normalized malformed agent firm keys; omitted Fifth Season / First Access (no verified team); no '-' placeholders."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "Re-ran research merge for batch1 JSON — filled 6 previously missed 004 rows (Capital A Partners, Blangkond, etc.). batch3: research/linkedin_private_cursor_batch3_2026_04_18.json (001 B-names slice + 004 Defy/DRK/etc.; stripped bogus /company-only company map; Bedrock +Base10 augment)."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "Continuation batch2: research/linkedin_private_cursor_batch2_2026_04_18.json (001 slice + 004 slice, QA: AXA slug trim, CVP→Converge VC Cambridge roster, B Capital +Gabe Greenbaum). Applied via apply_linkedin_private_cursor_research_merge.py."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "Parallel agent batch + merge: research/linkedin_private_cursor_parallel_batch_2026_04_18.json applied via apply_linkedin_private_cursor_research_merge.py — touched 001 (11 rows), 004 (5), 007 (6), 009 (3), 012 (8), 014 (3). Source: two generalPurpose agent passes (deep-tech 001 slice + micro-VC 004 slice) plus spot web_search checks (ATX Venture Partners, Asymmetry Ventures Rob Ness)."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "020: NEA row (Timothy Matthew Schaller) — no verified personal /in/ in search; set linkedin-private-cursor to comma-separated NEA team URLs from indexed results (Sandell, Tretikov, Luck, Yang, Koplow-McAdams, Baskett, Sharata, Brecher, Neemuchwala, Li, Sonsini, Immelt, Makhzoumi). 023: filled 7 rows (Nathan Feroli, Leon Poutievski/Google proxy, Roberto Wagner crypto, Ryan Welch PayPal, Vanguard Austin cohort, Thomas van Halen/Tom V., Decho V.); 20 rows remain empty where search yielded no credible match. 004: Anchor (anchorcap.us management team), Arena Ventures (Paige Craig), Antecedent Ventures (Steve Berg)."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "023 follow-up: Martin Keller — Litecoin Foundation leadership (/in/chocobo, jaymilla, michelle-mafra-48812ba) from company research; Alexander Modzeleski — Alex Modzelewski /in/alexmodz (spelling variant per search). 004 follow-up: Beanstalk Ventures (Ken Seiff, Michael Newman), Black Diamond Ventures (Chris Lucas, Ana Quintana, Jon Kraft), Black River Ventures (Evgeny Kaltashev, Andrey Daleky, Sergey Safronov, Alexander Prokhorov)."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "Composer (research/linkedin_private_cursor_composer_session_2026_04_18.json): 021 — BackFund, Blue InCube, Korean Bluepoint, Embarca 11376549, EFG EV Fintech, Ark Challenge (2533798), BEYOND (beyondaccelerator), Chivas Venture (the-venture). 023 — Philip Odegard /in/philipodegard (+ Odegard Group map). 024 — one row matched Blue InCube company URL (team merged). Session JSON merges only; apply script run twice for batch add-ons."
+    },
+    {
+      "date": "2026-04-18",
+      "notes": "Composer continuation: re-applied session after 021 had many blank cursors; added batch 3 (10b Gestora, 4WARD 86764424, CyRise, DreamPlusAsia, BonBillo) and batch 4 (Apple Seed venture accelerator, CyberLaunch VC). Accelerate (accelerateus) left for a future pass — no /in/ list in indexed search."
+    }
+  ],
+  "empty_linkedin_private_cursor_snapshot": {
+    "largest_remaining_files_row_count": {
+      "012__native__list_5000": 4057,
+      "007__html__vc_firms_cold_outreach": 1904,
+      "009__native__folk_all_vcs_people": 1570,
+      "010__native__folk_corporate_venture_arms_companies": 1382,
+      "014__native__people": 1370,
+      "001__html__deep_tech_investors": 1255
+    },
+    "023_empty_after_continuation": 14,
+    "004_empty_after_continuation": 332
+  }
+}

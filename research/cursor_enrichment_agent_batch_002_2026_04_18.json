@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "batch": "002_rows_2-19",
+    "method": "web_search_subagent",
+    "description": "Euro tech funds — personal /in/ URLs from web research (batch 1)"
+  },
+  "firms": {
+    "Kembara": [
+      "https://www.linkedin.com/in/javier-santiso-0aa08322",
+      "https://www.linkedin.com/in/yanndevries",
+      "https://www.linkedin.com/in/yokokojima"
+    ],
+    "SlateVC": [
+      "https://www.linkedin.com/in/chloegiard",
+      "https://www.linkedin.com/in/clementbuyse",
+      "https://www.linkedin.com/in/renaudvisage",
+      "https://www.linkedin.com/in/sebastienleger1",
+      "https://fr.linkedin.com/in/c%C3%A9lia-bellec-21183589",
+      "https://fr.linkedin.com/in/paul-pihou%C3%A9e-16a67010b"
+    ],
+    "B2Venture": [
+      "https://www.linkedin.com/in/agoeldi",
+      "https://www.linkedin.com/in/mathias-ockenfels",
+      "https://www.linkedin.com/in/friederikehoffmann",
+      "https://www.linkedin.com/in/d-zak",
+      "https://www.linkedin.com/in/isabel-e-3ab655144",
+      "https://www.linkedin.com/in/marieschwertner",
+      "https://www.linkedin.com/in/karimelg",
+      "https://ch.linkedin.com/in/florianschweitzer"
+    ],
+    "ZOHO.VC": [
+      "https://www.linkedin.com/in/denniskirpensteijn",
+      "https://www.linkedin.com/in/benjabo",
+      "https://www.linkedin.com/in/nicolas-sievers-821b39106",
+      "https://www.linkedin.com/in/judit-klein"
+    ],
+    "The Footprint Firm": [
+      "https://www.linkedin.com/in/anna-s%C3%B8ndergaard-4390903",
+      "https://www.linkedin.com/in/sofie-k%C3%A4ll-138a9164",
+      "https://www.linkedin.com/in/christian-sparrevohn-2172a3"
+    ],
+    "Metavallon VC": [
+      "https://www.linkedin.com/in/demetrisiacovides",
+      "https://www.linkedin.com/in/gkarantonis",
+      "https://gr.linkedin.com/in/yorgos-mousmoulas",
+      "https://www.linkedin.com/in/angelos-manglis-0801bb4",
+      "https://www.linkedin.com/in/nikoskarapanagou"
+    ],
+    "Mission": [
+      "https://www.linkedin.com/in/jorgedobon",
+      "https://www.linkedin.com/in/mnavarrom",
+      "https://www.linkedin.com/in/julioribes",
+      "https://www.linkedin.com/in/%C3%A1lvaro-callejo-s%C3%A1nchez",
+      "https://www.linkedin.com/in/juan-dominguez-calomarde",
+      "https://www.linkedin.com/in/flavia-aina-922757182",
+      "https://www.linkedin.com/in/-inigo",
+      "https://www.linkedin.com/in/davidcastellscercadillo"
+    ],
+    "Vi Partners": [
+      "https://www.linkedin.com/in/arnd-kaltofen",
+      "https://www.linkedin.com/in/diego-braguglia-9634b915",
+      "https://www.linkedin.com/in/olivierlaplace",
+      "https://www.linkedin.com/in/gaetanozanon",
+      "https://www.linkedin.com/in/julienpache",
+      "https://www.linkedin.com/in/martinagromo"
+    ],
+    "Vanagon Ventures": [
+      "https://www.linkedin.com/in/susannefromm",
+      "https://www.linkedin.com/in/sandrostark",
+      "https://www.linkedin.com/in/axelroitzsch"
+    ],
+    "Ananda Impact Ventures": [
+      "https://www.linkedin.com/in/jweberananda",
+      "https://www.linkedin.com/in/florianerber",
+      "https://www.linkedin.com/in/zoepeden"
+    ],
+    "NextGen Ventures": [
+      "https://www.linkedin.com/in/harmjanwessels",
+      "https://www.linkedin.com/in/peter-haasjes-1631a04",
+      "https://www.linkedin.com/in/matthijs-blokhuis-5874955",
+      "https://www.linkedin.com/in/rudy-mareel-a7571510",
+      "https://www.linkedin.com/in/sannevanerp",
+      "https://www.linkedin.com/in/thijsschaap",
+      "https://www.linkedin.com/in/paul-van-ooik-26a6b491"
+    ],
+    "Rosberg Ventures": [
+      "https://www.linkedin.com/in/nicorosberg",
+      "https://www.linkedin.com/in/franckriviere"
+    ],
+    "Hetz Ventures": [
+      "https://www.linkedin.com/in/judah-taub-3773247b",
+      "https://www.linkedin.com/in/guyfig",
+      "https://www.linkedin.com/in/itamarmula",
+      "https://www.linkedin.com/in/pavel-livshiz-68b3183a"
+    ],
+    "Qbeat Ventures": [
+      "https://www.linkedin.com/in/dorit-dor-by49",
+      "https://www.linkedin.com/in/mayanetser"
+    ],
+    "Übermorgen Ventures": [
+      "https://www.linkedin.com/in/elena-walder-schiavone-13ab9950",
+      "https://www.linkedin.com/in/alexander-langguth-42b74451",
+      "https://www.linkedin.com/in/michaelnaef",
+      "https://www.linkedin.com/in/adrianbuehrer",
+      "https://www.linkedin.com/in/jonas-hornung",
+      "https://ch.linkedin.com/in/christophgrobbel"
+    ],
+    "Kibo Ventures": [
+      "https://www.linkedin.com/in/aquilinopena",
+      "https://www.linkedin.com/in/soniafernandez",
+      "https://www.linkedin.com/in/valeria-loewe-2b0279",
+      "https://www.linkedin.com/in/javier-torremocha"
+    ],
+    "Catalpa Ventures": [
+      "https://www.linkedin.com/in/thomasgoergen",
+      "https://www.linkedin.com/in/willibrord-ehses",
+      "https://www.linkedin.com/in/adriangoergen",
+      "https://www.linkedin.com/in/silke-rickert-sperling",
+      "https://www.linkedin.com/in/cgoergen"
+    ],
+    "Carbon Equity": [
+      "https://www.linkedin.com/in/larakoole",
+      "https://www.linkedin.com/in/jlvdende",
+      "https://www.linkedin.com/in/gomez-jeff",
+      "https://www.linkedin.com/in/saskia-bruysten",
+      "https://www.linkedin.com/in/berend-braam-310b9357"
+    ]
+  },
+  "companies": {
+    "linkedin.com/company/mundi-ventures": [
+      "https://www.linkedin.com/in/javier-santiso-0aa08322",
+      "https://www.linkedin.com/in/yanndevries",
+      "https://www.linkedin.com/in/yokokojima"
+    ],
+    "linkedin.com/company/slatevc": [
+      "https://www.linkedin.com/in/chloegiard",
+      "https://www.linkedin.com/in/clementbuyse",
+      "https://www.linkedin.com/in/renaudvisage",
+      "https://www.linkedin.com/in/sebastienleger1",
+      "https://fr.linkedin.com/in/c%C3%A9lia-bellec-21183589",
+      "https://fr.linkedin.com/in/paul-pihou%C3%A9e-16a67010b"
+    ],
+    "linkedin.com/company/b2venture": [
+      "https://www.linkedin.com/in/agoeldi",
+      "https://www.linkedin.com/in/mathias-ockenfels",
+      "https://www.linkedin.com/in/friederikehoffmann",
+      "https://www.linkedin.com/in/d-zak",
+      "https://www.linkedin.com/in/isabel-e-3ab655144",
+      "https://www.linkedin.com/in/marieschwertner",
+      "https://www.linkedin.com/in/karimelg",
+      "https://ch.linkedin.com/in/florianschweitzer"
+    ],
+    "linkedin.com/company/zoho-vc": [
+      "https://www.linkedin.com/in/denniskirpensteijn",
+      "https://www.linkedin.com/in/benjabo",
+      "https://www.linkedin.com/in/nicolas-sievers-821b39106",
+      "https://www.linkedin.com/in/judit-klein"
+    ],
+    "linkedin.com/company/the-footprint-firm": [
+      "https://www.linkedin.com/in/anna-s%C3%B8ndergaard-4390903",
+      "https://www.linkedin.com/in/sofie-k%C3%A4ll-138a9164",
+      "https://www.linkedin.com/in/christian-sparrevohn-2172a3"
+    ],
+    "linkedin.com/company/metavallon": [
+      "https://www.linkedin.com/in/demetrisiacovides",
+      "https://www.linkedin.com/in/gkarantonis",
+      "https://gr.linkedin.com/in/yorgos-mousmoulas",
+      "https://www.linkedin.com/in/angelos-manglis-0801bb4",
+      "https://www.linkedin.com/in/nikoskarapanagou"
+    ],
+    "linkedin.com/company/missionfund": [
+      "https://www.linkedin.com/in/jorgedobon",
+      "https://www.linkedin.com/in/mnavarrom",
+      "https://www.linkedin.com/in/julioribes",
+      "https://www.linkedin.com/in/%C3%A1lvaro-callejo-s%C3%A1nchez",
+      "https://www.linkedin.com/in/juan-dominguez-calomarde",
+      "https://www.linkedin.com/in/flavia-aina-922757182",
+      "https://www.linkedin.com/in/-inigo",
+      "https://www.linkedin.com/in/davidcastellscercadillo"
+    ],
+    "linkedin.com/company/vi-partners-ag": [
+      "https://www.linkedin.com/in/arnd-kaltofen",
+      "https://www.linkedin.com/in/diego-braguglia-9634b915",
+      "https://www.linkedin.com/in/olivierlaplace",
+      "https://www.linkedin.com/in/gaetanozanon",
+      "https://www.linkedin.com/in/julienpache",
+      "https://www.linkedin.com/in/martinagromo"
+    ],
+    "linkedin.com/company/vanagon": [
+      "https://www.linkedin.com/in/susannefromm",
+      "https://www.linkedin.com/in/sandrostark",
+      "https://www.linkedin.com/in/axelroitzsch"
+    ],
+    "linkedin.com/company/anandaventures": [
+      "https://www.linkedin.com/in/jweberananda",
+      "https://www.linkedin.com/in/florianerber",
+      "https://www.linkedin.com/in/zoepeden"
+    ],
+    "linkedin.com/company/nextgen-ventures": [
+      "https://www.linkedin.com/in/harmjanwessels",
+      "https://www.linkedin.com/in/peter-haasjes-1631a04",
+      "https://www.linkedin.com/in/matthijs-blokhuis-5874955",
+      "https://www.linkedin.com/in/rudy-mareel-a7571510",
+      "https://www.linkedin.com/in/sannevanerp",
+      "https://www.linkedin.com/in/thijsschaap",
+      "https://www.linkedin.com/in/paul-van-ooik-26a6b491"
+    ],
+    "linkedin.com/company/rosberg-ventures": [
+      "https://www.linkedin.com/in/nicorosberg",
+      "https://www.linkedin.com/in/franckriviere"
+    ],
+    "linkedin.com/company/hetz-ventures": [
+      "https://www.linkedin.com/in/judah-taub-3773247b",
+      "https://www.linkedin.com/in/guyfig",
+      "https://www.linkedin.com/in/itamarmula",
+      "https://www.linkedin.com/in/pavel-livshiz-68b3183a"
+    ],
+    "linkedin.com/company/qbeatventures": [
+      "https://www.linkedin.com/in/dorit-dor-by49",
+      "https://www.linkedin.com/in/mayanetser"
+    ],
+    "linkedin.com/company/%c3%bcbermorgen-ventures": [
+      "https://www.linkedin.com/in/elena-walder-schiavone-13ab9950",
+      "https://www.linkedin.com/in/alexander-langguth-42b74451",
+      "https://www.linkedin.com/in/michaelnaef",
+      "https://www.linkedin.com/in/adrianbuehrer",
+      "https://www.linkedin.com/in/jonas-hornung",
+      "https://ch.linkedin.com/in/christophgrobbel"
+    ],
+    "linkedin.com/company/kiboventures": [
+      "https://www.linkedin.com/in/aquilinopena",
+      "https://www.linkedin.com/in/soniafernandez",
+      "https://www.linkedin.com/in/valeria-loewe-2b0279",
+      "https://www.linkedin.com/in/javier-torremocha"
+    ],
+    "linkedin.com/company/catalpa-ventures": [
+      "https://www.linkedin.com/in/thomasgoergen",
+      "https://www.linkedin.com/in/willibrord-ehses",
+      "https://www.linkedin.com/in/adriangoergen",
+      "https://www.linkedin.com/in/silke-rickert-sperling",
+      "https://www.linkedin.com/in/cgoergen"
+    ],
+    "linkedin.com/company/carbon-equity": [
+      "https://www.linkedin.com/in/larakoole",
+      "https://www.linkedin.com/in/jlvdende",
+      "https://www.linkedin.com/in/gomez-jeff",
+      "https://www.linkedin.com/in/saskia-bruysten",
+      "https://www.linkedin.com/in/berend-braam-310b9357"
+    ]
+  }
+}

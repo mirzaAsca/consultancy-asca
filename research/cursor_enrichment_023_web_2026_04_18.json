@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "file": "datasets/023__zip__folk_early_stage_web_3_us_investors_2026_02_15_people.csv",
+    "date": "2026-04-18",
+    "method": "Web search + public page fetch (Medium Pledgecamp team post, LinkedIn public previews). Dash '-' = researched, no verified matching personal /in/ URL.",
+    "agent": "cursor-session"
+  },
+  "verified_urls": {
+    "e380633f-193f-413b-8ba2-cfbb4e7da82c": {
+      "name": "J Choi",
+      "note": "Pledgecamp founding team from official Medium post; primary + co-founders as same-fund investors.",
+      "urls": [
+        "https://www.linkedin.com/in/realjhc",
+        "https://www.linkedin.com/in/iamedmond",
+        "https://www.linkedin.com/in/samuel-pullman-1ab30220"
+      ],
+      "sources": [
+        "https://medium.com/pledgecamp/meet-our-complete-team-845fad61f4a1"
+      ]
+    },
+    "c33cdb8e-d9f1-4aec-88e5-dfa676002c90": {
+      "name": "Evan Huddleson",
+      "note": "Columbus OH; SaaS AE / crypto investor per public LinkedIn preview (Delegate, Ethereum investor, etc.).",
+      "urls": ["https://www.linkedin.com/in/evanhuddleson"],
+      "sources": ["https://www.linkedin.com/in/evanhuddleson"]
+    },
+    "fc8c143e-00a8-4732-83f9-6f9770beb343": {
+      "name": "Dan O'Regan",
+      "note": "FINRA BrokerCheck + LinkedIn: equity trading at RBC then Mizuho; profile lists Mizuho.",
+      "urls": ["https://www.linkedin.com/in/danoregan2022"],
+      "sources": [
+        "https://www.linkedin.com/in/danoregan2022",
+        "https://files.brokercheck.finra.org/individual/individual_5158815.pdf"
+      ]
+    }
+  },
+  "no_verified_profile": {
+    "0e7fc280-eeeb-4951-a365-44b031cf1613": "Franze Tempone — no 'Franze Tempone' LinkedIn; possible junk name.",
+    "2d047275-f66a-47bb-a1b4-b70bff3452ba": "Spam-style listing / not a verifiable institutional investor row.",
+    "360e9826-03f3-412d-af62-48595785e81d": "Micheal Kent + 'Robinhood' — many unrelated Michael Kents; no Robinhood-tagged match in search.",
+    "4b4e7817-9785-4ce9-b4f4-9e57fae9c6a2": "Sparkle Williams + Honda FCU — no LinkedIn result tying name to that employer.",
+    "5c0c399b-062d-410b-a02b-950ffadb2678": "Saji J. — too many homonyms; no clear single profile.",
+    "7d2aaadf-c69c-484c-b524-8126b86a2d45": "Michael S. + Shell board — ambiguous; many Shell executives.",
+    "8460e80f-623f-472d-9465-9d43c12674d9": "R. G. — initials only.",
+    "93c2974a-6b5d-47a3-a4ab-20b968aa1f98": "Nicholas Brown + Quicken Loans associate banker — no matching LinkedIn in search results.",
+    "a02489c6-abca-4ce1-8d9d-3e07b64f5765": "Michael Thomas + EVP only — not uniquely identifiable.",
+    "c58a4189-26bf-4a76-98b0-f858ce6fe783": "Junk / meme-style name.",
+    "c9979af0-4fa7-4f59-a90d-dedd2725dca6": "Sarah Fortner + Bellahoot — no Bellahoot-tagged LinkedIn.",
+    "cf0d064a-5b87-490d-a614-9819cd2f6e70": "Merit Jason Anderson + crypto miner — no clear unique profile.",
+    "d6442f0d-3951-4f65-89fa-bae78a8a3587": "Mark Wilbur corp dev life sciences — no search hit matching that combo.",
+    "da47d925-6632-4c04-82c8-9ed301b7430a": "David Cheung + Global Investment Group — many David Cheungs; no GIG managing partner profile in results.",
+    "fb2002ac-d966-4632-a257-4ff5b312b5f9": "Philip Odegard investor — Crunchbase/AngelMatch list investor but no confirmed public /in/ URL in search (directory hits are other people or unverified)."
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "description": "Web search (2026-04-18): first batch of empty linkedin-private-cursor rows in 007 (cold-outreach VCs).",
+    "sources": "LinkedIn company pages, fund websites (karista.vc/team, specialeinvest.com/team, raise.co, up.partners/thecrew), indexed profiles."
+  },
+  "firms": {
+    "digital horizon": [
+      "https://www.linkedin.com/in/ivanovdenis",
+      "https://www.linkedin.com/in/alan-vaksman-1467861"
+    ],
+    "up partners": [
+      "https://www.linkedin.com/in/benjamindmarcus",
+      "https://www.linkedin.com/in/cyrus-sigari-0218401",
+      "https://www.linkedin.com/in/ally-warson-1a99962"
+    ],
+    "speciale invest": [
+      "https://www.linkedin.com/in/visheshraj",
+      "https://www.linkedin.com/in/raoarjun",
+      "https://www.linkedin.com/in/dhanush-ram",
+      "https://www.linkedin.com/in/vishnurajeev"
+    ],
+    "raise ventures": [
+      "https://www.linkedin.com/in/spesque",
+      "https://www.linkedin.com/in/thalia-stemitsiotis"
+    ],
+    "alfabeat": [
+      "https://www.linkedin.com/in/edwardstanoch",
+      "https://www.linkedin.com/in/bartoszlipnicki",
+      "https://www.linkedin.com/in/wyrwinski",
+      "https://www.linkedin.com/in/radekbialas"
+    ],
+    "karista": [
+      "https://www.linkedin.com/in/olivier-dubuisson-6587121b",
+      "https://www.linkedin.com/in/catherine-boule-5039128",
+      "https://www.linkedin.com/in/bzerbib",
+      "https://www.linkedin.com/in/alaingavin"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/digitalhorizonvc": [
+      "https://www.linkedin.com/in/ivanovdenis",
+      "https://www.linkedin.com/in/alan-vaksman-1467861"
+    ],
+    "linkedin.com/company/uppartners": [
+      "https://www.linkedin.com/in/benjamindmarcus",
+      "https://www.linkedin.com/in/cyrus-sigari-0218401",
+      "https://www.linkedin.com/in/ally-warson-1a99962"
+    ],
+    "linkedin.com/company/specialeinvest": [
+      "https://www.linkedin.com/in/visheshraj",
+      "https://www.linkedin.com/in/raoarjun",
+      "https://www.linkedin.com/in/dhanush-ram",
+      "https://www.linkedin.com/in/vishnurajeev"
+    ],
+    "linkedin.com/company/raise-france": [
+      "https://www.linkedin.com/in/spesque",
+      "https://www.linkedin.com/in/thalia-stemitsiotis"
+    ],
+    "linkedin.com/company/raise-groupe": [
+      "https://www.linkedin.com/in/spesque",
+      "https://www.linkedin.com/in/thalia-stemitsiotis"
+    ],
+    "linkedin.com/company/alfabeat": [
+      "https://www.linkedin.com/in/edwardstanoch",
+      "https://www.linkedin.com/in/bartoszlipnicki",
+      "https://www.linkedin.com/in/wyrwinski",
+      "https://www.linkedin.com/in/radekbialas"
+    ],
+    "linkedin.com/company/karistavc": [
+      "https://www.linkedin.com/in/olivier-dubuisson-6587121b",
+      "https://www.linkedin.com/in/catherine-boule-5039128",
+      "https://www.linkedin.com/in/bzerbib",
+      "https://www.linkedin.com/in/alaingavin"
+    ]
+  }
+}

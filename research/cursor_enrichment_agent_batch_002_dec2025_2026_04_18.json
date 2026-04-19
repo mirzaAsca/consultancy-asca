@@ -1,0 +1,159 @@
+{
+  "meta": {
+    "batch": "002_funds_dec2025_block",
+    "method": "web_search_subagent",
+    "description": "Euro tech 002 — Dec 2025 fund closes with empty cursor"
+  },
+  "firms": {
+    "Cloudberry VC": [
+      "https://www.linkedin.com/in/renekromhof",
+      "https://www.linkedin.com/in/veerapietikainen",
+      "https://www.linkedin.com/in/lawrence-lundy-bryan"
+    ],
+    "Baseline": [
+      "https://www.linkedin.com/in/eamonleonard",
+      "https://www.linkedin.com/in/fiona-kelly-518a2a13"
+    ],
+    "The Nordic Web Ventures": ["https://www.linkedin.com/in/neilswmurray"],
+    "Viola Ventures": [
+      "https://www.linkedin.com/in/omry-ben-david-2436371",
+      "https://www.linkedin.com/in/shlomo-dovrat-b2117313a",
+      "https://www.linkedin.com/in/zvika-orron",
+      "https://www.linkedin.com/in/avi-zeevi-7393522",
+      "https://www.linkedin.com/in/itzikavidor",
+      "https://www.linkedin.com/in/alex-shmulovich"
+    ],
+    "Viola Ventures [Growth]": [
+      "https://www.linkedin.com/in/omry-ben-david-2436371",
+      "https://www.linkedin.com/in/shlomo-dovrat-b2117313a",
+      "https://www.linkedin.com/in/zvika-orron",
+      "https://www.linkedin.com/in/avi-zeevi-7393522",
+      "https://www.linkedin.com/in/itzikavidor",
+      "https://www.linkedin.com/in/alex-shmulovich"
+    ],
+    "makesense": [
+      "https://www.linkedin.com/in/anne-gerset",
+      "https://www.linkedin.com/in/marion-schuppe-50b35345"
+    ],
+    "Twin Track Ventures": ["https://uk.linkedin.com/in/nicola-sinclair-"],
+    "U2V (University 2 Venture)": [
+      "https://www.linkedin.com/in/psemmer",
+      "https://www.linkedin.com/in/michaelschmitt1024",
+      "https://www.linkedin.com/in/johannestriebs"
+    ],
+    "Aneli Capital": [
+      "https://www.linkedin.com/in/daiva-rakauskaite-cfa-886789b",
+      "https://www.linkedin.com/in/nerijusbaliunas",
+      "https://www.linkedin.com/in/sabina-sinicienė-8789b174"
+    ],
+    "betacluster Ventures": [
+      "https://www.linkedin.com/in/fmsteger",
+      "https://www.linkedin.com/in/gabriela-brodzinska",
+      "https://www.linkedin.com/in/cezary-iwan"
+    ],
+    "Investing For Purpose": [
+      "https://www.linkedin.com/in/richardmullane",
+      "https://www.linkedin.com/in/annenijenhuis",
+      "https://www.linkedin.com/in/ioannis-tsepis-01550815a",
+      "https://www.linkedin.com/in/markos-komondouros-522019222",
+      "https://www.linkedin.com/in/cottareleleonore"
+    ],
+    "ISAI": [
+      "https://www.linkedin.com/in/jeandavidchamboredon",
+      "https://www.linkedin.com/in/aude-lapillonne-8009b124",
+      "https://www.linkedin.com/in/pierre-dumas-94215555",
+      "https://www.linkedin.com/in/williamvermont",
+      "https://www.linkedin.com/in/simon-beguin"
+    ],
+    "6 Degrees Capital": [
+      "https://www.linkedin.com/in/wouter-volckaert-440727",
+      "https://www.linkedin.com/in/lucasstoops",
+      "https://www.linkedin.com/in/thibaultdhondt",
+      "https://www.linkedin.com/in/thomasolszewski",
+      "https://www.linkedin.com/in/bobrode"
+    ],
+    "Teampact.ventures": [
+      "https://www.linkedin.com/in/basile-agay-42030214b",
+      "https://www.linkedin.com/in/vidalromain",
+      "https://www.linkedin.com/in/juliendecot"
+    ],
+    "Clover": [
+      "https://www.linkedin.com/in/hmen",
+      "https://www.linkedin.com/in/maxime-verschoor-754775178",
+      "https://www.linkedin.com/in/samuel-tual-0b737819"
+    ],
+    "Baobab Ventures": ["https://www.linkedin.com/in/carlesreina"]
+  },
+  "companies": {
+    "linkedin.com/company/cloudberry-vc": [
+      "https://www.linkedin.com/in/renekromhof",
+      "https://www.linkedin.com/in/veerapietikainen",
+      "https://www.linkedin.com/in/lawrence-lundy-bryan"
+    ],
+    "linkedin.com/company/baseline-community": [
+      "https://www.linkedin.com/in/eamonleonard",
+      "https://www.linkedin.com/in/fiona-kelly-518a2a13"
+    ],
+    "linkedin.com/company/the-nordic-web-ventures": ["https://www.linkedin.com/in/neilswmurray"],
+    "linkedin.com/company/violaventures": [
+      "https://www.linkedin.com/in/omry-ben-david-2436371",
+      "https://www.linkedin.com/in/shlomo-dovrat-b2117313a",
+      "https://www.linkedin.com/in/zvika-orron",
+      "https://www.linkedin.com/in/avi-zeevi-7393522",
+      "https://www.linkedin.com/in/itzikavidor",
+      "https://www.linkedin.com/in/alex-shmulovich"
+    ],
+    "linkedin.com/company/makesense": [
+      "https://www.linkedin.com/in/anne-gerset",
+      "https://www.linkedin.com/in/marion-schuppe-50b35345"
+    ],
+    "linkedin.com/company/twin-track-vc": ["https://uk.linkedin.com/in/nicola-sinclair-"],
+    "linkedin.com/company/u2v": [
+      "https://www.linkedin.com/in/psemmer",
+      "https://www.linkedin.com/in/michaelschmitt1024",
+      "https://www.linkedin.com/in/johannestriebs"
+    ],
+    "linkedin.com/company/anelicapital": [
+      "https://www.linkedin.com/in/daiva-rakauskaite-cfa-886789b",
+      "https://www.linkedin.com/in/nerijusbaliunas",
+      "https://www.linkedin.com/in/sabina-sinicienė-8789b174"
+    ],
+    "linkedin.com/company/betacluster-ventures": [
+      "https://www.linkedin.com/in/fmsteger",
+      "https://www.linkedin.com/in/gabriela-brodzinska",
+      "https://www.linkedin.com/in/cezary-iwan"
+    ],
+    "linkedin.com/company/investingforpurpose": [
+      "https://www.linkedin.com/in/richardmullane",
+      "https://www.linkedin.com/in/annenijenhuis",
+      "https://www.linkedin.com/in/ioannis-tsepis-01550815a",
+      "https://www.linkedin.com/in/markos-komondouros-522019222",
+      "https://www.linkedin.com/in/cottareleleonore"
+    ],
+    "linkedin.com/company/isai-gestion": [
+      "https://www.linkedin.com/in/jeandavidchamboredon",
+      "https://www.linkedin.com/in/aude-lapillonne-8009b124",
+      "https://www.linkedin.com/in/pierre-dumas-94215555",
+      "https://www.linkedin.com/in/williamvermont",
+      "https://www.linkedin.com/in/simon-beguin"
+    ],
+    "linkedin.com/company/6degreescapital": [
+      "https://www.linkedin.com/in/wouter-volckaert-440727",
+      "https://www.linkedin.com/in/lucasstoops",
+      "https://www.linkedin.com/in/thibaultdhondt",
+      "https://www.linkedin.com/in/thomasolszewski",
+      "https://www.linkedin.com/in/bobrode"
+    ],
+    "linkedin.com/company/teampactventures": [
+      "https://www.linkedin.com/in/basile-agay-42030214b",
+      "https://www.linkedin.com/in/vidalromain",
+      "https://www.linkedin.com/in/juliendecot"
+    ],
+    "linkedin.com/company/cloverfundvc": [
+      "https://www.linkedin.com/in/hmen",
+      "https://www.linkedin.com/in/maxime-verschoor-754775178",
+      "https://www.linkedin.com/in/samuel-tual-0b737819"
+    ],
+    "linkedin.com/company/baobab-ventures": ["https://www.linkedin.com/in/carlesreina"]
+  }
+}

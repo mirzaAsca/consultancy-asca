@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "description": "Web-researched personal LinkedIn /in/ URLs (2026-04-19). Sources: indexed web search snippets, fund team pages, LinkedIn company employee links. Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch_continue_2026_04_19.json"
+  },
+  "firms": {
+    "defy partners": [
+      "https://www.linkedin.com/in/brianrothenberg",
+      "https://www.linkedin.com/in/medhakagarwal",
+      "https://www.linkedin.com/in/pcshah",
+      "https://www.linkedin.com/in/noah-lin17",
+      "https://www.linkedin.com/in/amyyin"
+    ],
+    "drk foundation": [
+      "https://www.linkedin.com/in/jim-bildner",
+      "https://www.linkedin.com/in/bill-draper-945b67b",
+      "https://www.linkedin.com/in/anika-warren-wood-phd-72274258",
+      "https://www.linkedin.com/in/timothy-sung-cho",
+      "https://www.linkedin.com/in/larametcalf"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/antecedent-ventures": [
+      "https://www.linkedin.com/in/sbberg1"
+    ],
+    "https://www.linkedin.com/company/33188514": [
+      "https://www.linkedin.com/in/joseph-lubin-48406489",
+      "https://www.linkedin.com/in/rushthomas"
+    ],
+    "https://www.linkedin.com/company/marker-llc": [
+      "https://www.linkedin.com/in/thomas-pompidou-1101b6285",
+      "https://www.linkedin.com/in/ohad-finkelstein-b6602191",
+      "https://www.linkedin.com/in/itsmejon",
+      "https://www.linkedin.com/in/yuval-shachar-14a6476"
+    ],
+    "https://www.linkedin.com/company/274951": [
+      "https://www.linkedin.com/in/davidhirsch2",
+      "https://www.linkedin.com/in/josh-nussbaum-58235550",
+      "https://www.linkedin.com/in/michaelhdempsey"
+    ],
+    "https://www.linkedin.com/company/mhs-capital-limited": [
+      "https://www.linkedin.com/in/msugarman",
+      "https://www.linkedin.com/in/vijaynagappan"
+    ],
+    "https://www.linkedin.com/company/39297": [
+      "https://www.linkedin.com/in/sxjacobson",
+      "https://www.linkedin.com/in/vivekramaswami",
+      "https://www.linkedin.com/in/patrickjennis",
+      "https://www.linkedin.com/in/len-jordan-24a68318"
+    ],
+    "https://www.linkedin.com/company/2150357": [
+      "https://www.linkedin.com/in/david-arcara-b8a0801",
+      "https://www.linkedin.com/in/jeffreyleesilverman",
+      "https://www.linkedin.com/in/gerikirilova",
+      "https://www.linkedin.com/in/miritlugassi"
+    ]
+  }
+}

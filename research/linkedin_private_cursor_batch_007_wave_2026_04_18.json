@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "description": "007-style enrichment: company LinkedIn pages → verified /in/ team URLs (indexed web_search, 2026-04-18).",
+    "apply": "python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch_007_wave_2026_04_18.json"
+  },
+  "firms": {},
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/ufiventures": [
+      "https://www.linkedin.com/in/helen-gironi-6ab27019",
+      "https://www.linkedin.com/in/alex-bishop-362b0782",
+      "https://www.linkedin.com/in/damien-lane-9405a6"
+    ],
+    "https://www.linkedin.com/company/r3iventures": [
+      "https://www.linkedin.com/in/leesasoulodre",
+      "https://www.linkedin.com/in/mariannewinslett",
+      "https://www.linkedin.com/in/jimis",
+      "https://www.linkedin.com/in/ian-cresswell-67183045",
+      "https://www.linkedin.com/in/adammbeal"
+    ],
+    "https://www.linkedin.com/company/looking-glass-capital": [
+      "https://www.linkedin.com/in/besvinick"
+    ],
+    "https://www.linkedin.com/company/sierra-ventures": [
+      "https://www.linkedin.com/in/markjfernandes",
+      "https://www.linkedin.com/in/timguleri",
+      "https://www.linkedin.com/in/benyu",
+      "https://www.linkedin.com/in/shomik-ghosh-a5a71319",
+      "https://www.linkedin.com/in/vravikumar1",
+      "https://www.linkedin.com/in/brendonschmidt",
+      "https://www.linkedin.com/in/danielparedes1"
+    ],
+    "https://www.linkedin.com/company/earnestcap": [
+      "https://www.linkedin.com/in/tringastyler"
+    ],
+    "https://www.linkedin.com/company/calmcompanyfund": [
+      "https://www.linkedin.com/in/tringastyler"
+    ],
+    "https://www.linkedin.com/company/unknown-ventures": [
+      "https://www.linkedin.com/in/briggsmitchell",
+      "https://www.linkedin.com/in/sherita-allen-0b387718a"
+    ]
+  }
+}

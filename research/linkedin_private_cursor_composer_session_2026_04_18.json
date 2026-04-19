@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "description": "Web-researched personal LinkedIn /in/ URLs (Composer session 2026-04-18). Sources: indexed web search snippets (company pages, bios, press). Applied via scripts/apply_linkedin_private_cursor_research_json.py.",
+    "sources": "Web search only; no direct LinkedIn browsing.",
+    "notes": "Batch 1–2: 023 Philip Odegard; 021 BackFund, Blue InCube, Korean Bluepoint, Embarca 11376549, EFG EV Fintech, Ark 2533798, BEYOND, Chivas Venture; Odegard Group. Batch 3: 021 10b Gestora, 4WARD 86764424, CyRise, DreamPlusAsia, BonBillo. Batch 4: Apple Seed Pte (Kumaran Pillai, Karuppaiah Palani per SG company listing); CyberLaunch VC (Christopher Klaus /in/chklaus, Matt M. Rahman per indexed company page + IOActive advisory context). Accelerate (accelerateus) skipped — no verified /in/ list in search snippets."
+  },
+  "firms": {
+    "backfund": [
+      "https://www.linkedin.com/in/karelescobar",
+      "https://uk.linkedin.com/in/andres-gassert-71853544"
+    ],
+    "blue incube ventures": [
+      "https://sg.linkedin.com/in/clgoh1",
+      "https://sg.linkedin.com/in/peterybtan",
+      "https://sg.linkedin.com/in/markus-helms-75b8313b2",
+      "https://sg.linkedin.com/in/cynthiamak",
+      "https://sg.linkedin.com/in/chee-bin-tay-017230b3"
+    ],
+    "bluepoint partners": [
+      "https://kr.linkedin.com/in/yongkwan-lee-41749aa6",
+      "https://kr.linkedin.com/in/kihyunhong"
+    ],
+    "embarca ventures": [
+      "https://www.linkedin.com/in/valentinaterranova1",
+      "https://es.linkedin.com/in/gonzaloinnocenti",
+      "https://ar.linkedin.com/in/fernandezmbelen",
+      "https://ar.linkedin.com/in/cpnbrendarojas",
+      "https://ar.linkedin.com/in/lobato-david"
+    ],
+    "efg ev fintech": [
+      "https://eg.linkedin.com/in/mahmoud-el-zohairy-mba-62a948102"
+    ],
+    "ark challenge": [
+      "https://www.linkedin.com/in/jeffamerine",
+      "https://www.linkedin.com/in/jeannetteballezacollins"
+    ],
+    "beyond": [
+      "https://dk.linkedin.com/in/verica-poposka"
+    ],
+    "chivas venture": [
+      "https://uk.linkedin.com/in/nick-blacknell-39173817"
+    ],
+    "10b": [
+      "https://br.linkedin.com/in/marcelo-lima-893195",
+      "https://br.linkedin.com/in/thomas-carolla-2a587a69",
+      "https://br.linkedin.com/in/peixotopedro",
+      "https://br.linkedin.com/in/rodrigo-rodrigues-3567a93b",
+      "https://br.linkedin.com/in/camilabraune"
+    ],
+    "4ward vc": [
+      "https://www.linkedin.com/in/mattwardio"
+    ],
+    "cyrise": [
+      "https://au.linkedin.com/in/scotthandsaker",
+      "https://au.linkedin.com/in/kirstin-mcintosh",
+      "https://au.linkedin.com/in/tayedwin"
+    ],
+    "dreamplus": [
+      "https://www.linkedin.com/in/yuntek-jung-8b872b93",
+      "https://kr.linkedin.com/in/mason-moonhwi-lee-b65b45ab"
+    ],
+    "bonbillo llc": [
+      "https://www.linkedin.com/in/surajkripalani",
+      "https://in.linkedin.com/in/ashnathakkar",
+      "https://www.linkedin.com/in/kunalpaymaster",
+      "https://www.linkedin.com/in/micahchase",
+      "https://www.linkedin.com/in/ankeetdedhia"
+    ],
+    "apple seed": [
+      "https://sg.linkedin.com/in/kumaranpillai",
+      "https://sg.linkedin.com/in/karuppaiahpalani"
+    ],
+    "cyberlaunch": [
+      "https://www.linkedin.com/in/chklaus",
+      "https://www.linkedin.com/in/matt-m-rahman-8170771"
+    ]
+  },
+  "people": {
+    "philip odegard": [
+      "https://www.linkedin.com/in/philipodegard"
+    ]
+  },
+  "companies": {
+    "linkedin.com/company/backfund": [
+      "https://www.linkedin.com/in/karelescobar",
+      "https://uk.linkedin.com/in/andres-gassert-71853544"
+    ],
+    "linkedin.com/company/blueincube": [
+      "https://sg.linkedin.com/in/clgoh1",
+      "https://sg.linkedin.com/in/peterybtan",
+      "https://sg.linkedin.com/in/markus-helms-75b8313b2",
+      "https://sg.linkedin.com/in/cynthiamak",
+      "https://sg.linkedin.com/in/chee-bin-tay-017230b3"
+    ],
+    "linkedin.com/company/bluepoint-partners": [
+      "https://kr.linkedin.com/in/yongkwan-lee-41749aa6",
+      "https://kr.linkedin.com/in/kihyunhong"
+    ],
+    "linkedin.com/company/11376549": [
+      "https://www.linkedin.com/in/valentinaterranova1",
+      "https://es.linkedin.com/in/gonzaloinnocenti",
+      "https://ar.linkedin.com/in/fernandezmbelen",
+      "https://ar.linkedin.com/in/cpnbrendarojas",
+      "https://ar.linkedin.com/in/lobato-david"
+    ],
+    "linkedin.com/company/efgevfintech": [
+      "https://eg.linkedin.com/in/mahmoud-el-zohairy-mba-62a948102"
+    ],
+    "linkedin.com/company/odegardgroup": [
+      "https://www.linkedin.com/in/philipodegard",
+      "https://za.linkedin.com/in/warren-cason-36204b1a7"
+    ],
+    "linkedin.com/company/2533798": [
+      "https://www.linkedin.com/in/jeffamerine",
+      "https://www.linkedin.com/in/jeannetteballezacollins"
+    ],
+    "linkedin.com/company/beyondaccelerator": [
+      "https://dk.linkedin.com/in/verica-poposka"
+    ],
+    "linkedin.com/company/the-venture": [
+      "https://uk.linkedin.com/in/nick-blacknell-39173817"
+    ],
+    "linkedin.com/company/10b-gestora-de-recursos": [
+      "https://br.linkedin.com/in/marcelo-lima-893195",
+      "https://br.linkedin.com/in/thomas-carolla-2a587a69",
+      "https://br.linkedin.com/in/peixotopedro",
+      "https://br.linkedin.com/in/rodrigo-rodrigues-3567a93b",
+      "https://br.linkedin.com/in/camilabraune"
+    ],
+    "linkedin.com/company/86764424": [
+      "https://www.linkedin.com/in/mattwardio"
+    ],
+    "linkedin.com/company/cyrise": [
+      "https://au.linkedin.com/in/scotthandsaker",
+      "https://au.linkedin.com/in/kirstin-mcintosh",
+      "https://au.linkedin.com/in/tayedwin"
+    ],
+    "linkedin.com/company/dreamplusasia": [
+      "https://www.linkedin.com/in/yuntek-jung-8b872b93",
+      "https://kr.linkedin.com/in/mason-moonhwi-lee-b65b45ab"
+    ],
+    "linkedin.com/company/bonbillo": [
+      "https://www.linkedin.com/in/surajkripalani",
+      "https://in.linkedin.com/in/ashnathakkar",
+      "https://www.linkedin.com/in/kunalpaymaster",
+      "https://www.linkedin.com/in/micahchase",
+      "https://www.linkedin.com/in/ankeetdedhia"
+    ],
+    "linkedin.com/company/apple-seed-venture-accelerator": [
+      "https://sg.linkedin.com/in/kumaranpillai",
+      "https://sg.linkedin.com/in/karuppaiahpalani"
+    ],
+    "linkedin.com/company/cyberlaunchvc": [
+      "https://www.linkedin.com/in/chklaus",
+      "https://www.linkedin.com/in/matt-m-rahman-8170771"
+    ]
+  }
+}

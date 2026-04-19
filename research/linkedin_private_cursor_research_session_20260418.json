@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "description": "Session-owned LinkedIn /in/ enrichment (web search verified). Apply with: python3 scripts/apply_linkedin_private_cursor_research_merge.py",
+    "updated": "2026-04-18Tsession3",
+    "notes": [
+      "Primary Venture Partners & FirstMark Capital: partner URLs gathered from public web search snippets (company pages, f4.fund, LinkedIn).",
+      "Michael Liou (023): matched to https://www.linkedin.com/in/michaelliou (Main Character Capital) from search context.",
+      "Corner Table (008): no verifiable VC fund team found; name collides with restaurant group and Orbis stub listing.",
+      "Human Ventures: GP URLs from human.vc/our-team plus web search (Joe Marchese, Michael Letta slug per LinkedIn title match). Elise King included as former Human Ventures investment team (per AHA bio).",
+      "NEA (new-enterprise-associates): leadership URLs from nea.com/team + LinkedIn fetch for Mohamad Makhzoumi; fills mis-scraped 020 row that carries NEA company LinkedIn but wrong person name.",
+      "Asimov Ventures: Alan Meckler, Tyler Benster, John Meckler from asimovventures.com/team + LinkedIn title verification for Alan.",
+      "004 batch: Black Diamond Ventures team from bdventures.com/team + LinkedIn (Chris Lucas, Ana Quintana, David Lynch, Jon Kraft). John Kispert omitted — BDV on site but not shown on his public LinkedIn experience.",
+      "Brick & Mortar Ventures: team from brickmortar.vc/team + LinkedIn title checks.",
+      "Brand Foundry Ventures: Andrew Mitchell + Brian Spaly (vcsheet / LinkedIn).",
+      "Beanstalk Ventures (retail VC): Ken Seiff + Michael Newman from LinkedIn titles (Beanstalk company); Ken Pilot not listed on his /in/ experience so excluded."
+    ]
+  },
+  "firms": {
+    "primary venture partners": [
+      "https://www.linkedin.com/in/bradsvrluga",
+      "https://www.linkedin.com/in/benjaminsun",
+      "https://www.linkedin.com/in/jasonshuman",
+      "https://www.linkedin.com/in/cassyoung",
+      "https://www.linkedin.com/in/emily-man-02a1a486",
+      "https://www.linkedin.com/in/samtoole",
+      "https://www.linkedin.com/in/tobias-citron-65500b78",
+      "https://www.linkedin.com/in/sridharajay"
+    ],
+    "firstmark capital": [
+      "https://www.linkedin.com/in/rickheitzmann",
+      "https://www.linkedin.com/in/amishjani",
+      "https://www.linkedin.com/in/turck",
+      "https://www.linkedin.com/in/adam-nelson-ny",
+      "https://www.linkedin.com/in/arnavbimbhet",
+      "https://www.linkedin.com/in/derekschu",
+      "https://www.linkedin.com/in/daniel-gaisin-a235504"
+    ],
+    "human ventures": [
+      "https://www.linkedin.com/in/heatherhartnett",
+      "https://www.linkedin.com/in/joemarchese",
+      "https://www.linkedin.com/in/michael-letta-ab3541383",
+      "https://www.linkedin.com/in/elise-king-49757212"
+    ],
+    "nea new enterprise associates": [
+      "https://www.linkedin.com/in/scottsandell",
+      "https://www.linkedin.com/in/toflorence",
+      "https://www.linkedin.com/in/mohamad-makhzoumi-37368334",
+      "https://www.linkedin.com/in/rickcyang",
+      "https://www.linkedin.com/in/ali-behbahani-3bb3591"
+    ],
+    "new enterprise associates": [
+      "https://www.linkedin.com/in/scottsandell",
+      "https://www.linkedin.com/in/toflorence",
+      "https://www.linkedin.com/in/mohamad-makhzoumi-37368334",
+      "https://www.linkedin.com/in/rickcyang",
+      "https://www.linkedin.com/in/ali-behbahani-3bb3591"
+    ],
+    "asimov ventures": [
+      "https://www.linkedin.com/in/alan-meckler-30b39612",
+      "https://www.linkedin.com/in/tylerbenster",
+      "https://www.linkedin.com/in/john-meckler-64629016b"
+    ],
+    "black diamond ventures": [
+      "https://www.linkedin.com/in/chris-lucas-46514ab",
+      "https://www.linkedin.com/in/anaquintana",
+      "https://www.linkedin.com/in/davidtlynch",
+      "https://www.linkedin.com/in/jonkraft1"
+    ],
+    "brick mortar": [
+      "https://www.linkedin.com/in/darrenbechtel",
+      "https://www.linkedin.com/in/kaustubh-pandya",
+      "https://www.linkedin.com/in/curtrodgers",
+      "https://www.linkedin.com/in/austinyount",
+      "https://www.linkedin.com/in/guillaumebazouin",
+      "https://www.linkedin.com/in/alice-leung",
+      "https://www.linkedin.com/in/adityathakur"
+    ],
+    "brand foundry ventures": [
+      "https://www.linkedin.com/in/andrewcmitchell",
+      "https://www.linkedin.com/in/brianspaly"
+    ],
+    "beanstalk ventures": [
+      "https://www.linkedin.com/in/seiff",
+      "https://www.linkedin.com/in/michael-newman-987268a0"
+    ]
+  },
+  "people": {
+    "michael liou": [
+      "https://www.linkedin.com/in/michaelliou"
+    ]
+  },
+  "companies": {
+    "linkedin.com/company/primary-venture-partners": [
+      "https://www.linkedin.com/in/bradsvrluga",
+      "https://www.linkedin.com/in/benjaminsun",
+      "https://www.linkedin.com/in/jasonshuman",
+      "https://www.linkedin.com/in/cassyoung",
+      "https://www.linkedin.com/in/emily-man-02a1a486",
+      "https://www.linkedin.com/in/samtoole",
+      "https://www.linkedin.com/in/tobias-citron-65500b78",
+      "https://www.linkedin.com/in/sridharajay"
+    ],
+    "linkedin.com/company/firstmark": [
+      "https://www.linkedin.com/in/rickheitzmann",
+      "https://www.linkedin.com/in/amishjani",
+      "https://www.linkedin.com/in/turck",
+      "https://www.linkedin.com/in/adam-nelson-ny",
+      "https://www.linkedin.com/in/arnavbimbhet",
+      "https://www.linkedin.com/in/derekschu",
+      "https://www.linkedin.com/in/daniel-gaisin-a235504"
+    ],
+    "linkedin.com/company/human-vc": [
+      "https://www.linkedin.com/in/heatherhartnett",
+      "https://www.linkedin.com/in/joemarchese",
+      "https://www.linkedin.com/in/michael-letta-ab3541383",
+      "https://www.linkedin.com/in/elise-king-49757212"
+    ],
+    "linkedin.com/company/new-enterprise-associates": [
+      "https://www.linkedin.com/in/scottsandell",
+      "https://www.linkedin.com/in/toflorence",
+      "https://www.linkedin.com/in/mohamad-makhzoumi-37368334",
+      "https://www.linkedin.com/in/rickcyang",
+      "https://www.linkedin.com/in/ali-behbahani-3bb3591"
+    ],
+    "linkedin.com/company/asimov-ventures": [
+      "https://www.linkedin.com/in/alan-meckler-30b39612",
+      "https://www.linkedin.com/in/tylerbenster",
+      "https://www.linkedin.com/in/john-meckler-64629016b"
+    ],
+    "linkedin.com/company/black-diamond-ventures": [
+      "https://www.linkedin.com/in/chris-lucas-46514ab",
+      "https://www.linkedin.com/in/anaquintana",
+      "https://www.linkedin.com/in/davidtlynch",
+      "https://www.linkedin.com/in/jonkraft1"
+    ],
+    "linkedin.com/company/brickmortarvc": [
+      "https://www.linkedin.com/in/darrenbechtel",
+      "https://www.linkedin.com/in/kaustubh-pandya",
+      "https://www.linkedin.com/in/curtrodgers",
+      "https://www.linkedin.com/in/austinyount",
+      "https://www.linkedin.com/in/guillaumebazouin",
+      "https://www.linkedin.com/in/alice-leung",
+      "https://www.linkedin.com/in/adityathakur"
+    ],
+    "linkedin.com/company/brand-foundry-ventures": [
+      "https://www.linkedin.com/in/andrewcmitchell",
+      "https://www.linkedin.com/in/brianspaly"
+    ],
+    "linkedin.com/company/beanstalk-ventures": [
+      "https://www.linkedin.com/in/seiff",
+      "https://www.linkedin.com/in/michael-newman-987268a0"
+    ]
+  }
+}

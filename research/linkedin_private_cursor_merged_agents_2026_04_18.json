@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "description": "Merged web-research batch 2026-04-18: agents (007,012,009) + key/slug QA for merge script",
+    "apply": "python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_merged_agents_2026_04_18.json"
+  },
+  "firms": {
+    "nova": [
+      "https://www.linkedin.com/in/andydavidson1974",
+      "https://www.linkedin.com/in/robwhitecpo",
+      "https://www.linkedin.com/in/oliviagreenberg"
+    ],
+    "mrpink vc": [
+      "https://www.linkedin.com/in/hernanharo",
+      "https://www.linkedin.com/in/ernestogarciamontesano",
+      "https://www.linkedin.com/in/danielpprr",
+      "https://www.linkedin.com/in/gustavowurzel"
+    ],
+    "creadev": [
+      "https://www.linkedin.com/in/charlfrancois",
+      "https://www.linkedin.com/in/joelfilippi",
+      "https://www.linkedin.com/in/tom-rostand-282a1418",
+      "https://www.linkedin.com/in/alexia-lingart-meltz-14316b85",
+      "https://www.linkedin.com/in/brieuc-sartorius-107571b6"
+    ],
+    "pl iade venture": [
+      "https://www.linkedin.com/in/maximilienoursel",
+      "https://www.linkedin.com/in/rdelachapelle",
+      "https://www.linkedin.com/in/bertrand-begin-97a544",
+      "https://www.linkedin.com/in/constancerietzler",
+      "https://www.linkedin.com/in/julien-watry-vc-ba-venture-capital-entrepreneur-dirigeant",
+      "https://www.linkedin.com/in/hector-peribere-4a1504175"
+    ],
+    "bip capital": [
+      "https://www.linkedin.com/in/bipmarkbuffington",
+      "https://www.linkedin.com/in/cjohnsonatlanta",
+      "https://www.linkedin.com/in/mark-flickinger-24295538",
+      "https://www.linkedin.com/in/phil-davidson-49887b81",
+      "https://www.linkedin.com/in/kara-mullins-864ab872",
+      "https://www.linkedin.com/in/davidmichaelgreenberg"
+    ],
+    "lventure group": [
+      "https://www.linkedin.com/in/giuliomontoli",
+      "https://www.linkedin.com/in/antonella-zullo-b7a998b",
+      "https://www.linkedin.com/in/riccardo-allegra-20a947a",
+      "https://www.linkedin.com/in/domenico-nesci-55113b",
+      "https://www.linkedin.com/in/augustoamatori",
+      "https://www.linkedin.com/in/rmagnifico",
+      "https://www.linkedin.com/in/michela-aliazzo-she-her-9b949b33",
+      "https://www.linkedin.com/in/elena-martelli",
+      "https://www.linkedin.com/in/fbattisti",
+      "https://www.linkedin.com/in/filippo-bria",
+      "https://www.linkedin.com/in/giulia-fazzini",
+      "https://www.linkedin.com/in/edoardo-giorio-74b924187",
+      "https://www.linkedin.com/in/ericlarsen1989",
+      "https://www.linkedin.com/in/michelamasoni",
+      "https://www.linkedin.com/in/pietro-nobili-24551418a",
+      "https://www.linkedin.com/in/matteoparadisi",
+      "https://www.linkedin.com/in/radiosa",
+      "https://www.linkedin.com/in/ludovica-tartaglione-24639335"
+    ],
+    "velocity partners": [
+      "https://www.linkedin.com/in/dmaris",
+      "https://www.linkedin.com/in/dkalavros",
+      "https://www.linkedin.com/in/konstantinos-mavros-6b05038",
+      "https://www.linkedin.com/in/grpapastergiou"
+    ],
+    "madrona venture group": [
+      "https://www.linkedin.com/in/sabrina-albert",
+      "https://www.linkedin.com/in/annabaird",
+      "https://www.linkedin.com/in/hopecochran",
+      "https://www.linkedin.com/in/patrickjennis",
+      "https://www.linkedin.com/in/mikefridgen",
+      "https://www.linkedin.com/in/joehorsman",
+      "https://www.linkedin.com/in/sxjacobson",
+      "https://www.linkedin.com/in/len-jordan-24a68318",
+      "https://www.linkedin.com/in/karanmehandru",
+      "https://www.linkedin.com/in/mattmcilwain",
+      "https://www.linkedin.com/in/markthomasnelson",
+      "https://www.linkedin.com/in/chrispicardo",
+      "https://www.linkedin.com/in/portertim",
+      "https://www.linkedin.com/in/vivekramaswami",
+      "https://www.linkedin.com/in/stevesingh",
+      "https://www.linkedin.com/in/somasegar"
+    ],
+    "join capital": [
+      "https://www.linkedin.com/in/tobiasschirmer",
+      "https://www.linkedin.com/in/simone-lavizzari-7a82b93",
+      "https://www.linkedin.com/in/julia-flaig-19246325"
+    ],
+    "10branch": [
+      "https://www.linkedin.com/in/jay-haladay-1b91846",
+      "https://www.linkedin.com/in/taryn-hatchel-76a1aa9",
+      "https://www.linkedin.com/in/mileshaladay",
+      "https://www.linkedin.com/in/suzan-rea-469b17152"
+    ],
+    "13 ventures": [
+      "https://www.linkedin.com/in/kevineisenfrats"
+    ],
+    "208 seed ventures": [
+      "https://www.linkedin.com/in/jai-malik"
+    ],
+    "3t capital": [
+      "https://www.linkedin.com/in/caclin",
+      "https://www.linkedin.com/in/gillesdebuchy"
+    ],
+    "7 gate ventures": [
+      "https://www.linkedin.com/in/amirvohooshi",
+      "https://www.linkedin.com/in/alireza-rahnema-a430771",
+      "https://www.linkedin.com/in/taniya-dewan-7022751b",
+      "https://www.linkedin.com/in/krahemtu",
+      "https://www.linkedin.com/in/shahabsamimi"
+    ],
+    "7wire ventures": [
+      "https://www.linkedin.com/in/glen-tullman-76108566",
+      "https://www.linkedin.com/in/leeshapiro",
+      "https://www.linkedin.com/in/rgarber",
+      "https://www.linkedin.com/in/alyssa-jaffee-71095011",
+      "https://www.linkedin.com/in/thomas-main-506a5b18",
+      "https://www.linkedin.com/in/schonthal",
+      "https://www.linkedin.com/in/eric-z-shan",
+      "https://www.linkedin.com/in/tiffanyhyu",
+      "https://www.linkedin.com/in/tom-richards-1801356b",
+      "https://www.linkedin.com/in/ted-bernstein"
+    ],
+    "8 bit capital": [
+      "https://www.linkedin.com/in/jonathanabrams",
+      "https://www.linkedin.com/in/kentlindstrom"
+    ]
+  },
+  "people": {
+    "linda strydom prosus group": [
+      "https://www.linkedin.com/in/linda-strydom-0a699b71"
+    ],
+    "luba lesiva palumni vc": [
+      "https://www.linkedin.com/in/lubalesiva"
+    ],
+    "mike majors data point capital": [
+      "https://www.linkedin.com/in/mike-majors-43398"
+    ],
+    "t scott law scott law meridian street capital": [
+      "https://www.linkedin.com/in/scott-law-57030940"
+    ],
+    "t scott law scott law": [
+      "https://www.linkedin.com/in/scott-law-57030940"
+    ],
+    "brianne carta": [
+      "https://www.linkedin.com/in/brianne-gaultiere-8889a437"
+    ],
+    "matt barron 12 12 ventures": [
+      "https://www.linkedin.com/in/matthewtbarron"
+    ],
+    "paul dugsin raiven capital": [
+      "https://www.linkedin.com/in/pauldugsin"
+    ]
+  },
+  "companies": {
+    "linkedin.com/company/wearenova": [
+      "https://www.linkedin.com/in/andydavidson1974",
+      "https://www.linkedin.com/in/robwhitecpo",
+      "https://www.linkedin.com/in/oliviagreenberg"
+    ],
+    "linkedin.com/company/mrpink-vc": [
+      "https://www.linkedin.com/in/hernanharo",
+      "https://www.linkedin.com/in/ernestogarciamontesano",
+      "https://www.linkedin.com/in/danielpprr",
+      "https://www.linkedin.com/in/gustavowurzel"
+    ],
+    "linkedin.com/company/creadev-investissements": [
+      "https://www.linkedin.com/in/charlfrancois",
+      "https://www.linkedin.com/in/joelfilippi",
+      "https://www.linkedin.com/in/tom-rostand-282a1418",
+      "https://www.linkedin.com/in/alexia-lingart-meltz-14316b85",
+      "https://www.linkedin.com/in/brieuc-sartorius-107571b6"
+    ],
+    "linkedin.com/company/pleiade-venture": [
+      "https://www.linkedin.com/in/maximilienoursel",
+      "https://www.linkedin.com/in/rdelachapelle",
+      "https://www.linkedin.com/in/bertrand-begin-97a544",
+      "https://www.linkedin.com/in/constancerietzler",
+      "https://www.linkedin.com/in/julien-watry-vc-ba-venture-capital-entrepreneur-dirigeant",
+      "https://www.linkedin.com/in/hector-peribere-4a1504175"
+    ],
+    "linkedin.com/company/bip-capital": [
+      "https://www.linkedin.com/in/bipmarkbuffington",
+      "https://www.linkedin.com/in/cjohnsonatlanta",
+      "https://www.linkedin.com/in/mark-flickinger-24295538",
+      "https://www.linkedin.com/in/phil-davidson-49887b81",
+      "https://www.linkedin.com/in/kara-mullins-864ab872",
+      "https://www.linkedin.com/in/davidmichaelgreenberg"
+    ],
+    "linkedin.com/company/lventure-group": [
+      "https://www.linkedin.com/in/giuliomontoli",
+      "https://www.linkedin.com/in/antonella-zullo-b7a998b",
+      "https://www.linkedin.com/in/riccardo-allegra-20a947a",
+      "https://www.linkedin.com/in/domenico-nesci-55113b",
+      "https://www.linkedin.com/in/augustoamatori",
+      "https://www.linkedin.com/in/rmagnifico",
+      "https://www.linkedin.com/in/michela-aliazzo-she-her-9b949b33",
+      "https://www.linkedin.com/in/elena-martelli",
+      "https://www.linkedin.com/in/fbattisti",
+      "https://www.linkedin.com/in/filippo-bria",
+      "https://www.linkedin.com/in/giulia-fazzini",
+      "https://www.linkedin.com/in/edoardo-giorio-74b924187",
+      "https://www.linkedin.com/in/ericlarsen1989",
+      "https://www.linkedin.com/in/michelamasoni",
+      "https://www.linkedin.com/in/pietro-nobili-24551418a",
+      "https://www.linkedin.com/in/matteoparadisi",
+      "https://www.linkedin.com/in/radiosa",
+      "https://www.linkedin.com/in/ludovica-tartaglione-24639335"
+    ],
+    "linkedin.com/company/velocity-partners-vc": [
+      "https://www.linkedin.com/in/dmaris",
+      "https://www.linkedin.com/in/dkalavros",
+      "https://www.linkedin.com/in/konstantinos-mavros-6b05038",
+      "https://www.linkedin.com/in/grpapastergiou"
+    ],
+    "linkedin.com/company/madrona-venture-group": [
+      "https://www.linkedin.com/in/sabrina-albert",
+      "https://www.linkedin.com/in/annabaird",
+      "https://www.linkedin.com/in/hopecochran",
+      "https://www.linkedin.com/in/patrickjennis",
+      "https://www.linkedin.com/in/mikefridgen",
+      "https://www.linkedin.com/in/joehorsman",
+      "https://www.linkedin.com/in/sxjacobson",
+      "https://www.linkedin.com/in/len-jordan-24a68318",
+      "https://www.linkedin.com/in/karanmehandru",
+      "https://www.linkedin.com/in/mattmcilwain",
+      "https://www.linkedin.com/in/markthomasnelson",
+      "https://www.linkedin.com/in/chrispicardo",
+      "https://www.linkedin.com/in/portertim",
+      "https://www.linkedin.com/in/vivekramaswami",
+      "https://www.linkedin.com/in/stevesingh",
+      "https://www.linkedin.com/in/somasegar"
+    ],
+    "linkedin.com/company/join-capital": [
+      "https://www.linkedin.com/in/tobiasschirmer",
+      "https://www.linkedin.com/in/simone-lavizzari-7a82b93",
+      "https://www.linkedin.com/in/julia-flaig-19246325"
+    ],
+    "linkedin.com/company/ld-capital": [
+      "https://www.linkedin.com/in/xi-li-618527b4",
+      "https://www.linkedin.com/in/le-lu-036a5465",
+      "https://www.linkedin.com/in/haobo-zhao-hbz",
+      "https://www.linkedin.com/in/vicky-xue-498b17a1",
+      "https://www.linkedin.com/in/sona-lee-8b2b7b149"
+    ],
+    "linkedin.com/company/prosus-group": [
+      "https://www.linkedin.com/in/linda-strydom-0a699b71",
+      "https://www.linkedin.com/in/nikkydshah"
+    ],
+    "linkedin.com/company/palumnivc": [
+      "https://www.linkedin.com/in/lubalesiva"
+    ],
+    "linkedin.com/company/data-point-capital": [
+      "https://www.linkedin.com/in/mike-majors-43398",
+      "https://www.linkedin.com/in/scott-savitz-19837a91",
+      "https://www.linkedin.com/in/geoff-oblak-31b2298",
+      "https://www.linkedin.com/in/haley-farnsworth-13745513b"
+    ],
+    "linkedin.com/company/10594868": [
+      "https://www.linkedin.com/in/scott-law-57030940",
+      "https://www.linkedin.com/in/george-ribaroff",
+      "https://www.linkedin.com/in/brianna-yarnoff-801945190",
+      "https://www.linkedin.com/in/robelm",
+      "https://www.linkedin.com/in/matt-shiflett-cpa-28ab1142",
+      "https://www.linkedin.com/in/steven-isenberg-2464a782",
+      "https://www.linkedin.com/in/john-j-villa-a8014a66"
+    ],
+    "linkedin.com/company/12-12-ventures": [
+      "https://www.linkedin.com/in/matthewtbarron",
+      "https://www.linkedin.com/in/sam-humeid-5620333",
+      "https://www.linkedin.com/in/sabascarrillo",
+      "https://www.linkedin.com/in/madeline-stein-844185aa"
+    ],
+    "linkedin.com/company/raivencapital": [
+      "https://www.linkedin.com/in/pauldugsin",
+      "https://www.linkedin.com/in/supreet",
+      "https://www.linkedin.com/in/annamshen"
+    ]
+  }
+}

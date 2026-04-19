@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "description": "Web search (2026-04-18): first Euro Tech VC funds (002) — personal /in/ URLs from public team pages, press, and LinkedIn company listings.",
+    "sources": "Indexed web search; Kembara/Mundi, SlateVC, b2venture, ZOHO.VC.",
+    "no_match_placeholder": "Use '-' in session JSON when researched and no verified /in/ URL; merge script treats '-' like empty."
+  },
+  "firms": {
+    "kembara": [
+      "https://www.linkedin.com/in/javiersantiso",
+      "https://www.linkedin.com/in/yann-de-vries-468134",
+      "https://www.linkedin.com/in/sirajkhaliq",
+      "https://www.linkedin.com/in/pierre-festal-192600",
+      "https://www.linkedin.com/in/elisa-mele-66837510a",
+      "https://www.linkedin.com/in/rubendominguezibar"
+    ],
+    "slatevc": [
+      "https://www.linkedin.com/in/chloegiard",
+      "https://www.linkedin.com/in/clementbuyse",
+      "https://www.linkedin.com/in/renaudvisage",
+      "https://www.linkedin.com/in/sebastienleger1"
+    ],
+    "b2venture": [
+      "https://www.linkedin.com/in/agoeldi",
+      "https://www.linkedin.com/in/d-zak",
+      "https://www.linkedin.com/in/camillagayl",
+      "https://www.linkedin.com/in/isabel-e-3ab655144",
+      "https://www.linkedin.com/in/friederikehoffmann",
+      "https://www.linkedin.com/in/sabrina-stoeckl"
+    ],
+    "zoho vc": [
+      "https://www.linkedin.com/in/denniskirpensteijn",
+      "https://www.linkedin.com/in/nicolas-sievers-821b39106",
+      "https://www.linkedin.com/in/judit-klein",
+      "https://www.linkedin.com/in/benjabo"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/mundi-ventures": [
+      "https://www.linkedin.com/in/javiersantiso",
+      "https://www.linkedin.com/in/yann-de-vries-468134",
+      "https://www.linkedin.com/in/sirajkhaliq",
+      "https://www.linkedin.com/in/pierre-festal-192600",
+      "https://www.linkedin.com/in/elisa-mele-66837510a",
+      "https://www.linkedin.com/in/rubendominguezibar"
+    ],
+    "linkedin.com/company/kembaravc": [
+      "https://www.linkedin.com/in/javiersantiso",
+      "https://www.linkedin.com/in/yann-de-vries-468134",
+      "https://www.linkedin.com/in/sirajkhaliq",
+      "https://www.linkedin.com/in/pierre-festal-192600",
+      "https://www.linkedin.com/in/elisa-mele-66837510a",
+      "https://www.linkedin.com/in/rubendominguezibar"
+    ],
+    "linkedin.com/company/slatevc": [
+      "https://www.linkedin.com/in/chloegiard",
+      "https://www.linkedin.com/in/clementbuyse",
+      "https://www.linkedin.com/in/renaudvisage",
+      "https://www.linkedin.com/in/sebastienleger1"
+    ],
+    "linkedin.com/company/b2venture": [
+      "https://www.linkedin.com/in/agoeldi",
+      "https://www.linkedin.com/in/d-zak",
+      "https://www.linkedin.com/in/camillagayl",
+      "https://www.linkedin.com/in/isabel-e-3ab655144",
+      "https://www.linkedin.com/in/friederikehoffmann",
+      "https://www.linkedin.com/in/sabrina-stoeckl"
+    ],
+    "linkedin.com/company/zoho-vc": [
+      "https://www.linkedin.com/in/denniskirpensteijn",
+      "https://www.linkedin.com/in/nicolas-sievers-821b39106",
+      "https://www.linkedin.com/in/judit-klein",
+      "https://www.linkedin.com/in/benjabo"
+    ]
+  }
+}

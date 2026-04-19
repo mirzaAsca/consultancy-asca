@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "batch": "014_rows_2-21",
+    "method": "web_search_subagent",
+    "description": "Native people CSV — batch 1"
+  },
+  "people": {
+    "keaton hatch::tamarak capital": ["https://www.linkedin.com/in/keaton-hatch-217636114"],
+    "martin garcia::bitkraft ventures": ["https://www.linkedin.com/in/martin-garcia-0a01004"],
+    "greg robert kidd::globalid": ["https://www.linkedin.com/in/gregkidd"],
+    "miguel armaza::gilgamesh ventures": ["https://www.linkedin.com/in/armaza"],
+    "emma cui::longhash ventures": ["https://www.linkedin.com/in/emmacui"],
+    "david arscott::compass technology partners": ["https://www.linkedin.com/in/david-g-arscott-b6a2b31a"],
+    "lisa morales-hellebo::refashiond ventures": ["https://www.linkedin.com/in/supplychainlocalization"],
+    "carolina serra::visa": ["https://www.linkedin.com/in/carolinaserra"],
+    "anthony xu::new ground ventures": ["https://www.linkedin.com/in/anthonyzxu"],
+    "cindy bi::capitalx": ["https://www.linkedin.com/in/cindyxbi"],
+    "nick naclerio::illumina ventures": ["https://www.linkedin.com/in/nick-naclerio-68235b8"],
+    "jonathan hakakian::soundboard venture fund": ["https://www.linkedin.com/in/jhakakian"],
+    "william lese::braemar energy": ["https://www.linkedin.com/in/william-lese-9312603"],
+    "philip austin::anterra capital": ["https://www.linkedin.com/in/philip-austin-9005b917"],
+    "marc averitt::🌴marc averitt🌴": ["https://www.linkedin.com/in/averitt"],
+    "adam goulburn::lux capital": ["https://www.linkedin.com/in/adam-goulburn-52421027"],
+    "terry w. moore::mvp funds": ["https://www.linkedin.com/in/terrymoore2"],
+    "greg young::spruce capital partners": ["https://www.linkedin.com/in/gregyoungvc"]
+  },
+  "companies": {
+    "linkedin.com/company/tamarak-capital": ["https://www.linkedin.com/in/keaton-hatch-217636114"],
+    "linkedin.com/company/bitkraft-holding": ["https://www.linkedin.com/in/martin-garcia-0a01004"],
+    "linkedin.com/company/global-id-inc": ["https://www.linkedin.com/in/gregkidd"],
+    "linkedin.com/company/gilgamesh-ventures": ["https://www.linkedin.com/in/armaza"],
+    "linkedin.com/company/longhashventures": ["https://www.linkedin.com/in/emmacui"],
+    "linkedin.com/company/compass-technology-partners": ["https://www.linkedin.com/in/david-g-arscott-b6a2b31a"],
+    "linkedin.com/company/refashiond": ["https://www.linkedin.com/in/supplychainlocalization"],
+    "linkedin.com/company/visa": ["https://www.linkedin.com/in/carolinaserra"],
+    "linkedin.com/company/new-ground-ventures": ["https://www.linkedin.com/in/anthonyzxu"],
+    "linkedin.com/company/capitalx-vc": ["https://www.linkedin.com/in/cindyxbi"],
+    "linkedin.com/company/illumina-ventures": ["https://www.linkedin.com/in/nick-naclerio-68235b8"],
+    "linkedin.com/company/soundboard-venture-fund": ["https://www.linkedin.com/in/jhakakian"],
+    "linkedin.com/company/braemar-energy-ventures": ["https://www.linkedin.com/in/william-lese-9312603"],
+    "linkedin.com/company/anterra-capital": ["https://www.linkedin.com/in/philip-austin-9005b917"],
+    "linkedin.com/company/okapi-venture-capital": ["https://www.linkedin.com/in/averitt"],
+    "linkedin.com/company/lux-capital": ["https://www.linkedin.com/in/adam-goulburn-52421027"],
+    "linkedin.com/company/moore-venture-partners": ["https://www.linkedin.com/in/terrymoore2"],
+    "linkedin.com/company/spruce-capital-partners-llc": ["https://www.linkedin.com/in/gregyoungvc"]
+  },
+  "firms": {}
+}

@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "file": "datasets/004__html__micro_vc_seed_fund_spreadsheet_google_drive.csv",
+    "date": "2026-04-18",
+    "batch": 2,
+    "method": "Web search + LinkedIn public profile previews (verified employer lines).",
+    "agent": "cursor-session"
+  },
+  "by_firm_name": {
+    "Counterview Capital": {
+      "urls": [
+        "https://www.linkedin.com/in/brian-rubenstein-4aa4b774",
+        "https://www.linkedin.com/in/evanburnstein",
+        "https://www.linkedin.com/in/barry-rubenstein-5081b884"
+      ],
+      "note": "LinkedIn company page + partner title snippets; Barry Rubenstein MGP."
+    },
+    "Cross Culture Ventures": {
+      "urls": [
+        "https://www.linkedin.com/in/marloncnichols",
+        "https://www.linkedin.com/in/suzyryoo",
+        "https://www.linkedin.com/in/danuelbrown"
+      ],
+      "note": "Marlon Nichols MaC / Cross Culture lineage; Suzy Ryoo lists Partner at Cross Culture Ventures; Danny Brown Chief of Staff Cross Culture + Partner MaC."
+    },
+    "Core Ventures Group": {
+      "urls": [
+        "https://www.linkedin.com/in/joannadrake",
+        "https://www.linkedin.com/in/seiji-miyasaka-3905a412"
+      ],
+      "note": "Joanna Drake lists General Partner Core Ventures Group (current); Seiji Miyasaka lists Investor at Core Ventures Group Apr 2016–Apr 2023 (jp profile)."
+    }
+  }
+}

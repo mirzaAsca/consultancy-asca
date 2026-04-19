@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "description": "007 wave 3: Leonis Investissement (FR), Draper Esprit/Molten, Keiki, Maverick Israel, Shearwater, SidebySide, IAN Fund (firms key). Web_search verified 2026-04-18.",
+    "apply": "python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch_007_wave3_2026_04_18.json"
+  },
+  "firms": {
+    "IAN Fund": [
+      "https://www.linkedin.com/in/padmajaruparel",
+      "https://www.linkedin.com/in/saurabhsrivastava101",
+      "https://www.linkedin.com/in/alok-mittal-590a",
+      "https://www.linkedin.com/in/priyankgarg"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/leonis-vc": [
+      "https://www.linkedin.com/in/flepied",
+      "https://www.linkedin.com/in/laurentlacroix",
+      "https://www.linkedin.com/in/hugel",
+      "https://www.linkedin.com/in/sylvain-delroux-45b8996"
+    ],
+    "https://www.linkedin.com/company/draper-esprit": [
+      "https://www.linkedin.com/in/marshr",
+      "https://www.linkedin.com/in/paullouislepine",
+      "https://www.linkedin.com/in/george-chalmers-cfa",
+      "https://www.linkedin.com/in/ingadeakin"
+    ],
+    "https://www.linkedin.com/company/molten-ventures": [
+      "https://www.linkedin.com/in/marshr",
+      "https://www.linkedin.com/in/paullouislepine",
+      "https://www.linkedin.com/in/george-chalmers-cfa",
+      "https://www.linkedin.com/in/ingadeakin"
+    ],
+    "https://www.linkedin.com/company/keiki-capital-llc": [
+      "https://www.linkedin.com/in/danlichtenberg"
+    ],
+    "https://www.linkedin.com/company/keiki-capital": [
+      "https://www.linkedin.com/in/danlichtenberg"
+    ],
+    "https://www.linkedin.com/company/maverick-ventures-israel-l-p-": [
+      "https://www.linkedin.com/in/yaron-carni-907a732",
+      "https://www.linkedin.com/in/miri-fenton-phd-868ba037",
+      "https://www.linkedin.com/in/rochelleram",
+      "https://www.linkedin.com/in/chen-sadeh-42a7b4a6",
+      "https://www.linkedin.com/in/laura-schwartz-a50a122"
+    ],
+    "https://www.linkedin.com/company/maverick-ventures-israel-l-p": [
+      "https://www.linkedin.com/in/yaron-carni-907a732",
+      "https://www.linkedin.com/in/miri-fenton-phd-868ba037",
+      "https://www.linkedin.com/in/rochelleram",
+      "https://www.linkedin.com/in/chen-sadeh-42a7b4a6",
+      "https://www.linkedin.com/in/laura-schwartz-a50a122"
+    ],
+    "https://www.linkedin.com/company/the-sidebyside-partnership": [
+      "https://www.linkedin.com/in/ben-ashworth-065b6a122",
+      "https://www.linkedin.com/in/shaleen-sheli-gupta-5ba8521",
+      "https://www.linkedin.com/in/julie-tooby",
+      "https://www.linkedin.com/in/sharon-murdoch-61a9ba98"
+    ],
+    "https://www.linkedin.com/company/shearwater-growth-equity": [
+      "https://www.linkedin.com/in/zac-zavos",
+      "https://www.linkedin.com/in/michael-gregg-8484805",
+      "https://www.linkedin.com/in/charles-gibbon-686584a",
+      "https://www.linkedin.com/in/matthew-parbhu-081941116"
+    ]
+  }
+}

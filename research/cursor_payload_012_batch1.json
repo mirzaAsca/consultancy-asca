@@ -1,0 +1,126 @@
+{
+  "firms": {
+    "01booster": [
+      "https://jp.linkedin.com/in/shinsuke-hamamiya",
+      "https://jp.linkedin.com/in/fuyuki-t"
+    ],
+    "1Flourish Capital": [
+      "https://www.linkedin.com/in/bill-hooper-04804929",
+      "https://www.linkedin.com/in/david-lane-01130",
+      "https://www.linkedin.com/in/tomtognoli",
+      "https://www.linkedin.com/in/steve-brinkman-773b1410",
+      "https://www.linkedin.com/in/eric-leicher-2b880a4"
+    ],
+    "1Up Ventures": [
+      "https://www.linkedin.com/in/edfries",
+      "https://www.linkedin.com/in/kelly-wallick-193b705",
+      "https://www.linkedin.com/in/emilygreer"
+    ],
+    "2B Angels": [
+      "https://il.linkedin.com/in/yoel-cheshin",
+      "https://il.linkedin.com/in/reuvenavital"
+    ],
+    "2B-Community": [
+      "https://il.linkedin.com/in/yoel-cheshin",
+      "https://il.linkedin.com/in/sbotzer",
+      "https://il.linkedin.com/in/adi8pundak8mintz"
+    ],
+    "2M Companies": [
+      "https://www.linkedin.com/in/iantrumpower",
+      "https://www.linkedin.com/in/samuel-mohkamkar-a93a57143"
+    ],
+    "2M2D - Tomorrow Today": [
+      "https://no.linkedin.com/in/bjarne-melbye-030665b",
+      "https://no.linkedin.com/in/fredrikwintheroslo",
+      "https://eg.linkedin.com/in/heba-eltemsahy-7196171a8"
+    ],
+    "3D Innotech": [
+      "https://www.linkedin.com/in/avi-sharir-22230a9"
+    ],
+    "3L Capital": [
+      "https://www.linkedin.com/in/dave-leyrer-a494a182",
+      "https://www.linkedin.com/in/shawn-colo"
+    ],
+    "3TS Capital Partners": [
+      "https://www.linkedin.com/in/pekka-m%C3%A4ki-730178",
+      "https://www.linkedin.com/in/alinstanciu",
+      "https://at.linkedin.com/in/markus-fleischer",
+      "https://www.linkedin.com/in/severtotia"
+    ],
+    "4Tech Capital Ventures": [
+      "https://il.linkedin.com/in/sharon-chen-03067a4"
+    ],
+    "5 Square": [
+      "https://nl.linkedin.com/in/remco-van-den-heuvel-48b334",
+      "https://nl.linkedin.com/in/hidde-hartelust-43b9b425",
+      "https://nl.linkedin.com/in/philip-sluiter-47b17267"
+    ],
+    "5M Ventures": [
+      "https://fr.linkedin.com/in/francescomaio1",
+      "https://fr.linkedin.com/in/louisprunel",
+      "https://fr.linkedin.com/in/christophe-montague-649898"
+    ]
+  },
+  "companies": {
+    "linkedin.com/company/01booster-capital": [
+      "https://jp.linkedin.com/in/shinsuke-hamamiya",
+      "https://jp.linkedin.com/in/fuyuki-t"
+    ],
+    "linkedin.com/company/1flourishcapital": [
+      "https://www.linkedin.com/in/bill-hooper-04804929",
+      "https://www.linkedin.com/in/david-lane-01130",
+      "https://www.linkedin.com/in/tomtognoli",
+      "https://www.linkedin.com/in/steve-brinkman-773b1410",
+      "https://www.linkedin.com/in/eric-leicher-2b880a4"
+    ],
+    "linkedin.com/company/1upfund": [
+      "https://www.linkedin.com/in/edfries",
+      "https://www.linkedin.com/in/kelly-wallick-193b705",
+      "https://www.linkedin.com/in/emilygreer"
+    ],
+    "linkedin.com/company/2bvc": [
+      "https://il.linkedin.com/in/yoel-cheshin",
+      "https://il.linkedin.com/in/reuvenavital"
+    ],
+    "linkedin.com/company/2b-community": [
+      "https://il.linkedin.com/in/yoel-cheshin",
+      "https://il.linkedin.com/in/sbotzer",
+      "https://il.linkedin.com/in/adi8pundak8mintz"
+    ],
+    "linkedin.com/company/2m-companies-inc": [
+      "https://www.linkedin.com/in/iantrumpower",
+      "https://www.linkedin.com/in/samuel-mohkamkar-a93a57143"
+    ],
+    "linkedin.com/company/tomorrow-today-as": [
+      "https://no.linkedin.com/in/bjarne-melbye-030665b",
+      "https://no.linkedin.com/in/fredrikwintheroslo",
+      "https://eg.linkedin.com/in/heba-eltemsahy-7196171a8"
+    ],
+    "linkedin.com/company/3d-innotech": [
+      "https://www.linkedin.com/in/avi-sharir-22230a9"
+    ],
+    "linkedin.com/company/3lcapital": [
+      "https://www.linkedin.com/in/dave-leyrer-a494a182",
+      "https://www.linkedin.com/in/shawn-colo"
+    ],
+    "linkedin.com/company/3ts-capital-partners": [
+      "https://www.linkedin.com/in/pekka-m%C3%A4ki-730178",
+      "https://www.linkedin.com/in/alinstanciu",
+      "https://at.linkedin.com/in/markus-fleischer",
+      "https://www.linkedin.com/in/severtotia"
+    ],
+    "linkedin.com/company/4tech-capital": [
+      "https://il.linkedin.com/in/sharon-chen-03067a4"
+    ],
+    "linkedin.com/company/5square": [
+      "https://nl.linkedin.com/in/remco-van-den-heuvel-48b334",
+      "https://nl.linkedin.com/in/hidde-hartelust-43b9b425",
+      "https://nl.linkedin.com/in/philip-sluiter-47b17267"
+    ],
+    "linkedin.com/company/5m-ventures": [
+      "https://fr.linkedin.com/in/francescomaio1",
+      "https://fr.linkedin.com/in/louisprunel",
+      "https://fr.linkedin.com/in/christophe-montague-649898"
+    ]
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "meta": {
+    "description": "Web-research merge: first ~20 empty linkedin-private-cursor rows in 007 (generalPurpose agent 2026-04-18). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_agent_batch_007_first20_2026_04_18.json"
+  },
+  "firms": {
+    "cathay africinvest innovation": [
+      "https://www.linkedin.com/in/lavanya-anand"
+    ],
+    "leonis investissement": [
+      "https://www.linkedin.com/in/flepied",
+      "https://www.linkedin.com/in/laurentlacroix",
+      "https://www.linkedin.com/in/hugel",
+      "https://www.linkedin.com/in/sylvain-delroux-45b8996"
+    ],
+    "draper esprit": [
+      "https://www.linkedin.com/in/george-chalmers-cfa",
+      "https://www.linkedin.com/in/marshr",
+      "https://www.linkedin.com/in/bentompkins",
+      "https://www.linkedin.com/in/paullouislepine"
+    ],
+    "ian fund": [
+      "https://www.linkedin.com/in/padmajaruparel",
+      "https://www.linkedin.com/in/kakkarabhishek",
+      "https://www.linkedin.com/in/saurabh-sharma-i-ca-i-venture-capital-1a421829",
+      "https://www.linkedin.com/in/kapurrajnish"
+    ],
+    "keiki capital": [
+      "https://www.linkedin.com/in/danlichtenberg"
+    ],
+    "maverick ventures israel": [
+      "https://www.linkedin.com/in/yaron-carni-907a732",
+      "https://www.linkedin.com/in/miri-fenton-phd-868ba037",
+      "https://www.linkedin.com/in/chen-sadeh-42a7b4a6"
+    ],
+    "the sidebyside partnership": [
+      "https://www.linkedin.com/in/ben-ashworth-065b6a122",
+      "https://www.linkedin.com/in/josh-gilbey-0a0b24201",
+      "https://www.linkedin.com/in/matthew-arwynck-37031236"
+    ],
+    "shearwater capital": [
+      "https://www.linkedin.com/in/zac-zavos",
+      "https://www.linkedin.com/in/michael-gregg-8484805",
+      "https://www.linkedin.com/in/matthew-parbhu-081941116",
+      "https://www.linkedin.com/in/charles-gibbon-686584a"
+    ],
+    "dreamers vc": [
+      "https://www.linkedin.com/in/kosaku-yada-05041a13",
+      "https://www.linkedin.com/in/tashinakanishi",
+      "https://www.linkedin.com/in/skivisa"
+    ],
+    "spacecadet ventures": [
+      "https://www.linkedin.com/in/wizlikewizard",
+      "https://www.linkedin.com/in/john-mccarthy-1848492",
+      "https://www.linkedin.com/in/alexabinns",
+      "https://www.linkedin.com/in/danieleckler"
+    ],
+    "amg block": [
+      "https://www.linkedin.com/in/carlostorresdlc"
+    ],
+    "convivialit ventures": [
+      "https://www.linkedin.com/in/brandonyahn",
+      "https://www.linkedin.com/in/stephane-longuet-020606a",
+      "https://www.linkedin.com/in/wendy-wattebled-7b4a7016",
+      "https://www.linkedin.com/in/virenj",
+      "https://www.linkedin.com/in/kenneth-chen-8757984b",
+      "https://www.linkedin.com/in/charleshenriprevost"
+    ],
+    "yym ventures": [
+      "https://www.linkedin.com/in/gilad-zinger",
+      "https://www.linkedin.com/in/uzi-yemin"
+    ],
+    "blisce": [
+      "https://www.linkedin.com/in/alexandremars",
+      "https://www.linkedin.com/in/samgiber",
+      "https://www.linkedin.com/in/nikita-satish",
+      "https://www.linkedin.com/in/peberion",
+      "https://www.linkedin.com/in/charleshenriprevost"
+    ],
+    "trend forward capital": [
+      "https://www.linkedin.com/in/antonio-cano-corzo",
+      "https://www.linkedin.com/in/mohamedw",
+      "https://www.linkedin.com/in/kinawi"
+    ],
+    "ecapital entrepreneurial partners": [
+      "https://www.linkedin.com/in/lucasmerle"
+    ],
+    "venture inc": [
+      "https://www.linkedin.com/in/jakubsitarz",
+      "https://www.linkedin.com/in/jarzebowski"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/africinvestgrp/": [
+      "https://www.linkedin.com/in/lavanya-anand"
+    ],
+    "https://www.linkedin.com/company/leonis-vc/": [
+      "https://www.linkedin.com/in/flepied",
+      "https://www.linkedin.com/in/laurentlacroix",
+      "https://www.linkedin.com/in/hugel",
+      "https://www.linkedin.com/in/sylvain-delroux-45b8996"
+    ],
+    "https://www.linkedin.com/company/draper-esprit/": [
+      "https://www.linkedin.com/in/george-chalmers-cfa",
+      "https://www.linkedin.com/in/marshr",
+      "https://www.linkedin.com/in/bentompkins",
+      "https://www.linkedin.com/in/paullouislepine"
+    ],
+    "https://www.linkedin.com/company/keiki-capital-llc": [
+      "https://www.linkedin.com/in/danlichtenberg"
+    ],
+    "https://www.linkedin.com/company/maverick-ventures-israel-l-p-": [
+      "https://www.linkedin.com/in/yaron-carni-907a732",
+      "https://www.linkedin.com/in/miri-fenton-phd-868ba037",
+      "https://www.linkedin.com/in/chen-sadeh-42a7b4a6"
+    ],
+    "https://www.linkedin.com/company/the-sidebyside-partnership/": [
+      "https://www.linkedin.com/in/ben-ashworth-065b6a122",
+      "https://www.linkedin.com/in/josh-gilbey-0a0b24201",
+      "https://www.linkedin.com/in/matthew-arwynck-37031236"
+    ],
+    "https://www.linkedin.com/company/shearwater-growth-equity/": [
+      "https://www.linkedin.com/in/zac-zavos",
+      "https://www.linkedin.com/in/michael-gregg-8484805",
+      "https://www.linkedin.com/in/matthew-parbhu-081941116",
+      "https://www.linkedin.com/in/charles-gibbon-686584a"
+    ],
+    "https://www.linkedin.com/company/dreamersvc/": [
+      "https://www.linkedin.com/in/kosaku-yada-05041a13",
+      "https://www.linkedin.com/in/tashinakanishi",
+      "https://www.linkedin.com/in/skivisa"
+    ],
+    "https://www.linkedin.com/company/spacecadet2020": [
+      "https://www.linkedin.com/in/wizlikewizard",
+      "https://www.linkedin.com/in/john-mccarthy-1848492",
+      "https://www.linkedin.com/in/alexabinns",
+      "https://www.linkedin.com/in/danieleckler"
+    ],
+    "https://www.linkedin.com/company/amgblock": [
+      "https://www.linkedin.com/in/carlostorresdlc"
+    ],
+    "https://www.linkedin.com/company/convivialit%C3%A9-ventures/": [
+      "https://www.linkedin.com/in/brandonyahn",
+      "https://www.linkedin.com/in/stephane-longuet-020606a",
+      "https://www.linkedin.com/in/wendy-wattebled-7b4a7016",
+      "https://www.linkedin.com/in/virenj",
+      "https://www.linkedin.com/in/kenneth-chen-8757984b",
+      "https://www.linkedin.com/in/charleshenriprevost"
+    ],
+    "https://www.linkedin.com/company/yym-ventures/": [
+      "https://www.linkedin.com/in/gilad-zinger",
+      "https://www.linkedin.com/in/uzi-yemin"
+    ],
+    "https://www.linkedin.com/company/blisce/": [
+      "https://www.linkedin.com/in/alexandremars",
+      "https://www.linkedin.com/in/samgiber",
+      "https://www.linkedin.com/in/nikita-satish",
+      "https://www.linkedin.com/in/peberion",
+      "https://www.linkedin.com/in/charleshenriprevost"
+    ],
+    "https://www.linkedin.com/company/trendforward/": [
+      "https://www.linkedin.com/in/antonio-cano-corzo",
+      "https://www.linkedin.com/in/mohamedw",
+      "https://www.linkedin.com/in/kinawi"
+    ],
+    "https://www.linkedin.com/company/ecapital-entrepreneurial-partners": [
+      "https://www.linkedin.com/in/lucasmerle"
+    ],
+    "https://www.linkedin.com/company/venture-inc-sa": [
+      "https://www.linkedin.com/in/jakubsitarz",
+      "https://www.linkedin.com/in/jarzebowski"
+    ]
+  }
+}

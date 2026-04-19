@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "description": "Web search (2026-04-18): Euro Tech VC funds (002) batch 2 — team /in/ URLs from official sites, LinkedIn company listings, and press.",
+    "sources": "Indexed web search; thefootprintfirm.com/our-team, missionfund.vc / missionvc, vipartners.ch, vanagon.vc/aboutus, nextgenventures.nl, rosberg.ventures, qbeat.vc, uebermorgen.vc/aboutus."
+  },
+  "firms": {
+    "the footprint firm": [
+      "https://www.linkedin.com/in/phil-doolan-2a967523",
+      "https://www.linkedin.com/in/jakob-wichmann-ba84a0",
+      "https://www.linkedin.com/in/christian-sparrevohn-2172a3",
+      "https://www.linkedin.com/in/anna-søndergaard-4390903",
+      "https://www.linkedin.com/in/sofie-käll-138a9164"
+    ],
+    "mission": [
+      "https://www.linkedin.com/in/jorgedobon",
+      "https://www.linkedin.com/in/julioribes",
+      "https://www.linkedin.com/in/mnavarrom",
+      "https://es.linkedin.com/in/álvaro-callejo-sánchez",
+      "https://www.linkedin.com/in/juan-dominguez-calomarde",
+      "https://www.linkedin.com/in/flavia-aina-922757182",
+      "https://www.linkedin.com/in/davidcastellscercadillo"
+    ],
+    "vi partners": [
+      "https://www.linkedin.com/in/olivierlaplace",
+      "https://www.linkedin.com/in/arnd-kaltofen-ehmann-87570a",
+      "https://www.linkedin.com/in/diego-braguglia-9634b915",
+      "https://www.linkedin.com/in/gaetanozanon",
+      "https://www.linkedin.com/in/julienpache",
+      "https://www.linkedin.com/in/mariaescalagarcia",
+      "https://www.linkedin.com/in/cyrill-osterwalder-9482079",
+      "https://www.linkedin.com/in/alainnicod",
+      "https://www.linkedin.com/in/martinagromo"
+    ],
+    "vanagon ventures": [
+      "https://www.linkedin.com/in/susannefromm",
+      "https://www.linkedin.com/in/sandrostark",
+      "https://www.linkedin.com/in/axelroitzsch"
+    ],
+    "nextgen ventures": [
+      "https://www.linkedin.com/in/harmjanwessels",
+      "https://www.linkedin.com/in/peter-haasjes-1631a04",
+      "https://www.linkedin.com/in/matthijs-blokhuis-5874955",
+      "https://www.linkedin.com/in/rudy-mareel-a7571510",
+      "https://www.linkedin.com/in/sannevanerp"
+    ],
+    "rosberg ventures": [
+      "https://www.linkedin.com/in/nicorosberg",
+      "https://www.linkedin.com/in/franckriviere"
+    ],
+    "qbeat ventures": [
+      "https://www.linkedin.com/in/dorit-dor-by49",
+      "https://www.linkedin.com/in/mayanetser",
+      "https://www.linkedin.com/in/joab-rosenberg-3343991",
+      "https://www.linkedin.com/in/tamarindi",
+      "https://www.linkedin.com/in/may-loewenthal"
+    ],
+    "bermorgen ventures": [
+      "https://www.linkedin.com/in/elena-walder-schiavone-13ab9950",
+      "https://www.linkedin.com/in/alexander-langguth-42b74451",
+      "https://www.linkedin.com/in/michaelnaef",
+      "https://www.linkedin.com/in/adrianbuehrer",
+      "https://www.linkedin.com/in/jonas-hornung"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "linkedin.com/company/the-footprint-firm": [
+      "https://www.linkedin.com/in/phil-doolan-2a967523",
+      "https://www.linkedin.com/in/jakob-wichmann-ba84a0",
+      "https://www.linkedin.com/in/christian-sparrevohn-2172a3",
+      "https://www.linkedin.com/in/anna-søndergaard-4390903",
+      "https://www.linkedin.com/in/sofie-käll-138a9164"
+    ],
+    "linkedin.com/company/missionfund": [
+      "https://www.linkedin.com/in/jorgedobon",
+      "https://www.linkedin.com/in/julioribes",
+      "https://www.linkedin.com/in/mnavarrom",
+      "https://es.linkedin.com/in/álvaro-callejo-sánchez",
+      "https://www.linkedin.com/in/juan-dominguez-calomarde",
+      "https://www.linkedin.com/in/flavia-aina-922757182",
+      "https://www.linkedin.com/in/davidcastellscercadillo"
+    ],
+    "linkedin.com/company/missionvc": [
+      "https://www.linkedin.com/in/jorgedobon",
+      "https://www.linkedin.com/in/julioribes",
+      "https://www.linkedin.com/in/mnavarrom",
+      "https://es.linkedin.com/in/álvaro-callejo-sánchez",
+      "https://www.linkedin.com/in/juan-dominguez-calomarde",
+      "https://www.linkedin.com/in/flavia-aina-922757182",
+      "https://www.linkedin.com/in/davidcastellscercadillo"
+    ],
+    "linkedin.com/company/vi-partners-ag": [
+      "https://www.linkedin.com/in/olivierlaplace",
+      "https://www.linkedin.com/in/arnd-kaltofen-ehmann-87570a",
+      "https://www.linkedin.com/in/diego-braguglia-9634b915",
+      "https://www.linkedin.com/in/gaetanozanon",
+      "https://www.linkedin.com/in/julienpache",
+      "https://www.linkedin.com/in/mariaescalagarcia",
+      "https://www.linkedin.com/in/cyrill-osterwalder-9482079",
+      "https://www.linkedin.com/in/alainnicod",
+      "https://www.linkedin.com/in/martinagromo"
+    ],
+    "linkedin.com/company/vanagon": [
+      "https://www.linkedin.com/in/susannefromm",
+      "https://www.linkedin.com/in/sandrostark",
+      "https://www.linkedin.com/in/axelroitzsch"
+    ],
+    "linkedin.com/company/nextgen-ventures": [
+      "https://www.linkedin.com/in/harmjanwessels",
+      "https://www.linkedin.com/in/peter-haasjes-1631a04",
+      "https://www.linkedin.com/in/matthijs-blokhuis-5874955",
+      "https://www.linkedin.com/in/rudy-mareel-a7571510",
+      "https://www.linkedin.com/in/sannevanerp"
+    ],
+    "linkedin.com/company/rosberg-ventures": [
+      "https://www.linkedin.com/in/nicorosberg",
+      "https://www.linkedin.com/in/franckriviere"
+    ],
+    "linkedin.com/company/qbeatventures": [
+      "https://www.linkedin.com/in/dorit-dor-by49",
+      "https://www.linkedin.com/in/mayanetser",
+      "https://www.linkedin.com/in/joab-rosenberg-3343991",
+      "https://www.linkedin.com/in/tamarindi",
+      "https://www.linkedin.com/in/may-loewenthal"
+    ],
+    "linkedin.com/company/%c3%bcbermorgen-ventures": [
+      "https://www.linkedin.com/in/elena-walder-schiavone-13ab9950",
+      "https://www.linkedin.com/in/alexander-langguth-42b74451",
+      "https://www.linkedin.com/in/michaelnaef",
+      "https://www.linkedin.com/in/adrianbuehrer",
+      "https://www.linkedin.com/in/jonas-hornung"
+    ]
+  }
+}

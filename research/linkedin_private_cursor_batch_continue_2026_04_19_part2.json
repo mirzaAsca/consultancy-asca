@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "description": "Web-researched /in/ URLs for 004 micro-VC seed funds (batch 2, 2026-04-19). Apply: python3 scripts/apply_linkedin_private_cursor_research_merge.py --json research/linkedin_private_cursor_batch_continue_2026_04_19_part2.json"
+  },
+  "firms": {
+    "elementum ventures": [
+      "https://www.linkedin.com/in/ben-chelf-726b7",
+      "https://www.linkedin.com/in/bpattersonca",
+      "https://www.linkedin.com/in/keilhacker"
+    ],
+    "energy innovation capital": [
+      "https://www.linkedin.com/in/joaquin-silva-213192",
+      "https://www.linkedin.com/in/chris00smith",
+      "https://www.linkedin.com/in/yucen-xie"
+    ],
+    "elab vc": [
+      "https://www.linkedin.com/in/dougneal",
+      "https://www.linkedin.com/in/bob-stefanski-a56085171",
+      "https://www.linkedin.com/in/rickbolander",
+      "https://www.linkedin.com/in/paul-stefanski-03a22a132"
+    ],
+    "coplex ventures": [
+      "https://www.linkedin.com/in/zcferres",
+      "https://www.linkedin.com/in/bizguy"
+    ]
+  },
+  "people": {},
+  "companies": {
+    "https://www.linkedin.com/company/elementum-ventures": [
+      "https://www.linkedin.com/in/ben-chelf-726b7",
+      "https://www.linkedin.com/in/bpattersonca",
+      "https://www.linkedin.com/in/keilhacker"
+    ],
+    "https://www.linkedin.com/company/energy-innovation-capital": [
+      "https://www.linkedin.com/in/joaquin-silva-213192",
+      "https://www.linkedin.com/in/chris00smith",
+      "https://www.linkedin.com/in/yucen-xie"
+    ],
+    "https://www.linkedin.com/company/elabventures": [
+      "https://www.linkedin.com/in/dougneal",
+      "https://www.linkedin.com/in/bob-stefanski-a56085171",
+      "https://www.linkedin.com/in/rickbolander",
+      "https://www.linkedin.com/in/paul-stefanski-03a22a132"
+    ],
+    "https://www.linkedin.com/company/coplex": [
+      "https://www.linkedin.com/in/zcferres",
+      "https://www.linkedin.com/in/bizguy"
+    ]
+  }
+}

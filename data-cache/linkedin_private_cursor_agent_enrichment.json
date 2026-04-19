@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "description": "Agent-owned LinkedIn /in/ URL batches (web-researched). Applied only via scripts/apply_linkedin_private_cursor_agent_enrichment.py — merges into linkedin-private-cursor without removing existing URLs.",
+    "updated": "2026-04-18Tbatch2"
+  },
+  "firms": {},
+  "people": {},
+  "companies": {
+    "linkedin.com/company/sofinnova-partners": [
+      "https://fr.linkedin.com/in/antoine-papiernik-06075610",
+      "https://dk.linkedin.com/in/henrijette-richter-12a238"
+    ],
+    "linkedin.com/company/iporanga-ventures": [
+      "https://br.linkedin.com/in/revalente",
+      "https://br.linkedin.com/in/leovmt",
+      "https://br.linkedin.com/in/nataliaberti",
+      "https://www.linkedin.com/in/rodrigotrindademenezes"
+    ],
+    "linkedin.com/company/matchstick-ventures": [
+      "https://www.linkedin.com/in/nattyzola",
+      "https://www.linkedin.com/in/ryanbroshar",
+      "https://www.linkedin.com/in/nglaros",
+      "https://www.linkedin.com/in/shannon-stobbe-shroyer"
+    ],
+    "linkedin.com/company/kindred-capital-vc": [
+      "https://uk.linkedin.com/in/john-w-cassidy",
+      "https://uk.linkedin.com/in/leilazegna",
+      "https://uk.linkedin.com/in/chrysanthoschrysanthou",
+      "https://uk.linkedin.com/in/maxbray",
+      "https://uk.linkedin.com/in/fiona-lay-92528295"
+    ],
+    "linkedin.com/company/render-capital": [
+      "https://www.linkedin.com/in/patrickhenshawpmp",
+      "https://www.linkedin.com/in/trietnguyen93",
+      "https://www.linkedin.com/in/ryan-brown-8b3281b"
+    ],
+    "linkedin.com/company/mercury-fund": [
+      "https://www.linkedin.com/in/bgarrou",
+      "https://www.linkedin.com/in/adrianfortino",
+      "https://www.linkedin.com/in/texasvc",
+      "https://www.linkedin.com/in/samanthajolewis",
+      "https://www.linkedin.com/in/heathbutler",
+      "https://www.linkedin.com/in/alexandergras"
+    ],
+    "linkedin.com/company/seedcamp_2": [
+      "https://www.linkedin.com/in/reshmasohoni",
+      "https://uk.linkedin.com/in/carloseduardoespinal",
+      "https://uk.linkedin.com/in/tomwilsonseedcamp",
+      "https://uk.linkedin.com/in/siahouchangnia",
+      "https://www.linkedin.com/in/will-bennett-seedcamp"
+    ],
+    "linkedin.com/company/bowery-capital": [
+      "https://www.linkedin.com/in/browmich",
+      "https://www.linkedin.com/in/lorenstraub",
+      "https://www.linkedin.com/in/jessicabernido",
+      "https://www.linkedin.com/in/ellen-terlizzi-88b631a3",
+      "https://www.linkedin.com/in/brsbl",
+      "https://www.linkedin.com/in/neilcapel",
+      "https://www.linkedin.com/in/pwmcgovern"
+    ],
+    "linkedin.com/company/otb-ventures": [
+      "https://pl.linkedin.com/in/marcinhejka",
+      "https://pl.linkedin.com/in/adam-niewinski-07b7931",
+      "https://www.linkedin.com/in/wojtekwalniczek",
+      "https://pl.linkedin.com/in/karol-szubstarski-93462073"
+    ],
+    "linkedin.com/company/correlation-ventures": [
+      "https://www.linkedin.com/in/trevor-kienzle-477a3",
+      "https://www.linkedin.com/in/david-coats-2a26b66",
+      "https://www.linkedin.com/in/wesleybarrow",
+      "https://www.linkedin.com/in/krishnagopinathan",
+      "https://www.linkedin.com/in/shayna7"
+    ],
+    "linkedin.com/company/commerzventures": [
+      "https://www.linkedin.com/in/stirtey",
+      "https://de.linkedin.com/in/patrickmeisberger",
+      "https://de.linkedin.com/in/schwenderheiko",
+      "https://de.linkedin.com/in/paulmorgenthaler-cov"
+    ],
+    "linkedin.com/company/firstmomentum": [
+      "https://de.linkedin.com/in/sebastianboehmer",
+      "https://de.linkedin.com/in/afischerfmv",
+      "https://at.linkedin.com/in/christian-neumann-44a7a5195",
+      "https://de.linkedin.com/in/janine-de-leeuw-314303180",
+      "https://www.linkedin.com/in/dr-maximilian-ochs-a30a521aa"
+    ],
+    "linkedin.com/company/spring-invest": [
+      "https://fr.linkedin.com/in/xfaure",
+      "https://fr.linkedin.com/in/lfoiry",
+      "https://fr.linkedin.com/in/alex-guillot",
+      "https://fr.linkedin.com/in/pascal-gagna-1111a8"
+    ],
+    "linkedin.com/company/insurtech-gateway": [
+      "https://uk.linkedin.com/in/richard-chattock-89715810",
+      "https://uk.linkedin.com/in/dom-nolan-546542b2",
+      "https://uk.linkedin.com/in/stephenbrittain",
+      "https://uk.linkedin.com/in/robert-lumley",
+      "https://uk.linkedin.com/in/hannahleonard01"
+    ],
+    "linkedin.com/company/revo-capital": [
+      "https://tr.linkedin.com/in/cenkbayrakdar",
+      "https://nl.linkedin.com/in/vandijkjaap",
+      "https://tr.linkedin.com/in/denizaslandogan",
+      "https://tr.linkedin.com/in/sarpcanbayrakdar",
+      "https://www.linkedin.com/in/derinercelebi"
+    ],
+    "linkedin.com/company/gocapital": [
+      "https://fr.linkedin.com/in/fredericlebrun",
+      "https://fr.linkedin.com/in/theophilegallon",
+      "https://fr.linkedin.com/in/tristan-garde",
+      "https://fr.linkedin.com/in/david-leray-14489093",
+      "https://fr.linkedin.com/in/aude-kermarrec-a9103848"
+    ],
+    "linkedin.com/company/revtechventures": [
+      "https://www.linkedin.com/in/davidmatthews4",
+      "https://www.linkedin.com/in/link2mikewhitaker",
+      "https://www.linkedin.com/in/laura-baldwin-98233615",
+      "https://www.linkedin.com/in/stewart-matthews-38567b152",
+      "https://www.linkedin.com/in/mayleeharris",
+      "https://www.linkedin.com/in/jonathansfine",
+      "https://www.linkedin.com/in/brooks-terrell-1b837a6"
+    ],
+    "linkedin.com/company/citizen-capital": [
+      "https://fr.linkedin.com/in/laurence-mehaignerie",
+      "https://fr.linkedin.com/in/flora-velle-bonvouloir-8668b996",
+      "https://fr.linkedin.com/in/margot-courcelles",
+      "https://fr.linkedin.com/in/victoire-estager",
+      "https://fr.linkedin.com/in/remi-marreau-citizencapital"
+    ],
+    "linkedin.com/company/inventure": [
+      "https://fi.linkedin.com/in/kokkila",
+      "https://fi.linkedin.com/in/timotirkkonen",
+      "https://fi.linkedin.com/in/tuomaskosonen",
+      "https://fi.linkedin.com/in/linusdahg",
+      "https://uk.linkedin.com/in/magdalukaszewicz"
+    ],
+    "linkedin.com/company/smartgate.vc": [
+      "https://www.linkedin.com/in/ashotarzumanyan",
+      "https://www.linkedin.com/in/arega"
+    ],
+    "linkedin.com/company/depo-ventures": [
+      "https://www.linkedin.com/in/petr-sima-a294681",
+      "https://cz.linkedin.com/in/michalciffra",
+      "https://cz.linkedin.com/in/tobiasrataj",
+      "https://de.linkedin.com/in/premek-starovesky-ph-d-4356b44",
+      "https://www.linkedin.com/in/jankrahulik"
+    ],
+    "linkedin.com/company/360-capital-partners": [
+      "https://www.linkedin.com/in/alexandre-mordacq",
+      "https://www.linkedin.com/in/ftison",
+      "https://www.linkedin.com/in/thomas-nivard-7a199343",
+      "https://www.linkedin.com/in/alessandro-m-zaccaria",
+      "https://www.linkedin.com/in/cesare-maifredi-15050b",
+      "https://www.linkedin.com/in/fausto-boni-839137"
+    ],
+    "linkedin.com/company/south-central-ventures": [
+      "https://www.linkedin.com/in/eli-zhabevska-3131034",
+      "https://www.linkedin.com/in/jan-kobler-615433",
+      "https://www.linkedin.com/in/jurem",
+      "https://www.linkedin.com/in/lordan-hristov-767268b0",
+      "https://www.linkedin.com/in/saraoluic",
+      "https://www.linkedin.com/in/tatjanazabasu",
+      "https://www.linkedin.com/in/tina-kastrevc-cfa-59579793",
+      "https://www.linkedin.com/in/xiaomin-mou-81b4044"
+    ]
+  }
+}

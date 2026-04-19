@@ -1,0 +1,39 @@
+{
+  "companies": {
+    "linkedin.com/company/banco-sabadell": [
+      "https://www.linkedin.com/in/raul-rodriguez-sabater-51a492",
+      "https://www.linkedin.com/in/cormacleggett",
+      "https://www.linkedin.com/in/alfredoiglesiascolino",
+      "https://www.linkedin.com/in/rogeralmuni",
+      "https://www.linkedin.com/in/ilanmarcoschamer"
+    ],
+    "linkedin.com/company/fuelventurecapital": [
+      "https://www.linkedin.com/in/jeffransdell",
+      "https://www.linkedin.com/in/maggievo",
+      "https://www.linkedin.com/in/selenecasabal",
+      "https://www.linkedin.com/in/oliviagaudree",
+      "https://www.linkedin.com/in/danhcluong"
+    ],
+    "linkedin.com/company/pico-venture-partners": [
+      "https://www.linkedin.com/in/wurtman",
+      "https://www.linkedin.com/in/tal-yatsiv-bb57602",
+      "https://www.linkedin.com/in/keren-kenan-bb5178119",
+      "https://www.linkedin.com/in/hagar-levin-78b1a1176",
+      "https://www.linkedin.com/in/rotem-malichi-023910146"
+    ],
+    "linkedin.com/company/triventures": [
+      "https://www.linkedin.com/in/michal-geva-90b3465",
+      "https://www.linkedin.com/in/dani-goldsher-b97455b",
+      "https://www.linkedin.com/in/lihi-lubranski-90bb4055",
+      "https://www.linkedin.com/in/karin-bar-or-aa20b442",
+      "https://www.linkedin.com/in/peter-fitzgerald-853567"
+    ],
+    "linkedin.com/company/adaravc": [
+      "https://www.linkedin.com/in/ngoulet",
+      "https://www.linkedin.com/in/albertogomezarreaza",
+      "https://www.linkedin.com/in/rociopillado",
+      "https://www.linkedin.com/in/bwinchell",
+      "https://www.linkedin.com/in/ossim"
+    ]
+  }
+}
