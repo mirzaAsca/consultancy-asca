@@ -531,7 +531,7 @@ export default function App() {
         <section className={shortDividerSectionClass}>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl lg:text-[2.75rem]">
-              If the system we implement doesn't solve your problem within 10
+              If the system I implement doesn't solve your problem within 10
               weeks,{" "}
               <span className="text-[var(--muted)]">
                 — I keep working for free until it does.
