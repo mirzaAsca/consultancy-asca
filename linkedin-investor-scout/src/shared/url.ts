@@ -80,7 +80,7 @@ export function canonicalizeLinkedInProfileUrl(input: string): string | null {
 }
 
 function isLinkedInProfileHost(host: string): boolean {
-  return host === 'linkedin.com' || host === 'www.linkedin.com';
+  return host === 'linkedin.com' || host.endsWith('.linkedin.com');
 }
 
 /**

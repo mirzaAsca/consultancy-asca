@@ -26,6 +26,15 @@ describe('canonicalizeLinkedInProfileUrl', () => {
     );
   });
 
+  it('accepts regional linkedin subdomains and canonicalizes host', () => {
+    expect(canonicalizeLinkedInProfileUrl('https://ae.linkedin.com/in/jane-doe')).toBe(
+      'https://www.linkedin.com/in/jane-doe/',
+    );
+    expect(canonicalizeLinkedInProfileUrl('https://at.linkedin.com/in/max-mustermann/')).toBe(
+      'https://www.linkedin.com/in/max-mustermann/',
+    );
+  });
+
   it('strips overlay path after slug', () => {
     expect(
       canonicalizeLinkedInProfileUrl(

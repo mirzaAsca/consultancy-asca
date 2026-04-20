@@ -5,6 +5,19 @@ import {
   slugFromCanonicalProfileUrl,
 } from './url';
 
+const URL_HEADER_CELLS = new Set([
+  'url',
+  'profile_url',
+  'linkedin_url',
+  'url_normalized',
+  'linkedin_profile_url',
+]);
+
+function looksLikeUrlHeaderCell(raw: string): boolean {
+  const normalized = raw.trim().toLowerCase().replace(/\s+/g, '_');
+  return URL_HEADER_CELLS.has(normalized);
+}
+
 export interface CsvImportSummary {
   /** Non-empty rows parsed from the file (pre-classification). */
   total: number;
@@ -34,6 +47,7 @@ export function summarizeCsvText(input: string): CsvImportSummary {
   let total = 0;
   let invalid = 0;
   let duplicates = 0;
+  let rowIndex = 0;
 
   const parsed = Papa.parse<string[]>(input, {
     header: false,
@@ -42,9 +56,11 @@ export function summarizeCsvText(input: string): CsvImportSummary {
 
   for (const row of parsed.data) {
     const cell = Array.isArray(row) ? row[0] : undefined;
-    if (!cell) continue;
-    const raw = String(cell).trim();
+    const raw = cell ? String(cell).trim() : '';
+    const isFirstRow = rowIndex === 0;
+    rowIndex++;
     if (!raw) continue;
+    if (isFirstRow && looksLikeUrlHeaderCell(raw)) continue;
     total++;
 
     const canonical = canonicalizeLinkedInProfileUrl(raw);
@@ -83,6 +99,7 @@ export function summarizeCsvFile(file: File): Promise<CsvImportSummary> {
     let total = 0;
     let invalid = 0;
     let duplicates = 0;
+    let rowIndex = 0;
 
     Papa.parse<string[]>(file, {
       header: false,
@@ -92,9 +109,11 @@ export function summarizeCsvFile(file: File): Promise<CsvImportSummary> {
       chunk: (results) => {
         for (const row of results.data) {
           const cell = Array.isArray(row) ? row[0] : undefined;
-          if (!cell) continue;
-          const raw = String(cell).trim();
+          const raw = cell ? String(cell).trim() : '';
+          const isFirstRow = rowIndex === 0;
+          rowIndex++;
           if (!raw) continue;
+          if (isFirstRow && looksLikeUrlHeaderCell(raw)) continue;
           total++;
 
           const canonical = canonicalizeLinkedInProfileUrl(raw);

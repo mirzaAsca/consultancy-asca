@@ -6,6 +6,7 @@ export type DashboardRoute = 'prospects' | 'settings' | 'logs';
 export interface DashboardState {
   route: DashboardRoute;
   setRoute: (route: DashboardRoute) => void;
+  applyDeepLinkLevel: (level: ProspectLevel | null) => void;
 
   // Prospects table state
   query: ProspectQuery;
@@ -51,6 +52,21 @@ function toggleInList<T>(arr: T[] | undefined, value: T): T[] {
 export const useDashboardStore = create<DashboardState>()((set) => ({
   route: 'prospects',
   setRoute: (route) => set({ route }),
+  applyDeepLinkLevel: (level) =>
+    set((s) => {
+      if (!level) return {};
+      return {
+        query: {
+          ...s.query,
+          search: '',
+          levels: [level],
+          scan_statuses: [],
+          activity: {},
+          page: 0,
+        },
+        selectedIds: new Set<number>(),
+      };
+    }),
 
   query: { ...DEFAULT_QUERY, levels: [], scan_statuses: [], activity: {} },
   selectedIds: new Set<number>(),

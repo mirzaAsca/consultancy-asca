@@ -11,12 +11,27 @@
 
 import { sendMessage } from '@/shared/messaging';
 import type {
+  FeedVisibleProfile,
   Message,
   ProspectHighlightSummary,
-  ProspectLevel,
   Settings,
   SlugMap,
 } from '@/shared/types';
+import { canonicalizeLinkedInProfileUrl } from '@/shared/url';
+import {
+  badgeLabelForLevel,
+  buildHighlightLevelCss,
+  cssVarForLevel,
+} from './highlight-levels';
+import {
+  findHighlightContainer,
+  type ContainerKind,
+} from './highlight-containers';
+import {
+  inferAnchorKind,
+  isCommenterAnchor,
+  isPostAuthorAnchor,
+} from './highlight-mentions';
 
 // ——— Module state (content-script scope, one instance per tab) ———
 
@@ -25,7 +40,14 @@ const MENU_ID = 'lis-action-menu';
 const DATA_MATCH = 'lisMatch';
 const DATA_SLUG = 'lisSlug';
 const DATA_PROSPECT_ID = 'lisProspectId';
+const DATA_BADGE_NAME = 'lisBadgeName';
+const DATA_BADGE_ACTION = 'lisBadgeAction';
+const DATA_BADGE_URL = 'lisBadgeUrl';
+const DATA_KIND = 'lisKind';
 const BADGE_CLASS = 'lis-badge';
+const BADGE_PILL_CLASS = 'lis-badge-pill';
+const BADGE_NAME_CLASS = 'lis-badge-name';
+const BADGE_ACTION_CLASS = 'lis-badge-action';
 const CONTAINER_ATTR = 'data-lis-match';
 
 let slugMap: SlugMap = {};
@@ -33,49 +55,32 @@ let slugMapReady = false;
 let settings: Settings | null = null;
 let scheduled = false;
 let rescanTimer: number | null = null;
+let repositionScheduled = false;
+const containerBadges = new Map<HTMLElement, HTMLElement>();
+const FEED_TEST_DEFAULT_MAX_PROFILES = 200;
+/** Horizontal gap between a badge's right edge and the outer post card. */
+const BADGE_GAP_PX = 16;
+/** Vertical inset from the top of the reference container to the badge. */
+const BADGE_TOP_OFFSET_PX = 4;
+/** Minimum vertical breathing room between two stacked badges. */
+const BADGE_COLLISION_GAP_PX = 8;
+/** Viewport-left gutter preserved when a layout would push a badge off-screen. */
+const BADGE_MIN_VISIBLE_LEFT_PX = 8;
 
-/** Containers we currently know how to decorate, keyed by setting flag. */
-type ContainerKind =
-  | 'post_authors'
-  | 'reposters'
-  | 'commenters'
-  | 'reactors'
-  | 'suggested'
-  // Generic fallback — anchor has no recognizable parent; we don't decorate.
-  | 'unknown';
-
-/** CSS selectors we climb to from an `/in/` anchor to find the container. */
-const CONTAINER_SELECTORS: Record<Exclude<ContainerKind, 'unknown'>, string[]> = {
-  post_authors: [
-    // Main feed post card
-    'article',
-    'div[data-urn*="urn:li:activity"]',
-    'div.feed-shared-update-v2',
-    'div.update-components-actor',
-  ],
-  reposters: [
-    'div.update-components-header',
-    'div.feed-shared-mini-update-v2',
-    'div.feed-shared-header',
-  ],
-  commenters: [
-    'article.comments-comment-item',
-    'article.comments-comment-entity',
-    'div.comments-comment-item',
-    'div.comments-post-meta',
-  ],
-  reactors: [
-    'li.artdeco-list__item',
-    'li.social-details-reactors-tab-body-list-item',
-    'li.reusable-search__result-container',
-  ],
-  suggested: [
-    'li.entity-result',
-    'li.reusable-search__result-container',
-    'li.pymk-list__item',
-    'div.discover-entity-type-card',
-  ],
-};
+/**
+ * Selectors for the outer post/activity card. All badges on the same post
+ * (author header, any commenters, any @-mentions in the body) share this
+ * card's left edge as the anchor — so the badges stack in one clean column
+ * to the LEFT of the entire feed item instead of each action. Falls back to
+ * the matched container's own rect when no post card wraps it (e.g.
+ * reactor dialogs, right-rail "People you may know" cards).
+ */
+const OUTER_FEED_CARD_SELECTOR = [
+  'div[role="listitem"][componentkey*="FeedType_"]',
+  'article',
+  'div[data-urn*="urn:li:activity"]',
+  'div.feed-shared-update-v2',
+].join(', ');
 
 // ——— Utilities ———
 
@@ -110,28 +115,238 @@ function slugFromHref(href: string): string | null {
   }
 }
 
-/**
- * Climb from an anchor to the nearest container matching any selector in any
- * enabled kind. Returns both the kind (drives show_on toggle) and the element.
- * `closest()` naturally stops at the highest ancestor we tolerate, so a match
- * inside a comment that's *also* inside a post resolves to the comment first.
- */
-function findContainer(
-  anchor: HTMLElement,
-): { kind: Exclude<ContainerKind, 'unknown'>; el: HTMLElement } | null {
-  for (const kind of Object.keys(CONTAINER_SELECTORS) as Array<
-    Exclude<ContainerKind, 'unknown'>
-  >) {
-    for (const sel of CONTAINER_SELECTORS[kind]) {
-      try {
-        const found = anchor.closest<HTMLElement>(sel);
-        if (found) return { kind, el: found };
-      } catch {
-        // Invalid selector in a given page context — skip.
-      }
-    }
+function normalizeVisibleProfileName(anchor: HTMLAnchorElement): string | null {
+  const candidates = [anchor.getAttribute('aria-label'), anchor.textContent];
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim();
+    if (trimmed) return trimmed.slice(0, 200);
   }
   return null;
+}
+
+function findDisplayNameInContainer(
+  container: HTMLElement,
+  slug: string,
+): string | null {
+  const anchors = container.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
+  let best: string | null = null;
+  for (const a of Array.from(anchors)) {
+    const href = a.getAttribute('href') || a.href;
+    if (slugFromHref(href) !== slug) continue;
+    const text = a.textContent?.replace(/\s+/g, ' ').trim();
+    if (!text || !/[A-Za-zÀ-ÿĀ-žА-я]/.test(text)) continue;
+    const normalized = normalizeBadgeName(text);
+    if (!normalized) continue;
+    if (!best || normalized.length > best.length) best = normalized;
+  }
+  return best;
+}
+
+function normalizeBadgeName(raw: string | null | undefined): string | null {
+  const trimmed = raw?.replace(/\s+/g, ' ').trim();
+  if (!trimmed) return null;
+  const normalized = trimmed
+    .replace(/^view\s+/i, '')
+    .replace(/\s*profile$/i, '')
+    .replace(/,\s*(?:1st|2nd|3rd|out of network).*$/i, '')
+    .replace(
+      /\s+(?:liked|likes|commented|reposted|finds this funny|celebrates this|supports this|loves this|is insightful|is curious).*$/i,
+      '',
+    )
+    .trim();
+  if (!normalized) return null;
+  return normalized.slice(0, 80);
+}
+
+function collectNearbyActionContext(
+  anchor: HTMLAnchorElement,
+  container: HTMLElement,
+): string {
+  const snippets: string[] = [];
+  const seen = new Set<string>();
+
+  const collect = (raw: string | null | undefined): void => {
+    const text = raw?.replace(/\s+/g, ' ').trim();
+    if (!text || text.length > 220 || seen.has(text)) return;
+    seen.add(text);
+    snippets.push(text);
+  };
+
+  const nearestLine = anchor.closest<HTMLElement>('p, span, div');
+  if (nearestLine) collect(nearestLine.textContent);
+
+  let cursor: HTMLElement | null = anchor.parentElement;
+  let hops = 0;
+  while (cursor && cursor !== container && hops < 8) {
+    collect(cursor.textContent);
+    cursor = cursor.parentElement;
+    hops += 1;
+  }
+
+  return snippets.join(' · ').slice(0, 600);
+}
+
+function inferActionLabelFromText(raw: string): string | null {
+  const text = raw.toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+
+  if (text.includes('finds this funny')) return 'reacted (funny)';
+  if (text.includes('celebrates this')) return 'reacted (celebrate)';
+  if (text.includes('supports this')) return 'reacted (support)';
+  if (text.includes('loves this')) return 'reacted (love)';
+  if (text.includes('is insightful')) return 'reacted (insightful)';
+  if (text.includes('is curious')) return 'reacted (curious)';
+  if (text.includes('likes this') || text.includes('liked this') || text.includes('reacted')) {
+    return 'reacted (like)';
+  }
+  if (text.includes('commented')) return 'commented';
+  if (text.includes('reposted')) return 'reposted';
+  if (/\bfollow(?:s|ed|ing)?\s+this\s+page\b/i.test(text)) return 'followed';
+  if (text.includes('followed')) return 'followed';
+
+  return null;
+}
+
+function fallbackActionLabelForKind(kind: ContainerKind): string | null {
+  switch (kind) {
+    case 'commenters':
+      return 'commented';
+    case 'reactors':
+      return 'reacted';
+    case 'reposters':
+      return 'reposted';
+    case 'suggested':
+      return 'suggested';
+    case 'post_authors':
+      return 'posted';
+    case 'mentions':
+      return 'mentioned';
+    default:
+      return null;
+  }
+}
+
+interface BadgeMeta {
+  displayName: string;
+  actionLabel: string | null;
+  profileUrl: string;
+}
+
+function buildBadgeMeta(
+  anchor: HTMLAnchorElement,
+  container: HTMLElement,
+  kind: ContainerKind,
+  summary: ProspectHighlightSummary,
+  slug: string,
+): BadgeMeta {
+  const href = anchor.getAttribute('href') || anchor.href;
+  const canonicalProfileUrl = href ? canonicalizeLinkedInProfileUrl(href) : null;
+  const profileUrl =
+    canonicalProfileUrl ||
+    `https://www.linkedin.com/in/${encodeURIComponent(slug)}/`;
+
+  const displayName =
+    normalizeBadgeName(summary.name) ||
+    findDisplayNameInContainer(container, slug) ||
+    normalizeBadgeName(normalizeVisibleProfileName(anchor)) ||
+    slug;
+
+  // Mentions sit in post/comment body copy — the surrounding sentence is the
+  // post's text, not a social-proof header. Skip the text scan and use the
+  // stable fallback so every mention reads as "mentioned".
+  const actionLabel =
+    kind === 'mentions'
+      ? fallbackActionLabelForKind(kind)
+      : inferActionLabelFromText(collectNearbyActionContext(anchor, container)) ||
+        fallbackActionLabelForKind(kind);
+
+  return {
+    displayName,
+    actionLabel,
+    profileUrl,
+  };
+}
+
+/**
+ * Accept any anchor that is actually rendered — non-zero box, not
+ * display:none/visibility:hidden/opacity:0. We intentionally do **not**
+ * require the anchor to intersect the current viewport rectangle: LinkedIn's
+ * feed is a tall virtual-scrolled document, and a strict viewport filter
+ * leaves the user with only 1–2 unique slugs at any given scroll position
+ * (which is nowhere near the 4 needed to seed all color levels). Collecting
+ * every rendered profile on the page lets the test-seed flow always find
+ * enough unique targets, and lets the diversity picker sample post authors,
+ * commenters, reactors, mentions, etc. from everything LinkedIn has already
+ * mounted into the DOM.
+ */
+function isElementRendered(el: HTMLElement): boolean {
+  const rect = el.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return false;
+  const style = window.getComputedStyle(el);
+  if (style.visibility === 'hidden' || style.display === 'none') return false;
+  if (Number(style.opacity) === 0) return false;
+  return true;
+}
+
+/**
+ * Diversity-first ordering for seeding test labels: include at least one of
+ * every observed role before falling back to extras. `post_authors` first so
+ * a feed with exactly 4 profiles still covers the primary actor.
+ */
+const DIVERSITY_KIND_ORDER: ContainerKind[] = [
+  'post_authors',
+  'commenters',
+  'reposters',
+  'reactors',
+  'mentions',
+  'suggested',
+  'unknown',
+];
+
+function collectVisibleFeedProfiles(maxProfiles: number): FeedVisibleProfile[] {
+  const seenSlugs = new Set<string>();
+  const buckets = new Map<ContainerKind, FeedVisibleProfile[]>();
+  const anchors = document.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
+
+  for (const anchor of Array.from(anchors)) {
+    if (!isElementRendered(anchor)) continue;
+
+    const href = anchor.href || anchor.getAttribute('href');
+    if (!href) continue;
+    const canonical = canonicalizeLinkedInProfileUrl(href);
+    if (!canonical) continue;
+
+    const slug = slugFromHref(canonical);
+    if (!slug || seenSlugs.has(slug)) continue;
+    seenSlugs.add(slug);
+
+    const kind = inferAnchorKind(anchor);
+    const profile: FeedVisibleProfile = {
+      url: canonical,
+      slug,
+      name: normalizeVisibleProfileName(anchor),
+    };
+    const bucket = buckets.get(kind);
+    if (bucket) bucket.push(profile);
+    else buckets.set(kind, [profile]);
+  }
+
+  // Round-robin across kinds in priority order. Drains one from each non-empty
+  // bucket per pass so a handful of roles always precede a long tail from any
+  // single role (e.g. 40 sidebar suggestions).
+  const out: FeedVisibleProfile[] = [];
+  let drained = true;
+  while (drained && out.length < maxProfiles) {
+    drained = false;
+    for (const kind of DIVERSITY_KIND_ORDER) {
+      if (out.length >= maxProfiles) break;
+      const bucket = buckets.get(kind);
+      if (!bucket || bucket.length === 0) continue;
+      out.push(bucket.shift() as FeedVisibleProfile);
+      drained = true;
+    }
+  }
+  return out;
 }
 
 function isKindEnabled(kind: ContainerKind): boolean {
@@ -140,65 +355,65 @@ function isKindEnabled(kind: ContainerKind): boolean {
   return settings.highlight.show_on[kind] === true;
 }
 
-function badgeLabel(level: ProspectLevel): string {
-  switch (level) {
-    case '1st':
-      return '1st · TARGET';
-    case '2nd':
-      return '2nd · TARGET';
-    case '3rd':
-      return '3rd · TARGET';
-    case 'OUT_OF_NETWORK':
-      return 'OUT · TARGET';
-    default:
-      return '? · TARGET';
-  }
-}
-
-function cssVarForLevel(level: ProspectLevel): string {
-  switch (level) {
-    case '1st':
-      return 'var(--lis-color-1st)';
-    case '2nd':
-      return 'var(--lis-color-2nd)';
-    case '3rd':
-      return 'var(--lis-color-3rd)';
-    default:
-      return 'var(--lis-color-oon)';
-  }
-}
-
 // ——— CSS injection (driven by user-configurable colors) ———
 
 function buildStylesheet(): string {
-  const c = settings?.highlight?.colors;
-  const first = c?.first ?? '#22c55e';
-  const second = c?.second ?? '#3b82f6';
-  const third = c?.third ?? '#a855f7';
-  const oon = c?.out_of_network ?? '#6b7280';
+  const levelCss = buildHighlightLevelCss(CONTAINER_ATTR, settings?.highlight?.colors);
   return `
-    :root {
-      --lis-color-1st: ${first};
-      --lis-color-2nd: ${second};
-      --lis-color-3rd: ${third};
-      --lis-color-oon: ${oon};
-    }
+    ${levelCss}
     [${CONTAINER_ATTR}] {
       position: relative;
       border-radius: 8px;
       transition: box-shadow .2s ease;
     }
-    [${CONTAINER_ATTR}="1st"] { box-shadow: 0 0 0 2px var(--lis-color-1st); }
-    [${CONTAINER_ATTR}="2nd"] { box-shadow: 0 0 0 2px var(--lis-color-2nd); }
-    [${CONTAINER_ATTR}="3rd"] { box-shadow: 0 0 0 2px var(--lis-color-3rd); }
-    [${CONTAINER_ATTR}="OUT_OF_NETWORK"] { box-shadow: 0 0 0 2px var(--lis-color-oon); }
-    [${CONTAINER_ATTR}="NONE"] { box-shadow: 0 0 0 2px var(--lis-color-oon); }
 
     .${BADGE_CLASS} {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      z-index: 10;
+      top: 0;
+      left: 0;
+      transform: translateX(-100%);
+      z-index: 2147483646;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      white-space: nowrap;
+      pointer-events: auto;
+    }
+
+    .${BADGE_ACTION_CLASS} {
+      color: var(--lis-badge-bg, var(--lis-color-oon));
+      font-size: 11px;
+      font-weight: 600;
+      opacity: .9;
+      white-space: nowrap;
+      text-transform: lowercase;
+    }
+
+    .${BADGE_NAME_CLASS} {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: #ffffff;
+      background: var(--lis-badge-bg, var(--lis-color-oon));
+      text-decoration: none;
+      max-width: 180px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    }
+    .${BADGE_NAME_CLASS}:hover { filter: brightness(1.1); }
+
+    .${BADGE_PILL_CLASS} {
+      all: unset;
+      display: inline-flex;
+      align-items: center;
       padding: 2px 8px;
       border-radius: 999px;
       font-size: 11px;
@@ -207,11 +422,9 @@ function buildStylesheet(): string {
       color: #ffffff;
       background: var(--lis-badge-bg, var(--lis-color-oon));
       cursor: pointer;
-      user-select: none;
       box-shadow: 0 1px 2px rgba(0,0,0,.2);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     }
-    .${BADGE_CLASS}:hover { filter: brightness(1.1); }
+    .${BADGE_PILL_CLASS}:hover { filter: brightness(1.1); }
 
     #${MENU_ID} {
       position: absolute;
@@ -278,21 +491,153 @@ function clearContainer(el: HTMLElement): void {
   delete el.dataset[DATA_MATCH];
   delete el.dataset[DATA_SLUG];
   delete el.dataset[DATA_PROSPECT_ID];
-  const badge = el.querySelector<HTMLElement>(`:scope > .${BADGE_CLASS}`);
-  if (badge) badge.remove();
+  delete el.dataset[DATA_BADGE_NAME];
+  delete el.dataset[DATA_BADGE_ACTION];
+  delete el.dataset[DATA_BADGE_URL];
+  delete el.dataset[DATA_KIND];
+  const badge = containerBadges.get(el);
+  if (badge) {
+    badge.remove();
+    containerBadges.delete(el);
+  }
+}
+
+interface BadgePlacement {
+  badge: HTMLElement;
+  top: number;
+  left: number;        // value written to `style.left`
+  visibleLeft: number; // rendered left edge (accounts for translateX(-100%))
+  visibleRight: number;
+  height: number;
+}
+
+function findOuterFeedCard(container: HTMLElement): HTMLElement | null {
+  // For any element inside a post card (including mention anchors nested
+  // deep in the body), return the card. `closest` walks up from the element.
+  if (container.matches?.(OUTER_FEED_CARD_SELECTOR)) return container;
+  return container.closest<HTMLElement>(OUTER_FEED_CARD_SELECTOR);
+}
+
+function computeBadgePlacement(
+  container: HTMLElement,
+  badge: HTMLElement,
+): BadgePlacement | null {
+  const containerRect = container.getBoundingClientRect();
+  if (containerRect.width <= 0 && containerRect.height <= 0) return null;
+
+  // Horizontal reference: the outermost post card shared by everything
+  // inside it. This is what produces a single clean left column per post
+  // regardless of which action (author / commenter / reactor / mention)
+  // triggered the highlight. When no post card wraps the container (reactor
+  // dialogs, right-rail suggestions), fall back to the container itself.
+  const anchorCard = findOuterFeedCard(container);
+  const anchorRect = anchorCard
+    ? anchorCard.getBoundingClientRect()
+    : containerRect;
+
+  const badgeW = badge.offsetWidth || 180;
+  const badgeH = badge.offsetHeight || 20;
+
+  // Badges use `transform: translateX(-100%)` globally (set in the shared
+  // `.lis-badge` stylesheet), so `style.left` is the RIGHT edge of the
+  // rendered rectangle.
+  const idealStyleLeft = anchorRect.left + window.scrollX - BADGE_GAP_PX;
+  // Vertical: align with the specific action inside the post, not the post's
+  // top — so the commenter badge lines up with the comment row, the mention
+  // badge lines up with the mention line, and the post-author badge lines up
+  // with the post card's top.
+  const top = containerRect.top + window.scrollY + BADGE_TOP_OFFSET_PX;
+
+  // Clamp so the visible rect never goes under 8px from the viewport left.
+  const styleLeft = Math.max(
+    idealStyleLeft,
+    window.scrollX + BADGE_MIN_VISIBLE_LEFT_PX + badgeW,
+  );
+
+  return {
+    badge,
+    top,
+    left: styleLeft,
+    visibleLeft: styleLeft - badgeW,
+    visibleRight: styleLeft,
+    height: badgeH,
+  };
+}
+
+/**
+ * Place all badges with pairwise vertical-collision avoidance. Posts, their
+ * comments, and in-body mentions often share the same left margin (LinkedIn
+ * centers content to a fixed column), so naive `rect.top - offset`
+ * positioning produces stacked badges that overlap each other and the post
+ * itself. Sort by desired top and push any badge whose visible rect would
+ * intersect a previously-placed badge below it.
+ */
+function repositionAllBadges(): void {
+  // Prune badges whose containers left the DOM (SPA navigation, feed reflow).
+  for (const [container, badge] of Array.from(containerBadges.entries())) {
+    if (!container.isConnected) {
+      badge.remove();
+      containerBadges.delete(container);
+    }
+  }
+
+  const placements: BadgePlacement[] = [];
+  for (const [container, badge] of containerBadges.entries()) {
+    const placement = computeBadgePlacement(container, badge);
+    if (!placement) {
+      badge.style.display = 'none';
+      continue;
+    }
+    badge.style.display = '';
+    placements.push(placement);
+  }
+
+  // Sort by desired top; resolve collisions greedily against already-placed badges.
+  placements.sort((a, b) => a.top - b.top);
+  const placed: BadgePlacement[] = [];
+  for (const p of placements) {
+    let resolvedTop = p.top;
+    for (const q of placed) {
+      // No horizontal overlap → can't collide.
+      if (p.visibleRight <= q.visibleLeft || p.visibleLeft >= q.visibleRight) continue;
+      const qBottom = q.top + q.height;
+      if (resolvedTop < qBottom + BADGE_COLLISION_GAP_PX) {
+        resolvedTop = qBottom + BADGE_COLLISION_GAP_PX;
+      }
+    }
+    p.top = resolvedTop;
+    p.badge.style.top = `${resolvedTop}px`;
+    p.badge.style.left = `${p.left}px`;
+    placed.push(p);
+  }
+}
+
+function scheduleReposition(): void {
+  if (repositionScheduled) return;
+  repositionScheduled = true;
+  requestAnimationFrame(() => {
+    repositionScheduled = false;
+    repositionAllBadges();
+  });
 }
 
 function applyHighlight(
   container: HTMLElement,
   summary: ProspectHighlightSummary,
   slug: string,
+  badgeMeta: BadgeMeta,
+  kind: ContainerKind,
 ): void {
   const levelAttr = summary.level === 'NONE' ? 'NONE' : summary.level;
   const previous = container.getAttribute(CONTAINER_ATTR);
   if (
     previous === levelAttr &&
     container.dataset[DATA_SLUG] === slug &&
-    container.querySelector(`:scope > .${BADGE_CLASS}`)
+    (container.dataset[DATA_BADGE_NAME] ?? '') === badgeMeta.displayName &&
+    (container.dataset[DATA_BADGE_ACTION] ?? '') === (badgeMeta.actionLabel ?? '') &&
+    (container.dataset[DATA_BADGE_URL] ?? '') === badgeMeta.profileUrl &&
+    (container.dataset[DATA_KIND] ?? '') === kind &&
+    containerBadges.has(container)
   ) {
     return;
   }
@@ -300,28 +645,71 @@ function applyHighlight(
   container.setAttribute(CONTAINER_ATTR, levelAttr);
   container.dataset[DATA_SLUG] = slug;
   container.dataset[DATA_PROSPECT_ID] = String(summary.id);
+  container.dataset[DATA_BADGE_NAME] = badgeMeta.displayName;
+  container.dataset[DATA_BADGE_ACTION] = badgeMeta.actionLabel ?? '';
+  container.dataset[DATA_BADGE_URL] = badgeMeta.profileUrl;
+  container.dataset[DATA_KIND] = kind;
 
-  // Ensure absolute-positioned badge has a positioning context without
-  // disturbing LinkedIn's own layout.
-  const computed = getComputedStyle(container).position;
-  if (computed === 'static') {
-    container.style.position = 'relative';
-  }
-
-  let badge = container.querySelector<HTMLElement>(`:scope > .${BADGE_CLASS}`);
-  if (!badge) {
+  let badge = containerBadges.get(container);
+  if (!badge || !badge.isConnected) {
     badge = document.createElement('div');
     badge.className = BADGE_CLASS;
-    badge.addEventListener('click', onBadgeClick);
-    container.appendChild(badge);
+    document.body.appendChild(badge);
+    containerBadges.set(container, badge);
   }
-  badge.textContent = badgeLabel(summary.level);
+
+  let nameLink = badge.querySelector<HTMLAnchorElement>(`:scope > .${BADGE_NAME_CLASS}`);
+  let action = badge.querySelector<HTMLElement>(`:scope > .${BADGE_ACTION_CLASS}`);
+  let pill = badge.querySelector<HTMLButtonElement>(`:scope > .${BADGE_PILL_CLASS}`);
+
+  if (!nameLink || !action || !pill) {
+    badge.replaceChildren();
+
+    nameLink = document.createElement('a');
+    nameLink.className = BADGE_NAME_CLASS;
+    nameLink.target = '_blank';
+    nameLink.rel = 'noopener noreferrer';
+    nameLink.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+    });
+
+    action = document.createElement('span');
+    action.className = BADGE_ACTION_CLASS;
+
+    pill = document.createElement('button');
+    pill.type = 'button';
+    pill.className = BADGE_PILL_CLASS;
+    pill.addEventListener('click', onBadgeClick);
+
+    badge.appendChild(nameLink);
+    badge.appendChild(action);
+    badge.appendChild(pill);
+  }
+
   badge.style.setProperty('--lis-badge-bg', cssVarForLevel(summary.level));
-  badge.setAttribute('data-lis-prospect-id', String(summary.id));
-  badge.setAttribute('data-lis-slug', slug);
-  badge.title = [summary.name, summary.company, summary.headline]
+
+  nameLink.textContent = badgeMeta.displayName;
+  nameLink.href = badgeMeta.profileUrl;
+
+  if (badgeMeta.actionLabel) {
+    action.textContent = badgeMeta.actionLabel;
+    action.style.display = '';
+  } else {
+    action.textContent = '';
+    action.style.display = 'none';
+  }
+
+  pill.textContent = badgeLabelForLevel(summary.level);
+  pill.setAttribute('data-lis-prospect-id', String(summary.id));
+  pill.setAttribute('data-lis-slug', slug);
+
+  badge.title = [badgeMeta.displayName, badgeMeta.actionLabel, summary.company, summary.headline]
     .filter(Boolean)
     .join(' · ');
+
+  // Defer placement to the centralized collision-aware pass so newly added
+  // badges don't overlap existing ones in the same left margin column.
+  scheduleReposition();
 }
 
 function onBadgeClick(ev: MouseEvent): void {
@@ -466,6 +854,15 @@ async function markActivity(
 
 // ——— Scanning pass ———
 
+function getMarkedContainers(root: ParentNode): HTMLElement[] {
+  const out: HTMLElement[] = [];
+  if (root instanceof HTMLElement && root.hasAttribute(CONTAINER_ATTR)) {
+    out.push(root);
+  }
+  out.push(...Array.from(root.querySelectorAll<HTMLElement>(`[${CONTAINER_ATTR}]`)));
+  return out;
+}
+
 function scanAndHighlight(root: ParentNode = document): void {
   if (!slugMapReady) return;
   if (!settings?.highlight?.enabled) {
@@ -474,7 +871,7 @@ function scanAndHighlight(root: ParentNode = document): void {
   }
 
   const anchors = root.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
-  if (anchors.length === 0) return;
+  const activeContainers = new Set<HTMLElement>();
 
   // Skip the currently-viewed profile's own top card (spec §8.1).
   const currentProfileSlug = slugFromHref(location.href);
@@ -496,11 +893,40 @@ function scanAndHighlight(root: ParentNode = document): void {
       continue;
     }
 
-    const container = findContainer(anchor);
+    const container = findHighlightContainer(anchor);
     if (!container) continue;
-    if (!isKindEnabled(container.kind)) continue;
 
-    applyHighlight(container.el, summary, slug);
+    // Reclassify @-mentions: a post-body or comment-body anchor that isn't
+    // the author/commenter header becomes its own `mentions` decoration with
+    // the anchor itself as the container (inline badge above the link).
+    let kind: ContainerKind = container.kind;
+    let el: HTMLElement = container.el;
+    if (kind === 'post_authors' && !isPostAuthorAnchor(anchor, container.el)) {
+      kind = 'mentions';
+      el = anchor;
+    } else if (kind === 'commenters' && !isCommenterAnchor(anchor, container.el)) {
+      kind = 'mentions';
+      el = anchor;
+    }
+
+    if (!isKindEnabled(kind)) continue;
+    if (activeContainers.has(el)) continue;
+
+    activeContainers.add(el);
+    applyHighlight(
+      el,
+      summary,
+      slug,
+      buildBadgeMeta(anchor, el, kind, summary, slug),
+      kind,
+    );
+  }
+
+  // Clear stale decorations that no longer map to an on-page matched anchor.
+  for (const marked of getMarkedContainers(root)) {
+    if (!activeContainers.has(marked)) {
+      clearContainer(marked);
+    }
   }
 }
 
@@ -612,9 +1038,24 @@ function onSettingsChanged(next: Settings): void {
 
 // ——— Broadcast listener ———
 
-chrome.runtime.onMessage.addListener((msg: Message) => {
+chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
   if (!msg || typeof msg !== 'object') return;
   switch (msg.type) {
+    case 'FEED_TEST_COLLECT_VISIBLE_PROFILES': {
+      const requested = Number(msg.payload?.max_profiles ?? FEED_TEST_DEFAULT_MAX_PROFILES);
+      const maxProfiles = Number.isFinite(requested)
+        ? Math.max(1, Math.min(FEED_TEST_DEFAULT_MAX_PROFILES, Math.trunc(requested)))
+        : FEED_TEST_DEFAULT_MAX_PROFILES;
+      const profiles = collectVisibleFeedProfiles(maxProfiles);
+      sendResponse({
+        ok: true,
+        data: {
+          profiles,
+          truncated: profiles.length >= maxProfiles,
+        },
+      });
+      return;
+    }
     case 'PROSPECTS_UPDATED':
       void refreshSlugMap();
       break;
@@ -638,6 +1079,7 @@ function startObservers(): void {
         if (n.classList?.contains(BADGE_CLASS)) continue;
         if (n.id === MENU_ID || n.id === STYLE_ID) continue;
         scheduleScan();
+        scheduleReposition();
         return;
       }
     }
@@ -646,6 +1088,11 @@ function startObservers(): void {
     childList: true,
     subtree: true,
   });
+
+  // Badges are portaled to <body>; keep them aligned with their source
+  // containers as the user scrolls, resizes, or LinkedIn reflows layout.
+  window.addEventListener('scroll', scheduleReposition, { passive: true, capture: true });
+  window.addEventListener('resize', scheduleReposition, { passive: true });
 }
 
 // ——— Bootstrap ———

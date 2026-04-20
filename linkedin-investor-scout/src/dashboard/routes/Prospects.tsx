@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   ChevronDown,
   Download,
   Filter,
   Loader2,
+  MoreHorizontal,
   RefreshCw,
   Search,
   Trash2,
@@ -16,7 +20,9 @@ import type {
   Prospect,
   ProspectLevel,
   ProspectPage,
+  ProspectSortField,
   ScanStatus,
+  SortDirection,
 } from '@/shared/types';
 import { useDashboardStore } from '../store';
 import {
@@ -66,6 +72,16 @@ const STATUS_DISPLAY: Record<ScanStatus, string> = {
 };
 
 const ROW_HEIGHT = 44;
+const RESCAN_ALL_PAGE_SIZE = Number.MAX_SAFE_INTEGER;
+const DEFAULT_SORT_DIRECTION: Record<ProspectSortField, SortDirection> = {
+  created_at: 'desc',
+  updated_at: 'desc',
+  name: 'asc',
+  company: 'asc',
+  level: 'asc',
+  scan_status: 'asc',
+  last_scanned: 'desc',
+};
 
 export function ProspectsRoute() {
   const query = useDashboardStore((s) => s.query);
@@ -73,6 +89,7 @@ export function ProspectsRoute() {
   const toggleLevel = useDashboardStore((s) => s.toggleLevel);
   const toggleScanStatus = useDashboardStore((s) => s.toggleScanStatus);
   const toggleActivity = useDashboardStore((s) => s.toggleActivity);
+  const setSort = useDashboardStore((s) => s.setSort);
   const setPage = useDashboardStore((s) => s.setPage);
   const resetFilters = useDashboardStore((s) => s.resetFilters);
   const selectedIds = useDashboardStore((s) => s.selectedIds);
@@ -151,6 +168,8 @@ export function ProspectsRoute() {
 
   const selectedCount = selectedIds.size;
   const selectedArr = useMemo(() => Array.from(selectedIds), [selectedIds]);
+  const sortField: ProspectSortField = query.sort_field ?? 'created_at';
+  const sortDirection: SortDirection = query.sort_direction ?? 'desc';
 
   const handleBulkRescan = async () => {
     if (selectedCount === 0) return;
@@ -209,6 +228,113 @@ export function ProspectsRoute() {
     }
   };
 
+  const handleRescanAll = async () => {
+    setBusy(true);
+    try {
+      const listRes = await sendMessage({
+        type: 'PROSPECTS_LIST',
+        payload: {
+          ...query,
+          page: 0,
+          page_size: RESCAN_ALL_PAGE_SIZE,
+        },
+      });
+      if (!listRes.ok) {
+        setToast(listRes.error);
+        return;
+      }
+      const ids = listRes.data.rows.map((row) => row.id);
+      if (ids.length === 0) {
+        setToast('No matching rows to rescan');
+        return;
+      }
+      const confirmed = window.confirm(
+        `Queue ${ids.length.toLocaleString()} matching prospect${ids.length === 1 ? '' : 's'} for rescan?`,
+      );
+      if (!confirmed) return;
+      const rescanRes = await sendMessage({
+        type: 'PROSPECTS_RESCAN',
+        payload: { ids },
+      });
+      if (rescanRes.ok) {
+        clearSelection();
+        setToast(`Queued ${rescanRes.data.updated.toLocaleString()} for rescan`);
+        await refresh();
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleSort = (field: ProspectSortField) => {
+    if (sortField === field) {
+      setSort(field, sortDirection === 'asc' ? 'desc' : 'asc');
+      return;
+    }
+    setSort(field, DEFAULT_SORT_DIRECTION[field]);
+  };
+
+  const handleRowRescan = async (id: number) => {
+    setBusy(true);
+    try {
+      const res = await sendMessage({
+        type: 'PROSPECTS_RESCAN',
+        payload: { ids: [id] },
+      });
+      if (res.ok) {
+        setToast(`Queued ${res.data.updated} for rescan`);
+        await refresh();
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRowDelete = async (row: Prospect) => {
+    const confirmed = window.confirm(
+      `Delete ${row.name ?? row.slug}? This cannot be undone.`,
+    );
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      const res = await sendMessage({
+        type: 'PROSPECTS_DELETE',
+        payload: { ids: [row.id] },
+      });
+      if (res.ok) {
+        if (drawerProspectId === row.id) {
+          openDrawer(null);
+        }
+        const next = new Set(selectedIds);
+        next.delete(row.id);
+        setSelectedIds(next);
+        setToast(`Deleted ${res.data.deleted} prospect`);
+        await refresh();
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRowActivity = async (
+    id: number,
+    activity: ActivityKind,
+  ) => {
+    setBusy(true);
+    try {
+      const res = await sendMessage({
+        type: 'PROSPECTS_BULK_ACTIVITY',
+        payload: { ids: [id], activity },
+      });
+      if (res.ok) {
+        setToast(`Updated ${res.data.updated} prospect`);
+        await refresh();
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleExport = async (useFilter: boolean) => {
     setBusy(true);
     try {
@@ -248,6 +374,16 @@ export function ProspectsRoute() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => void handleRescanAll()}
+              disabled={busy || total === 0}
+              className="inline-flex items-center gap-1.5 rounded-md border border-gray-700 bg-bg px-2.5 py-1.5 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white disabled:opacity-50"
+              title="Queue all matching rows for rescan"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Rescan all
+            </button>
             <button
               type="button"
               onClick={() => void refresh()}
@@ -361,7 +497,7 @@ export function ProspectsRoute() {
       )}
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="grid grid-cols-[32px_minmax(180px,2fr)_minmax(160px,2fr)_minmax(120px,1.5fr)_80px_96px_80px_100px_60px] items-center gap-2 border-b border-gray-800 bg-bg-card/40 px-4 py-1.5 text-[10px] uppercase tracking-wide text-gray-500">
+        <div className="grid grid-cols-[32px_minmax(180px,2fr)_minmax(160px,2fr)_minmax(120px,1.5fr)_80px_96px_80px_100px_60px_44px] items-center gap-2 border-b border-gray-800 bg-bg-card/40 px-4 py-1.5 text-[10px] uppercase tracking-wide text-gray-500">
           <div>
             <input
               type="checkbox"
@@ -371,14 +507,45 @@ export function ProspectsRoute() {
               className="h-3 w-3 cursor-pointer accent-blue-500"
             />
           </div>
-          <div>Name</div>
+          <SortHeader
+            label="Name"
+            field="name"
+            activeField={sortField}
+            direction={sortDirection}
+            onToggle={handleSort}
+          />
           <div>Headline</div>
-          <div>Company</div>
-          <div>Level</div>
-          <div>Status</div>
+          <SortHeader
+            label="Company"
+            field="company"
+            activeField={sortField}
+            direction={sortDirection}
+            onToggle={handleSort}
+          />
+          <SortHeader
+            label="Level"
+            field="level"
+            activeField={sortField}
+            direction={sortDirection}
+            onToggle={handleSort}
+          />
+          <SortHeader
+            label="Status"
+            field="scan_status"
+            activeField={sortField}
+            direction={sortDirection}
+            onToggle={handleSort}
+          />
           <div>Activity</div>
-          <div>Scanned</div>
+          <SortHeader
+            label="Scanned"
+            field="last_scanned"
+            activeField={sortField}
+            direction={sortDirection}
+            onToggle={handleSort}
+          />
           <div className="text-right">Notes</div>
+          <div className="text-right">Actions</div>
         </div>
 
         <div
@@ -418,9 +585,13 @@ export function ProspectsRoute() {
                   >
                     <Row
                       row={row}
+                      busy={busy}
                       checked={checked}
                       onToggleSelect={() => toggleSelected(row.id)}
                       onOpen={() => openDrawer(row.id)}
+                      onRescan={() => void handleRowRescan(row.id)}
+                      onSetActivity={(activity) => void handleRowActivity(row.id, activity)}
+                      onDelete={() => void handleRowDelete(row)}
                     />
                   </div>
                 );
@@ -474,18 +645,26 @@ export function ProspectsRoute() {
 
 function Row({
   row,
+  busy,
   checked,
   onToggleSelect,
   onOpen,
+  onRescan,
+  onSetActivity,
+  onDelete,
 }: {
   row: Prospect;
+  busy: boolean;
   checked: boolean;
   onToggleSelect: () => void;
   onOpen: () => void;
+  onRescan: () => void;
+  onSetActivity: (activity: ActivityKind) => void;
+  onDelete: () => void;
 }) {
   return (
     <div
-      className="grid h-full grid-cols-[32px_minmax(180px,2fr)_minmax(160px,2fr)_minmax(120px,1.5fr)_80px_96px_80px_100px_60px] items-center gap-2 border-b border-gray-800/70 px-4 text-xs hover:bg-gray-800/40"
+      className="grid h-full grid-cols-[32px_minmax(180px,2fr)_minmax(160px,2fr)_minmax(120px,1.5fr)_80px_96px_80px_100px_60px_44px] items-center gap-2 border-b border-gray-800/70 px-4 text-xs hover:bg-gray-800/40"
     >
       <div className="flex items-center">
         <input
@@ -530,6 +709,149 @@ function Row({
       <div className="truncate text-right text-gray-500" title={row.notes}>
         {row.notes ? `“${row.notes.slice(0, 24)}${row.notes.length > 24 ? '…' : ''}”` : ''}
       </div>
+      <div className="flex justify-end">
+        <RowActionsMenu
+          busy={busy}
+          row={row}
+          onOpen={onOpen}
+          onRescan={onRescan}
+          onSetActivity={onSetActivity}
+          onDelete={onDelete}
+        />
+      </div>
+    </div>
+  );
+}
+
+function SortHeader({
+  label,
+  field,
+  activeField,
+  direction,
+  onToggle,
+}: {
+  label: string;
+  field: ProspectSortField;
+  activeField: ProspectSortField;
+  direction: SortDirection;
+  onToggle: (field: ProspectSortField) => void;
+}) {
+  const active = activeField === field;
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(field)}
+      className={
+        'inline-flex items-center gap-1 text-left uppercase tracking-wide transition ' +
+        (active ? 'text-blue-300' : 'text-gray-500 hover:text-gray-200')
+      }
+      title={`Sort by ${label.toLowerCase()}`}
+    >
+      <span>{label}</span>
+      {active ? (
+        direction === 'asc' ? (
+          <ArrowUp className="h-3 w-3" />
+        ) : (
+          <ArrowDown className="h-3 w-3" />
+        )
+      ) : (
+        <ArrowUpDown className="h-3 w-3 opacity-60" />
+      )}
+    </button>
+  );
+}
+
+function RowActionsMenu({
+  busy,
+  row,
+  onOpen,
+  onRescan,
+  onSetActivity,
+  onDelete,
+}: {
+  busy: boolean;
+  row: Prospect;
+  onOpen: () => void;
+  onRescan: () => void;
+  onSetActivity: (activity: ActivityKind) => void;
+  onDelete: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const listener = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', listener);
+    return () => document.removeEventListener('mousedown', listener);
+  }, [open]);
+
+  const closeAndRun = (fn: () => void) => {
+    setOpen(false);
+    fn();
+  };
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        disabled={busy}
+        className="rounded-md border border-gray-700 bg-bg p-1 text-gray-300 hover:border-blue-500 hover:text-white disabled:opacity-50"
+        aria-label={`Actions for ${row.name ?? row.slug}`}
+      >
+        <MoreHorizontal className="h-3.5 w-3.5" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-md border border-gray-700 bg-bg-card p-1 shadow-xl">
+          <button
+            type="button"
+            onClick={() => closeAndRun(onOpen)}
+            className="block w-full rounded-md px-2 py-1.5 text-left text-[11px] text-gray-200 hover:bg-gray-800"
+          >
+            Open details
+          </button>
+          <button
+            type="button"
+            onClick={() => closeAndRun(onRescan)}
+            className="block w-full rounded-md px-2 py-1.5 text-left text-[11px] text-gray-200 hover:bg-gray-800"
+          >
+            Rescan
+          </button>
+          <button
+            type="button"
+            onClick={() => closeAndRun(() => onSetActivity({ connected: true }))}
+            className="block w-full rounded-md px-2 py-1.5 text-left text-[11px] text-gray-200 hover:bg-gray-800"
+          >
+            Mark connected
+          </button>
+          <button
+            type="button"
+            onClick={() => closeAndRun(() => onSetActivity({ commented: true }))}
+            className="block w-full rounded-md px-2 py-1.5 text-left text-[11px] text-gray-200 hover:bg-gray-800"
+          >
+            Mark commented
+          </button>
+          <button
+            type="button"
+            onClick={() => closeAndRun(() => onSetActivity({ messaged: true }))}
+            className="block w-full rounded-md px-2 py-1.5 text-left text-[11px] text-gray-200 hover:bg-gray-800"
+          >
+            Mark messaged
+          </button>
+          <button
+            type="button"
+            onClick={() => closeAndRun(onDelete)}
+            className="block w-full rounded-md px-2 py-1.5 text-left text-[11px] text-red-300 hover:bg-red-900/40 hover:text-red-100"
+          >
+            Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 }

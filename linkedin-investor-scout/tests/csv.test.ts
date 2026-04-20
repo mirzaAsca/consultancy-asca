@@ -38,6 +38,22 @@ describe('summarizeCsvText', () => {
     expect(summary.urls[1]).toBe('https://www.linkedin.com/in/b/');
   });
 
+  it('skips a common URL header row and accepts regional linkedin hosts', () => {
+    const csv = [
+      'url_normalized,count_total',
+      'https://ae.linkedin.com/in/jane-doe,2',
+      'https://at.linkedin.com/in/max-mustermann,3',
+    ].join('\n');
+    const summary = summarizeCsvText(csv);
+    expect(summary.total).toBe(2);
+    expect(summary.invalid).toBe(0);
+    expect(summary.valid).toBe(2);
+    expect(summary.urls).toEqual([
+      'https://www.linkedin.com/in/jane-doe/',
+      'https://www.linkedin.com/in/max-mustermann/',
+    ]);
+  });
+
   it('caps invalid_samples at 5', () => {
     const csv = Array.from({ length: 12 }, (_, i) => `bad-${i}`).join('\n');
     const summary = summarizeCsvText(csv);

@@ -1,6 +1,7 @@
 import {
   appendActivityLog,
   getProspectById,
+  getProspectByUrl,
   getScanState,
   getSettings,
   putScanState,
@@ -10,6 +11,10 @@ import {
 } from '@/shared/db';
 import { broadcast } from '@/shared/messaging';
 import { jitterAround, localDayBucket, randomDelayMs } from '@/shared/time';
+import {
+  canonicalizeLinkedInProfileUrl,
+  slugFromCanonicalProfileUrl,
+} from '@/shared/url';
 import type {
   AutoPauseReason,
   Prospect,
@@ -42,6 +47,16 @@ export function getOwnedTabIds(): number[] {
 
 async function broadcastScanState(state: ScanState): Promise<void> {
   broadcast({ type: 'SCAN_STATE_CHANGED', payload: state });
+}
+
+function broadcastProspectsUpdated(changedIds: number[]): void {
+  const normalized = Array.from(
+    new Set(changedIds.filter((id) => Number.isInteger(id) && id > 0)),
+  );
+  broadcast({
+    type: 'PROSPECTS_UPDATED',
+    payload: { changed_ids: normalized },
+  });
 }
 
 async function setScanStatus(
@@ -217,6 +232,44 @@ async function executeScanInTab(tabId: number) {
   return first.result as Awaited<ReturnType<typeof scanProfilePageInTab>>;
 }
 
+async function buildRedirectPatch(
+  prospect: Prospect,
+  tabId: number,
+): Promise<Partial<Omit<Prospect, 'id'>>> {
+  let currentTabUrl: string | null = null;
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    currentTabUrl = typeof tab.url === 'string' ? tab.url : null;
+  } catch {
+    return {};
+  }
+  if (!currentTabUrl) return {};
+
+  const canonical = canonicalizeLinkedInProfileUrl(currentTabUrl);
+  if (!canonical || canonical === prospect.url) return {};
+
+  const redirectedSlug = slugFromCanonicalProfileUrl(canonical);
+  if (!redirectedSlug) return {};
+
+  const existing = await getProspectByUrl(canonical);
+  if (existing && existing.id !== prospect.id) {
+    await appendActivityLog({
+      ts: Date.now(),
+      level: 'warn',
+      event: 'profile_redirect_conflict',
+      prospect_id: prospect.id,
+      data: {
+        from_url: prospect.url,
+        to_url: canonical,
+        existing_prospect_id: existing.id,
+      },
+    });
+    return {};
+  }
+
+  return { url: canonical, slug: redirectedSlug };
+}
+
 export interface ScanProspectOutcome {
   kind: 'done' | 'retry' | 'failed' | 'auto_paused';
   level?: ProspectLevel;
@@ -274,7 +327,10 @@ async function scanSingleProspect(
       throw new Error(result.error ?? 'scan_failed');
     }
 
+    const redirectPatch = await buildRedirectPatch(prospect, tabId);
+
     await updateProspect(prospect.id, {
+      ...redirectPatch,
       level: d.level,
       name: d.name,
       headline: d.headline,
@@ -291,7 +347,8 @@ async function scanSingleProspect(
       event: 'profile_scanned',
       prospect_id: prospect.id,
       data: {
-        url: prospect.url,
+        url: redirectPatch.url ?? prospect.url,
+        original_url: prospect.url,
         level: d.level,
         name: d.name,
         company: d.company,
@@ -313,6 +370,7 @@ async function applyOutcome(
   prospect: Prospect,
   outcome: ScanProspectOutcome,
   maxRetries: number,
+  retryOnFailure: boolean,
 ): Promise<'continue' | 'stop'> {
   if (outcome.kind === 'done') {
     return 'continue';
@@ -339,6 +397,26 @@ async function applyOutcome(
 
   // 'retry'
   const attempts = prospect.scan_attempts + 1;
+  if (!retryOnFailure) {
+    await updateProspect(prospect.id, {
+      scan_status: 'failed',
+      scan_error: outcome.error ?? 'retry_disabled',
+    });
+    await appendActivityLog({
+      ts: Date.now(),
+      level: 'warn',
+      event: 'profile_scan_failed',
+      prospect_id: prospect.id,
+      data: {
+        url: prospect.url,
+        error: outcome.error,
+        attempts,
+        retry_on_failure: false,
+      },
+    });
+    return 'continue';
+  }
+
   if (attempts >= maxRetries) {
     await updateProspect(prospect.id, {
       scan_status: 'failed',
@@ -442,12 +520,14 @@ export async function runScanLoop(): Promise<void> {
           prospect,
           outcome,
           settings.scan.max_retries,
+          settings.scan.retry_on_failure,
         );
+        // Batch prospect-row mutations into one broadcast per processed prospect.
+        broadcastProspectsUpdated([prospect.id]);
 
-        if (outcome.kind === 'done') {
-          const s = await getScanState();
-          await setScanStatus({ scans_today: s.scans_today + 1 });
-        }
+        // Daily cap tracks scan attempts, not only successful outcomes.
+        const s = await getScanState();
+        await setScanStatus({ scans_today: s.scans_today + 1 });
 
         if (next === 'stop') return;
       }

@@ -9,6 +9,7 @@ import {
 } from 'react';
 import {
   AlertTriangle,
+  ClipboardList,
   Download,
   FileUp,
   Filter,
@@ -33,12 +34,19 @@ import type {
   ScanState,
   ScanStatus,
   ScanWorkerStatus,
+  Settings,
 } from '@/shared/types';
 
 type PreviewState = {
   filename: string;
   summary: CsvImportSummary;
 };
+
+interface ScanConfigSnapshot {
+  min_delay_ms: number;
+  max_delay_ms: number;
+  daily_cap: number;
+}
 
 type ToastState =
   | { kind: 'idle' }
@@ -70,11 +78,13 @@ const AUTO_PAUSE_COPY: Record<NonNullable<AutoPauseReason>, string> = {
   auth_wall: 'LinkedIn auth wall hit. Log back in, then resume.',
 };
 
+const OUT_OF_NETWORK_LABEL = 'OOO (Out of network)';
+
 const FILTER_LEVEL_OPTIONS: Array<{ value: ProspectLevel; label: string }> = [
   { value: '1st', label: '1st' },
   { value: '2nd', label: '2nd' },
   { value: '3rd', label: '3rd' },
-  { value: 'OUT_OF_NETWORK', label: 'OOO' },
+  { value: 'OUT_OF_NETWORK', label: OUT_OF_NETWORK_LABEL },
   { value: 'NONE', label: 'Unscanned' },
 ];
 
@@ -141,17 +151,38 @@ function buildExportFilename(suffix: string): string {
   return `investor-scout-${suffix}-${stamp}.csv`;
 }
 
+function scanConfigFromSettings(settings: Settings): ScanConfigSnapshot {
+  return {
+    min_delay_ms: settings.scan.min_delay_ms,
+    max_delay_ms: settings.scan.max_delay_ms,
+    daily_cap: settings.scan.daily_cap,
+  };
+}
+
+function formatEta(remainingMs: number): string {
+  const totalMinutes = Math.max(0, Math.ceil(remainingMs / 60_000));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+type PopupDashboardRoute = 'prospects' | 'settings' | 'logs';
+
 export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [stats, setStats] = useState<ProspectStats>(EMPTY_STATS);
   const [statsLoading, setStatsLoading] = useState(true);
   const [scanState, setScanState] = useState<ScanState | null>(null);
+  const [scanConfig, setScanConfig] = useState<ScanConfigSnapshot | null>(null);
+  const [lastUploadAt, setLastUploadAt] = useState<number | null>(null);
   const [scanBusy, setScanBusy] = useState(false);
   const [preview, setPreview] = useState<PreviewState | null>(null);
   const [parsing, setParsing] = useState(false);
   const [committing, setCommitting] = useState(false);
   const [toast, setToast] = useState<ToastState>({ kind: 'idle' });
   const [exportBusy, setExportBusy] = useState(false);
+  const [feedTestBusy, setFeedTestBusy] = useState(false);
+  const [feedTestCleanupBusy, setFeedTestCleanupBusy] = useState(false);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
 
   const refreshStats = useCallback(async () => {
@@ -171,9 +202,26 @@ export default function App() {
     if (res.ok) setScanState(res.data);
   }, []);
 
+  const refreshSettings = useCallback(async () => {
+    const res = await sendMessage({ type: 'SETTINGS_QUERY' });
+    if (res.ok) setScanConfig(scanConfigFromSettings(res.data));
+  }, []);
+
+  const refreshLastUpload = useCallback(async () => {
+    const res = await sendMessage({
+      type: 'LOGS_QUERY',
+      payload: { event_contains: 'csv_imported', limit: 25 },
+    });
+    if (!res.ok) return;
+    const row = res.data.find((entry) => entry.event === 'csv_imported');
+    setLastUploadAt(row?.ts ?? null);
+  }, []);
+
   useEffect(() => {
     void refreshStats();
     void refreshScanState();
+    void refreshSettings();
+    void refreshLastUpload();
     const listener = (msg: { type?: string; payload?: unknown }) => {
       if (msg?.type === 'PROSPECTS_UPDATED') {
         void refreshStats();
@@ -183,10 +231,13 @@ export default function App() {
         // Updates to scan_status touch the status counts as well.
         void refreshStats();
       }
+      if (msg?.type === 'SETTINGS_CHANGED' && msg.payload) {
+        setScanConfig(scanConfigFromSettings(msg.payload as Settings));
+      }
     };
     chrome.runtime.onMessage.addListener(listener);
     return () => chrome.runtime.onMessage.removeListener(listener);
-  }, [refreshStats, refreshScanState]);
+  }, [refreshLastUpload, refreshSettings, refreshScanState, refreshStats]);
 
   useEffect(() => {
     if (toast.kind === 'idle') return;
@@ -235,6 +286,8 @@ export default function App() {
         payload: {
           filename: preview.filename,
           urls: preview.summary.urls,
+          invalid_count: preview.summary.invalid,
+          invalid_samples: preview.summary.invalid_samples,
         },
       });
       if (res.ok) {
@@ -244,6 +297,7 @@ export default function App() {
         });
         setPreview(null);
         await refreshStats();
+        await refreshLastUpload();
       } else {
         setToast({ kind: 'error', text: res.error });
       }
@@ -252,9 +306,15 @@ export default function App() {
     }
   };
 
-  const openDashboard = () => {
-    chrome.runtime.openOptionsPage?.();
-  };
+  const openDashboard = useCallback(
+    (route: PopupDashboardRoute = 'prospects', params?: Record<string, string>) => {
+      const search = new URLSearchParams(params ?? {});
+      const hash = `#/${route}${search.toString() ? `?${search.toString()}` : ''}`;
+      const url = chrome.runtime.getURL(`src/dashboard/index.html${hash}`);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    },
+    [],
+  );
 
   const runExport = useCallback(
     async (filter: ProspectQuery | null, suffix: string) => {
@@ -318,6 +378,56 @@ export default function App() {
 
   const openPicker = () => fileInputRef.current?.click();
 
+  const handleFeedTestSeed = useCallback(async () => {
+    if (feedTestBusy) return;
+    setFeedTestBusy(true);
+    try {
+      const res = await sendMessage({ type: 'FEED_TEST_SEED_RANDOM_LEVELS' });
+      if (!res.ok) {
+        setToast({ kind: 'error', text: res.error });
+        return;
+      }
+      setToast({
+        kind: 'success',
+        text: `Seeded ${res.data.seeded.toLocaleString()} visible prospects with random levels.`,
+      });
+      await refreshStats();
+    } catch (error) {
+      console.error('[investor-scout] feed test seed failed', {
+        error: error instanceof Error ? error.message : error,
+        timestamp: new Date().toISOString(),
+      });
+      setToast({ kind: 'error', text: 'Failed to seed random feed labels.' });
+    } finally {
+      setFeedTestBusy(false);
+    }
+  }, [feedTestBusy, refreshStats]);
+
+  const handleFeedTestCleanup = useCallback(async () => {
+    if (feedTestCleanupBusy) return;
+    setFeedTestCleanupBusy(true);
+    try {
+      const res = await sendMessage({ type: 'CLEAR_ALL_DATA' });
+      if (!res.ok) {
+        setToast({ kind: 'error', text: res.error });
+        return;
+      }
+      setToast({
+        kind: 'success',
+        text: 'Cleared local test data. Re-import your CSV when ready.',
+      });
+      await Promise.all([refreshStats(), refreshScanState(), refreshLastUpload()]);
+    } catch (error) {
+      console.error('[investor-scout] feed test cleanup failed', {
+        error: error instanceof Error ? error.message : error,
+        timestamp: new Date().toISOString(),
+      });
+      setToast({ kind: 'error', text: 'Failed to clear local test data.' });
+    } finally {
+      setFeedTestCleanupBusy(false);
+    }
+  }, [feedTestCleanupBusy, refreshLastUpload, refreshScanState, refreshStats]);
+
   const willReplace = useMemo(() => stats.total > 0, [stats.total]);
 
   const scanStatus: ScanWorkerStatus = scanState?.status ?? 'idle';
@@ -346,6 +456,20 @@ export default function App() {
   const canStart = scanStatus === 'idle' && pending > 0;
   const canPause = scanStatus === 'running';
   const canResume = scanStatus === 'paused' || scanStatus === 'auto_paused';
+  const feedTestBlockedByRunningScan = scanStatus === 'running';
+  const lastUploadLabel = lastUploadAt ? new Date(lastUploadAt).toLocaleString() : '—';
+  const dayCounterLabel = scanState
+    ? scanConfig
+      ? `${scanState.scans_today}/${scanConfig.daily_cap} today`
+      : `${scanState.scans_today} today`
+    : '—';
+  const etaLabel = useMemo(() => {
+    if (scanStatus !== 'running' || pending <= 0 || !scanConfig) {
+      return 'ETA —';
+    }
+    const avgDelayMs = Math.round((scanConfig.min_delay_ms + scanConfig.max_delay_ms) / 2);
+    return `ETA ${formatEta(pending * avgDelayMs)}`;
+  }, [pending, scanConfig, scanStatus]);
 
   return (
     <div className="flex h-full w-full flex-col bg-bg text-gray-100">
@@ -373,6 +497,9 @@ export default function App() {
               </div>
               <div className="text-xl font-semibold text-gray-100">
                 {statsLoading ? '—' : stats.total.toLocaleString()}
+              </div>
+              <div className="mt-1 text-[10px] text-gray-500" title={lastUploadLabel}>
+                Last upload: {lastUploadLabel}
               </div>
             </div>
             <button
@@ -426,6 +553,19 @@ export default function App() {
               <p className="mt-0.5 text-red-200/80">
                 {AUTO_PAUSE_COPY[scanState.auto_pause_reason]}
               </p>
+              <button
+                type="button"
+                onClick={() => void handleScanAction('SCAN_RESUME')}
+                disabled={scanBusy}
+                className="mt-2 inline-flex items-center gap-1 rounded-md border border-red-400/60 bg-red-800/40 px-2 py-1 text-[11px] font-medium text-red-100 hover:bg-red-700/50 disabled:opacity-60"
+              >
+                {scanBusy ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Play className="h-3 w-3" />
+                )}
+                Resume scan
+              </button>
             </div>
           </div>
         )}
@@ -448,9 +588,11 @@ export default function App() {
             <span>
               {pending.toLocaleString()} pending · {stats.by_scan_status.failed.toLocaleString()} failed
             </span>
-            <span>
-              {scanState ? `${scanState.scans_today} today` : '—'}
-            </span>
+            <span>{dayCounterLabel}</span>
+          </div>
+          <div className="mt-1 flex items-center justify-between text-[10px] text-gray-500">
+            <span>{etaLabel}</span>
+            <span />
           </div>
           <div className="mt-3 flex gap-2">
             {canStart && (
@@ -495,10 +637,30 @@ export default function App() {
             By connection level
           </div>
           <div className="grid grid-cols-4 gap-2">
-            <StatTile label="1st" value={stats.by_level['1st']} color="bg-level-first" />
-            <StatTile label="2nd" value={stats.by_level['2nd']} color="bg-level-second" />
-            <StatTile label="3rd" value={stats.by_level['3rd']} color="bg-level-third" />
-            <StatTile label="OOO" value={stats.by_level.OUT_OF_NETWORK} color="bg-level-oon" />
+            <StatTile
+              label="1st"
+              value={stats.by_level['1st']}
+              color="bg-level-first"
+              onClick={() => openDashboard('prospects', { level: '1st' })}
+            />
+            <StatTile
+              label="2nd"
+              value={stats.by_level['2nd']}
+              color="bg-level-second"
+              onClick={() => openDashboard('prospects', { level: '2nd' })}
+            />
+            <StatTile
+              label="3rd"
+              value={stats.by_level['3rd']}
+              color="bg-level-third"
+              onClick={() => openDashboard('prospects', { level: '3rd' })}
+            />
+            <StatTile
+              label={OUT_OF_NETWORK_LABEL}
+              value={stats.by_level.OUT_OF_NETWORK}
+              color="bg-level-oon"
+              onClick={() => openDashboard('prospects', { level: 'OUT_OF_NETWORK' })}
+            />
           </div>
         </section>
 
@@ -546,10 +708,64 @@ export default function App() {
           </div>
           <button
             type="button"
-            onClick={openDashboard}
+            onClick={() => void handleFeedTestSeed()}
+            disabled={feedTestBusy || feedTestBlockedByRunningScan}
+            className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            title={
+              feedTestBlockedByRunningScan
+                ? 'Pause the active scan before running feed label test'
+                : 'Replace local list with currently visible feed profiles and random levels'
+            }
+          >
+            {feedTestBusy ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3.5 w-3.5" />
+            )}
+            Test Feed Labels (Random)
+          </button>
+          {feedTestBlockedByRunningScan && (
+            <p className="mt-1 text-[10px] text-amber-300/80">
+              Pause the active scan before running feed label tests.
+            </p>
+          )}
+          <p className="mt-1 text-[10px] text-amber-300/80">
+            Testing mode replaces local prospect list.
+          </p>
+          <p className="mt-1 text-[10px] text-gray-500">
+            Requires an active <code className="text-gray-400">linkedin.com/feed</code> tab with at least 4 unique <code className="text-gray-400">/in/</code> profiles rendered on the page (viewport or off-screen).
+          </p>
+          <button
+            type="button"
+            onClick={() => void handleFeedTestCleanup()}
+            disabled={feedTestCleanupBusy || stats.total === 0}
+            className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            title="Clear local test data (prospects, scan state, logs)"
+          >
+            {feedTestCleanupBusy ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <AlertTriangle className="h-3.5 w-3.5" />
+            )}
+            Clear test data
+          </button>
+          <p className="mt-1 text-[10px] text-gray-500">
+            Local cleanup only. No LinkedIn clicks or messages are performed.
+          </p>
+          <button
+            type="button"
+            onClick={() => openDashboard('prospects')}
             className="mt-2 w-full rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white"
           >
             Open dashboard
+          </button>
+          <button
+            type="button"
+            onClick={() => openDashboard('logs')}
+            className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white"
+          >
+            <ClipboardList className="h-3.5 w-3.5" />
+            View logs
           </button>
         </section>
       </main>
@@ -625,23 +841,37 @@ function StatTile({
   label,
   value,
   color,
+  onClick,
 }: {
   label: string;
   value: number;
   color: string;
+  onClick?: () => void;
 }) {
+  const className =
+    'rounded-md border border-gray-800 bg-bg-card p-2 text-center transition ' +
+    (onClick
+      ? 'cursor-pointer hover:border-blue-500 hover:text-white'
+      : '');
+
   return (
-    <div className="rounded-md border border-gray-800 bg-bg-card p-2 text-center">
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!onClick}
+      className={className}
+      title={onClick ? `Open ${label} prospects in dashboard` : undefined}
+    >
       <div className="mx-auto mb-1 flex items-center justify-center gap-1">
         <span className={`inline-block h-1.5 w-1.5 rounded-full ${color}`} />
-        <span className="text-[10px] font-medium uppercase tracking-wide text-gray-400">
+        <span className="text-[9px] font-medium leading-tight tracking-wide text-gray-400">
           {label}
         </span>
       </div>
       <div className="text-sm font-semibold text-gray-100">
         {value.toLocaleString()}
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -783,21 +1013,33 @@ function ExportFilterModal({
   const toggleLevel = (value: ProspectLevel) => {
     setDraft((d) => {
       const next = new Set(d.levels);
-      next.has(value) ? next.delete(value) : next.add(value);
+      if (next.has(value)) {
+        next.delete(value);
+      } else {
+        next.add(value);
+      }
       return { ...d, levels: next };
     });
   };
   const toggleStatus = (value: ScanStatus) => {
     setDraft((d) => {
       const next = new Set(d.scan_statuses);
-      next.has(value) ? next.delete(value) : next.add(value);
+      if (next.has(value)) {
+        next.delete(value);
+      } else {
+        next.add(value);
+      }
       return { ...d, scan_statuses: next };
     });
   };
   const toggleActivity = (value: keyof ActivityKind) => {
     setDraft((d) => {
       const next = new Set(d.activity);
-      next.has(value) ? next.delete(value) : next.add(value);
+      if (next.has(value)) {
+        next.delete(value);
+      } else {
+        next.add(value);
+      }
       return { ...d, activity: next };
     });
   };

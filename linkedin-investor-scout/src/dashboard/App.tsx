@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { ClipboardList, Radar, Settings as SettingsIcon } from 'lucide-react';
+import type { ProspectLevel } from '@/shared/types';
 import { useDashboardStore, type DashboardRoute } from './store';
 import { ProspectsRoute } from './routes/Prospects';
 import { SettingsRoute } from './routes/Settings';
@@ -15,24 +16,80 @@ const ROUTES: Array<{
   { id: 'logs', label: 'Logs', Icon: ClipboardList },
 ];
 
+const VALID_ROUTES: DashboardRoute[] = ['prospects', 'settings', 'logs'];
+const VALID_LEVELS: ProspectLevel[] = [
+  '1st',
+  '2nd',
+  '3rd',
+  'OUT_OF_NETWORK',
+  'NONE',
+];
+
+function parseDashboardHash(
+  hash: string,
+): { route: DashboardRoute; prospectId: number | null; level: ProspectLevel | null } {
+  const raw = hash.startsWith('#') ? hash.slice(1) : hash;
+  const [pathPart, queryPart = ''] = raw.split('?');
+  const routeToken = pathPart.replace(/^\/+/, '').split('/')[0];
+  const route = VALID_ROUTES.includes(routeToken as DashboardRoute)
+    ? (routeToken as DashboardRoute)
+    : 'prospects';
+  if (route !== 'prospects') {
+    return { route, prospectId: null, level: null };
+  }
+  const params = new URLSearchParams(queryPart);
+  const idRaw = params.get('id');
+  const parsed = idRaw ? Number(idRaw) : NaN;
+  const levelRaw = params.get('level');
+  const level =
+    levelRaw && VALID_LEVELS.includes(levelRaw as ProspectLevel)
+      ? (levelRaw as ProspectLevel)
+      : null;
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    return { route, prospectId: null, level };
+  }
+  return { route, prospectId: parsed, level };
+}
+
 export default function App() {
   const route = useDashboardStore((s) => s.route);
   const setRoute = useDashboardStore((s) => s.setRoute);
+  const applyDeepLinkLevel = useDashboardStore((s) => s.applyDeepLinkLevel);
+  const drawerProspectId = useDashboardStore((s) => s.drawerProspectId);
+  const openDrawer = useDashboardStore((s) => s.openDrawer);
 
   useEffect(() => {
-    const hash = window.location.hash.replace(/^#\/?/, '');
-    const initial = (hash.split('/')[0] || 'prospects') as DashboardRoute;
-    if (['prospects', 'settings', 'logs'].includes(initial)) {
-      setRoute(initial);
+    const syncFromHash = () => {
+      const parsed = parseDashboardHash(window.location.hash);
+      setRoute(parsed.route);
+      if (parsed.route === 'prospects') {
+        openDrawer(parsed.prospectId);
+        applyDeepLinkLevel(parsed.level);
+      } else {
+        openDrawer(null);
+      }
+    };
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, [applyDeepLinkLevel, openDrawer, setRoute]);
+
+  useEffect(() => {
+    if (route !== 'prospects' && drawerProspectId !== null) {
+      openDrawer(null);
     }
-  }, [setRoute]);
+  }, [drawerProspectId, openDrawer, route]);
 
   useEffect(() => {
-    const next = `#/${route}`;
+    const params = new URLSearchParams();
+    if (route === 'prospects' && drawerProspectId !== null) {
+      params.set('id', String(drawerProspectId));
+    }
+    const next = `#/${route}${params.toString() ? `?${params.toString()}` : ''}`;
     if (window.location.hash !== next) {
       window.history.replaceState(null, '', next);
     }
-  }, [route]);
+  }, [drawerProspectId, route]);
 
   return (
     <div className="min-h-screen bg-bg text-gray-100">

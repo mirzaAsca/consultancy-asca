@@ -14,6 +14,7 @@ import {
   getSettings,
   openScoutDb,
   prospectInsertFromRawUrl,
+  queryProspects,
   putScanState,
   putSettings,
   replaceAllProspects,
@@ -148,6 +149,38 @@ describe('IndexedDB data layer', () => {
     ]);
     const rows = await getAllProspects();
     expect(rows.map((r) => r.slug)).toEqual(['first', 'second']);
+  });
+
+  it('keeps 3rd and OUT_OF_NETWORK level filters separate', async () => {
+    const now = Date.now();
+    await replaceAllProspects([
+      {
+        ...prospectInsertFromRawUrl('linkedin.com/in/third-level'),
+        level: '3rd',
+        scan_status: 'done',
+        last_scanned: now,
+      },
+      {
+        ...prospectInsertFromRawUrl('linkedin.com/in/out-of-network'),
+        level: 'OUT_OF_NETWORK',
+        scan_status: 'done',
+        last_scanned: now,
+      },
+    ]);
+
+    const thirdOnly = await queryProspects({
+      levels: ['3rd'],
+      page: 0,
+      page_size: 20,
+    });
+    const oonOnly = await queryProspects({
+      levels: ['OUT_OF_NETWORK'],
+      page: 0,
+      page_size: 20,
+    });
+
+    expect(thirdOnly.rows.map((row) => row.slug)).toEqual(['third-level']);
+    expect(oonOnly.rows.map((row) => row.slug)).toEqual(['out-of-network']);
   });
 
   it('getSettings returns an independent copy (no DEFAULT_SETTINGS aliasing)', async () => {

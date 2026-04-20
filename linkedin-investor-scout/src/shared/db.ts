@@ -323,7 +323,24 @@ export async function resetStuckInProgressProspects(): Promise<number> {
 export async function getSettings(): Promise<Settings> {
   const db = await openScoutDb();
   const row = await db.get('settings', 'global');
-  if (row) return row;
+  if (row) {
+    // Forward-compatible backfill: existing installs may predate new
+    // `show_on` keys (e.g. `mentions`). Merge defaults for missing fields so
+    // the UI never crashes on `settings.highlight.show_on.mentions`.
+    const defaults = createDefaultSettings(row.updated_at || Date.now());
+    const merged: Settings = {
+      ...defaults,
+      ...row,
+      scan: { ...defaults.scan, ...row.scan },
+      highlight: {
+        ...defaults.highlight,
+        ...row.highlight,
+        colors: { ...defaults.highlight.colors, ...row.highlight?.colors },
+        show_on: { ...defaults.highlight.show_on, ...row.highlight?.show_on },
+      },
+    };
+    return merged;
+  }
   // NOTE: must be a fresh deep copy — spreading DEFAULT_SETTINGS directly would
   // alias nested objects (scan / highlight / colors / show_on), letting
   // consumer mutations silently corrupt the module-level defaults.

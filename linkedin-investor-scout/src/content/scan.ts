@@ -13,9 +13,9 @@ import {
 export interface ScanArgs {
   selectors: ScanSelectorSet;
   safetyUrlPatterns: {
-    captcha: RegExp;
-    rateLimit: RegExp;
-    authWall: RegExp;
+    captcha: { source: string; flags: string };
+    rateLimit: { source: string; flags: string };
+    authWall: { source: string; flags: string };
   };
   safetyTextFragments: {
     captcha: readonly string[];
@@ -29,9 +29,18 @@ export interface ScanArgs {
 export const DEFAULT_SCAN_ARGS: ScanArgs = {
   selectors: LINKEDIN_SELECTORS,
   safetyUrlPatterns: {
-    captcha: SAFETY_URL_PATTERNS.captcha,
-    rateLimit: SAFETY_URL_PATTERNS.rateLimit,
-    authWall: SAFETY_URL_PATTERNS.authWall,
+    captcha: {
+      source: SAFETY_URL_PATTERNS.captcha.source,
+      flags: SAFETY_URL_PATTERNS.captcha.flags,
+    },
+    rateLimit: {
+      source: SAFETY_URL_PATTERNS.rateLimit.source,
+      flags: SAFETY_URL_PATTERNS.rateLimit.flags,
+    },
+    authWall: {
+      source: SAFETY_URL_PATTERNS.authWall.source,
+      flags: SAFETY_URL_PATTERNS.authWall.flags,
+    },
   },
   safetyTextFragments: SAFETY_TEXT_FRAGMENTS,
   maxWaitMs: 15000,
@@ -56,15 +65,27 @@ export async function scanProfilePageInTab(
 
   const href = window.location.href;
   const pageText = (document.body?.innerText || '').toLowerCase();
+  const safetyCaptchaRe = new RegExp(
+    safetyUrlPatterns.captcha.source,
+    safetyUrlPatterns.captcha.flags,
+  );
+  const safetyRateLimitRe = new RegExp(
+    safetyUrlPatterns.rateLimit.source,
+    safetyUrlPatterns.rateLimit.flags,
+  );
+  const safetyAuthWallRe = new RegExp(
+    safetyUrlPatterns.authWall.source,
+    safetyUrlPatterns.authWall.flags,
+  );
 
   const detected_captcha =
-    safetyUrlPatterns.captcha.test(href) ||
+    safetyCaptchaRe.test(href) ||
     safetyTextFragments.captcha.some((f) => pageText.includes(f));
   const detected_rate_limit =
-    safetyUrlPatterns.rateLimit.test(href) ||
+    safetyRateLimitRe.test(href) ||
     safetyTextFragments.rateLimit.some((f) => pageText.includes(f));
   const detected_auth_wall =
-    safetyUrlPatterns.authWall.test(href) ||
+    safetyAuthWallRe.test(href) ||
     safetyTextFragments.authWall.some((f) => pageText.includes(f));
 
   if (detected_captcha || detected_rate_limit || detected_auth_wall) {

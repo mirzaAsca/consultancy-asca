@@ -4,6 +4,11 @@ import type {
   MessageResponseMap,
 } from './types';
 
+const TAB_BROADCAST_URLS = [
+  'https://www.linkedin.com/*',
+  'https://linkedin.com/*',
+] as const;
+
 /**
  * Typed wrapper around `chrome.runtime.sendMessage`.
  *
@@ -69,6 +74,30 @@ export function registerMessageRouter(handler: MessageHandler): void {
   });
 }
 
+function shouldBroadcastToLinkedInTabs(msg: Message): boolean {
+  return msg.type === 'PROSPECTS_UPDATED' || msg.type === 'SETTINGS_CHANGED';
+}
+
+function broadcastToLinkedInTabs(msg: Message): void {
+  void chrome.tabs
+    .query({ url: [...TAB_BROADCAST_URLS] })
+    .then((tabs) => {
+      for (const tab of tabs) {
+        if (typeof tab.id !== 'number') continue;
+        try {
+          chrome.tabs.sendMessage(tab.id, msg, () => {
+            void chrome.runtime.lastError;
+          });
+        } catch {
+          // Tab may have navigated away between query/send — ignore.
+        }
+      }
+    })
+    .catch(() => {
+      // Ignore tab query failures in fire-and-forget broadcasts.
+    });
+}
+
 /**
  * Broadcast a message to all listeners (popup, dashboard, content scripts).
  * Background-initiated; ignores errors from disconnected ports (normal when
@@ -81,5 +110,9 @@ export function broadcast(msg: Message): void {
     });
   } catch {
     // popup/dashboard closed — ignore
+  }
+
+  if (shouldBroadcastToLinkedInTabs(msg)) {
+    broadcastToLinkedInTabs(msg);
   }
 }

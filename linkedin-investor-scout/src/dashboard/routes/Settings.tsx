@@ -237,6 +237,13 @@ export function SettingsRoute() {
                 }
               />
               <CheckRow
+                label="Mentions (@ tags in post/comment body)"
+                checked={hi.show_on.mentions}
+                onChange={(v) =>
+                  void save({ highlight: { show_on: { mentions: v } } })
+                }
+              />
+              <CheckRow
                 label="People you may know"
                 checked={hi.show_on.suggested}
                 onChange={(v) =>

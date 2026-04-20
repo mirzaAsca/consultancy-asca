@@ -19,12 +19,16 @@ export function randomDelayMs(minMs: number, maxMs: number): number {
 }
 
 /**
- * Apply ±15% Gaussian-ish jitter around baseMs (clamped to at least 0).
+ * Apply truncated Gaussian jitter around baseMs (clamped to at least 0).
+ * Distribution is hard-bounded to ±4σ so pacing stays finite and testable.
  */
 export function jitterAround(baseMs: number, spread = 0.15): number {
-  const u = Math.random();
+  const safeBase = Math.max(0, baseMs);
+  const safeSpread = Math.max(0, spread);
+  const u = Math.max(Number.EPSILON, Math.random());
   const v = Math.random();
   const gaussian = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-  const delta = baseMs * spread * gaussian;
-  return Math.max(0, Math.round(baseMs + delta));
+  const boundedGaussian = Math.max(-4, Math.min(4, gaussian));
+  const delta = safeBase * safeSpread * boundedGaussian;
+  return Math.max(0, Math.round(safeBase + delta));
 }

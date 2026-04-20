@@ -29,7 +29,7 @@
   "options_page": "src/dashboard/index.html",
   "content_scripts": [
     {
-      "matches": ["https://www.linkedin.com/*"],
+      "matches": ["https://www.linkedin.com/*", "https://linkedin.com/*"],
       "js": ["src/content/highlight.ts"],
       "run_at": "document_idle",
       "all_frames": false
@@ -38,7 +38,7 @@
   "web_accessible_resources": [
     {
       "resources": ["assets/*"],
-      "matches": ["https://www.linkedin.com/*"]
+      "matches": ["https://www.linkedin.com/*", "https://linkedin.com/*"]
     }
   ]
 }

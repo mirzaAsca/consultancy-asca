@@ -30,6 +30,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
       reposters: true,
       commenters: true,
       reactors: true,
+      mentions: true,
       suggested: true,
     }),
   }),

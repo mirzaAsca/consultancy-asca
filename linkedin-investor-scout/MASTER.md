@@ -363,6 +363,8 @@ Mapping:
 | (missing) + no Connect button + no Message = `OUT_OF_NETWORK` |
 | If profile page is "Profile unavailable" / 404 | `scan_status = 'failed'`, `scan_error = 'profile_unavailable'` |
 
+`3rd` and `OUT_OF_NETWORK` are distinct levels; UI shorthand `OOO` always means `OUT_OF_NETWORK`.
+
 **Selector resilience**: selectors are defined in a single module `content/selectors.ts`. If LinkedIn changes DOM, only this file needs updating. Each selector has 2–3 fallbacks tried in order.
 
 ### 7.4 Safety Detection Rules (auto-pause triggers)
@@ -453,7 +455,7 @@ Layout (top to bottom):
 2. **List summary card**: `{N} prospects loaded · Last upload: {date}`. CTA "Upload new CSV" (file picker).
 3. **Scan controls**: Primary button toggles between `Start scan` / `Pause scan` / `Resume scan`. Below: `X of Y scanned · ETA {hh:mm}` + linear progress bar. Day counter: `{scans_today}/{daily_cap} today`.
 4. **Stats grid (4 tiles)**: counts of 1st / 2nd / 3rd / OOO, each clickable → opens dashboard pre-filtered.
-5. **Quick actions**: `Export CSV (all)`, `Export CSV (filtered...)` (opens filter modal), `Open dashboard`, `View logs`.
+5. **Quick actions**: `Export CSV (all)`, `Export CSV (filtered...)` (opens filter modal), `Test Feed Labels (Random)` (requires active `linkedin.com/feed` tab + at least 4 visible unique `/in/` profiles), `Open dashboard`, `View logs`.
 6. **Auto-pause banner** (conditional): red background, reason text, "Resume" button.
 
 ### 9.2 Dashboard (full page at `chrome-extension://{id}/dashboard.html`)
@@ -691,10 +693,12 @@ Ordered for incremental verification. Each milestone ends with a runnable, testa
 - [x] CSV parse: handles BOM, trailing newlines, CRLF, quoted cells, invalid URLs, duplicates.
 - [x] Day-bucket rollover across timezones.
 - [x] Jitter delay stays within bounds.
+- [x] Feed test seeding guarantees all four levels are present when at least 4 profiles are collected.
+- [x] Highlight level mapping keeps `3rd` and `OUT_OF_NETWORK` (`OOO`) color variables separate.
 
 ### 14.2 Fixture / Contract
-- [ ] `tests/selectors.fixtures.html` contains saved snapshots per level (`1st.html`, `2nd.html`, `3rd.html`, `oon.html`, `unavailable.html`).
-- [ ] `content/scan.ts` parser runs against each fixture and asserts correct level.
+- [x] `tests/selectors.fixtures.html` contains saved selector fixtures per level (`1st`, `2nd`, `3rd`, `oon`, `unavailable`) via named `<template>` blocks.
+- [x] `content/scan.ts` parser runs against each fixture and asserts the expected level (`tests/selectors.contract.test.ts`).
 - [ ] Re-capture fixtures quarterly (calendar reminder).
 
 ### 14.3 Manual Smoke (run before every release build)

@@ -59,6 +59,7 @@ export interface Settings {
       reposters: boolean;
       commenters: boolean;
       reactors: boolean;
+      mentions: boolean;
       suggested: boolean;
     };
   };
@@ -121,6 +122,8 @@ export interface ProspectStats {
 export interface CsvCommitPayload {
   filename: string;
   urls: string[];
+  invalid_count?: number;
+  invalid_samples?: string[];
 }
 
 export type ProspectSortField =
@@ -198,6 +201,21 @@ export interface ProspectHighlightSummary {
 /** Slug → summary map payload sent to the feed highlighter. */
 export type SlugMap = Record<string, ProspectHighlightSummary>;
 
+/**
+ * Lightweight `/in/` profile shape collected from the currently visible feed.
+ * Used by the random color-label seeding flow for manual UI testing.
+ */
+export interface FeedVisibleProfile {
+  url: string;
+  slug: string;
+  name: string | null;
+}
+
+export interface FeedVisibleProfilesResult {
+  profiles: FeedVisibleProfile[];
+  truncated: boolean;
+}
+
 export type Message =
   // popup / dashboard → background
   | { type: 'CSV_COMMIT'; payload: CsvCommitPayload }
@@ -218,10 +236,13 @@ export type Message =
   | { type: 'LOGS_QUERY'; payload: LogQuery }
   | { type: 'CLEAR_ALL_DATA' }
   | { type: 'EXPORT_CSV'; payload: { filter: ProspectQuery | null } }
+  | { type: 'FEED_TEST_SEED_RANDOM_LEVELS' }
   // content (highlight) → background
   | { type: 'SLUGS_QUERY' }
+  // background → content (highlight) direct tab message
+  | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
   // background → all listeners (broadcast)
-  | { type: 'PROSPECTS_UPDATED'; payload: { total: number } }
+  | { type: 'PROSPECTS_UPDATED'; payload: { changed_ids: number[] } }
   | { type: 'SCAN_STATE_CHANGED'; payload: ScanState }
   | { type: 'SETTINGS_CHANGED'; payload: Settings };
 
@@ -249,7 +270,9 @@ export interface MessageResponseMap {
   LOGS_QUERY: LogEntry[];
   CLEAR_ALL_DATA: { cleared: true };
   EXPORT_CSV: { csv: string; row_count: number };
+  FEED_TEST_SEED_RANDOM_LEVELS: { seeded: number; collected: number; tab_id: number };
   SLUGS_QUERY: SlugMap;
+  FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   PROSPECTS_UPDATED: void;
   SCAN_STATE_CHANGED: void;
   SETTINGS_CHANGED: void;

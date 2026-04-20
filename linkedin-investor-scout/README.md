@@ -1,6 +1,7 @@
 # LinkedIn Investor Scout
 
 Chrome MV3 extension that scans LinkedIn profile URLs to detect connection level (`1st` / `2nd` / `3rd` / `OUT_OF_NETWORK`) and highlights matched prospects in-feed with a level-coded border and badge. Personal-use tool — **no outreach automation**. See [`MASTER.md`](./MASTER.md) for the full spec.
+`3rd` and `OUT_OF_NETWORK` (shown in UI as `OOO`) are separate levels and stay independently countable/filterable.
 
 Current status: **v1.0 feature-complete**. All core milestones (scaffold → data layer → CSV upload → scan worker → dashboard → feed highlighter → export → polish) land. Remaining release step is the manual smoke test in [`MASTER.md`](./MASTER.md) §14.3.
 
@@ -12,7 +13,8 @@ Current status: **v1.0 feature-complete**. All core milestones (scaffold → dat
 - **Feed highlighter** — on any `linkedin.com/*` page, marks post authors, reposters, commenters, reactors, and "People you may know" cards that belong to your prospect list with a level-colored border and badge. Inline badge menu for marking Connected / Commented / Messaged (no automated actions).
 - **Dashboard** — virtualized table with search, level/scan-status/activity filters, per-row drawer with editable notes and activity timeline, bulk rescan / bulk activity flags, settings panel (pacing sliders, daily cap, color pickers, clear-data).
 - **Popup** — upload, start / pause / resume, live progress + ETA, 4-tile stats grid, quick export.
-- **Export** — full or filtered CSV (PapaParse `unparse`) delivered via `chrome.downloads.download`.
+- **Feed label test mode** — popup action `Test Feed Labels (Random)` reads visible `/in/` profiles from the active `linkedin.com/feed` tab, replaces local prospects, and seeds random levels for color verification. Requires at least 4 unique visible profiles so all four levels are represented.
+- **Export** — full or filtered CSV (PapaParse `unparse`) delivered via Blob URL download.
 - **Safety** — conservative defaults (5–10 s jitter, 500/day cap), auto-pause on safety triggers, auto-resume on browser restart, watchdog alarm reconciles orphan tabs.
 
 ---
@@ -92,7 +94,7 @@ bun run icons      # regenerate icons/16.png, 48.png, 128.png via Pillow
 bun run test
 ```
 
-Covers URL canonicalization (all variant forms collapse to the canonical `/in/{slug}/` shape), CSV parsing edge cases (BOM, CRLF, quoted cells, duplicates), IndexedDB CRUD against `fake-indexeddb`, local day-bucket rollover, and jitter bounds. Fixture-based selector resilience tests (§14.2) and the end-to-end manual smoke test (§14.3) are run by hand before releases — see `MASTER.md`.
+Covers URL canonicalization (all variant forms collapse to the canonical `/in/{slug}/` shape), CSV parsing edge cases (BOM, CRLF, quoted cells, duplicates), IndexedDB CRUD against `fake-indexeddb`, local day-bucket rollover, jitter bounds, selector fixture contracts (scan parser against `tests/selectors.fixtures.html`), feed-test random-level coverage guarantees, and highlight level/color mapping (`3rd` vs `OOO`). The end-to-end manual smoke test (§14.3) is still run by hand before releases — see `MASTER.md`.
 
 ---
 
