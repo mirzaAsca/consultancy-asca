@@ -8,6 +8,54 @@ export type ScanStatus =
   | 'failed'
   | 'skipped';
 
+/**
+ * v2 — where the prospect is in the outreach pipeline.
+ * Independent of `scan_status` (which tracks DOM-scan progress).
+ */
+export type ProspectLifecycleStatus =
+  | 'new'
+  | 'ready_for_visit'
+  | 'ready_for_connect'
+  | 'request_sent'
+  | 'connected'
+  | 'followup_due'
+  | 'do_not_contact';
+
+/** v2 — scoring-engine tier bucket. `null` = not yet scored. */
+export type ProspectTier = 'S' | 'A' | 'B' | 'C' | 'skip';
+
+/**
+ * v2 — outreach action taxonomy (Mode A only; message surfaces are
+ * clipboard-copy helpers, no automated Message/DM submission).
+ */
+export type OutreachActionKind =
+  | 'profile_visit'
+  | 'connection_request_sent'
+  | 'message_sent'
+  | 'followup_message_sent';
+
+/** v2 — state machine for a queued outreach action. */
+export type OutreachActionState =
+  | 'draft'
+  | 'approved'
+  | 'sent'
+  | 'accepted'
+  | 'declined'
+  | 'expired'
+  | 'withdrawn'
+  | 'needs_review';
+
+/** v2 — score-input breakdown persisted alongside the total so callers can audit. */
+export interface ProspectScoreBreakdown {
+  level: number;
+  keyword: number;
+  firm: number;
+  mutuals: number;
+  recency: number;
+  cooldown: number;
+  total: number;
+}
+
 export interface Prospect {
   id: number;
   url: string;
@@ -32,10 +80,75 @@ export interface Prospect {
   notes: string;
   created_at: number;
   updated_at: number;
+  // ——— v2 fields (nullable; backfilled during v1→v2 upgrade) ———
+  lifecycle_status: ProspectLifecycleStatus;
+  priority_score: number | null;
+  score_breakdown: ProspectScoreBreakdown | null;
+  tier: ProspectTier | null;
+  mutual_count: number | null;
+  next_action: OutreachActionKind | null;
+  next_action_due_at: number | null;
+  last_level_change_at: number | null;
+  last_outreach_at: number | null;
 }
 
 /** Row insert shape (IndexedDB auto-increment assigns `id`). */
 export type ProspectInsert = Omit<Prospect, 'id'>;
+
+/** v2 — user-maintained keyword seed entry (Settings). */
+export interface OutreachKeyword {
+  /** Case-insensitive substring; matched against prospect headline. */
+  term: string;
+  /** Scoring weight (0..40). */
+  weight: number;
+  /** Strong matches drive +40, soft matches +15 by convention. */
+  kind: 'strong' | 'soft';
+}
+
+/** v2 — user-maintained firm seed entry (Settings). */
+export interface OutreachFirm {
+  /** Case-insensitive substring; matched against prospect company. */
+  name: string;
+  /** Scoring weight (0..40). */
+  weight: number;
+  tier: 'top' | 'mid' | 'boutique';
+}
+
+/**
+ * v2 — unified daily / weekly budget caps. Invites and visits share a single
+ * risk bucket when `shared_bucket = true` (default).
+ */
+export interface OutreachCaps {
+  daily_invites: number;
+  daily_visits: number;
+  daily_messages: number;
+  weekly_invites: number;
+  shared_bucket: boolean;
+}
+
+/** v2 — scoring tier thresholds (inclusive lower bounds). */
+export interface TierThresholds {
+  S: number;
+  A: number;
+  B: number;
+  C: number;
+}
+
+/** v2 — all outreach-engine settings under a single namespace. */
+export interface OutreachSettings {
+  caps: OutreachCaps;
+  tier_thresholds: TierThresholds;
+  /** Queue a 24–72h pre-invite profile_visit before a connection_request_sent. */
+  warm_visit_before_invite: boolean;
+  /** Min dwell on a profile tab before a `profile_visited` interaction counts. */
+  profile_visit_dwell_ms: number;
+  /** Health-breach kill switch cooldown before manual resume is allowed. */
+  health_cooldown_hours: number;
+  /** User-maintained keyword list consumed by the scoring engine. */
+  keywords: OutreachKeyword[];
+  /** User-maintained firm whitelist consumed by the scoring engine. */
+  firms: OutreachFirm[];
+}
 
 export interface Settings {
   id: 'global';
@@ -63,6 +176,8 @@ export interface Settings {
       suggested: boolean;
     };
   };
+  /** v2 — outreach engine config. Backfilled from defaults for v1 installs. */
+  outreach: OutreachSettings;
   updated_at: number;
 }
 
@@ -105,6 +220,17 @@ export interface SettingsPatch {
     enabled?: Settings['highlight']['enabled'];
     colors?: Partial<Settings['highlight']['colors']>;
     show_on?: Partial<Settings['highlight']['show_on']>;
+  };
+  outreach?: {
+    caps?: Partial<OutreachCaps>;
+    tier_thresholds?: Partial<TierThresholds>;
+    warm_visit_before_invite?: boolean;
+    profile_visit_dwell_ms?: number;
+    health_cooldown_hours?: number;
+    /** Full replace — caller owns the list. */
+    keywords?: OutreachKeyword[];
+    /** Full replace — caller owns the list. */
+    firms?: OutreachFirm[];
   };
   updated_at?: number;
 }
@@ -297,4 +423,121 @@ export interface ScanPageResult {
     profile_unavailable: boolean;
   } | null;
   error: string | null;
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — outreach_actions store
+// ———————————————————————————————————————————————————————————
+
+/**
+ * v2 — one queued or completed outreach step against a prospect.
+ * State machine: draft → approved → sent → (accepted | declined | expired | withdrawn)
+ * `needs_review` is a sidelane for ambiguous detections that want user confirm.
+ */
+export interface OutreachAction {
+  id: number;
+  prospect_id: number;
+  kind: OutreachActionKind;
+  state: OutreachActionState;
+  /**
+   * Stable idempotency key. Format:
+   * `{prospect_id}:{kind}:{yyyy-mm-dd}:{short_hash}` — prevents double-sends
+   * across service-worker restarts / detector races.
+   */
+  idempotency_key: string;
+  /** Template that produced the rendered body (if any). */
+  template_id: number | null;
+  template_version: number | null;
+  /** Snapshot of the rendered note/message at queue time (audit trail). */
+  rendered_body: string | null;
+  /** Optional correlation to a feed event that seeded this action. */
+  source_feed_event_id: number | null;
+  created_at: number;
+  approved_at: number | null;
+  sent_at: number | null;
+  resolved_at: number | null;
+  notes: string | null;
+}
+
+export type OutreachActionInsert = Omit<OutreachAction, 'id'>;
+
+// ———————————————————————————————————————————————————————————
+// v2 — feed_events store
+// ———————————————————————————————————————————————————————————
+
+export type FeedEventKind =
+  | 'post'
+  | 'comment'
+  | 'repost'
+  | 'reaction'
+  | 'mention'
+  | 'tagged';
+
+/** v2 — URN prefix classifier for filtering group-only traffic, etc. */
+export type FeedPostKind = 'activity' | 'ugcPost' | 'groupPost' | 'share';
+
+export type FeedMode = 'top' | 'recent' | 'unknown';
+
+export type FeedTaskStatus = 'new' | 'queued' | 'done' | 'ignored';
+
+export interface FeedEvent {
+  id: number;
+  prospect_id: number;
+  slug: string;
+  event_kind: FeedEventKind;
+  post_kind: FeedPostKind | null;
+  /** Canonical post permalink, when resolvable. */
+  post_url: string | null;
+  /** Canonical comment permalink, when event_kind === 'comment'. */
+  comment_url: string | null;
+  /** Raw activity URN (e.g. `urn:li:activity:7451...`). */
+  activity_urn: string | null;
+  /** Raw comment URN (`urn:li:comment:(urn:li:activity:X,Y)`). */
+  comment_urn: string | null;
+  feed_mode: FeedMode;
+  /** sha1-based dedupe key. See `shared/scoring.ts#computeFeedEventFingerprint`. */
+  event_fingerprint: string;
+  first_seen_at: number;
+  last_seen_at: number;
+  seen_count: number;
+  task_status: FeedTaskStatus;
+}
+
+export type FeedEventInsert = Omit<FeedEvent, 'id'>;
+
+// ———————————————————————————————————————————————————————————
+// v2 — message_templates store
+// ———————————————————————————————————————————————————————————
+
+export type MessageTemplateKind = 'connect_note' | 'first_message' | 'followup';
+
+export interface MessageTemplate {
+  id: number;
+  kind: MessageTemplateKind;
+  /** Monotonic version within `kind` (A/B infra deferred to v2.1). */
+  version: number;
+  /** Optional human-readable label; defaults to `"{kind} v{version}"`. */
+  name: string;
+  /** Raw template body with `{{placeholder}}` tokens. */
+  body: string;
+  archived: boolean;
+  created_at: number;
+  updated_at: number;
+}
+
+export type MessageTemplateInsert = Omit<MessageTemplate, 'id'>;
+
+// ———————————————————————————————————————————————————————————
+// v2 — daily_usage store (budget counters, keyed by local day bucket)
+// ———————————————————————————————————————————————————————————
+
+export interface DailyUsage {
+  /** Local `YYYY-MM-DD` bucket; primary key. */
+  day_bucket: string;
+  invites_sent: number;
+  visits: number;
+  messages_sent: number;
+  followups_sent: number;
+  feed_events_captured: number;
+  updated_at: number;
 }

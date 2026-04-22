@@ -3,6 +3,7 @@ import type {
   ProspectInsert,
   ProspectLevel,
 } from '@/shared/types';
+import { defaultProspectV2Fields } from '@/shared/db';
 import {
   canonicalizeLinkedInProfileUrl,
   slugFromCanonicalProfileUrl,
@@ -127,5 +128,6 @@ export function buildFeedTestRows(
     notes: '',
     created_at: now,
     updated_at: now,
+    ...defaultProspectV2Fields(),
   }));
 }

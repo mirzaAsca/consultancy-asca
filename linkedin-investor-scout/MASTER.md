@@ -772,3 +772,52 @@ Production build:
 ---
 
 **End of Master Specification v1.0**
+
+---
+
+## 19. v1.1 Amendments (v2 Supersede Block)
+
+_Added 2026-04-22 alongside the Phase 0/1.1/2.1 v2-foundation landing. Supersedes the sections referenced below. See [`EXTENSION_GROWTH_TODO.md`](./EXTENSION_GROWTH_TODO.md) for the full v2 roadmap._
+
+### 19.1 Supersedes §3.2 — Out of Scope
+
+- **`Working-hours scheduler` stays out of scope** (confirmed 2026-04-22 interview; no `chrome.alarms` scheduler added beyond the existing day-bucket rollover and 30s orphan-tab watchdog).
+- **`Re-scan staleness scheduler` becomes in-scope for S/A-tier only** (Phase 1.4 / 3.3 of the growth roadmap). S/A rows older than 30d jump to the front of the scan queue on the next pass.
+
+### 19.2 Supersedes §3.3 — Non-Goals
+
+Relaxes the "never clicks Connect / submits any form" invariant to allow **Mode A only**: the extension may open the LinkedIn Connect modal and prefill the note textarea; the user still clicks Send. All other write surfaces (DMs, reactions, comments, posts, follows) remain fully manual. Message and follow-up templates are **clipboard-copy only** — the extension never submits the LinkedIn message composer.
+
+### 19.3 Supersedes §6.3 — CSV Export Format
+
+The v2.0 frozen column order appends after `notes`:
+
+```
+url,level,name,headline,company,location,scan_status,last_scanned,connected,commented,messaged,notes,score,tier,lifecycle_status,mutual_count,last_outreach_at
+```
+
+### 19.4 Supersedes §7.2 — Scan Queue ordering
+
+Change from `id ASC` to **`tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST`**. S/A-tier rows stale > 30d are priority-requeued on the next pass.
+
+### 19.5 New sections (landed in this PR as foundation; UI follows in later sprints)
+
+- **DB_VERSION bumped to 2** — new stores: `outreach_actions`, `feed_events`, `message_templates`, `daily_usage`. New `Prospect` fields: `lifecycle_status`, `priority_score`, `score_breakdown`, `tier`, `mutual_count`, `next_action`, `next_action_due_at`, `last_level_change_at`, `last_outreach_at`.
+- **Scoring engine** — deterministic pure function in [`src/shared/scoring.ts`](./src/shared/scoring.ts). Formula and weights frozen in `SCORE_WEIGHTS`. Tier thresholds default S≥140, A≥100, B≥60, C≥30 (Settings-configurable).
+- **Outreach caps (shared bucket)** — defaults `daily_invites=15`, `daily_visits=40`, `daily_messages=10`, `weekly_invites=80`, `shared_bucket=true`. Live in `DEFAULT_OUTREACH_CAPS` and persisted under `settings.outreach.caps`.
+- **Feed-event fingerprint** — sync FNV-1a 64-bit hex over `prospect_id|event_kind|activity_urn|comment_urn`. Unique index `feed_events.by_event_fingerprint` enforces dedupe across scroll passes / feed modes.
+- **Pre-migration JSON backup** — [`src/shared/backup.ts`](./src/shared/backup.ts) captures a full-DB snapshot at the current on-disk version before the next `openScoutDb()` upgrade runs. Consumers gate on `shouldBackupBeforeUpgrade(lastBootedVersion)`.
+
+### 19.6 Deferred to follow-up commits
+
+Not landed in this PR; see `EXTENSION_GROWTH_TODO.md` sprint plan:
+
+- Phase 1.3 Outreach Queue UX (Mode A prefill flow).
+- Phase 1.4 Message template CRUD UI (the store exists and has CRUD helpers; UI pending).
+- Phase 2.2 Content-script feed-event extraction (debounced 500ms / max batch 50 via `upsertFeedEventsBulk`, which is already shipped and unit-tested).
+- Phase 2.3 Engagement Tasks inbox + `chrome.action` badge.
+- Phase 3.x Continuous harvester + unlock discovery.
+- Phase 4.x Analytics + health + kill switch.
+- Phase 5.x Auto reconciliation.
+
+**End of v1.1 Amendments**

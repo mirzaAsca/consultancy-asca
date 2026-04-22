@@ -119,6 +119,15 @@ describe('prospectsToCsv', () => {
       notes: 'follow up',
       created_at: 0,
       updated_at: 0,
+      lifecycle_status: 'new',
+      priority_score: null,
+      score_breakdown: null,
+      tier: null,
+      mutual_count: null,
+      next_action: null,
+      next_action_due_at: null,
+      last_level_change_at: null,
+      last_outreach_at: null,
     };
     const csv = prospectsToCsv([row]);
     const [header, data] = csv.trim().split('\n');

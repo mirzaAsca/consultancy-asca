@@ -1,4 +1,5 @@
 import Papa from 'papaparse';
+import { defaultProspectV2Fields } from './db';
 import type { Prospect, ProspectInsert } from './types';
 import {
   canonicalizeLinkedInProfileUrl,
@@ -170,6 +171,7 @@ export function buildProspectInsertsFromCanonicalUrls(
       scan_error: null,
       scan_attempts: 0,
       last_scanned: null,
+      ...defaultProspectV2Fields(),
       activity: {
         connected: false,
         connected_at: null,

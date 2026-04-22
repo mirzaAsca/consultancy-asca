@@ -10,9 +10,17 @@ import {
 export { ACTIVITY_LOG_MAX_ENTRIES, DB_NAME, DB_VERSION } from './constants';
 import type {
   ActivityKind,
+  DailyUsage,
+  FeedEvent,
+  FeedEventInsert,
   LogEntry,
   LogEntryInsert,
   LogQuery,
+  MessageTemplate,
+  MessageTemplateInsert,
+  MessageTemplateKind,
+  OutreachAction,
+  OutreachActionInsert,
   Prospect,
   ProspectInsert,
   ProspectLevel,
@@ -39,6 +47,10 @@ export interface ScoutDBSchema extends DBSchema {
       by_scan_status: string;
       /** Indexed field may be null at runtime; `IDBValidKey` typing omits null. */
       by_last_scanned: number;
+      // ——— v2 indexes (added in v1→v2 upgrade) ———
+      by_tier: string;
+      by_lifecycle_status: string;
+      by_priority_score: number;
     };
   };
   settings: {
@@ -53,6 +65,43 @@ export interface ScoutDBSchema extends DBSchema {
     key: number;
     value: LogEntry;
     indexes: { by_ts: number };
+  };
+  // ——— v2 stores ———
+  outreach_actions: {
+    key: number;
+    value: OutreachAction;
+    indexes: {
+      by_prospect_id: number;
+      by_state: string;
+      by_kind: string;
+      /** Unique — dedupes double-send races across service-worker restarts. */
+      by_idempotency_key: string;
+      by_created_at: number;
+    };
+  };
+  feed_events: {
+    key: number;
+    value: FeedEvent;
+    indexes: {
+      by_slug: string;
+      by_prospect_id: number;
+      by_event_kind: string;
+      by_first_seen_at: number;
+      by_task_status: string;
+      /** Unique — sha1-based dedupe key. See `shared/scoring.ts`. */
+      by_event_fingerprint: string;
+    };
+  };
+  message_templates: {
+    key: number;
+    value: MessageTemplate;
+    indexes: {
+      by_kind: string;
+    };
+  };
+  daily_usage: {
+    key: string; // day_bucket
+    value: DailyUsage;
   };
 }
 
@@ -80,7 +129,7 @@ export async function deleteScoutDatabase(): Promise<void> {
 export function openScoutDb(): Promise<IDBPDatabase<ScoutDBSchema>> {
   if (!dbPromise) {
     dbPromise = openDB<ScoutDBSchema>(DB_NAME, DB_VERSION, {
-      upgrade(db, oldVersion, newVersion) {
+      async upgrade(db, oldVersion, newVersion, transaction) {
         if (oldVersion < 1) {
           const prospects = db.createObjectStore('prospects', {
             keyPath: 'id',
@@ -100,6 +149,96 @@ export function openScoutDb(): Promise<IDBPDatabase<ScoutDBSchema>> {
           });
           log.createIndex('by_ts', 'ts');
         }
+
+        if (oldVersion < 2) {
+          // — Extend existing `prospects` store with v2 indexes + backfill.
+          // Existing rows predate `lifecycle_status`/`tier`/etc — the index walk
+          // must follow the backfill, otherwise `by_*` indexes on the new fields
+          // would report `undefined` for every pre-v2 row.
+          const prospectsStore = transaction.objectStore('prospects');
+
+          // Backfill first: cursor-walk every row, add v2 fields with safe defaults.
+          // Fresh v2 installs have zero rows, so this is a no-op for them.
+          let cursor = await prospectsStore.openCursor();
+          while (cursor) {
+            const row = cursor.value as Partial<Prospect> & { id: number };
+            const updated: Prospect = {
+              id: row.id,
+              url: row.url ?? '',
+              slug: row.slug ?? '',
+              level: row.level ?? 'NONE',
+              name: row.name ?? null,
+              headline: row.headline ?? null,
+              company: row.company ?? null,
+              location: row.location ?? null,
+              scan_status: row.scan_status ?? 'pending',
+              scan_error: row.scan_error ?? null,
+              scan_attempts: row.scan_attempts ?? 0,
+              last_scanned: row.last_scanned ?? null,
+              activity: row.activity ?? defaultActivity(),
+              notes: row.notes ?? '',
+              created_at: row.created_at ?? Date.now(),
+              updated_at: Date.now(),
+              lifecycle_status: row.lifecycle_status ?? 'new',
+              priority_score: row.priority_score ?? null,
+              score_breakdown: row.score_breakdown ?? null,
+              tier: row.tier ?? null,
+              mutual_count: row.mutual_count ?? null,
+              next_action: row.next_action ?? null,
+              next_action_due_at: row.next_action_due_at ?? null,
+              last_level_change_at: row.last_level_change_at ?? null,
+              last_outreach_at: row.last_outreach_at ?? null,
+            };
+            await cursor.update(updated);
+            cursor = await cursor.continue();
+          }
+
+          // Now safe to index on the backfilled fields.
+          if (!prospectsStore.indexNames.contains('by_tier')) {
+            prospectsStore.createIndex('by_tier', 'tier');
+          }
+          if (!prospectsStore.indexNames.contains('by_lifecycle_status')) {
+            prospectsStore.createIndex('by_lifecycle_status', 'lifecycle_status');
+          }
+          if (!prospectsStore.indexNames.contains('by_priority_score')) {
+            prospectsStore.createIndex('by_priority_score', 'priority_score');
+          }
+
+          // — New stores (Phase 1.1 + Phase 2.1).
+          const outreach = db.createObjectStore('outreach_actions', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+          outreach.createIndex('by_prospect_id', 'prospect_id');
+          outreach.createIndex('by_state', 'state');
+          outreach.createIndex('by_kind', 'kind');
+          outreach.createIndex('by_idempotency_key', 'idempotency_key', {
+            unique: true,
+          });
+          outreach.createIndex('by_created_at', 'created_at');
+
+          const feed = db.createObjectStore('feed_events', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+          feed.createIndex('by_slug', 'slug');
+          feed.createIndex('by_prospect_id', 'prospect_id');
+          feed.createIndex('by_event_kind', 'event_kind');
+          feed.createIndex('by_first_seen_at', 'first_seen_at');
+          feed.createIndex('by_task_status', 'task_status');
+          feed.createIndex('by_event_fingerprint', 'event_fingerprint', {
+            unique: true,
+          });
+
+          const templates = db.createObjectStore('message_templates', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+          templates.createIndex('by_kind', 'kind');
+
+          db.createObjectStore('daily_usage', { keyPath: 'day_bucket' });
+        }
+
         console.info('[investor-scout] db upgraded', {
           oldVersion,
           newVersion,
@@ -138,6 +277,36 @@ function defaultActivity(): Prospect['activity'] {
   };
 }
 
+/**
+ * v2 default field block for a newly-created Prospect row. Centralized so
+ * every call site (`prospectInsertFromRawUrl`, CSV import, feed-test seeding)
+ * stays in sync as the v2 surface evolves.
+ */
+export function defaultProspectV2Fields(): Pick<
+  Prospect,
+  | 'lifecycle_status'
+  | 'priority_score'
+  | 'score_breakdown'
+  | 'tier'
+  | 'mutual_count'
+  | 'next_action'
+  | 'next_action_due_at'
+  | 'last_level_change_at'
+  | 'last_outreach_at'
+> {
+  return {
+    lifecycle_status: 'new',
+    priority_score: null,
+    score_breakdown: null,
+    tier: null,
+    mutual_count: null,
+    next_action: null,
+    next_action_due_at: null,
+    last_level_change_at: null,
+    last_outreach_at: null,
+  };
+}
+
 /** Build a new prospect row from a raw URL string (canonicalizes; throws if invalid). */
 export function prospectInsertFromRawUrl(rawUrl: string): ProspectInsert {
   const url = canonicalizeLinkedInProfileUrl(rawUrl);
@@ -165,6 +334,7 @@ export function prospectInsertFromRawUrl(rawUrl: string): ProspectInsert {
     notes: '',
     created_at: now,
     updated_at: now,
+    ...defaultProspectV2Fields(),
   };
 }
 
@@ -325,9 +495,10 @@ export async function getSettings(): Promise<Settings> {
   const row = await db.get('settings', 'global');
   if (row) {
     // Forward-compatible backfill: existing installs may predate new
-    // `show_on` keys (e.g. `mentions`). Merge defaults for missing fields so
-    // the UI never crashes on `settings.highlight.show_on.mentions`.
+    // `show_on` keys (e.g. `mentions`) or the full `outreach` v2 namespace.
+    // Merge defaults for missing fields so the UI never crashes on access.
     const defaults = createDefaultSettings(row.updated_at || Date.now());
+    const rowOutreach = (row as Partial<Settings>).outreach;
     const merged: Settings = {
       ...defaults,
       ...row,
@@ -337,6 +508,17 @@ export async function getSettings(): Promise<Settings> {
         ...row.highlight,
         colors: { ...defaults.highlight.colors, ...row.highlight?.colors },
         show_on: { ...defaults.highlight.show_on, ...row.highlight?.show_on },
+      },
+      outreach: {
+        ...defaults.outreach,
+        ...(rowOutreach ?? {}),
+        caps: { ...defaults.outreach.caps, ...(rowOutreach?.caps ?? {}) },
+        tier_thresholds: {
+          ...defaults.outreach.tier_thresholds,
+          ...(rowOutreach?.tier_thresholds ?? {}),
+        },
+        keywords: rowOutreach?.keywords ?? [],
+        firms: rowOutreach?.firms ?? [],
       },
     };
     return merged;
@@ -366,6 +548,24 @@ export async function putSettings(patch: SettingsPatch): Promise<Settings> {
         ...current.highlight.show_on,
         ...patch.highlight?.show_on,
       },
+    },
+    outreach: {
+      ...current.outreach,
+      ...(patch.outreach ? {
+        warm_visit_before_invite:
+          patch.outreach.warm_visit_before_invite ?? current.outreach.warm_visit_before_invite,
+        profile_visit_dwell_ms:
+          patch.outreach.profile_visit_dwell_ms ?? current.outreach.profile_visit_dwell_ms,
+        health_cooldown_hours:
+          patch.outreach.health_cooldown_hours ?? current.outreach.health_cooldown_hours,
+      } : {}),
+      caps: { ...current.outreach.caps, ...patch.outreach?.caps },
+      tier_thresholds: {
+        ...current.outreach.tier_thresholds,
+        ...patch.outreach?.tier_thresholds,
+      },
+      keywords: patch.outreach?.keywords ?? current.outreach.keywords,
+      firms: patch.outreach?.firms ?? current.outreach.firms,
     },
     updated_at: Date.now(),
   };
@@ -721,13 +921,31 @@ export async function queryActivityLog(q: LogQuery = {}): Promise<LogEntry[]> {
   return filtered.slice(0, limit);
 }
 
-/** Nuke prospects + scan_state + activity_log; keep settings (user-configured). */
+/**
+ * Nuke prospects + scan_state + activity_log + v2 derived stores
+ * (outreach_actions / feed_events / daily_usage). Keeps settings and
+ * message_templates — both are user-curated config that should survive
+ * a "reset all data" action.
+ */
 export async function clearAllData(): Promise<void> {
   const db = await openScoutDb();
-  const tx = db.transaction(['prospects', 'scan_state', 'activity_log'], 'readwrite');
+  const tx = db.transaction(
+    [
+      'prospects',
+      'scan_state',
+      'activity_log',
+      'outreach_actions',
+      'feed_events',
+      'daily_usage',
+    ],
+    'readwrite',
+  );
   await tx.objectStore('prospects').clear();
   await tx.objectStore('scan_state').clear();
   await tx.objectStore('activity_log').clear();
+  await tx.objectStore('outreach_actions').clear();
+  await tx.objectStore('feed_events').clear();
+  await tx.objectStore('daily_usage').clear();
   await tx.done;
 }
 
@@ -781,4 +999,250 @@ export async function getProspectStats(): Promise<ProspectStats> {
 
   await tx.done;
   return { total, by_level, by_scan_status };
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — outreach_actions CRUD
+// ———————————————————————————————————————————————————————————
+
+export async function addOutreachAction(
+  row: OutreachActionInsert,
+): Promise<number> {
+  const db = await openScoutDb();
+  return db.add('outreach_actions', row as OutreachAction);
+}
+
+export async function getOutreachActionById(
+  id: number,
+): Promise<OutreachAction | undefined> {
+  const db = await openScoutDb();
+  return db.get('outreach_actions', id);
+}
+
+/**
+ * Lookup by idempotency key — call this before insert to avoid unique-index
+ * aborts on double-send races across service-worker restarts.
+ */
+export async function getOutreachActionByIdempotencyKey(
+  key: string,
+): Promise<OutreachAction | undefined> {
+  const db = await openScoutDb();
+  return db.getFromIndex('outreach_actions', 'by_idempotency_key', key);
+}
+
+export async function updateOutreachAction(
+  id: number,
+  patch: Partial<Omit<OutreachAction, 'id' | 'prospect_id'>>,
+): Promise<OutreachAction> {
+  const db = await openScoutDb();
+  const existing = await db.get('outreach_actions', id);
+  if (!existing) {
+    throw new Error(`OutreachAction not found: ${id}`);
+  }
+  const next: OutreachAction = { ...existing, ...patch, id };
+  await db.put('outreach_actions', next);
+  return next;
+}
+
+export async function listOutreachActionsForProspect(
+  prospectId: number,
+): Promise<OutreachAction[]> {
+  const db = await openScoutDb();
+  const all = await db.getAllFromIndex(
+    'outreach_actions',
+    'by_prospect_id',
+    prospectId,
+  );
+  return all.sort((a, b) => b.created_at - a.created_at);
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — feed_events CRUD
+// ———————————————————————————————————————————————————————————
+
+export async function getFeedEventByFingerprint(
+  fingerprint: string,
+): Promise<FeedEvent | undefined> {
+  const db = await openScoutDb();
+  return db.getFromIndex('feed_events', 'by_event_fingerprint', fingerprint);
+}
+
+/**
+ * Insert a feed event, or bump `last_seen_at` + `seen_count` if one with the
+ * same fingerprint already exists. Returns the resulting row id.
+ * Use via `FEED_EVENTS_UPSERT_BULK` from the content script (debounced 500ms /
+ * max batch 50 — see MASTER v1.1 §19 / EXTENSION_GROWTH_TODO Phase 2.2).
+ */
+export async function upsertFeedEvent(row: FeedEventInsert): Promise<number> {
+  const db = await openScoutDb();
+  const existing = await db.getFromIndex(
+    'feed_events',
+    'by_event_fingerprint',
+    row.event_fingerprint,
+  );
+  if (existing) {
+    const next: FeedEvent = {
+      ...existing,
+      last_seen_at: row.last_seen_at,
+      seen_count: existing.seen_count + 1,
+      // feed_mode may legitimately change between passes — keep latest.
+      feed_mode: row.feed_mode,
+    };
+    await db.put('feed_events', next);
+    return existing.id;
+  }
+  return db.add('feed_events', row as FeedEvent);
+}
+
+export async function upsertFeedEventsBulk(
+  rows: FeedEventInsert[],
+): Promise<{ inserted: number; updated: number }> {
+  if (rows.length === 0) return { inserted: 0, updated: 0 };
+  const db = await openScoutDb();
+  const tx = db.transaction('feed_events', 'readwrite');
+  const index = tx.store.index('by_event_fingerprint');
+  let inserted = 0;
+  let updated = 0;
+  for (const row of rows) {
+    const existing = await index.get(row.event_fingerprint);
+    if (existing) {
+      await tx.store.put({
+        ...existing,
+        last_seen_at: row.last_seen_at,
+        seen_count: existing.seen_count + 1,
+        feed_mode: row.feed_mode,
+      });
+      updated++;
+    } else {
+      await tx.store.add(row as FeedEvent);
+      inserted++;
+    }
+  }
+  await tx.done;
+  return { inserted, updated };
+}
+
+export async function listFeedEventsForProspect(
+  prospectId: number,
+): Promise<FeedEvent[]> {
+  const db = await openScoutDb();
+  const all = await db.getAllFromIndex(
+    'feed_events',
+    'by_prospect_id',
+    prospectId,
+  );
+  return all.sort((a, b) => b.last_seen_at - a.last_seen_at);
+}
+
+export async function countFeedEventsByTaskStatus(
+  status: FeedEvent['task_status'],
+): Promise<number> {
+  const db = await openScoutDb();
+  const index = db
+    .transaction('feed_events', 'readonly')
+    .store.index('by_task_status');
+  return index.count(IDBKeyRange.only(status));
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — message_templates CRUD (single active template per kind in v2.0)
+// ———————————————————————————————————————————————————————————
+
+export async function addMessageTemplate(
+  row: MessageTemplateInsert,
+): Promise<number> {
+  const db = await openScoutDb();
+  return db.add('message_templates', row as MessageTemplate);
+}
+
+export async function listMessageTemplates(
+  kind?: MessageTemplateKind,
+): Promise<MessageTemplate[]> {
+  const db = await openScoutDb();
+  const all = kind
+    ? await db.getAllFromIndex('message_templates', 'by_kind', kind)
+    : await db.getAll('message_templates');
+  return all.sort((a, b) => b.version - a.version || b.created_at - a.created_at);
+}
+
+/** Latest unarchived template for the given kind, or `null`. */
+export async function getActiveMessageTemplate(
+  kind: MessageTemplateKind,
+): Promise<MessageTemplate | null> {
+  const all = await listMessageTemplates(kind);
+  return all.find((t) => !t.archived) ?? null;
+}
+
+export async function updateMessageTemplate(
+  id: number,
+  patch: Partial<Omit<MessageTemplate, 'id' | 'kind'>>,
+): Promise<MessageTemplate> {
+  const db = await openScoutDb();
+  const existing = await db.get('message_templates', id);
+  if (!existing) {
+    throw new Error(`MessageTemplate not found: ${id}`);
+  }
+  const next: MessageTemplate = {
+    ...existing,
+    ...patch,
+    id,
+    updated_at: Date.now(),
+  };
+  await db.put('message_templates', next);
+  return next;
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — daily_usage (budget counters, keyed by local day bucket)
+// ———————————————————————————————————————————————————————————
+
+function zeroDailyUsage(dayBucket: string): DailyUsage {
+  return {
+    day_bucket: dayBucket,
+    invites_sent: 0,
+    visits: 0,
+    messages_sent: 0,
+    followups_sent: 0,
+    feed_events_captured: 0,
+    updated_at: Date.now(),
+  };
+}
+
+/** Read today's counters (or zero-filled if none yet). */
+export async function getDailyUsage(dayBucket: string): Promise<DailyUsage> {
+  const db = await openScoutDb();
+  const row = await db.get('daily_usage', dayBucket);
+  return row ?? zeroDailyUsage(dayBucket);
+}
+
+/**
+ * Atomically increment one or more counters for the given day bucket.
+ * Caller passes the deltas (positive integers). Negative deltas are allowed
+ * but clamped to zero to keep budgets non-negative.
+ */
+export async function incrementDailyUsage(
+  dayBucket: string,
+  deltas: Partial<Omit<DailyUsage, 'day_bucket' | 'updated_at'>>,
+): Promise<DailyUsage> {
+  const db = await openScoutDb();
+  const tx = db.transaction('daily_usage', 'readwrite');
+  const existing = (await tx.store.get(dayBucket)) ?? zeroDailyUsage(dayBucket);
+  const next: DailyUsage = {
+    day_bucket: dayBucket,
+    invites_sent: Math.max(0, existing.invites_sent + (deltas.invites_sent ?? 0)),
+    visits: Math.max(0, existing.visits + (deltas.visits ?? 0)),
+    messages_sent: Math.max(0, existing.messages_sent + (deltas.messages_sent ?? 0)),
+    followups_sent: Math.max(
+      0,
+      existing.followups_sent + (deltas.followups_sent ?? 0),
+    ),
+    feed_events_captured: Math.max(
+      0,
+      existing.feed_events_captured + (deltas.feed_events_captured ?? 0),
+    ),
+    updated_at: Date.now(),
+  };
+  await tx.store.put(next);
+  await tx.done;
+  return next;
 }

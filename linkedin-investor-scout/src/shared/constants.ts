@@ -1,8 +1,55 @@
-import type { Settings, ScanState } from './types';
+import type {
+  OutreachCaps,
+  OutreachSettings,
+  ScanState,
+  Settings,
+  TierThresholds,
+} from './types';
 
 export const DB_NAME = 'linkedin-investor-scout';
-export const DB_VERSION = 1;
+/**
+ * v1 (scan/prospect MVP) → v2 (outreach engine: new Prospect fields,
+ * + outreach_actions / daily_usage / message_templates / feed_events stores).
+ * See `db.ts` upgrade() hook and `MASTER.md` §19 v1.1 amendment block.
+ */
+export const DB_VERSION = 2;
 export const ACTIVITY_LOG_MAX_ENTRIES = 2000;
+
+// ——— v2 outreach defaults (Phase 0 / MASTER v1.1 §19) ———
+
+/** Matches the 15–30/day manual baseline on clean Premium; conservative. */
+export const DEFAULT_OUTREACH_CAPS: Readonly<OutreachCaps> = Object.freeze({
+  daily_invites: 15,
+  daily_visits: 40,
+  daily_messages: 10,
+  weekly_invites: 80,
+  shared_bucket: true,
+});
+
+export const DEFAULT_TIER_THRESHOLDS: Readonly<TierThresholds> = Object.freeze({
+  S: 140,
+  A: 100,
+  B: 60,
+  C: 30,
+});
+
+/**
+ * Score weights exposed as named constants so scoring tests and the
+ * Settings UI share a single source of truth.
+ */
+export const SCORE_WEIGHTS = Object.freeze({
+  level_2nd: 100,
+  level_3rd: 20,
+  level_out_of_network: 5,
+  mutuals_cap: 15,
+  recency_max: 20,
+  recency_half_life_days: 30,
+  cooldown_days: 14,
+  cooldown_penalty: -30,
+});
+
+export const DEFAULT_PROFILE_VISIT_DWELL_MS = 8000;
+export const DEFAULT_HEALTH_COOLDOWN_HOURS = 24;
 
 /**
  * Deep-frozen canonical defaults. Treat as read-only; use
@@ -34,6 +81,15 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
       suggested: true,
     }),
   }),
+  outreach: Object.freeze({
+    caps: DEFAULT_OUTREACH_CAPS,
+    tier_thresholds: DEFAULT_TIER_THRESHOLDS,
+    warm_visit_before_invite: true,
+    profile_visit_dwell_ms: DEFAULT_PROFILE_VISIT_DWELL_MS,
+    health_cooldown_hours: DEFAULT_HEALTH_COOLDOWN_HOURS,
+    keywords: Object.freeze([]) as unknown as OutreachSettings['keywords'],
+    firms: Object.freeze([]) as unknown as OutreachSettings['firms'],
+  }),
   updated_at: 0,
 }) as Readonly<Settings>;
 
@@ -50,6 +106,15 @@ export function createDefaultSettings(updatedAt: number = Date.now()): Settings 
       enabled: DEFAULT_SETTINGS.highlight.enabled,
       colors: { ...DEFAULT_SETTINGS.highlight.colors },
       show_on: { ...DEFAULT_SETTINGS.highlight.show_on },
+    },
+    outreach: {
+      caps: { ...DEFAULT_SETTINGS.outreach.caps },
+      tier_thresholds: { ...DEFAULT_SETTINGS.outreach.tier_thresholds },
+      warm_visit_before_invite: DEFAULT_SETTINGS.outreach.warm_visit_before_invite,
+      profile_visit_dwell_ms: DEFAULT_SETTINGS.outreach.profile_visit_dwell_ms,
+      health_cooldown_hours: DEFAULT_SETTINGS.outreach.health_cooldown_hours,
+      keywords: [],
+      firms: [],
     },
     updated_at: updatedAt,
   };
