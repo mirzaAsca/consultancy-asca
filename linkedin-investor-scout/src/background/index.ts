@@ -8,7 +8,6 @@ import {
   addOutreachAction,
   appendActivityLog,
   bulkAutoTrackFeedEvents,
-  consumeCorrelationToken,
   gcExpiredCorrelationTokens,
   listCorrelationTokensForProspect,
   listInteractionEvents,
@@ -792,9 +791,13 @@ async function handleLinkedInRestrictionBanner(
 /**
  * Phase 5.4 — shared reconciliation path. Called by every detector handler
  * after it has resolved the prospect + (optionally) the activity URN. Writes
- * one interaction_events row, correlates it to the most recent live
- * correlation_token for this prospect + action (if any), consumes that
- * token, and returns whether the detection was auto-matched.
+ * one interaction_events row and correlates it to the most recent live
+ * correlation_token for this prospect + action (if any). Tokens are NOT
+ * consumed on match (Phase 5.6 multi-action fan-out): one inbox click can
+ * legitimately trigger multiple interactions (e.g. react + comment on the
+ * same post) — both should correlate back to the same token. Duplicate
+ * observations of the *same* action within the 2 s fingerprint bucket are
+ * dedup'd by the `interaction_events.by_fingerprint` unique index.
  */
 async function recordInteractionAndReconcile(args: {
   prospect_id: number;
@@ -842,9 +845,10 @@ async function recordInteractionAndReconcile(args: {
     data: args.data ?? {},
   };
   const id = await addInteractionEvent(row);
-  if (match) {
-    await consumeCorrelationToken(match.token);
-  }
+  // Phase 5.6 — tokens stay live for the full window so a single inbox click
+  // can fan out to multiple interactions (react + comment on same post). The
+  // fingerprint index on `interaction_events` prevents double-counting the
+  // same action; the token is garbage-collected when it expires.
   return {
     interaction_id: id,
     matched: match !== null,

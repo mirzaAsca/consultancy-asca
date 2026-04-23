@@ -56,6 +56,17 @@ describe('pickMatchingToken', () => {
     const t = tok({ action_expected: 'commented' });
     expect(pickMatchingToken([t], 10, 'reacted', 500)).toBeNull();
   });
+
+  // Phase 5.6 — multi-action fan-out. One inbox click can legitimately
+  // produce multiple interactions (react + comment). Tokens stay live for
+  // the full window and match each compatible observation.
+  it('returns the same token across multiple compatible observations', () => {
+    const shared = tok({ action_expected: 'reacted', opened_at: 4000 });
+    const reactHit = pickMatchingToken([shared], 10, 'reacted', 5000);
+    const undoHit = pickMatchingToken([shared], 10, 'unreacted', 6000);
+    expect(reactHit?.token).toBe(shared.token);
+    expect(undoHit?.token).toBe(shared.token);
+  });
 });
 
 describe('isActionCompatible', () => {

@@ -14,6 +14,13 @@ import type {
  *
  * Un-reacts are compatible with `reacted` tokens — the user may react then
  * undo inside the window, and both observations belong to the same click.
+ *
+ * Phase 5.6: the `consumed` filter is still honored for backwards compatibility
+ * with any token explicitly marked consumed, but the reconciliation pipeline
+ * no longer flips `consumed` on match — tokens remain live for their full
+ * window so a single inbox click can fan out to multiple interactions (e.g.
+ * react + comment on the same post). Detector-level dedupe is enforced by the
+ * `interaction_events.by_fingerprint` unique index.
  */
 export function pickMatchingToken(
   tokens: readonly CorrelationToken[],

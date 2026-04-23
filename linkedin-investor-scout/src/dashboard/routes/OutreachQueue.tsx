@@ -177,6 +177,16 @@ export function OutreachQueueRoute() {
   };
 
   const handleOpenProfile = async (candidate: OutreachQueueCandidate) => {
+    // Phase 5.2 — open a correlation window so the profile-visit detector
+    // (Phase 5.6) can credit this click if the user dwells on the top card.
+    // Fire-and-forget: a token write failure must never block the nav.
+    void sendMessage({
+      type: 'INTERACTION_TOKEN_OPEN',
+      payload: {
+        prospect_id: candidate.prospect_id,
+        action_expected: 'profile_visited',
+      },
+    }).catch(() => {});
     // Opens in a new tab so the dashboard stays put — Mode A prefill uses the
     // *active* LinkedIn window, so this lets the user alt-tab and trigger the
     // prefill from there.
@@ -227,6 +237,17 @@ export function OutreachQueueRoute() {
 
   const handlePrefillConnect = async (candidate: OutreachQueueCandidate) => {
     setBusyId(candidate.prospect_id);
+    // Phase 5.2 — open a correlation window for the invite-sent detector
+    // before the modal opens, so the send-detected path can reconcile back to
+    // this queue row. Idempotent writes on the action side already prevent
+    // double-count; the token just raises reconciliation confidence.
+    void sendMessage({
+      type: 'INTERACTION_TOKEN_OPEN',
+      payload: {
+        prospect_id: candidate.prospect_id,
+        action_expected: 'invite_sent',
+      },
+    }).catch(() => {});
     try {
       const list = await sendMessage({
         type: 'TEMPLATES_LIST',
