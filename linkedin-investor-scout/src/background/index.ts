@@ -7,7 +7,9 @@ import {
   bulkDeleteProspects,
   bulkRescanProspects,
   bulkSetActivity,
+  bulkUpdateFeedEventTaskStatus,
   clearAllData,
+  countFeedEventsByTaskStatus,
   getActivityLogForProspect,
   getAllProspects,
   getProspectById,
@@ -19,8 +21,10 @@ import {
   openScoutDb,
   putSettings,
   queryActivityLog,
+  queryFeedEvents,
   queryProspects,
   replaceAllProspects,
+  updateFeedEventTaskStatus,
   updateProspectFromPatch,
   upsertFeedEventsBulk,
 } from '@/shared/db';
@@ -231,6 +235,59 @@ async function handleCsvCommit(
   return { ok: true, data: { inserted: rows.length } };
 }
 
+// ——— Engagement Tasks badge (Phase 2.3) ———
+// Shows count of `feed_events.task_status = 'new'` on the chrome.action icon.
+// Debounced to at most one refresh per 2s per EXTENSION_GROWTH_TODO §2.3.
+const BADGE_DEBOUNCE_MS = 2000;
+const BADGE_BG_COLOR = '#3b82f6'; // matches 2nd-degree blue — highest-value level
+let badgeRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+let badgePending = false;
+
+function formatBadgeText(count: number): string {
+  if (count <= 0) return '';
+  if (count > 999) return '999+';
+  return String(count);
+}
+
+async function applyBadge(): Promise<void> {
+  try {
+    const count = await countFeedEventsByTaskStatus('new');
+    const text = formatBadgeText(count);
+    const action = chrome.action;
+    if (!action?.setBadgeText) return;
+    await action.setBadgeText({ text });
+    if (text && action.setBadgeBackgroundColor) {
+      await action.setBadgeBackgroundColor({ color: BADGE_BG_COLOR });
+    }
+    broadcast({ type: 'FEED_EVENTS_UPDATED', payload: { new_count: count } });
+  } catch (error) {
+    console.warn('[investor-scout] badge refresh failed', {
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
+/**
+ * Schedule a badge refresh, coalescing multiple calls into at-most one refresh
+ * every {@link BADGE_DEBOUNCE_MS}. The first call fires immediately, subsequent
+ * calls within the window set a trailing flag so a single follow-up runs after
+ * the window closes (standard throttle-with-trailing-edge).
+ */
+function scheduleBadgeRefresh(): void {
+  if (badgeRefreshTimer) {
+    badgePending = true;
+    return;
+  }
+  void applyBadge();
+  badgeRefreshTimer = setTimeout(() => {
+    badgeRefreshTimer = null;
+    if (badgePending) {
+      badgePending = false;
+      scheduleBadgeRefresh();
+    }
+  }, BADGE_DEBOUNCE_MS);
+}
+
 async function broadcastProspectsUpdated(changedIds: number[]): Promise<void> {
   const normalized = Array.from(
     new Set(changedIds.filter((id) => Number.isInteger(id) && id > 0)),
@@ -377,6 +434,7 @@ registerMessageRouter(async (msg) => {
         data: {},
       });
       void broadcastProspectsUpdated([]);
+      scheduleBadgeRefresh();
       return { ok: true, data: { cleared: true } };
     }
     case 'EXPORT_CSV': {
@@ -399,8 +457,40 @@ registerMessageRouter(async (msg) => {
         await incrementDailyUsage(localDayBucket(Date.now()), {
           feed_events_captured: result.inserted,
         });
+        scheduleBadgeRefresh();
       }
       return { ok: true, data: result };
+    }
+    case 'FEED_EVENTS_QUERY': {
+      const page = await queryFeedEvents(msg.payload ?? {});
+      return { ok: true, data: page };
+    }
+    case 'FEED_EVENT_UPDATE': {
+      const next = await updateFeedEventTaskStatus(
+        msg.payload.id,
+        msg.payload.task_status,
+      );
+      scheduleBadgeRefresh();
+      return { ok: true, data: next };
+    }
+    case 'FEED_EVENTS_BULK_UPDATE': {
+      const updated = await bulkUpdateFeedEventTaskStatus(
+        msg.payload.ids,
+        msg.payload.task_status,
+      );
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: 'feed_events_bulk_update',
+        prospect_id: null,
+        data: {
+          ids_count: msg.payload.ids.length,
+          task_status: msg.payload.task_status,
+          updated,
+        },
+      });
+      scheduleBadgeRefresh();
+      return { ok: true, data: { updated } };
     }
     default:
       return { ok: false, error: `Unhandled message: ${(msg as Message).type}` };
@@ -415,6 +505,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     await openScoutDb();
     await getSettings();
     await getScanState();
+    scheduleBadgeRefresh();
   } catch (error) {
     console.error('[investor-scout] IndexedDB init failed:', {
       error: error instanceof Error ? error.message : error,
@@ -422,6 +513,9 @@ chrome.runtime.onInstalled.addListener(async () => {
     });
   }
 });
+
+// Seed the badge on every service-worker boot — MV3 workers recycle freely.
+scheduleBadgeRefresh();
 
 chrome.action?.onClicked?.addListener?.((tab) => {
   console.info('[investor-scout] action clicked', { tabId: tab.id });

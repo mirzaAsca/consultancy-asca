@@ -1,8 +1,15 @@
-import { useEffect } from 'react';
-import { ClipboardList, Radar, Settings as SettingsIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {
+  ClipboardList,
+  Inbox,
+  Radar,
+  Settings as SettingsIcon,
+} from 'lucide-react';
+import { sendMessage } from '@/shared/messaging';
 import type { ProspectLevel } from '@/shared/types';
 import { useDashboardStore, type DashboardRoute } from './store';
 import { ProspectsRoute } from './routes/Prospects';
+import { EngagementTasksRoute } from './routes/EngagementTasks';
 import { SettingsRoute } from './routes/Settings';
 import { LogsRoute } from './routes/Logs';
 
@@ -12,11 +19,17 @@ const ROUTES: Array<{
   Icon: React.ComponentType<{ className?: string }>;
 }> = [
   { id: 'prospects', label: 'Prospects', Icon: Radar },
+  { id: 'engagement_tasks', label: 'Engagement tasks', Icon: Inbox },
   { id: 'settings', label: 'Settings', Icon: SettingsIcon },
   { id: 'logs', label: 'Logs', Icon: ClipboardList },
 ];
 
-const VALID_ROUTES: DashboardRoute[] = ['prospects', 'settings', 'logs'];
+const VALID_ROUTES: DashboardRoute[] = [
+  'prospects',
+  'engagement_tasks',
+  'settings',
+  'logs',
+];
 const VALID_LEVELS: ProspectLevel[] = [
   '1st',
   '2nd',
@@ -57,6 +70,35 @@ export default function App() {
   const applyDeepLinkLevel = useDashboardStore((s) => s.applyDeepLinkLevel);
   const drawerProspectId = useDashboardStore((s) => s.drawerProspectId);
   const openDrawer = useDashboardStore((s) => s.openDrawer);
+  const [newTaskCount, setNewTaskCount] = useState<number>(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const res = await sendMessage({
+        type: 'FEED_EVENTS_QUERY',
+        payload: { task_statuses: ['new'], limit: 1 },
+      });
+      if (!cancelled && res.ok) {
+        setNewTaskCount(res.data.new_count);
+      }
+    };
+    void load();
+    const listener = (msg: { type?: string; payload?: { new_count?: number } }) => {
+      if (msg?.type === 'FEED_EVENTS_UPDATED') {
+        if (typeof msg.payload?.new_count === 'number') {
+          setNewTaskCount(msg.payload.new_count);
+        } else {
+          void load();
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(listener);
+    return () => {
+      cancelled = true;
+      chrome.runtime.onMessage.removeListener(listener);
+    };
+  }, []);
 
   useEffect(() => {
     const syncFromHash = () => {
@@ -98,28 +140,37 @@ export default function App() {
           <Radar className="h-4 w-4 text-blue-400" />
           <div className="text-sm font-semibold">Investor Scout</div>
         </div>
-        {ROUTES.map(({ id, label, Icon }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setRoute(id)}
-            className={
-              'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs font-medium transition ' +
-              (route === id
-                ? 'bg-gray-800 text-white'
-                : 'text-gray-400 hover:bg-gray-800/60 hover:text-gray-200')
-            }
-          >
-            <Icon className="h-3.5 w-3.5" />
-            {label}
-          </button>
-        ))}
+        {ROUTES.map(({ id, label, Icon }) => {
+          const showBadge = id === 'engagement_tasks' && newTaskCount > 0;
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setRoute(id)}
+              className={
+                'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-xs font-medium transition ' +
+                (route === id
+                  ? 'bg-gray-800 text-white'
+                  : 'text-gray-400 hover:bg-gray-800/60 hover:text-gray-200')
+              }
+            >
+              <Icon className="h-3.5 w-3.5" />
+              <span className="flex-1">{label}</span>
+              {showBadge && (
+                <span className="rounded-full bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-semibold leading-none text-white">
+                  {newTaskCount > 99 ? '99+' : newTaskCount}
+                </span>
+              )}
+            </button>
+          );
+        })}
         <div className="mt-auto px-1 text-[10px] text-gray-600">
           v{chrome.runtime?.getManifest?.().version ?? '1.0.0'}
         </div>
       </aside>
       <main className="min-h-screen md:ml-56">
         {route === 'prospects' && <ProspectsRoute />}
+        {route === 'engagement_tasks' && <EngagementTasksRoute />}
         {route === 'settings' && <SettingsRoute />}
         {route === 'logs' && <LogsRoute />}
       </main>

@@ -416,8 +416,10 @@ _Landed 2026-04-23 in [`src/content/feed-events.ts`](./src/content/feed-events.t
 
 ### 2.3 Event backlog UI
 
-- [ ] Add Dashboard tab: `Engagement Tasks`.
-- [ ] Columns:
+_Landed 2026-04-23 — [`src/dashboard/routes/EngagementTasks.tsx`](./src/dashboard/routes/EngagementTasks.tsx) + `FEED_EVENTS_QUERY` / `FEED_EVENT_UPDATE` / `FEED_EVENTS_BULK_UPDATE` handlers in [`src/background/index.ts`](./src/background/index.ts). `chrome.action` badge wired to `countFeedEventsByTaskStatus('new')` with 2 s trailing-edge debounce._
+
+- [x] Add Dashboard tab: `Engagement Tasks`.
+- [x] Columns:
   - investor,
   - event type,
   - post link,
@@ -425,12 +427,12 @@ _Landed 2026-04-23 in [`src/content/feed-events.ts`](./src/content/feed-events.t
   - seen count,
   - last seen,
   - task status.
-- [ ] Bulk actions:
+- [x] Bulk actions:
   - `Queue outreach`,
   - `Mark done`,
   - `Ignore`.
-- [ ] Deep link from task -> open LinkedIn post/comment.
-- [ ] Add extension badge count via `chrome.action.setBadgeText`: count of `task_status IN ('new')` feed events. Debounced to at most once per 2s. Clears to empty when count is 0.
+- [x] Deep link from task -> open LinkedIn post/comment. _(post + comment URLs open in new tab via `target="_blank"`; investor name deep-links into Prospects drawer.)_
+- [x] Add extension badge count via `chrome.action.setBadgeText`: count of `task_status IN ('new')` feed events. Debounced to at most once per 2s. Clears to empty when count is 0. _(trailing-edge throttle; seeds on service-worker boot + `onInstalled`; refreshes on bulk upsert / single update / bulk update / clear-all.)_
 
 Acceptance criteria:
 
@@ -681,7 +683,7 @@ Front-loads the harvester so scoring has real feed-recency signal by the time ou
 
 **Sprint 2 — Inbox visible, queue+templates (v2.0-beta target):**
 
-- [ ] Phase 2.3 (Engagement Tasks UI + `chrome.action` badge)
+- [x] Phase 2.3 (Engagement Tasks UI + `chrome.action` badge) _(landed 2026-04-23)_
 - [ ] Phase 1.3 (Outreach Queue UX + Mode A prefill flow + pre-invite visit warming)
 - [ ] Phase 1.4 (single-template-per-type CRUD with placeholders + length cap)
 - [ ] Phase 4.1 (popup daily quick-glance row)

@@ -13,6 +13,10 @@ import type {
   DailyUsage,
   FeedEvent,
   FeedEventInsert,
+  FeedEventPage,
+  FeedEventQuery,
+  FeedEventRow,
+  FeedTaskStatus,
   LogEntry,
   LogEntryInsert,
   LogQuery,
@@ -1142,6 +1146,125 @@ export async function countFeedEventsByTaskStatus(
     .transaction('feed_events', 'readonly')
     .store.index('by_task_status');
   return index.count(IDBKeyRange.only(status));
+}
+
+/**
+ * Query feed events with filters + denormalized prospect info for the
+ * Engagement Tasks dashboard table. Rows are sorted by `last_seen_at DESC`.
+ * `total` is the filtered count; `new_count` is the store-wide count of
+ * `task_status = 'new'` (drives the `chrome.action` badge).
+ */
+export async function queryFeedEvents(
+  filter: FeedEventQuery = {},
+): Promise<FeedEventPage> {
+  const db = await openScoutDb();
+  const limit = Math.max(1, filter.limit ?? 500);
+
+  const allEvents = filter.prospect_id
+    ? await db.getAllFromIndex(
+        'feed_events',
+        'by_prospect_id',
+        filter.prospect_id,
+      )
+    : await db.getAll('feed_events');
+
+  const statusSet =
+    filter.task_statuses && filter.task_statuses.length > 0
+      ? new Set<FeedTaskStatus>(filter.task_statuses)
+      : null;
+  const kindSet =
+    filter.event_kinds && filter.event_kinds.length > 0
+      ? new Set<FeedEvent['event_kind']>(filter.event_kinds)
+      : null;
+  const searchNeedle = (filter.search ?? '').trim().toLowerCase();
+
+  const filtered = allEvents.filter((e) => {
+    if (statusSet && !statusSet.has(e.task_status)) return false;
+    if (kindSet && !kindSet.has(e.event_kind)) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => b.last_seen_at - a.last_seen_at);
+
+  const prospectIds = Array.from(new Set(filtered.map((e) => e.prospect_id)));
+  const prospects = await Promise.all(
+    prospectIds.map((id) => db.get('prospects', id)),
+  );
+  const prospectById = new Map<number, Prospect>();
+  for (const p of prospects) {
+    if (p) prospectById.set(p.id, p);
+  }
+
+  const enriched: FeedEventRow[] = filtered.map((e) => {
+    const p = prospectById.get(e.prospect_id);
+    return {
+      ...e,
+      prospect_name: p?.name ?? null,
+      prospect_level: p?.level ?? 'NONE',
+      prospect_headline: p?.headline ?? null,
+      prospect_company: p?.company ?? null,
+    };
+  });
+
+  const searched = searchNeedle
+    ? enriched.filter((r) => {
+        const haystack = [
+          r.slug,
+          r.prospect_name,
+          r.prospect_headline,
+          r.prospect_company,
+        ]
+          .filter((v): v is string => typeof v === 'string' && v.length > 0)
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(searchNeedle);
+      })
+    : enriched;
+
+  const newCount = await countFeedEventsByTaskStatus('new');
+
+  return {
+    rows: searched.slice(0, limit),
+    total: searched.length,
+    new_count: newCount,
+  };
+}
+
+/** Patch a single feed event's task_status. Returns the updated row. */
+export async function updateFeedEventTaskStatus(
+  id: number,
+  taskStatus: FeedTaskStatus,
+): Promise<FeedEvent> {
+  const db = await openScoutDb();
+  const existing = await db.get('feed_events', id);
+  if (!existing) {
+    throw new Error(`FeedEvent not found: ${id}`);
+  }
+  const next: FeedEvent = { ...existing, task_status: taskStatus };
+  await db.put('feed_events', next);
+  return next;
+}
+
+/**
+ * Bulk-set `task_status` on a list of feed events. Rows that don't exist are
+ * silently skipped. Returns the number actually updated.
+ */
+export async function bulkUpdateFeedEventTaskStatus(
+  ids: number[],
+  taskStatus: FeedTaskStatus,
+): Promise<number> {
+  if (ids.length === 0) return 0;
+  const db = await openScoutDb();
+  const tx = db.transaction('feed_events', 'readwrite');
+  let updated = 0;
+  for (const id of ids) {
+    const existing = await tx.store.get(id);
+    if (!existing) continue;
+    await tx.store.put({ ...existing, task_status: taskStatus });
+    updated++;
+  }
+  await tx.done;
+  return updated;
 }
 
 // ———————————————————————————————————————————————————————————

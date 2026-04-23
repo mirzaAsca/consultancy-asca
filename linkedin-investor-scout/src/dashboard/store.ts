@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import type { ProspectLevel, ProspectQuery, ScanStatus } from '@/shared/types';
 
-export type DashboardRoute = 'prospects' | 'settings' | 'logs';
+export type DashboardRoute =
+  | 'prospects'
+  | 'engagement_tasks'
+  | 'settings'
+  | 'logs';
 
 export interface DashboardState {
   route: DashboardRoute;

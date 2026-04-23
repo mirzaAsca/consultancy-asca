@@ -8,6 +8,7 @@ import {
 import {
   addMessageTemplate,
   addOutreachAction,
+  bulkUpdateFeedEventTaskStatus,
   clearAllData,
   countFeedEventsByTaskStatus,
   deleteScoutDatabase,
@@ -22,7 +23,9 @@ import {
   openScoutDb,
   prospectInsertFromRawUrl,
   putSettings,
+  queryFeedEvents,
   replaceAllProspects,
+  updateFeedEventTaskStatus,
   updateMessageTemplate,
   updateOutreachAction,
   upsertFeedEvent,
@@ -309,6 +312,163 @@ describe('v2 — feed_events', () => {
 
     const newCount = await countFeedEventsByTaskStatus('new');
     expect(newCount).toBe(3);
+  });
+});
+
+describe('v2 — feed_events Engagement Tasks (Phase 2.3)', () => {
+  async function seedProspectsAndEvents() {
+    await replaceAllProspects([
+      prospectInsertFromRawUrl('https://linkedin.com/in/alice'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/bob'),
+    ]);
+    const db = await openScoutDb();
+    const all = await db.getAll('prospects');
+    const alice = all.find((p) => p.slug === 'alice')!;
+    const bob = all.find((p) => p.slug === 'bob')!;
+
+    // Enrich prospects so queryFeedEvents returns prospect_name / level.
+    await db.put('prospects', {
+      ...alice,
+      name: 'Alice Example',
+      headline: 'Partner at Acme',
+      company: 'Acme',
+      level: '2nd',
+    });
+    await db.put('prospects', {
+      ...bob,
+      name: 'Bob Example',
+      headline: 'Angel investor',
+      company: 'Beta',
+      level: '3rd',
+    });
+
+    const base = {
+      post_kind: 'activity' as const,
+      post_url: null,
+      comment_url: null,
+      comment_urn: null,
+      feed_mode: 'top' as const,
+      first_seen_at: 1000,
+      seen_count: 1,
+      task_status: 'new' as const,
+    };
+
+    await upsertFeedEvent({
+      ...base,
+      prospect_id: alice.id,
+      slug: 'alice',
+      event_kind: 'post',
+      activity_urn: 'urn:li:activity:A1',
+      event_fingerprint: 'fp-a1',
+      last_seen_at: 3000,
+    });
+    await upsertFeedEvent({
+      ...base,
+      prospect_id: alice.id,
+      slug: 'alice',
+      event_kind: 'comment',
+      activity_urn: 'urn:li:activity:A2',
+      event_fingerprint: 'fp-a2',
+      last_seen_at: 2000,
+    });
+    await upsertFeedEvent({
+      ...base,
+      prospect_id: bob.id,
+      slug: 'bob',
+      event_kind: 'post',
+      activity_urn: 'urn:li:activity:B1',
+      event_fingerprint: 'fp-b1',
+      last_seen_at: 1500,
+    });
+
+    return { aliceId: alice.id, bobId: bob.id };
+  }
+
+  it('queryFeedEvents denormalizes prospect info and sorts by last_seen DESC', async () => {
+    await seedProspectsAndEvents();
+    const page = await queryFeedEvents({});
+    expect(page.total).toBe(3);
+    expect(page.new_count).toBe(3);
+    expect(page.rows.map((r) => r.slug)).toEqual(['alice', 'alice', 'bob']);
+    expect(page.rows[0].prospect_name).toBe('Alice Example');
+    expect(page.rows[0].prospect_level).toBe('2nd');
+    expect(page.rows[2].prospect_level).toBe('3rd');
+  });
+
+  it('filters by task_statuses and event_kinds independently', async () => {
+    const { aliceId } = await seedProspectsAndEvents();
+    await updateFeedEventTaskStatus(
+      (await queryFeedEvents({ prospect_id: aliceId })).rows[0].id,
+      'done',
+    );
+
+    const onlyNew = await queryFeedEvents({ task_statuses: ['new'] });
+    expect(onlyNew.total).toBe(2);
+
+    const onlyDone = await queryFeedEvents({ task_statuses: ['done'] });
+    expect(onlyDone.total).toBe(1);
+
+    const onlyPosts = await queryFeedEvents({ event_kinds: ['post'] });
+    expect(onlyPosts.total).toBe(2);
+    expect(onlyPosts.rows.every((r) => r.event_kind === 'post')).toBe(true);
+  });
+
+  it('search matches against name / slug / headline / company case-insensitively', async () => {
+    await seedProspectsAndEvents();
+    const byName = await queryFeedEvents({ search: 'alice example' });
+    expect(byName.total).toBe(2);
+
+    const byHeadline = await queryFeedEvents({ search: 'ANGEL' });
+    expect(byHeadline.total).toBe(1);
+    expect(byHeadline.rows[0].slug).toBe('bob');
+
+    const byCompany = await queryFeedEvents({ search: 'acme' });
+    expect(byCompany.total).toBe(2);
+  });
+
+  it('new_count reflects store-wide unread count, not filtered set', async () => {
+    const { aliceId } = await seedProspectsAndEvents();
+    const alicePage = await queryFeedEvents({ prospect_id: aliceId });
+    expect(alicePage.total).toBe(2);
+    expect(alicePage.new_count).toBe(3);
+  });
+
+  it('updateFeedEventTaskStatus flips task_status and updateable fields', async () => {
+    await seedProspectsAndEvents();
+    const events = await queryFeedEvents({});
+    const target = events.rows[0];
+    const next = await updateFeedEventTaskStatus(target.id, 'queued');
+    expect(next.task_status).toBe('queued');
+    expect(next.id).toBe(target.id);
+
+    const after = await queryFeedEvents({ task_statuses: ['queued'] });
+    expect(after.total).toBe(1);
+  });
+
+  it('updateFeedEventTaskStatus throws for unknown id', async () => {
+    await seedProspectsAndEvents();
+    await expect(updateFeedEventTaskStatus(99999, 'done')).rejects.toThrow(
+      /not found/,
+    );
+  });
+
+  it('bulkUpdateFeedEventTaskStatus returns updated count and skips unknown ids', async () => {
+    await seedProspectsAndEvents();
+    const events = await queryFeedEvents({});
+    const ids = events.rows.slice(0, 2).map((r) => r.id);
+    ids.push(99999); // missing — must be skipped
+    const updated = await bulkUpdateFeedEventTaskStatus(ids, 'ignored');
+    expect(updated).toBe(2);
+    const newCount = await countFeedEventsByTaskStatus('new');
+    expect(newCount).toBe(1);
+    const ignoredCount = await countFeedEventsByTaskStatus('ignored');
+    expect(ignoredCount).toBe(2);
+  });
+
+  it('bulkUpdateFeedEventTaskStatus short-circuits for empty id list', async () => {
+    await seedProspectsAndEvents();
+    const updated = await bulkUpdateFeedEventTaskStatus([], 'done');
+    expect(updated).toBe(0);
   });
 });
 

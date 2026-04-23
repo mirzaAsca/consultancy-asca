@@ -369,12 +369,22 @@ export type Message =
       type: 'FEED_EVENTS_UPSERT_BULK';
       payload: { events: FeedEventInsert[] };
     }
+  | { type: 'FEED_EVENTS_QUERY'; payload: FeedEventQuery }
+  | {
+      type: 'FEED_EVENT_UPDATE';
+      payload: { id: number; task_status: FeedTaskStatus };
+    }
+  | {
+      type: 'FEED_EVENTS_BULK_UPDATE';
+      payload: { ids: number[]; task_status: FeedTaskStatus };
+    }
   // background → content (highlight) direct tab message
   | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
   // background → all listeners (broadcast)
   | { type: 'PROSPECTS_UPDATED'; payload: { changed_ids: number[] } }
   | { type: 'SCAN_STATE_CHANGED'; payload: ScanState }
-  | { type: 'SETTINGS_CHANGED'; payload: Settings };
+  | { type: 'SETTINGS_CHANGED'; payload: Settings }
+  | { type: 'FEED_EVENTS_UPDATED'; payload: { new_count: number } };
 
 export type MessageResponse<T = unknown> =
   | { ok: true; data: T }
@@ -403,10 +413,14 @@ export interface MessageResponseMap {
   FEED_TEST_SEED_RANDOM_LEVELS: { seeded: number; collected: number; tab_id: number };
   SLUGS_QUERY: SlugMap;
   FEED_EVENTS_UPSERT_BULK: { inserted: number; updated: number };
+  FEED_EVENTS_QUERY: FeedEventPage;
+  FEED_EVENT_UPDATE: FeedEvent;
+  FEED_EVENTS_BULK_UPDATE: { updated: number };
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   PROSPECTS_UPDATED: void;
   SCAN_STATE_CHANGED: void;
   SETTINGS_CHANGED: void;
+  FEED_EVENTS_UPDATED: void;
 }
 
 /**
@@ -509,6 +523,35 @@ export interface FeedEvent {
 }
 
 export type FeedEventInsert = Omit<FeedEvent, 'id'>;
+
+/** Filter + pagination payload for the Engagement Tasks dashboard table. */
+export interface FeedEventQuery {
+  /** Case-insensitive substring match against prospect slug/name/company. */
+  search?: string;
+  /** If set, rows must have one of the given event kinds. */
+  event_kinds?: FeedEventKind[];
+  /** If set, rows must have one of the given task statuses. */
+  task_statuses?: FeedTaskStatus[];
+  /** Only rows for this prospect (drawer / deep-link use). */
+  prospect_id?: number;
+  /** Hard limit before pagination slicing. Defaults to 500. */
+  limit?: number;
+}
+
+/** Feed event enriched with denormalized prospect info for table rendering. */
+export interface FeedEventRow extends FeedEvent {
+  prospect_name: string | null;
+  prospect_level: ProspectLevel;
+  prospect_headline: string | null;
+  prospect_company: string | null;
+}
+
+export interface FeedEventPage {
+  rows: FeedEventRow[];
+  total: number;
+  /** Count of `task_status = 'new'` across the entire store (for badge). */
+  new_count: number;
+}
 
 // ———————————————————————————————————————————————————————————
 // v2 — message_templates store
