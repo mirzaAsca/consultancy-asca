@@ -13,12 +13,17 @@
  *    still appear in the list so the user can see the pipeline.
  */
 
+import {
+  WARMING_VISIT_DEDUPE_MS,
+  WARMING_VISIT_INVITE_DELAY_MS,
+} from './constants';
 import type {
   DailyUsage,
   OutreachAction,
   OutreachActionKind,
   OutreachActionState,
   OutreachCaps,
+  OutreachDueFilter,
   OutreachQueueCandidate,
   OutreachQueueFilter,
   Prospect,
@@ -81,11 +86,42 @@ export function isActionLive(action: OutreachAction): boolean {
 export interface RecommendationOptions {
   /** If true, the user has `warm_visit_before_invite` turned on in Settings. */
   warm_visit_before_invite: boolean;
+  /**
+   * Wall-clock anchor used to age `profile_visit` history against the
+   * 14-day dedupe window and the 24h post-visit invite delay. Tests pin
+   * `now`; runtime callers pass `Date.now()`.
+   */
+  now: number;
+}
+
+/** Effective time of a recorded action — `sent_at` if stamped, else `created_at`. */
+function effectiveActionTime(action: OutreachAction): number {
+  return action.sent_at ?? action.created_at;
+}
+
+/** Most recent confirmed (sent / accepted) `profile_visit`, if any. */
+function mostRecentVisit(
+  history: readonly OutreachAction[],
+): OutreachAction | null {
+  let best: OutreachAction | null = null;
+  let bestT = -Infinity;
+  for (const a of history) {
+    if (a.kind !== 'profile_visit') continue;
+    if (a.state !== 'sent' && a.state !== 'accepted') continue;
+    const t = effectiveActionTime(a);
+    if (t > bestT) {
+      bestT = t;
+      best = a;
+    }
+  }
+  return best;
 }
 
 /**
  * Decide which action to surface next for a prospect. Rules (in order):
- *  - 2nd/3rd/OOO with no prior `profile_visit` + warming enabled → `profile_visit`.
+ *  - 2nd/3rd/OOO with no recent `profile_visit` (within 14d) + warming
+ *    enabled → `profile_visit`.
+ *  - 2nd/3rd/OOO with a recent visit < 24h old → null (warming in progress).
  *  - 2nd/3rd/OOO with no pending invite → `connection_request_sent`.
  *  - 1st connected recently → `message_sent`.
  *  - 1st messaged 7+ days ago with no followup → `followup_message_sent`.
@@ -105,8 +141,23 @@ export function recommendAction(
 
   if (prospect.level === '2nd' || prospect.level === '3rd' || prospect.level === 'OUT_OF_NETWORK') {
     if (hasLive('connection_request_sent')) return null; // waiting on acceptance
-    if (opts.warm_visit_before_invite && !anyOf('profile_visit')) {
-      return 'profile_visit';
+
+    if (opts.warm_visit_before_invite) {
+      const recentVisit = mostRecentVisit(history);
+      const recentVisitAge = recentVisit
+        ? opts.now - effectiveActionTime(recentVisit)
+        : Infinity;
+
+      // No fresh warming visit on file → recommend one.
+      if (recentVisitAge >= WARMING_VISIT_DEDUPE_MS) {
+        return 'profile_visit';
+      }
+      // Visit is fresh but the 24h post-visit delay hasn't elapsed → hold.
+      if (recentVisitAge < WARMING_VISIT_INVITE_DELAY_MS) {
+        return null;
+      }
+      // Visit is in the warm window AND past the 24h delay → invite now.
+      return 'connection_request_sent';
     }
     return 'connection_request_sent';
   }
@@ -120,6 +171,48 @@ export function recommendAction(
   }
 
   return null;
+}
+
+// ——— Due-date filter (Phase 1.3) ———
+
+/**
+ * Local-day boundary for a given timestamp. Today's bounds are
+ * `[startOfDay, startOfNextDay)` so equality comparisons stay half-open.
+ */
+function localStartOfDay(ts: number): number {
+  const d = new Date(ts);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
+/**
+ * Bucket a `next_action_due_at` timestamp against `now`.
+ *  - `none` — no due-at recorded
+ *  - `overdue` — due-at < start of today
+ *  - `due_today` — due-at within today's local-day bounds
+ *  - `future` — due-at >= start of tomorrow
+ */
+export function classifyDueBucket(
+  dueAt: number | null,
+  now: number,
+): 'none' | 'overdue' | 'due_today' | 'future' {
+  if (dueAt === null) return 'none';
+  const dayStart = localStartOfDay(now);
+  const nextDayStart = dayStart + 24 * 60 * 60 * 1000;
+  if (dueAt < dayStart) return 'overdue';
+  if (dueAt < nextDayStart) return 'due_today';
+  return 'future';
+}
+
+/** True when a candidate's due-bucket passes the requested filter. */
+export function passesDueFilter(
+  bucket: ReturnType<typeof classifyDueBucket>,
+  filter: OutreachDueFilter | undefined,
+): boolean {
+  if (!filter || filter === 'all') return true;
+  if (filter === 'due_today') return bucket === 'due_today';
+  if (filter === 'overdue') return bucket === 'overdue';
+  return true;
 }
 
 /** Short badge-style reason string rendered alongside each queue row. */
@@ -166,6 +259,11 @@ export interface FilterOptions {
   filter: OutreachQueueFilter;
   skippedProspectIds: ReadonlySet<number>;
   warm_visit_before_invite: boolean;
+  /**
+   * Wall-clock anchor for warming-window math + due-date bucketing. Tests
+   * pin a fixed timestamp; runtime callers pass `Date.now()`.
+   */
+  now: number;
 }
 
 /** Default levels surfaced when no explicit filter is provided. */
@@ -187,7 +285,7 @@ export function buildCandidates(
   actionsByProspect: ReadonlyMap<number, OutreachAction[]>,
   opts: FilterOptions,
 ): OutreachQueueCandidate[] {
-  const { filter, skippedProspectIds, warm_visit_before_invite } = opts;
+  const { filter, skippedProspectIds, warm_visit_before_invite, now } = opts;
 
   const levelSet = new Set<ProspectLevel>(
     filter.levels && filter.levels.length > 0 ? filter.levels : DEFAULT_LEVELS,
@@ -221,8 +319,14 @@ export function buildCandidates(
     const skipped = skippedProspectIds.has(p.id);
     if (skipped && !filter.include_skipped) continue;
 
+    const dueBucket = classifyDueBucket(p.next_action_due_at, now);
+    if (!passesDueFilter(dueBucket, filter.due_filter)) continue;
+
     const history = actionsByProspect.get(p.id) ?? [];
-    const recommended = recommendAction(p, history, { warm_visit_before_invite });
+    const recommended = recommendAction(p, history, {
+      warm_visit_before_invite,
+      now,
+    });
     if (!recommended) continue;
     if (actionSet && !actionSet.has(recommended)) continue;
 
@@ -247,6 +351,7 @@ export function buildCandidates(
       recommended_reason: buildReason(p, recommended),
       has_pending_invite: hasPendingInvite,
       skipped_today: skipped,
+      next_action_due_at: p.next_action_due_at,
     });
   }
 

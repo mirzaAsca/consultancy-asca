@@ -782,7 +782,15 @@ export interface OutreachQueueCandidate {
   has_pending_invite: boolean;
   /** If true, the user chose "Skip for today" within the current day bucket. */
   skipped_today: boolean;
+  /** Mirrors `Prospect.next_action_due_at` for UI badges (follow-up timing). */
+  next_action_due_at: number | null;
 }
+
+/**
+ * Phase 1.3 — restrict the queue to rows with a `next_action_due_at` that
+ * lands today or earlier. `all` (or undefined) disables the filter.
+ */
+export type OutreachDueFilter = 'all' | 'due_today' | 'overdue';
 
 export interface OutreachQueueFilter {
   /** Restrict to one or more tiers. Empty → all tiers. */
@@ -797,6 +805,11 @@ export interface OutreachQueueFilter {
    * Useful for isolating e.g. `followup_due` rows when chasing warm leads.
    */
   lifecycle_statuses?: ProspectLifecycleStatus[];
+  /**
+   * Filter by `prospect.next_action_due_at`. Rows without a due-at are
+   * excluded when this is `due_today` or `overdue`. `all` keeps every row.
+   */
+  due_filter?: OutreachDueFilter;
   /** If true, include rows the user marked "Skip for today". Default false. */
   include_skipped?: boolean;
   /** Hard limit on returned rows. Defaults to 200. */

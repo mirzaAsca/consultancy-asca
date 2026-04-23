@@ -68,6 +68,31 @@ export const DEFAULT_HEALTH_COOLDOWN_HOURS = 24;
 export const FOLLOWUP_DRAFT_DELAY_MS = 3 * 24 * 60 * 60 * 1000;
 
 /**
+ * Phase 1.3 — pre-invite warming dedupe.
+ *
+ * When `warm_visit_before_invite` is on, the recommender suppresses the
+ * "warm" recommendation for any prospect we've visited in the last
+ * `WARMING_VISIT_DEDUPE_MS`. Older visits are treated as stale signal — if a
+ * 30-day-old visit didn't lead to an invite, the warming context is no
+ * longer fresh enough for LinkedIn to weight the second visit, and we'd
+ * rather burn one slot now than let the prospect rot in queue purgatory.
+ *
+ * 14 days mirrors the cooldown penalty in scoring (`SCORE_WEIGHTS.cooldown`)
+ * — same horizon for "we touched this person recently."
+ */
+export const WARMING_VISIT_DEDUPE_MS = 14 * 24 * 60 * 60 * 1000;
+
+/**
+ * Phase 1.3 — minimum delay between a fresh warming visit and the follow-up
+ * invite. Sending the invite seconds after a profile visit defeats the
+ * warming signal LinkedIn weighs ("did this person look at me first?").
+ *
+ * 24h is the conservative lower bound; the user can always run the invite
+ * manually before the gate elapses (the recommender just won't surface it).
+ */
+export const WARMING_VISIT_INVITE_DELAY_MS = 24 * 60 * 60 * 1000;
+
+/**
  * MASTER §19.4 — S/A-tier rows whose `last_scanned` is older than this window
  * get flipped back to `pending` at scan-loop entry so the queue surfaces fresh
  * level / metadata signal for the highest-value targets. Lower-tier rows wait

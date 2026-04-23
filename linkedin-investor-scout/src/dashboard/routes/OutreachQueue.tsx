@@ -15,6 +15,7 @@ import {
 import { sendMessage } from '@/shared/messaging';
 import type {
   OutreachActionKind,
+  OutreachDueFilter,
   OutreachQueueCandidate,
   OutreachQueuePage,
   ProspectLevel,
@@ -93,6 +94,7 @@ export function OutreachQueueRoute() {
     () => new Set<ProspectLifecycleStatus>(),
   );
   const [includeSkipped, setIncludeSkipped] = useState(false);
+  const [dueFilter, setDueFilter] = useState<OutreachDueFilter>('all');
 
   const openProspectDrawer = useDashboardStore((s) => s.openDrawer);
   const setRoute = useDashboardStore((s) => s.setRoute);
@@ -108,6 +110,7 @@ export function OutreachQueueRoute() {
           actions: actions.size > 0 ? Array.from(actions) : undefined,
           lifecycle_statuses:
             lifecycles.size > 0 ? Array.from(lifecycles) : undefined,
+          due_filter: dueFilter,
           include_skipped: includeSkipped,
           limit: 500,
         },
@@ -116,7 +119,7 @@ export function OutreachQueueRoute() {
     } finally {
       setLoading(false);
     }
-  }, [tiers, levels, actions, lifecycles, includeSkipped]);
+  }, [tiers, levels, actions, lifecycles, dueFilter, includeSkipped]);
 
   useEffect(() => {
     void refresh();
@@ -161,6 +164,7 @@ export function OutreachQueueRoute() {
     (levels.size !== LEVEL_OPTIONS.length ? 1 : 0) +
     (actions.size > 0 ? 1 : 0) +
     (lifecycles.size > 0 ? 1 : 0) +
+    (dueFilter !== 'all' ? 1 : 0) +
     (includeSkipped ? 1 : 0);
 
   const resetFilters = () => {
@@ -168,6 +172,7 @@ export function OutreachQueueRoute() {
     setLevels(new Set(LEVEL_OPTIONS));
     setActions(new Set());
     setLifecycles(new Set());
+    setDueFilter('all');
     setIncludeSkipped(false);
   };
 
@@ -411,6 +416,8 @@ export function OutreachQueueRoute() {
               toggle(setLifecycles)(v as ProspectLifecycleStatus)
             }
           />
+
+          <DueFilterChip value={dueFilter} onChange={setDueFilter} />
 
           <label className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-gray-800 bg-bg px-2 py-1 text-[11px] text-gray-300 hover:border-gray-600">
             <input
@@ -838,6 +845,43 @@ function PrimaryButton({
       {icon}
       {label}
     </button>
+  );
+}
+
+function DueFilterChip({
+  value,
+  onChange,
+}: {
+  value: OutreachDueFilter;
+  onChange: (next: OutreachDueFilter) => void;
+}) {
+  const opts: Array<{ value: OutreachDueFilter; label: string }> = [
+    { value: 'all', label: 'All' },
+    { value: 'due_today', label: 'Due today' },
+    { value: 'overdue', label: 'Overdue' },
+  ];
+  return (
+    <div className="inline-flex overflow-hidden rounded-md border border-gray-800 bg-bg text-[11px]">
+      {opts.map((o, i) => {
+        const active = o.value === value;
+        return (
+          <button
+            type="button"
+            key={o.value}
+            onClick={() => onChange(o.value)}
+            className={
+              'px-2 py-1 transition ' +
+              (i > 0 ? 'border-l border-gray-800 ' : '') +
+              (active
+                ? 'bg-blue-900/40 text-blue-100'
+                : 'text-gray-300 hover:bg-bg-card hover:text-gray-100')
+            }
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 

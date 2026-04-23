@@ -440,7 +440,8 @@ async function handleTemplateUpsert(
 async function handleOutreachQueueQuery(
   filter: OutreachQueueFilter,
 ): Promise<OutreachQueuePage> {
-  const bucket = localDayBucket(Date.now());
+  const now = Date.now();
+  const bucket = localDayBucket(now);
   const [prospects, actionsByProspect, settings, usage, skipSet, weeklyInvites] =
     await Promise.all([
       getAllProspects(),
@@ -455,6 +456,7 @@ async function handleOutreachQueueQuery(
     filter,
     skippedProspectIds: skipSet,
     warm_visit_before_invite: settings.outreach.warm_visit_before_invite,
+    now,
   });
 
   const limit = Math.max(1, filter.limit ?? 200);
