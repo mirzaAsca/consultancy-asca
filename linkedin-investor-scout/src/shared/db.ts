@@ -32,6 +32,7 @@ import type {
   ProspectPatch,
   ProspectQuery,
   ProspectStats,
+  ProspectTier,
   ScanState,
   ScanStatus,
   Settings,
@@ -418,24 +419,73 @@ export interface PendingProspectRef {
   url: string;
 }
 
+/** Tier → rank for the scan-queue sort. Higher rank scans first. */
+const TIER_RANK: Record<Exclude<ProspectTier, null>, number> = {
+  S: 5,
+  A: 4,
+  B: 3,
+  C: 2,
+  skip: 1,
+};
+
+function tierRank(tier: ProspectTier | null): number {
+  return tier === null ? 0 : (TIER_RANK[tier] ?? 0);
+}
+
 /**
- * Next `limit` pending prospects (index order: `scan_status`, then primary `id`).
+ * MASTER §19.4 / EXTENSION_GROWTH_TODO Phase 1.2 queue order:
+ *   `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST`
+ *
+ * Breakdown: unscanned/new rows (`last_scanned = null`) lead within their
+ * tier+score bucket, then oldest-scanned first; identical rows tie-break on
+ * insertion id to keep the order stable (pre-v2 installs have null
+ * tier/score and fall through to id-ASC, preserving v1 behavior).
+ */
+function compareScanQueueOrder(a: Prospect, b: Prospect): number {
+  const ta = tierRank(a.tier);
+  const tb = tierRank(b.tier);
+  if (ta !== tb) return tb - ta;
+
+  const sa = a.priority_score;
+  const sb = b.priority_score;
+  if (sa !== null && sb !== null) {
+    if (sa !== sb) return sb - sa;
+  } else if (sa !== null) {
+    return -1;
+  } else if (sb !== null) {
+    return 1;
+  }
+
+  const la = a.last_scanned;
+  const lb = b.last_scanned;
+  if (la !== null && lb !== null) {
+    if (la !== lb) return la - lb;
+  } else if (la === null && lb !== null) {
+    return -1;
+  } else if (lb === null && la !== null) {
+    return 1;
+  }
+
+  return a.id - b.id;
+}
+
+/**
+ * Next `limit` pending prospects ordered by
+ * `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` (see
+ * {@link compareScanQueueOrder}). For v1 data (no tier/score yet) this
+ * degrades to id-ASC — same effective order as before v2.
  */
 export async function takePendingProspectsBatch(
   limit: number,
 ): Promise<PendingProspectRef[]> {
   const db = await openScoutDb();
   const tx = db.transaction('prospects', 'readonly');
-  const index = tx.store.index('by_scan_status');
-  const out: PendingProspectRef[] = [];
-  let cursor = await index.openCursor(IDBKeyRange.only('pending'));
-  while (cursor && out.length < limit) {
-    const row = cursor.value;
-    out.push({ id: row.id, url: row.url });
-    cursor = await cursor.continue();
-  }
+  const rows = await tx.store
+    .index('by_scan_status')
+    .getAll(IDBKeyRange.only('pending'));
   await tx.done;
-  return out;
+  rows.sort(compareScanQueueOrder);
+  return rows.slice(0, limit).map((row) => ({ id: row.id, url: row.url }));
 }
 
 /**

@@ -12,6 +12,7 @@ import {
   countFeedEventsByTaskStatus,
   getActivityLogForProspect,
   getAllProspects,
+  getDailyUsage,
   getProspectById,
   getProspectStats,
   getScanState,
@@ -28,6 +29,10 @@ import {
   updateProspectFromPatch,
   upsertFeedEventsBulk,
 } from '@/shared/db';
+import {
+  recomputeAllProspects,
+  recomputeProspectsByIds,
+} from '@/shared/prospect-scoring';
 import { localDayBucket } from '@/shared/time';
 import { broadcast, registerMessageRouter } from '@/shared/messaging';
 import type {
@@ -36,6 +41,7 @@ import type {
   MessageResponse,
   MessageResponseMap,
   ProspectQuery,
+  Settings,
 } from '@/shared/types';
 import { pauseScan, resumeScan, runScanLoop, startScan } from './scan-worker';
 import { registerLifecycleHooks, registerScanAlarms } from './startup';
@@ -298,6 +304,22 @@ async function broadcastProspectsUpdated(changedIds: number[]): Promise<void> {
   });
 }
 
+/**
+ * Does the patch touch any scoring-relevant outreach settings (keyword list,
+ * firm list, or tier thresholds)? Used to decide whether `SETTINGS_UPDATE`
+ * should trigger a full prospect rescore.
+ */
+function outreachScoringChanged(prev: Settings, next: Settings): boolean {
+  return (
+    JSON.stringify(prev.outreach.keywords) !==
+      JSON.stringify(next.outreach.keywords) ||
+    JSON.stringify(prev.outreach.firms) !==
+      JSON.stringify(next.outreach.firms) ||
+    JSON.stringify(prev.outreach.tier_thresholds) !==
+      JSON.stringify(next.outreach.tier_thresholds)
+  );
+}
+
 async function exportProspectsCsv(
   filter: ProspectQuery | null,
 ): Promise<{ csv: string; row_count: number }> {
@@ -416,8 +438,31 @@ registerMessageRouter(async (msg) => {
       return { ok: true, data: settings };
     }
     case 'SETTINGS_UPDATE': {
+      const prev = await getSettings();
       const next = await putSettings(msg.payload);
       broadcast({ type: 'SETTINGS_CHANGED', payload: next });
+      // If the user edited the keyword/firm lists or tier thresholds, every
+      // prospect's score needs refreshing (Phase 1.2 recompute trigger).
+      if (outreachScoringChanged(prev, next)) {
+        try {
+          const result = await recomputeAllProspects({ settings: next });
+          if (result.updated > 0) {
+            await appendActivityLog({
+              ts: Date.now(),
+              level: 'info',
+              event: 'prospects_rescored',
+              prospect_id: null,
+              data: { updated: result.updated, reason: 'settings_change' },
+            });
+            // Empty changed_ids = "refresh all" sentinel (same as CSV import).
+            void broadcastProspectsUpdated([]);
+          }
+        } catch (error) {
+          console.warn('[investor-scout] rescore after settings update failed', {
+            error: error instanceof Error ? error.message : error,
+          });
+        }
+      }
       return { ok: true, data: next };
     }
     case 'LOGS_QUERY': {
@@ -459,7 +504,40 @@ registerMessageRouter(async (msg) => {
         });
         scheduleBadgeRefresh();
       }
+      // Activity recency is a scoring input — refresh scores for the prospects
+      // whose feed rows moved (Phase 1.2 recompute trigger).
+      const affectedIds = Array.from(
+        new Set(
+          events
+            .map((e) => e.prospect_id)
+            .filter((id): id is number => Number.isInteger(id) && id > 0),
+        ),
+      );
+      if (affectedIds.length > 0) {
+        try {
+          const { changed_ids } = await recomputeProspectsByIds(affectedIds);
+          if (changed_ids.length > 0) {
+            void broadcastProspectsUpdated(changed_ids);
+          }
+        } catch (error) {
+          console.warn(
+            '[investor-scout] rescore after feed events failed',
+            { error: error instanceof Error ? error.message : error },
+          );
+        }
+      }
       return { ok: true, data: result };
+    }
+    case 'DAILY_SNAPSHOT_QUERY': {
+      const bucket = localDayBucket(Date.now());
+      const [usage, inboxNew] = await Promise.all([
+        getDailyUsage(bucket),
+        countFeedEventsByTaskStatus('new'),
+      ]);
+      return {
+        ok: true,
+        data: { day_bucket: bucket, usage, inbox_new_count: inboxNew },
+      };
     }
     case 'FEED_EVENTS_QUERY': {
       const page = await queryFeedEvents(msg.payload ?? {});

@@ -13,6 +13,7 @@ import {
   Download,
   FileUp,
   Filter,
+  Inbox,
   Loader2,
   Pause,
   Play,
@@ -28,6 +29,8 @@ import { sendMessage } from '@/shared/messaging';
 import type {
   ActivityKind,
   AutoPauseReason,
+  DailySnapshot,
+  OutreachCaps,
   ProspectLevel,
   ProspectQuery,
   ProspectStats,
@@ -174,6 +177,8 @@ export default function App() {
   const [statsLoading, setStatsLoading] = useState(true);
   const [scanState, setScanState] = useState<ScanState | null>(null);
   const [scanConfig, setScanConfig] = useState<ScanConfigSnapshot | null>(null);
+  const [outreachCaps, setOutreachCaps] = useState<OutreachCaps | null>(null);
+  const [dailySnapshot, setDailySnapshot] = useState<DailySnapshot | null>(null);
   const [lastUploadAt, setLastUploadAt] = useState<number | null>(null);
   const [scanBusy, setScanBusy] = useState(false);
   const [preview, setPreview] = useState<PreviewState | null>(null);
@@ -204,7 +209,15 @@ export default function App() {
 
   const refreshSettings = useCallback(async () => {
     const res = await sendMessage({ type: 'SETTINGS_QUERY' });
-    if (res.ok) setScanConfig(scanConfigFromSettings(res.data));
+    if (res.ok) {
+      setScanConfig(scanConfigFromSettings(res.data));
+      setOutreachCaps(res.data.outreach.caps);
+    }
+  }, []);
+
+  const refreshDailySnapshot = useCallback(async () => {
+    const res = await sendMessage({ type: 'DAILY_SNAPSHOT_QUERY' });
+    if (res.ok) setDailySnapshot(res.data);
   }, []);
 
   const refreshLastUpload = useCallback(async () => {
@@ -222,6 +235,7 @@ export default function App() {
     void refreshScanState();
     void refreshSettings();
     void refreshLastUpload();
+    void refreshDailySnapshot();
     const listener = (msg: { type?: string; payload?: unknown }) => {
       if (msg?.type === 'PROSPECTS_UPDATED') {
         void refreshStats();
@@ -232,12 +246,23 @@ export default function App() {
         void refreshStats();
       }
       if (msg?.type === 'SETTINGS_CHANGED' && msg.payload) {
-        setScanConfig(scanConfigFromSettings(msg.payload as Settings));
+        const settings = msg.payload as Settings;
+        setScanConfig(scanConfigFromSettings(settings));
+        setOutreachCaps(settings.outreach.caps);
+      }
+      if (msg?.type === 'FEED_EVENTS_UPDATED') {
+        void refreshDailySnapshot();
       }
     };
     chrome.runtime.onMessage.addListener(listener);
     return () => chrome.runtime.onMessage.removeListener(listener);
-  }, [refreshLastUpload, refreshSettings, refreshScanState, refreshStats]);
+  }, [
+    refreshDailySnapshot,
+    refreshLastUpload,
+    refreshSettings,
+    refreshScanState,
+    refreshStats,
+  ]);
 
   useEffect(() => {
     if (toast.kind === 'idle') return;
@@ -570,6 +595,8 @@ export default function App() {
           </div>
         )}
 
+        <DailyGlanceSection caps={outreachCaps} snapshot={dailySnapshot} />
+
         <section className="rounded-md border border-gray-800 bg-bg-card p-3">
           <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-wide text-gray-500">
             <span>Scan</span>
@@ -880,6 +907,134 @@ function StatusRow({ label, value }: { label: string; value: number }) {
     <div className="flex items-center justify-between rounded-md border border-gray-800 bg-bg-card px-2 py-1.5">
       <span className="text-gray-400">{label}</span>
       <span className="font-medium text-gray-100">{value.toLocaleString()}</span>
+    </div>
+  );
+}
+
+/**
+ * Phase 4.1 popup quick-glance row. Surfaces today's invite/visit/message
+ * budget usage + inbox-unread count so the user can read the day's status
+ * without opening the dashboard. Warns when any budget has < 20% remaining.
+ */
+function DailyGlanceSection({
+  caps,
+  snapshot,
+}: {
+  caps: OutreachCaps | null;
+  snapshot: DailySnapshot | null;
+}) {
+  const invitesUsed = snapshot?.usage.invites_sent ?? 0;
+  const visitsUsed = snapshot?.usage.visits ?? 0;
+  const messagesUsed = snapshot?.usage.messages_sent ?? 0;
+  const eventsToday = snapshot?.usage.feed_events_captured ?? 0;
+  const inboxNew = snapshot?.inbox_new_count ?? 0;
+
+  const invitesCap = caps?.daily_invites ?? 0;
+  const visitsCap = caps?.daily_visits ?? 0;
+  const messagesCap = caps?.daily_messages ?? 0;
+
+  const anyLow =
+    isLowBudget(invitesUsed, invitesCap) ||
+    isLowBudget(visitsUsed, visitsCap) ||
+    isLowBudget(messagesUsed, messagesCap);
+
+  return (
+    <section className="rounded-md border border-gray-800 bg-bg-card p-3">
+      <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-wide text-gray-500">
+        <span>Today</span>
+        {snapshot && (
+          <span className="font-mono text-[10px] text-gray-600">
+            {snapshot.day_bucket}
+          </span>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-[11px]">
+        <BudgetTile label="Invites" used={invitesUsed} cap={invitesCap} />
+        <BudgetTile label="Visits" used={visitsUsed} cap={visitsCap} />
+        <BudgetTile label="Messages" used={messagesUsed} cap={messagesCap} />
+        <InboxTile eventsToday={eventsToday} inboxNew={inboxNew} />
+      </div>
+      {anyLow && (
+        <div className="mt-2 text-[10px] text-amber-300">
+          Less than 20% of a daily budget remains — slow down or pause new outreach.
+        </div>
+      )}
+    </section>
+  );
+}
+
+function isLowBudget(used: number, cap: number): boolean {
+  if (cap <= 0) return false;
+  const remaining = Math.max(0, cap - used);
+  return remaining / cap < 0.2;
+}
+
+function BudgetTile({
+  label,
+  used,
+  cap,
+}: {
+  label: string;
+  used: number;
+  cap: number;
+}) {
+  const low = isLowBudget(used, cap);
+  const pct = cap > 0 ? Math.min(100, Math.round((used / cap) * 100)) : 0;
+  return (
+    <div className="rounded-md border border-gray-800 bg-bg px-2 py-1.5">
+      <div className="flex items-center justify-between">
+        <span className="text-gray-400">{label}</span>
+        <span
+          className={
+            low
+              ? 'font-medium text-amber-300'
+              : 'font-medium text-gray-100'
+          }
+        >
+          {used.toLocaleString()}
+          {cap > 0 ? `/${cap.toLocaleString()}` : ''}
+        </span>
+      </div>
+      {cap > 0 && (
+        <div className="mt-1 h-1 overflow-hidden rounded-full bg-gray-800">
+          <div
+            className={`h-full ${low ? 'bg-amber-500' : 'bg-blue-500'}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InboxTile({
+  eventsToday,
+  inboxNew,
+}: {
+  eventsToday: number;
+  inboxNew: number;
+}) {
+  const hot = inboxNew > 0;
+  return (
+    <div className="rounded-md border border-gray-800 bg-bg px-2 py-1.5">
+      <div className="flex items-center justify-between">
+        <span className="flex items-center gap-1 text-gray-400">
+          <Inbox className="h-3 w-3" />
+          Inbox
+        </span>
+        <span
+          className={
+            hot
+              ? 'font-medium text-blue-300'
+              : 'font-medium text-gray-100'
+          }
+        >
+          {inboxNew.toLocaleString()} new
+        </span>
+      </div>
+      <div className="mt-1 text-[10px] text-gray-500">
+        {eventsToday.toLocaleString()} events captured today
+      </div>
     </div>
   );
 }

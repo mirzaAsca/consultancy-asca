@@ -378,6 +378,7 @@ export type Message =
       type: 'FEED_EVENTS_BULK_UPDATE';
       payload: { ids: number[]; task_status: FeedTaskStatus };
     }
+  | { type: 'DAILY_SNAPSHOT_QUERY' }
   // background → content (highlight) direct tab message
   | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
   // background → all listeners (broadcast)
@@ -416,6 +417,7 @@ export interface MessageResponseMap {
   FEED_EVENTS_QUERY: FeedEventPage;
   FEED_EVENT_UPDATE: FeedEvent;
   FEED_EVENTS_BULK_UPDATE: { updated: number };
+  DAILY_SNAPSHOT_QUERY: DailySnapshot;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   PROSPECTS_UPDATED: void;
   SCAN_STATE_CHANGED: void;
@@ -588,4 +590,15 @@ export interface DailyUsage {
   followups_sent: number;
   feed_events_captured: number;
   updated_at: number;
+}
+
+/**
+ * Popup daily quick-glance snapshot (Phase 4.1). Bundles today's outreach
+ * counters with the inbox-unread count so the popup needs a single round-trip.
+ */
+export interface DailySnapshot {
+  day_bucket: string;
+  usage: DailyUsage;
+  /** Count of `feed_events.task_status = 'new'` across all prospects. */
+  inbox_new_count: number;
 }

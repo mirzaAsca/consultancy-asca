@@ -9,6 +9,7 @@ import {
   takePendingProspectsBatch,
   updateProspect,
 } from '@/shared/db';
+import { recomputeAndPersistProspect } from '@/shared/prospect-scoring';
 import { broadcast } from '@/shared/messaging';
 import { jitterAround, localDayBucket, randomDelayMs } from '@/shared/time';
 import {
@@ -329,6 +330,8 @@ async function scanSingleProspect(
 
     const redirectPatch = await buildRedirectPatch(prospect, tabId);
 
+    const now = Date.now();
+    const levelChanged = d.level !== prospect.level;
     await updateProspect(prospect.id, {
       ...redirectPatch,
       level: d.level,
@@ -338,8 +341,22 @@ async function scanSingleProspect(
       location: d.location,
       scan_status: 'done',
       scan_error: null,
-      last_scanned: Date.now(),
+      last_scanned: now,
+      // Phase 3.3 unlock tracking hook — stamp the transition so later sprints
+      // can query level-change history without a separate event store.
+      ...(levelChanged ? { last_level_change_at: now } : {}),
     });
+
+    // Phase 1.2 recompute trigger: scan completion refreshes score/tier.
+    // Failures here must not fail the scan — just log and move on.
+    try {
+      await recomputeAndPersistProspect(prospect.id);
+    } catch (error) {
+      console.warn('[investor-scout] recompute after scan failed', {
+        prospectId: prospect.id,
+        error: error instanceof Error ? error.message : error,
+      });
+    }
 
     await appendActivityLog({
       ts: Date.now(),
@@ -350,6 +367,7 @@ async function scanSingleProspect(
         url: redirectPatch.url ?? prospect.url,
         original_url: prospect.url,
         level: d.level,
+        level_changed: levelChanged,
         name: d.name,
         company: d.company,
       },

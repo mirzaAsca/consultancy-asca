@@ -2,7 +2,7 @@
 
 Last updated: 2026-04-23
 Owner: Mirza + Codex
-Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. Sprint 2 can now start on UI.
+Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. **Phase 1.2 scoring-recompute triggers + §19.4 queue ordering + Phase 4.1 popup daily quick-glance landed 2026-04-23** — `src/shared/prospect-scoring.ts` orchestrates the DB-aware scoring pass and is wired into scan-complete, `FEED_EVENTS_UPSERT_BULK`, and `SETTINGS_UPDATE` (keyword / firm / tier-threshold edits trigger a full rescore). `takePendingProspectsBatch` now sorts `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` with v1-parity fallback for null tier/score rows. Popup renders a `Today` row (invites / visits / messages / inbox unread) with a 20%-remaining budget chip, backed by a new `DAILY_SNAPSHOT_QUERY` message. Sprint 2 remaining: Outreach Queue UX (1.3) + template CRUD UI (1.4) + keyword/firm Settings UI.
 
 ## Interview resolutions (2026-04-22)
 
@@ -74,7 +74,7 @@ _Landed 2026-04-22 — see [`MASTER.md`](./MASTER.md) §19._
 - [x] **§3.2 Out of Scope** — `Working-hours scheduler` stays out of scope (confirmed). `Re-scan staleness scheduler` becomes in-scope for S/A tier only (Phase 1.4 / 3.3).
 - [x] **§3.3 Non-Goals** — relax "never clicks Connect / submits any form" to allow **Mode A only**: extension may open the Connect modal and prefill the note textarea; the user still clicks Send. All other write surfaces (DMs, reactions, comments, posts, follows) remain fully manual.
 - [x] **§6.3 CSV Export Format** — append columns after `notes`: `score`, `tier`, `lifecycle_status`, `mutual_count`, `last_outreach_at`. Column order frozen at v2.0.
-- [x] **§7.2 Scan Queue ordering** — change from `id ASC` to `tier DESC, score DESC, last_scanned ASC NULLS FIRST`. S/A-tier rows > 30d stale get priority re-queue.
+- [x] **§7.2 Scan Queue ordering** — change from `id ASC` to `tier DESC, score DESC, last_scanned ASC NULLS FIRST`. S/A-tier rows > 30d stale get priority re-queue. _(Sort order landed 2026-04-23 — `compareScanQueueOrder` in [`src/shared/db.ts`](./src/shared/db.ts). Stale-row re-queue mechanism is still TODO.)_
 
 ---
 
@@ -293,12 +293,12 @@ _Scoring helper landed 2026-04-22 in [`src/shared/scoring.ts`](./src/shared/scor
 
 - [x] Tier thresholds (Settings-configurable, defaults: **S ≥ 140, A ≥ 100, B ≥ 60, C ≥ 30, skip < 30**). _(DEFAULT_TIER_THRESHOLDS + `settings.outreach.tier_thresholds`)_
 - [ ] Keyword + firm seed lists are user-maintained via Settings UI. Provide CRUD for both lists with per-item weight fields; persist in the `settings` store. _(storage shape + putSettings merge landed; UI follows)_
-- [ ] Recompute score on:
-  - scan completion,
-  - feed event ingestion (any new `feed_event` for the prospect),
-  - outreach action completion (`invite_sent`, `accepted`, `withdrawn`),
-  - keyword/firm list edits (full rescore).
-- [ ] Scan queue ordering: `tier DESC, score DESC, last_scanned ASC NULLS FIRST`. S/A-tier rows > 30d stale jump priority on next pass.
+- [x] Recompute score on:
+  - [x] scan completion, _(wired in `scanSingleProspect` after the `done` write — [`src/background/scan-worker.ts`](./src/background/scan-worker.ts))_
+  - [x] feed event ingestion (any new `feed_event` for the prospect), _(`FEED_EVENTS_UPSERT_BULK` handler — [`src/background/index.ts`](./src/background/index.ts))_
+  - [ ] outreach action completion (`invite_sent`, `accepted`, `withdrawn`), _(deferred — outreach writers don't exist yet; wire when Phase 1.3 lands)_
+  - [x] keyword/firm list edits (full rescore). _(`SETTINGS_UPDATE` handler diffs `outreach.keywords` / `outreach.firms` / `tier_thresholds` and calls `recomputeAllProspects` on change)_
+- [x] Scan queue ordering: `tier DESC, score DESC, last_scanned ASC NULLS FIRST`. _(Sort order landed 2026-04-23 in `takePendingProspectsBatch` / `compareScanQueueOrder`.)_ S/A-tier rows > 30d stale jump priority on next pass. _(Stale-row re-queue mechanism still TODO — sort preserves ordering once rows are flagged pending by an upstream helper.)_
 - [x] Unit tests cover each input in isolation + a combined fixture with a representative scored prospect row. _([`tests/scoring.test.ts`](./tests/scoring.test.ts))_
 
 ### 1.3 Outreach queue UX (Mode A only)
@@ -500,11 +500,13 @@ Acceptance criteria:
 
 ### 4.1 Popup daily quick-glance (confirmed review cadence)
 
-- [ ] Add a new row to the popup showing today's operational numbers:
-  - `Today: X/15 invites · Y/40 visits · Z events captured · N inbox unread`.
-  - `Accepts today: A · Pending invites: P` (pending = `sent` + not yet resolved).
-  - Budget remaining + warning chip if <20% of daily budget left.
-- [ ] Popup "Next Best Target" CTA reads the top-of-queue tier + score.
+_Landed 2026-04-23 — popup renders a `Today` section above the Scan controls backed by a new `DAILY_SNAPSHOT_QUERY` message. See [`src/popup/App.tsx`](./src/popup/App.tsx) `DailyGlanceSection` + [`src/background/index.ts`](./src/background/index.ts) handler. Accepts/pending-invite counters and the "Next Best Target" CTA land with Phase 1.3._
+
+- [x] Add a new row to the popup showing today's operational numbers:
+  - [x] `Today: X/15 invites · Y/40 visits · Z events captured · N inbox unread`. _(per-metric tile with used/cap + progress bar; inbox tile shows `new` count and today's captured events)_
+  - [ ] `Accepts today: A · Pending invites: P` (pending = `sent` + not yet resolved). _(deferred — requires `outreach_actions` writers, wire with Phase 1.3)_
+  - [x] Budget remaining + warning chip if <20% of daily budget left.
+- [ ] Popup "Next Best Target" CTA reads the top-of-queue tier + score. _(lands with Phase 1.3 Outreach Queue)_
 
 ### 4.2 Dashboard analytics (weekly deep-dive)
 
@@ -684,9 +686,11 @@ Front-loads the harvester so scoring has real feed-recency signal by the time ou
 **Sprint 2 — Inbox visible, queue+templates (v2.0-beta target):**
 
 - [x] Phase 2.3 (Engagement Tasks UI + `chrome.action` badge) _(landed 2026-04-23)_
+- [x] Phase 1.2 scoring-recompute triggers + §19.4 queue ordering _(landed 2026-04-23 — `src/shared/prospect-scoring.ts`, scan-complete + feed-event + settings-edit hooks)_
+- [x] Phase 4.1 popup daily quick-glance row _(landed 2026-04-23 — `DailyGlanceSection` + `DAILY_SNAPSHOT_QUERY`)_
 - [ ] Phase 1.3 (Outreach Queue UX + Mode A prefill flow + pre-invite visit warming)
 - [ ] Phase 1.4 (single-template-per-type CRUD with placeholders + length cap)
-- [ ] Phase 4.1 (popup daily quick-glance row)
+- [ ] Keyword / firm seed-list Settings UI (prerequisite for scoring to differentiate tiers beyond `level`)
 
 **Sprint 3 — Crawler + unlock discovery:**
 
