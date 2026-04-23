@@ -12,6 +12,7 @@ import type {
   ActivityKind,
   AutoPauseReason,
   DailyUsage,
+  FeedAutoTrackSource,
   FeedEvent,
   FeedEventInsert,
   FeedEventPage,
@@ -1706,6 +1707,91 @@ export async function bulkUpdateFeedEventTaskStatus(
   }
   await tx.done;
   return updated;
+}
+
+export interface AutoTrackTransition {
+  id: number;
+  previous_task_status: FeedTaskStatus;
+  next_task_status: FeedTaskStatus;
+}
+
+/**
+ * Phase 5.5 — reconciliation-driven status flip. Stamps `auto_tracked_at`,
+ * `auto_tracked_source`, and `previous_task_status` alongside the
+ * `task_status` write so the Engagement Tasks UI can render an Auto-tracked
+ * badge + Undo within a time-limited window. No-op for rows that already
+ * carry the target status (so repeat detector fires don't clobber the
+ * previous_task_status needed for undo).
+ */
+export async function bulkAutoTrackFeedEvents(
+  ids: number[],
+  nextStatus: FeedTaskStatus,
+  source: FeedAutoTrackSource,
+  now: number = Date.now(),
+): Promise<AutoTrackTransition[]> {
+  if (ids.length === 0) return [];
+  const db = await openScoutDb();
+  const tx = db.transaction('feed_events', 'readwrite');
+  const transitions: AutoTrackTransition[] = [];
+  for (const id of ids) {
+    const existing = await tx.store.get(id);
+    if (!existing) continue;
+    if (existing.task_status === nextStatus) continue;
+    const prev = existing.task_status;
+    await tx.store.put({
+      ...existing,
+      task_status: nextStatus,
+      auto_tracked_at: now,
+      auto_tracked_source: source,
+      previous_task_status: prev,
+    });
+    transitions.push({
+      id,
+      previous_task_status: prev,
+      next_task_status: nextStatus,
+    });
+  }
+  await tx.done;
+  return transitions;
+}
+
+/**
+ * Phase 5.5 — revert an auto-track. Returns null if the row doesn't exist
+ * or carries no auto-track stamp (nothing to undo).
+ */
+export async function undoAutoTrackFeedEvent(
+  id: number,
+): Promise<FeedEvent | null> {
+  const db = await openScoutDb();
+  const existing = await db.get('feed_events', id);
+  if (!existing) return null;
+  if (!existing.auto_tracked_at || !existing.previous_task_status) return null;
+  const reverted: FeedEvent = {
+    ...existing,
+    task_status: existing.previous_task_status,
+    auto_tracked_at: null,
+    auto_tracked_source: 'manual_undo',
+    previous_task_status: null,
+  };
+  await db.put('feed_events', reverted);
+  return reverted;
+}
+
+/**
+ * Phase 5.5 — list interaction_events currently flagged needs_review. The
+ * `reconciliation.ts` engine returns this status for ambiguous detector
+ * matches (token expired, confidence low but URN resolved, etc.). Surfaced
+ * in the Engagement Tasks dashboard as a dedicated filter.
+ */
+export async function listNeedsReviewInteractionEvents(
+  limit = 200,
+): Promise<InteractionEvent[]> {
+  const db = await openScoutDb();
+  const all = await db.getAll('interaction_events');
+  return all
+    .filter((row) => row.reconciliation_status === 'needs_review')
+    .sort((a, b) => b.detected_at - a.detected_at)
+    .slice(0, Math.max(1, limit));
 }
 
 // ———————————————————————————————————————————————————————————

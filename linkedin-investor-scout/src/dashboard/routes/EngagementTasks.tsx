@@ -1,22 +1,27 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AlertTriangle,
   CheckCircle2,
   ExternalLink,
   Filter,
   Loader2,
   MessageSquare,
   RefreshCw,
+  RotateCcw,
   Search,
   Send,
+  Sparkles,
   X,
   XCircle,
 } from 'lucide-react';
 import { sendMessage } from '@/shared/messaging';
 import type {
+  FeedAutoTrackSource,
   FeedEventKind,
   FeedEventPage,
   FeedEventRow,
   FeedTaskStatus,
+  InteractionEvent,
 } from '@/shared/types';
 import { formatRelativeTime } from '../helpers';
 import { LevelBadge } from '../components/Badges';
@@ -76,6 +81,18 @@ const STATUS_STYLE: Record<FeedTaskStatus, string> = {
 
 const DEFAULT_LIMIT = 500;
 
+/** Phase 5.5 — undo window for auto-tracked flips. After this the Undo
+ * button stops rendering; the row's previous_task_status is still stored
+ * so a future "undo history" view could re-surface it. */
+const AUTO_TRACK_UNDO_WINDOW_MS = 10 * 60 * 1000;
+
+const AUTO_TRACK_SOURCE_LABEL: Record<FeedAutoTrackSource, string> = {
+  reaction: 'reaction',
+  unreaction: 'un-reacted',
+  comment: 'comment',
+  manual_undo: 'manual',
+};
+
 export function EngagementTasksRoute() {
   const [page, setPage] = useState<FeedEventPage | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,6 +107,9 @@ export function EngagementTasksRoute() {
     () => new Set<FeedEventKind>(),
   );
   const [selected, setSelected] = useState<Set<number>>(() => new Set<number>());
+  const [autoTrackedOnly, setAutoTrackedOnly] = useState(false);
+  const [needsReview, setNeedsReview] = useState<InteractionEvent[]>([]);
+  const [showNeedsReview, setShowNeedsReview] = useState(false);
   const openProspectDrawer = useDashboardStore((s) => s.openDrawer);
   const setRoute = useDashboardStore((s) => s.setRoute);
 
@@ -101,16 +121,20 @@ export function EngagementTasksRoute() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await sendMessage({
-        type: 'FEED_EVENTS_QUERY',
-        payload: {
-          search: search || undefined,
-          task_statuses: statuses.size > 0 ? Array.from(statuses) : undefined,
-          event_kinds: kinds.size > 0 ? Array.from(kinds) : undefined,
-          limit: DEFAULT_LIMIT,
-        },
-      });
-      if (res.ok) setPage(res.data);
+      const [eventsRes, reviewRes] = await Promise.all([
+        sendMessage({
+          type: 'FEED_EVENTS_QUERY',
+          payload: {
+            search: search || undefined,
+            task_statuses: statuses.size > 0 ? Array.from(statuses) : undefined,
+            event_kinds: kinds.size > 0 ? Array.from(kinds) : undefined,
+            limit: DEFAULT_LIMIT,
+          },
+        }),
+        sendMessage({ type: 'INTERACTIONS_NEEDS_REVIEW', payload: { limit: 50 } }),
+      ]);
+      if (eventsRes.ok) setPage(eventsRes.data);
+      if (reviewRes.ok) setNeedsReview(reviewRes.data);
     } finally {
       setLoading(false);
     }
@@ -139,7 +163,14 @@ export function EngagementTasksRoute() {
     return () => window.clearTimeout(id);
   }, [toast]);
 
-  const rows = page?.rows ?? [];
+  const allRows = page?.rows ?? [];
+  const rows = useMemo(
+    () =>
+      autoTrackedOnly
+        ? allRows.filter((r) => typeof r.auto_tracked_at === 'number' && r.auto_tracked_at !== null)
+        : allRows,
+    [allRows, autoTrackedOnly],
+  );
   const selectedIds = useMemo(() => Array.from(selected), [selected]);
   const selectedCount = selected.size;
   const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id));
@@ -189,6 +220,7 @@ export function EngagementTasksRoute() {
     setSearch('');
     setStatuses(new Set<FeedTaskStatus>());
     setKinds(new Set<FeedEventKind>());
+    setAutoTrackedOnly(false);
     clearSelection();
   };
 
@@ -226,6 +258,24 @@ export function EngagementTasksRoute() {
     }
   };
 
+  const undoAutoTrack = async (id: number) => {
+    setBusy(true);
+    try {
+      const res = await sendMessage({
+        type: 'FEED_EVENT_UNDO_AUTO_TRACK',
+        payload: { id },
+      });
+      if (res.ok) {
+        setToast(`Reverted to ${STATUS_DISPLAY[res.data.task_status]}`);
+        await refresh();
+      } else {
+        setToast(res.error);
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const openInProspects = (prospectId: number) => {
     setRoute('prospects');
     openProspectDrawer(prospectId);
@@ -233,8 +283,14 @@ export function EngagementTasksRoute() {
 
   const total = page?.total ?? 0;
   const newCount = page?.new_count ?? 0;
+  const autoTrackedCount = useMemo(
+    () => allRows.filter((r) => r.auto_tracked_at != null).length,
+    [allRows],
+  );
+  const needsReviewCount = needsReview.length;
   const activeFilterCount =
-    (search ? 1 : 0) + statuses.size + kinds.size;
+    (search ? 1 : 0) + statuses.size + kinds.size + (autoTrackedOnly ? 1 : 0);
+
 
   return (
     <div className="flex h-screen flex-col">
@@ -293,6 +349,47 @@ export function EngagementTasksRoute() {
             onToggle={(v) => toggleKind(v as FeedEventKind)}
           />
 
+          <button
+            type="button"
+            onClick={() => {
+              setAutoTrackedOnly((v) => !v);
+              clearSelection();
+            }}
+            title="Show only rows auto-updated by reaction/comment detectors"
+            className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition ${
+              autoTrackedOnly
+                ? 'border-emerald-600/70 bg-emerald-900/30 text-emerald-100'
+                : 'border-gray-800 bg-bg text-gray-400 hover:border-gray-600 hover:text-gray-200'
+            }`}
+          >
+            <Sparkles className="h-3 w-3" />
+            Auto-tracked
+            {autoTrackedCount > 0 && (
+              <span className="ml-0.5 rounded bg-emerald-900/60 px-1 text-[10px] text-emerald-100">
+                {autoTrackedCount}
+              </span>
+            )}
+          </button>
+
+          {needsReviewCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowNeedsReview((v) => !v)}
+              title="Interaction events the reconciliation engine couldn't confidently match"
+              className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] transition ${
+                showNeedsReview
+                  ? 'border-amber-600/70 bg-amber-900/30 text-amber-100'
+                  : 'border-amber-800/50 bg-amber-950/30 text-amber-200 hover:border-amber-600'
+              }`}
+            >
+              <AlertTriangle className="h-3 w-3" />
+              Needs review
+              <span className="ml-0.5 rounded bg-amber-900/60 px-1 text-[10px] text-amber-100">
+                {needsReviewCount}
+              </span>
+            </button>
+          )}
+
           {activeFilterCount > 0 && (
             <button
               type="button"
@@ -305,6 +402,14 @@ export function EngagementTasksRoute() {
           )}
         </div>
       </header>
+
+      {showNeedsReview && needsReviewCount > 0 && (
+        <NeedsReviewPanel
+          rows={needsReview}
+          onClose={() => setShowNeedsReview(false)}
+          onOpenProspect={openInProspects}
+        />
+      )}
 
       {selectedCount > 0 && (
         <div className="flex flex-wrap items-center gap-2 border-b border-blue-900/60 bg-blue-950/30 px-6 py-2 text-[11px] text-blue-100">
@@ -386,6 +491,7 @@ export function EngagementTasksRoute() {
                 onMarkDone={() => void setRowStatus(row.id, 'done', 'Marked done')}
                 onMarkIgnored={() => void setRowStatus(row.id, 'ignored', 'Ignored')}
                 onReopen={() => void setRowStatus(row.id, 'new', 'Reopened')}
+                onUndoAutoTrack={() => void undoAutoTrack(row.id)}
               />
             ))
           )}
@@ -414,6 +520,7 @@ function TaskRow({
   onMarkDone,
   onMarkIgnored,
   onReopen,
+  onUndoAutoTrack,
 }: {
   row: FeedEventRow;
   checked: boolean;
@@ -424,8 +531,16 @@ function TaskRow({
   onMarkDone: () => void;
   onMarkIgnored: () => void;
   onReopen: () => void;
+  onUndoAutoTrack: () => void;
 }) {
   const displayName = row.prospect_name || row.slug;
+  const autoTrackedAt = row.auto_tracked_at ?? null;
+  const autoTrackedSource = row.auto_tracked_source ?? null;
+  const canUndo =
+    autoTrackedAt !== null &&
+    Date.now() - autoTrackedAt < AUTO_TRACK_UNDO_WINDOW_MS &&
+    autoTrackedSource !== null &&
+    autoTrackedSource !== 'manual_undo';
   return (
     <div className="grid h-12 grid-cols-[32px_minmax(200px,2.2fr)_90px_minmax(140px,1.6fr)_80px_90px_110px_44px] items-center gap-2 border-b border-gray-800/70 px-4 text-xs hover:bg-gray-800/40">
       <div className="flex items-center">
@@ -508,11 +623,32 @@ function TaskRow({
         {formatRelativeTime(row.last_seen_at)}
       </div>
 
-      <div>
+      <div className="flex flex-col items-start gap-0.5">
         <StatusBadge status={row.task_status} />
+        {autoTrackedAt !== null && autoTrackedSource !== null && autoTrackedSource !== 'manual_undo' && (
+          <span
+            className="inline-flex items-center gap-0.5 rounded border border-emerald-700/50 bg-emerald-900/30 px-1 py-[1px] text-[9px] font-medium text-emerald-200"
+            title={`Auto-tracked via ${AUTO_TRACK_SOURCE_LABEL[autoTrackedSource]} at ${new Date(autoTrackedAt).toLocaleString()}`}
+          >
+            <Sparkles className="h-2 w-2" />
+            Auto · {formatRelativeTime(autoTrackedAt)}
+          </span>
+        )}
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-1">
+        {canUndo && (
+          <button
+            type="button"
+            onClick={onUndoAutoTrack}
+            disabled={busy}
+            title="Undo auto-track (reverts to previous status)"
+            className="inline-flex items-center gap-0.5 rounded border border-gray-700 bg-bg px-1 py-0.5 text-[10px] text-gray-300 hover:border-emerald-500 hover:text-emerald-200 disabled:opacity-50"
+          >
+            <RotateCcw className="h-2.5 w-2.5" />
+            Undo
+          </button>
+        )}
         <RowMenu
           status={row.task_status}
           busy={busy}
@@ -522,6 +658,61 @@ function TaskRow({
           onReopen={onReopen}
           onOpenProspect={onOpenProspect}
         />
+      </div>
+    </div>
+  );
+}
+
+function NeedsReviewPanel({
+  rows,
+  onClose,
+  onOpenProspect,
+}: {
+  rows: InteractionEvent[];
+  onClose: () => void;
+  onOpenProspect: (prospectId: number) => void;
+}) {
+  return (
+    <div className="border-b border-amber-900/50 bg-amber-950/20 px-6 py-3 text-xs text-amber-100">
+      <div className="mb-2 flex items-center justify-between">
+        <div className="flex items-center gap-2 font-semibold">
+          <AlertTriangle className="h-3.5 w-3.5" />
+          Needs review — {rows.length} interaction{rows.length === 1 ? '' : 's'} with ambiguous match
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded p-0.5 text-amber-300 hover:text-white"
+          aria-label="Close needs-review panel"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      </div>
+      <div className="space-y-1">
+        {rows.slice(0, 20).map((ev) => (
+          <button
+            key={ev.id}
+            type="button"
+            onClick={() => onOpenProspect(ev.prospect_id)}
+            className="flex w-full items-center justify-between rounded border border-amber-900/40 bg-amber-950/30 px-2 py-1 text-left hover:border-amber-500"
+          >
+            <span className="flex items-center gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-wide text-amber-300">
+                {ev.interaction_type}
+              </span>
+              <span className="text-[11px] text-amber-100">prospect #{ev.prospect_id}</span>
+              <span className="text-[10px] text-amber-400">conf: {ev.confidence}</span>
+            </span>
+            <span className="text-[10px] text-amber-300">
+              {formatRelativeTime(ev.detected_at)}
+            </span>
+          </button>
+        ))}
+        {rows.length > 20 && (
+          <div className="pt-1 text-center text-[10px] text-amber-400">
+            + {rows.length - 20} more — open Prospects → Logs for full audit
+          </div>
+        )}
       </div>
     </div>
   );

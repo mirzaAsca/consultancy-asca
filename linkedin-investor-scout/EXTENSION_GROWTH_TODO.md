@@ -610,10 +610,12 @@ _Landed 2026-04-23 — pure matcher in [`src/shared/reconciliation.ts`](./src/sh
 
 ### 5.5 UX + auditability
 
-- [ ] Add "Auto-tracked" badge + timestamp on rows updated by reconciliation.
-- [ ] Add filter "Needs review" for unresolved matches.
-- [ ] Log all reconciliations in activity log with before/after state.
-- [ ] Provide undo for last auto-update (time-limited).
+_Landed 2026-04-23. Auto-track visibility + reversibility + needs-review surfacing. See [`src/dashboard/routes/EngagementTasks.tsx`](./src/dashboard/routes/EngagementTasks.tsx) (chips + badge + Undo button + needs-review panel), `bulkAutoTrackFeedEvents` + `undoAutoTrackFeedEvent` + `listNeedsReviewInteractionEvents` in [`src/shared/db.ts`](./src/shared/db.ts), and the `FEED_EVENT_UNDO_AUTO_TRACK` / `INTERACTIONS_NEEDS_REVIEW` handlers in [`src/background/index.ts`](./src/background/index.ts)._
+
+- [x] Add "Auto-tracked" badge + timestamp on rows updated by reconciliation. _(FeedEvent rows now carry `auto_tracked_at` / `auto_tracked_source` / `previous_task_status` (no DB bump needed — IDB stores are field-schemaless). Reaction + comment detector handlers call the new `bulkAutoTrackFeedEvents()` which stamps all three fields atomically with the status flip; the engagement-tasks table renders a Sparkles pill "Auto · 3m ago" with tooltip showing source + absolute timestamp.)_
+- [x] Add filter "Needs review" for unresolved matches. _(New `INTERACTIONS_NEEDS_REVIEW` message scans `interaction_events` for `reconciliation_status='needs_review'` and the dashboard shows a dismissible amber panel listing the ambiguous matches with prospect deep-link. Filter chip also auto-hides when count is zero.)_
+- [x] Log all reconciliations in activity log with before/after state. _(Reaction / comment handlers now append a `feed_event_auto_tracked` log entry per transition with `{ before: { task_status }, after: { task_status }, source, activity_urn }` — the audit trail survives the Undo path's clear-in-place of `previous_task_status` on the row itself.)_
+- [x] Provide undo for last auto-update (time-limited). _(`FEED_EVENT_UNDO_AUTO_TRACK` handler flips `task_status` back to `previous_task_status`, stamps `auto_tracked_source = 'manual_undo'`, clears the previous_task_status, logs `feed_event_auto_track_undone`, and refreshes the badge. UI gates the Undo button to a 10-minute window (`AUTO_TRACK_UNDO_WINDOW_MS`) and hides it for rows already reverted. 4 new unit tests in `tests/db-v2.test.ts` cover the stamp + no-op-when-already-in-target + revert + missing-row paths.)_
 
 ### 5.6 Detector coverage gaps (hardening)
 

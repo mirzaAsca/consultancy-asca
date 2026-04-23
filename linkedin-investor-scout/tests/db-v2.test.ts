@@ -8,6 +8,7 @@ import {
 import {
   addMessageTemplate,
   addOutreachAction,
+  bulkAutoTrackFeedEvents,
   bulkUpdateFeedEventTaskStatus,
   clearAllData,
   countFeedEventsByTaskStatus,
@@ -30,6 +31,7 @@ import {
   updateFeedEventTaskStatus,
   updateMessageTemplate,
   updateOutreachAction,
+  undoAutoTrackFeedEvent,
   upsertFeedEvent,
   upsertFeedEventsBulk,
 } from '@/shared/db';
@@ -473,6 +475,75 @@ describe('v2 — feed_events Engagement Tasks (Phase 2.3)', () => {
     await seedProspectsAndEvents();
     const updated = await bulkUpdateFeedEventTaskStatus([], 'done');
     expect(updated).toBe(0);
+  });
+
+  // ——— Phase 5.5: bulkAutoTrackFeedEvents + undoAutoTrackFeedEvent ———
+
+  it('bulkAutoTrackFeedEvents stamps auto_tracked_at/source/previous_task_status', async () => {
+    await seedProspectsAndEvents();
+    const events = await queryFeedEvents({});
+    const newRow = events.rows.find((r) => r.task_status === 'new');
+    expect(newRow).toBeDefined();
+
+    const transitions = await bulkAutoTrackFeedEvents(
+      [newRow!.id],
+      'done',
+      'reaction',
+      1_800_000_000_000,
+    );
+    expect(transitions).toHaveLength(1);
+    expect(transitions[0]).toMatchObject({
+      id: newRow!.id,
+      previous_task_status: 'new',
+      next_task_status: 'done',
+    });
+
+    const afterRows = await queryFeedEvents({});
+    const flipped = afterRows.rows.find((r) => r.id === newRow!.id)!;
+    expect(flipped.task_status).toBe('done');
+    expect(flipped.auto_tracked_at).toBe(1_800_000_000_000);
+    expect(flipped.auto_tracked_source).toBe('reaction');
+    expect(flipped.previous_task_status).toBe('new');
+  });
+
+  it('bulkAutoTrackFeedEvents is a no-op for rows already in the target status (preserves undo history)', async () => {
+    await seedProspectsAndEvents();
+    const events = await queryFeedEvents({});
+    const newRow = events.rows.find((r) => r.task_status === 'new')!;
+
+    // First flip new → done. Second call with the same target is a no-op,
+    // so the previous_task_status stamped on the first flip survives.
+    const first = await bulkAutoTrackFeedEvents([newRow.id], 'done', 'reaction');
+    expect(first).toHaveLength(1);
+
+    const second = await bulkAutoTrackFeedEvents([newRow.id], 'done', 'reaction');
+    expect(second).toHaveLength(0);
+
+    const afterRows = await queryFeedEvents({});
+    const stillStamped = afterRows.rows.find((r) => r.id === newRow.id)!;
+    expect(stillStamped.previous_task_status).toBe('new');
+  });
+
+  it('undoAutoTrackFeedEvent reverts to previous_task_status and clears the auto-track stamp', async () => {
+    await seedProspectsAndEvents();
+    const events = await queryFeedEvents({});
+    const newRow = events.rows.find((r) => r.task_status === 'new')!;
+
+    await bulkAutoTrackFeedEvents([newRow.id], 'done', 'comment');
+    const reverted = await undoAutoTrackFeedEvent(newRow.id);
+    expect(reverted).not.toBeNull();
+    expect(reverted!.task_status).toBe('new');
+    expect(reverted!.auto_tracked_at).toBeNull();
+    expect(reverted!.previous_task_status).toBeNull();
+    expect(reverted!.auto_tracked_source).toBe('manual_undo');
+  });
+
+  it('undoAutoTrackFeedEvent returns null when there is nothing to undo', async () => {
+    await seedProspectsAndEvents();
+    const events = await queryFeedEvents({});
+    const untouched = events.rows[0];
+    const result = await undoAutoTrackFeedEvent(untouched.id);
+    expect(result).toBeNull();
   });
 });
 

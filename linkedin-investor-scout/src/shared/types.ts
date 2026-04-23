@@ -438,6 +438,10 @@ export type Message =
   | { type: 'FEED_CRAWL_CANCEL_IN_TAB'; payload: { session_id: string } }
   | { type: 'INTERACTION_TOKEN_OPEN'; payload: InteractionTokenOpenPayload }
   | { type: 'INTERACTIONS_LIST'; payload?: InteractionListQuery }
+  // Phase 5.5 — revert a reconciliation-driven auto-track (time-limited undo).
+  | { type: 'FEED_EVENT_UNDO_AUTO_TRACK'; payload: { id: number } }
+  // Phase 5.5 — list interaction_events with reconciliation_status='needs_review'.
+  | { type: 'INTERACTIONS_NEEDS_REVIEW'; payload?: { limit?: number } }
   // background → all listeners (broadcast)
   | { type: 'PROSPECTS_UPDATED'; payload: { changed_ids: number[] } }
   | { type: 'SCAN_STATE_CHANGED'; payload: ScanState }
@@ -492,6 +496,8 @@ export interface MessageResponseMap {
   COMMENT_POSTED_DETECTED: CommentPostedDetectedResult;
   INTERACTION_TOKEN_OPEN: InteractionTokenOpenResult;
   INTERACTIONS_LIST: InteractionEvent[];
+  FEED_EVENT_UNDO_AUTO_TRACK: FeedEvent;
+  INTERACTIONS_NEEDS_REVIEW: InteractionEvent[];
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   FEED_CRAWL_SESSION_START: FeedCrawlStatus;
   FEED_CRAWL_SESSION_STOP: FeedCrawlStatus;
@@ -639,6 +645,17 @@ export interface FeedCrawlStatus {
 
 export type FeedTaskStatus = 'new' | 'queued' | 'done' | 'ignored';
 
+/**
+ * Phase 5.5 — source of an auto-track transition on a feed_events row.
+ * Stamped by the reconciliation path that flipped `task_status`, so the
+ * dashboard can surface "Auto-tracked (reaction, 2m ago)" + Undo.
+ */
+export type FeedAutoTrackSource =
+  | 'reaction'
+  | 'unreaction'
+  | 'comment'
+  | 'manual_undo';
+
 export interface FeedEvent {
   id: number;
   prospect_id: number;
@@ -660,6 +677,12 @@ export interface FeedEvent {
   last_seen_at: number;
   seen_count: number;
   task_status: FeedTaskStatus;
+  /** Phase 5.5 — epoch ms of the last reconciliation-driven status flip. */
+  auto_tracked_at?: number | null;
+  /** Phase 5.5 — which detector drove the flip. */
+  auto_tracked_source?: FeedAutoTrackSource | null;
+  /** Phase 5.5 — prior task_status, for one-click undo. */
+  previous_task_status?: FeedTaskStatus | null;
 }
 
 export type FeedEventInsert = Omit<FeedEvent, 'id'>;

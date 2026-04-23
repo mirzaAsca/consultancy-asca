@@ -7,15 +7,18 @@ import {
   addMessageTemplate,
   addOutreachAction,
   appendActivityLog,
+  bulkAutoTrackFeedEvents,
   consumeCorrelationToken,
   gcExpiredCorrelationTokens,
   listCorrelationTokensForProspect,
   listInteractionEvents,
+  listNeedsReviewInteractionEvents,
   putCorrelationToken,
   bulkDeleteProspects,
   bulkRescanProspects,
   bulkSetActivity,
   bulkUpdateFeedEventTaskStatus,
+  undoAutoTrackFeedEvent,
   clearAllData,
   countAcceptedActionsForDay,
   countFeedEventsByTaskStatus,
@@ -976,14 +979,32 @@ async function handleReactionToggledDetected(
   }
 
   const nextStatus = payload.direction === 'reacted' ? 'done' : 'new';
-  const updated = await bulkUpdateFeedEventTaskStatus(targets, nextStatus);
-  if (updated > 0) {
+  const source = payload.direction === 'reacted' ? 'reaction' : 'unreaction';
+  const transitions = await bulkAutoTrackFeedEvents(targets, nextStatus, source, now);
+  if (transitions.length > 0) {
     scheduleBadgeRefresh();
+    // Phase 5.5 — before/after audit entry per row so a later Undo has a
+    // paper trail even if the row's own previous_task_status gets cleared.
+    for (const t of transitions) {
+      await appendActivityLog({
+        ts: now,
+        level: 'info',
+        event: 'feed_event_auto_tracked',
+        prospect_id: payload.prospect_id,
+        data: {
+          feed_event_id: t.id,
+          source,
+          before: { task_status: t.previous_task_status },
+          after: { task_status: t.next_task_status },
+          activity_urn: payload.activity_urn,
+        },
+      });
+    }
   }
 
   return {
-    matched: updated > 0,
-    updated_feed_event_ids: targets.slice(0, updated),
+    matched: transitions.length > 0,
+    updated_feed_event_ids: transitions.map((t) => t.id),
   };
 }
 
@@ -1035,14 +1056,29 @@ async function handleCommentPostedDetected(
     if (newestNew) targets = [newestNew.id];
   }
 
-  const updated = await bulkUpdateFeedEventTaskStatus(targets, 'done');
-  if (updated > 0) {
+  const transitions = await bulkAutoTrackFeedEvents(targets, 'done', 'comment', now);
+  if (transitions.length > 0) {
     scheduleBadgeRefresh();
+    for (const t of transitions) {
+      await appendActivityLog({
+        ts: now,
+        level: 'info',
+        event: 'feed_event_auto_tracked',
+        prospect_id: payload.prospect_id,
+        data: {
+          feed_event_id: t.id,
+          source: 'comment',
+          before: { task_status: t.previous_task_status },
+          after: { task_status: t.next_task_status },
+          activity_urn: payload.activity_urn,
+        },
+      });
+    }
   }
 
   return {
-    matched: updated > 0,
-    updated_feed_event_ids: targets.slice(0, updated),
+    matched: transitions.length > 0,
+    updated_feed_event_ids: transitions.map((t) => t.id),
   };
 }
 
@@ -1682,6 +1718,28 @@ registerMessageRouter(async (msg) => {
     case 'INTERACTIONS_LIST': {
       const data = await handleInteractionsList(msg.payload ?? {});
       return { ok: true, data };
+    }
+    case 'INTERACTIONS_NEEDS_REVIEW': {
+      const data = await listNeedsReviewInteractionEvents(msg.payload?.limit ?? 200);
+      return { ok: true, data };
+    }
+    case 'FEED_EVENT_UNDO_AUTO_TRACK': {
+      const row = await undoAutoTrackFeedEvent(msg.payload.id);
+      if (!row) {
+        return { ok: false, error: 'No auto-track to undo on that row.' };
+      }
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: 'feed_event_auto_track_undone',
+        prospect_id: row.prospect_id,
+        data: {
+          feed_event_id: row.id,
+          reverted_to: row.task_status,
+        },
+      });
+      scheduleBadgeRefresh();
+      return { ok: true, data: row };
     }
     case 'LINKEDIN_RESTRICTION_BANNER': {
       const data = await handleLinkedInRestrictionBanner(msg.payload);
