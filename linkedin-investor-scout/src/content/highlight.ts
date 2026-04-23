@@ -39,6 +39,7 @@ import {
 } from './feed-events';
 import { prefillConnectModal } from './outreach-prefill';
 import { runFeedCrawlSession } from './feed-crawler';
+import { startInteractionDetectorsForUrl } from './interaction-detectors';
 import { CONNECT_NOTE_CHAR_CAP } from '@/shared/constants';
 
 // ——— Module state (content-script scope, one instance per tab) ———
@@ -1040,6 +1041,9 @@ function onRouteChanged(): void {
   rescanTimer = window.setTimeout(() => {
     rescanTimer = null;
     scheduleScan();
+    // Phase 5.3 + 5.6: re-evaluate interaction detectors on every SPA
+    // navigation — a profile or messaging thread may have just mounted.
+    startInteractionDetectorsForUrl(() => slugMap, () => settings);
   }, 250);
 }
 
@@ -1212,6 +1216,9 @@ async function bootstrap(): Promise<void> {
     await Promise.all([refreshSettings(), refreshSlugMap()]);
     startObservers();
     installRouteChangeHook(onRouteChanged);
+    // Phase 5.3 + 5.6: kick off detectors for the initial URL. Route-change
+    // handler re-invokes on every SPA nav.
+    startInteractionDetectorsForUrl(() => slugMap, () => settings);
     log('bootstrapped', {
       slugs: Object.keys(slugMap).length,
       enabled: settings?.highlight?.enabled ?? null,
