@@ -944,6 +944,46 @@ export async function bulkDeleteProspects(ids: number[]): Promise<number> {
   return deleted;
 }
 
+/**
+ * "Skip today" markers are persisted as activity_log entries so they survive
+ * service-worker restarts without adding a new IDB store. `skip = true`
+ * appends an `outreach_skipped_today` entry; `skip = false` appends an
+ * `outreach_unskipped_today` entry. The effective set is the last event per
+ * prospect_id within the given day bucket.
+ */
+const OUTREACH_SKIP_EVENT = 'outreach_skipped_today';
+const OUTREACH_UNSKIP_EVENT = 'outreach_unskipped_today';
+
+export async function getSkippedProspectIdsForDay(
+  dayBucket: string,
+): Promise<Set<number>> {
+  const db = await openScoutDb();
+  const all = await db.getAll('activity_log');
+  const latest = new Map<number, 'skip' | 'unskip'>();
+  // Walk oldest → newest so the final assignment wins per prospect.
+  all.sort((a, b) => a.ts - b.ts || a.id - b.id);
+  for (const entry of all) {
+    const isSkip = entry.event === OUTREACH_SKIP_EVENT;
+    const isUnskip = entry.event === OUTREACH_UNSKIP_EVENT;
+    if (!isSkip && !isUnskip) continue;
+    if (entry.prospect_id === null) continue;
+    const bucket = (entry.data as { day_bucket?: string } | undefined)
+      ?.day_bucket;
+    if (bucket !== dayBucket) continue;
+    latest.set(entry.prospect_id, isSkip ? 'skip' : 'unskip');
+  }
+  const out = new Set<number>();
+  for (const [id, state] of latest) {
+    if (state === 'skip') out.add(id);
+  }
+  return out;
+}
+
+export const OUTREACH_SKIP_EVENTS = {
+  skip: OUTREACH_SKIP_EVENT,
+  unskip: OUTREACH_UNSKIP_EVENT,
+} as const;
+
 /** Return all log entries referencing a prospect (chronological, newest first). */
 export async function getActivityLogForProspect(
   prospectId: number,
@@ -1108,6 +1148,60 @@ export async function listOutreachActionsForProspect(
     prospectId,
   );
   return all.sort((a, b) => b.created_at - a.created_at);
+}
+
+/**
+ * Load every outreach_actions row, grouped by prospect_id. Used by the
+ * outreach-queue builder (Phase 1.3) where we need per-prospect history for
+ * thousands of candidates in a single pass.
+ */
+export async function getAllOutreachActionsByProspect(): Promise<
+  Map<number, OutreachAction[]>
+> {
+  const db = await openScoutDb();
+  const all = await db.getAll('outreach_actions');
+  const out = new Map<number, OutreachAction[]>();
+  for (const row of all) {
+    let bucket = out.get(row.prospect_id);
+    if (!bucket) {
+      bucket = [];
+      out.set(row.prospect_id, bucket);
+    }
+    bucket.push(row);
+  }
+  for (const list of out.values()) {
+    list.sort((a, b) => b.created_at - a.created_at);
+  }
+  return out;
+}
+
+/**
+ * Sum of `daily_usage.invites_sent` across the trailing 7 day buckets
+ * (inclusive of today). Used to enforce the `weekly_invites` cap.
+ */
+export async function getWeeklyInvitesUsed(
+  todayBucket: string,
+): Promise<number> {
+  const db = await openScoutDb();
+  const tx = db.transaction('daily_usage', 'readonly');
+  // Local-tz math — build the 7 bucket strings anchored on today at noon to
+  // avoid DST edge cases flipping the wall-clock date during arithmetic.
+  const [y, m, d] = todayBucket.split('-').map((v) => Number(v));
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) {
+    await tx.done;
+    return 0;
+  }
+  const anchor = new Date(y, m - 1, d, 12, 0, 0, 0);
+  let total = 0;
+  for (let i = 0; i < 7; i++) {
+    const stamp = new Date(anchor);
+    stamp.setDate(anchor.getDate() - i);
+    const bucket = `${stamp.getFullYear()}-${String(stamp.getMonth() + 1).padStart(2, '0')}-${String(stamp.getDate()).padStart(2, '0')}`;
+    const row = await tx.store.get(bucket);
+    if (row) total += row.invites_sent;
+  }
+  await tx.done;
+  return total;
 }
 
 // ———————————————————————————————————————————————————————————

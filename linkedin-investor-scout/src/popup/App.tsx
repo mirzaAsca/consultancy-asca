@@ -31,6 +31,7 @@ import type {
   AutoPauseReason,
   DailySnapshot,
   OutreachCaps,
+  OutreachQueueCandidate,
   ProspectLevel,
   ProspectQuery,
   ProspectStats,
@@ -169,7 +170,12 @@ function formatEta(remainingMs: number): string {
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
-type PopupDashboardRoute = 'prospects' | 'settings' | 'logs';
+type PopupDashboardRoute =
+  | 'prospects'
+  | 'outreach_queue'
+  | 'engagement_tasks'
+  | 'settings'
+  | 'logs';
 
 export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -179,6 +185,7 @@ export default function App() {
   const [scanConfig, setScanConfig] = useState<ScanConfigSnapshot | null>(null);
   const [outreachCaps, setOutreachCaps] = useState<OutreachCaps | null>(null);
   const [dailySnapshot, setDailySnapshot] = useState<DailySnapshot | null>(null);
+  const [nextBest, setNextBest] = useState<OutreachQueueCandidate | null>(null);
   const [lastUploadAt, setLastUploadAt] = useState<number | null>(null);
   const [scanBusy, setScanBusy] = useState(false);
   const [preview, setPreview] = useState<PreviewState | null>(null);
@@ -220,6 +227,14 @@ export default function App() {
     if (res.ok) setDailySnapshot(res.data);
   }, []);
 
+  const refreshNextBest = useCallback(async () => {
+    const res = await sendMessage({
+      type: 'OUTREACH_QUEUE_QUERY',
+      payload: { limit: 1 },
+    });
+    if (res.ok) setNextBest(res.data.next_best);
+  }, []);
+
   const refreshLastUpload = useCallback(async () => {
     const res = await sendMessage({
       type: 'LOGS_QUERY',
@@ -236,9 +251,11 @@ export default function App() {
     void refreshSettings();
     void refreshLastUpload();
     void refreshDailySnapshot();
+    void refreshNextBest();
     const listener = (msg: { type?: string; payload?: unknown }) => {
       if (msg?.type === 'PROSPECTS_UPDATED') {
         void refreshStats();
+        void refreshNextBest();
       }
       if (msg?.type === 'SCAN_STATE_CHANGED' && msg.payload) {
         setScanState(msg.payload as ScanState);
@@ -249,9 +266,11 @@ export default function App() {
         const settings = msg.payload as Settings;
         setScanConfig(scanConfigFromSettings(settings));
         setOutreachCaps(settings.outreach.caps);
+        void refreshNextBest();
       }
       if (msg?.type === 'FEED_EVENTS_UPDATED') {
         void refreshDailySnapshot();
+        void refreshNextBest();
       }
     };
     chrome.runtime.onMessage.addListener(listener);
@@ -259,6 +278,7 @@ export default function App() {
   }, [
     refreshDailySnapshot,
     refreshLastUpload,
+    refreshNextBest,
     refreshSettings,
     refreshScanState,
     refreshStats,
@@ -596,6 +616,11 @@ export default function App() {
         )}
 
         <DailyGlanceSection caps={outreachCaps} snapshot={dailySnapshot} />
+
+        <NextBestTargetRow
+          candidate={nextBest}
+          onOpen={() => openDashboard('outreach_queue')}
+        />
 
         <section className="rounded-md border border-gray-800 bg-bg-card p-3">
           <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-wide text-gray-500">
@@ -1004,6 +1029,79 @@ function BudgetTile({
         </div>
       )}
     </div>
+  );
+}
+
+const RECOMMENDED_ACTION_LABEL: Record<
+  OutreachQueueCandidate['recommended_action'],
+  string
+> = {
+  profile_visit: 'Warming visit',
+  connection_request_sent: 'Send invite',
+  message_sent: 'Send DM',
+  followup_message_sent: 'Follow up',
+};
+
+/**
+ * Phase 1.3 popup "Next Best Target" row — surfaces the top-of-queue
+ * prospect that still fits today's caps. Click opens the Outreach Queue
+ * dashboard tab (Mode A prefill lives there so the user has the full
+ * template preview before sending).
+ */
+function NextBestTargetRow({
+  candidate,
+  onOpen,
+}: {
+  candidate: OutreachQueueCandidate | null;
+  onOpen: () => void;
+}) {
+  if (!candidate) {
+    return (
+      <button
+        type="button"
+        onClick={onOpen}
+        className="flex w-full items-center justify-between gap-2 rounded-md border border-gray-800 bg-bg-card px-3 py-2 text-left text-[11px] text-gray-400 hover:border-gray-600"
+      >
+        <span>
+          <span className="block text-[10px] uppercase tracking-wide text-gray-500">
+            Next best target
+          </span>
+          <span className="text-gray-500">
+            Queue clear — nothing fits today's caps.
+          </span>
+        </span>
+        <span className="text-gray-500">Open queue →</span>
+      </button>
+    );
+  }
+  const displayName = candidate.name ?? candidate.slug;
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="flex w-full items-center gap-2 rounded-md border border-blue-700/50 bg-blue-950/40 px-3 py-2 text-left hover:border-blue-400"
+    >
+      <div className="min-w-0 flex-1">
+        <div className="text-[10px] uppercase tracking-wide text-blue-300">
+          Next best target
+        </div>
+        <div className="mt-0.5 flex items-center gap-2">
+          <span className="truncate text-[12px] font-medium text-gray-100">
+            {displayName}
+          </span>
+          {candidate.tier && (
+            <span className="rounded-sm border border-blue-500/40 bg-blue-900/50 px-1 text-[9px] font-semibold text-blue-100">
+              {candidate.tier}
+            </span>
+          )}
+        </div>
+        <div className="mt-0.5 truncate text-[10px] text-gray-400">
+          {RECOMMENDED_ACTION_LABEL[candidate.recommended_action]} ·{' '}
+          {candidate.recommended_reason}
+        </div>
+      </div>
+      <span className="text-[11px] text-blue-300">Open →</span>
+    </button>
   );
 }
 

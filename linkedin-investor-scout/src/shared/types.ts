@@ -382,8 +382,22 @@ export type Message =
   | { type: 'TEMPLATES_LIST'; payload?: { kind?: MessageTemplateKind } }
   | { type: 'TEMPLATE_UPSERT'; payload: TemplateUpsertPayload }
   | { type: 'TEMPLATE_ARCHIVE'; payload: { id: number; archived: boolean } }
+  | { type: 'OUTREACH_QUEUE_QUERY'; payload?: OutreachQueueFilter }
+  | { type: 'OUTREACH_ACTION_RECORD'; payload: OutreachActionRecordPayload }
+  | {
+      type: 'OUTREACH_SKIP_TODAY';
+      payload: { prospect_id: number; skip: boolean };
+    }
+  | {
+      type: 'OUTREACH_PREFILL_CONNECT';
+      payload: OutreachPrefillConnectPayload;
+    }
   // background → content (highlight) direct tab message
   | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
+  | {
+      type: 'OUTREACH_PREFILL_CONNECT_IN_TAB';
+      payload: OutreachPrefillConnectPayload;
+    }
   // background → all listeners (broadcast)
   | { type: 'PROSPECTS_UPDATED'; payload: { changed_ids: number[] } }
   | { type: 'SCAN_STATE_CHANGED'; payload: ScanState }
@@ -424,6 +438,11 @@ export interface MessageResponseMap {
   TEMPLATES_LIST: MessageTemplate[];
   TEMPLATE_UPSERT: MessageTemplate;
   TEMPLATE_ARCHIVE: MessageTemplate;
+  OUTREACH_QUEUE_QUERY: OutreachQueuePage;
+  OUTREACH_ACTION_RECORD: OutreachAction;
+  OUTREACH_SKIP_TODAY: { prospect_id: number; skipped: boolean };
+  OUTREACH_PREFILL_CONNECT: OutreachPrefillResult;
+  OUTREACH_PREFILL_CONNECT_IN_TAB: OutreachPrefillResult;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   PROSPECTS_UPDATED: void;
   SCAN_STATE_CHANGED: void;
@@ -622,4 +641,118 @@ export interface DailySnapshot {
   usage: DailyUsage;
   /** Count of `feed_events.task_status = 'new'` across all prospects. */
   inbox_new_count: number;
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — Outreach Queue (Phase 1.3, Mode A only)
+// ———————————————————————————————————————————————————————————
+
+/**
+ * A single candidate row surfaced in the dashboard Outreach Queue and
+ * popup "Next Best Target" CTA. Denormalized for easy table rendering; the
+ * authoritative data lives on the `Prospect` + `OutreachAction` rows.
+ */
+export interface OutreachQueueCandidate {
+  prospect_id: number;
+  slug: string;
+  url: string;
+  name: string | null;
+  headline: string | null;
+  company: string | null;
+  level: ProspectLevel;
+  tier: ProspectTier | null;
+  priority_score: number | null;
+  lifecycle_status: ProspectLifecycleStatus;
+  mutual_count: number | null;
+  last_outreach_at: number | null;
+  /** Action the queue recommends for this prospect at this moment. */
+  recommended_action: OutreachActionKind;
+  /** Short, display-only reason — e.g. "2nd · S tier" or "Warming visit". */
+  recommended_reason: string;
+  /** If true, an invite has been sent and we're waiting on acceptance. */
+  has_pending_invite: boolean;
+  /** If true, the user chose "Skip for today" within the current day bucket. */
+  skipped_today: boolean;
+}
+
+export interface OutreachQueueFilter {
+  /** Restrict to one or more tiers. Empty → all tiers. */
+  tiers?: ProspectTier[];
+  /** Restrict to one or more connection levels. Empty → 2nd/3rd/OUT_OF_NETWORK. */
+  levels?: ProspectLevel[];
+  /** Restrict to one or more recommended action kinds. Empty → all. */
+  actions?: OutreachActionKind[];
+  /** If true, include rows the user marked "Skip for today". Default false. */
+  include_skipped?: boolean;
+  /** Hard limit on returned rows. Defaults to 200. */
+  limit?: number;
+}
+
+/**
+ * Snapshot returned by `OUTREACH_QUEUE_QUERY` — the queue rows themselves
+ * plus enough context to render the header strip + budget chips without a
+ * second round-trip.
+ */
+export interface OutreachQueuePage {
+  rows: OutreachQueueCandidate[];
+  /** Total candidates matching the filter (rows is capped at `limit`). */
+  total: number;
+  caps: OutreachCaps;
+  usage: DailyUsage;
+  day_bucket: string;
+  /** Top-of-queue candidate that respects today's caps (for "Next Best"). */
+  next_best: OutreachQueueCandidate | null;
+}
+
+/**
+ * Payload for `OUTREACH_ACTION_RECORD` — creates (or upserts on idempotency
+ * key) a row in `outreach_actions` in the given state. Used by the queue
+ * "Mark request sent" / "Mark message sent" buttons and the detector path
+ * once Phase 5.3 lands.
+ */
+export interface OutreachActionRecordPayload {
+  prospect_id: number;
+  kind: OutreachActionKind;
+  state: OutreachActionState;
+  template_id?: number | null;
+  template_version?: number | null;
+  rendered_body?: string | null;
+  source_feed_event_id?: number | null;
+  notes?: string | null;
+  /** Optional override — defaults to `prospect:kind:yyyy-mm-dd`. */
+  idempotency_key?: string;
+}
+
+/**
+ * Payload for `OUTREACH_PREFILL_CONNECT` — background forwards this to the
+ * active LinkedIn tab's content script, which finds the Connect button on the
+ * loaded profile, opens the note modal, and types the rendered body. User
+ * still clicks Send (Mode A invariant).
+ */
+export interface OutreachPrefillConnectPayload {
+  prospect_id: number;
+  slug: string;
+  rendered_body: string;
+  template_id?: number | null;
+  template_version?: number | null;
+}
+
+export type OutreachPrefillStage =
+  | 'found_button'
+  | 'opened_modal'
+  | 'filled_textarea'
+  | 'awaiting_send';
+
+export interface OutreachPrefillResult {
+  stage: OutreachPrefillStage;
+  /** Rendered body that was actually typed into the textarea. */
+  filled_body: string | null;
+  /** True if the content script wrote a draft row before returning. */
+  draft_action_id: number | null;
+}
+
+/** Per-day skip flag (scoped to the local day bucket). */
+export interface OutreachSkipMarker {
+  prospect_id: number;
+  day_bucket: string;
 }

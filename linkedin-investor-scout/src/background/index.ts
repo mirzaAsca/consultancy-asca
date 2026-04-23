@@ -4,6 +4,7 @@ import {
 } from '@/shared/csv';
 import {
   addMessageTemplate,
+  addOutreachAction,
   appendActivityLog,
   bulkDeleteProspects,
   bulkRescanProspects,
@@ -12,16 +13,21 @@ import {
   clearAllData,
   countFeedEventsByTaskStatus,
   getActivityLogForProspect,
+  getAllOutreachActionsByProspect,
   getAllProspects,
   getDailyUsage,
+  getOutreachActionByIdempotencyKey,
   getProspectById,
   getProspectStats,
   getScanState,
   getSettings,
+  getSkippedProspectIdsForDay,
   getSlugMap,
+  getWeeklyInvitesUsed,
   incrementDailyUsage,
   listMessageTemplates,
   openScoutDb,
+  OUTREACH_SKIP_EVENTS,
   putSettings,
   queryActivityLog,
   queryFeedEvents,
@@ -29,9 +35,16 @@ import {
   replaceAllProspects,
   updateFeedEventTaskStatus,
   updateMessageTemplate,
+  updateOutreachAction,
+  updateProspect,
   updateProspectFromPatch,
   upsertFeedEventsBulk,
 } from '@/shared/db';
+import {
+  buildCandidates,
+  buildIdempotencyKey,
+  pickNextBest,
+} from '@/shared/outreach-queue';
 import {
   recomputeAllProspects,
   recomputeProspectsByIds,
@@ -44,6 +57,12 @@ import type {
   MessageResponse,
   MessageResponseMap,
   MessageTemplate,
+  OutreachAction,
+  OutreachActionRecordPayload,
+  OutreachPrefillConnectPayload,
+  OutreachPrefillResult,
+  OutreachQueueFilter,
+  OutreachQueuePage,
   ProspectQuery,
   Settings,
   TemplateUpsertPayload,
@@ -388,6 +407,305 @@ async function handleTemplateUpsert(
   };
 }
 
+// ——— Outreach Queue (Phase 1.3) ———
+
+/**
+ * Build the Outreach Queue snapshot: sorted candidates + today's budget
+ * snapshot + the top-of-queue "Next Best Target" that still fits the caps.
+ */
+async function handleOutreachQueueQuery(
+  filter: OutreachQueueFilter,
+): Promise<OutreachQueuePage> {
+  const bucket = localDayBucket(Date.now());
+  const [prospects, actionsByProspect, settings, usage, skipSet, weeklyInvites] =
+    await Promise.all([
+      getAllProspects(),
+      getAllOutreachActionsByProspect(),
+      getSettings(),
+      getDailyUsage(bucket),
+      getSkippedProspectIdsForDay(bucket),
+      getWeeklyInvitesUsed(bucket),
+    ]);
+
+  const rows = buildCandidates(prospects, actionsByProspect, {
+    filter,
+    skippedProspectIds: skipSet,
+    warm_visit_before_invite: settings.outreach.warm_visit_before_invite,
+  });
+
+  const limit = Math.max(1, filter.limit ?? 200);
+  const page = rows.slice(0, limit);
+  const nextBest = pickNextBest(rows, settings.outreach.caps, usage, weeklyInvites);
+
+  return {
+    rows: page,
+    total: rows.length,
+    caps: settings.outreach.caps,
+    usage,
+    day_bucket: bucket,
+    next_best: nextBest,
+  };
+}
+
+/**
+ * Record an outreach_action. Idempotent against same-day duplicates via
+ * `{prospect_id}:{kind}:{day_bucket}` key unless the caller overrides.
+ * Bumps `daily_usage` + `prospect.last_outreach_at` on transition to `sent`.
+ */
+async function handleOutreachActionRecord(
+  payload: OutreachActionRecordPayload,
+): Promise<OutreachAction> {
+  const now = Date.now();
+  const bucket = localDayBucket(now);
+  const key =
+    payload.idempotency_key ??
+    buildIdempotencyKey(payload.prospect_id, payload.kind, bucket);
+
+  const existing = await getOutreachActionByIdempotencyKey(key);
+  let action: OutreachAction;
+  if (existing) {
+    const wasSent = existing.state === 'sent';
+    action = await updateOutreachAction(existing.id, {
+      state: payload.state,
+      template_id: payload.template_id ?? existing.template_id,
+      template_version: payload.template_version ?? existing.template_version,
+      rendered_body: payload.rendered_body ?? existing.rendered_body,
+      source_feed_event_id:
+        payload.source_feed_event_id ?? existing.source_feed_event_id,
+      notes: payload.notes ?? existing.notes,
+      approved_at:
+        payload.state === 'approved' && existing.approved_at === null
+          ? now
+          : existing.approved_at,
+      sent_at:
+        payload.state === 'sent' && existing.sent_at === null
+          ? now
+          : existing.sent_at,
+      resolved_at:
+        payload.state === 'accepted' ||
+        payload.state === 'declined' ||
+        payload.state === 'expired' ||
+        payload.state === 'withdrawn'
+          ? now
+          : existing.resolved_at,
+    });
+    if (!wasSent && action.state === 'sent') {
+      await bumpDailyUsageForKind(bucket, action.kind);
+      await stampProspectLastOutreachAt(action.prospect_id, now);
+    }
+  } else {
+    const id = await addOutreachAction({
+      prospect_id: payload.prospect_id,
+      kind: payload.kind,
+      state: payload.state,
+      idempotency_key: key,
+      template_id: payload.template_id ?? null,
+      template_version: payload.template_version ?? null,
+      rendered_body: payload.rendered_body ?? null,
+      source_feed_event_id: payload.source_feed_event_id ?? null,
+      created_at: now,
+      approved_at:
+        payload.state === 'approved' || payload.state === 'sent' ? now : null,
+      sent_at: payload.state === 'sent' ? now : null,
+      resolved_at:
+        payload.state === 'accepted' ||
+        payload.state === 'declined' ||
+        payload.state === 'expired' ||
+        payload.state === 'withdrawn'
+          ? now
+          : null,
+      notes: payload.notes ?? null,
+    });
+    action = {
+      id,
+      prospect_id: payload.prospect_id,
+      kind: payload.kind,
+      state: payload.state,
+      idempotency_key: key,
+      template_id: payload.template_id ?? null,
+      template_version: payload.template_version ?? null,
+      rendered_body: payload.rendered_body ?? null,
+      source_feed_event_id: payload.source_feed_event_id ?? null,
+      created_at: now,
+      approved_at:
+        payload.state === 'approved' || payload.state === 'sent' ? now : null,
+      sent_at: payload.state === 'sent' ? now : null,
+      resolved_at: null,
+      notes: payload.notes ?? null,
+    };
+    if (action.state === 'sent') {
+      await bumpDailyUsageForKind(bucket, action.kind);
+      await stampProspectLastOutreachAt(action.prospect_id, now);
+    }
+  }
+
+  await appendActivityLog({
+    ts: now,
+    level: 'info',
+    event: 'outreach_action_recorded',
+    prospect_id: action.prospect_id,
+    data: {
+      kind: action.kind,
+      state: action.state,
+      idempotency_key: action.idempotency_key,
+      template_id: action.template_id,
+    },
+  });
+  void broadcastProspectsUpdated([action.prospect_id]);
+  return action;
+}
+
+async function bumpDailyUsageForKind(
+  bucket: string,
+  kind: OutreachAction['kind'],
+): Promise<void> {
+  switch (kind) {
+    case 'profile_visit':
+      await incrementDailyUsage(bucket, { visits: 1 });
+      return;
+    case 'connection_request_sent':
+      await incrementDailyUsage(bucket, {
+        invites_sent: 1,
+        // Shared bucket: an invite also consumes a visit slot. Settings is
+        // the source of truth, but the default is `shared_bucket: true` — we
+        // bump visits unconditionally and let the cap enforcement on read
+        // sort it out if the user toggles shared off.
+        visits: 1,
+      });
+      return;
+    case 'message_sent':
+      await incrementDailyUsage(bucket, { messages_sent: 1 });
+      return;
+    case 'followup_message_sent':
+      await incrementDailyUsage(bucket, { followups_sent: 1, messages_sent: 1 });
+      return;
+  }
+}
+
+async function stampProspectLastOutreachAt(
+  prospectId: number,
+  ts: number,
+): Promise<void> {
+  try {
+    await updateProspect(prospectId, { last_outreach_at: ts });
+  } catch (error) {
+    console.warn('[investor-scout] last_outreach_at stamp failed', {
+      prospect_id: prospectId,
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
+async function handleOutreachSkipToday(
+  prospectId: number,
+  skip: boolean,
+): Promise<{ prospect_id: number; skipped: boolean }> {
+  const now = Date.now();
+  const bucket = localDayBucket(now);
+  await appendActivityLog({
+    ts: now,
+    level: 'info',
+    event: skip ? OUTREACH_SKIP_EVENTS.skip : OUTREACH_SKIP_EVENTS.unskip,
+    prospect_id: prospectId,
+    data: { day_bucket: bucket },
+  });
+  return { prospect_id: prospectId, skipped: skip };
+}
+
+async function getActiveLinkedInTab(): Promise<chrome.tabs.Tab | null> {
+  const tabs = await chrome.tabs.query({
+    active: true,
+    lastFocusedWindow: true,
+  });
+  const tab = tabs[0];
+  if (!tab || typeof tab.id !== 'number' || !tab.url) return null;
+  if (!/^https:\/\/(?:www\.)?linkedin\.com\//i.test(tab.url)) return null;
+  return tab;
+}
+
+/**
+ * Mode A prefill — navigate the user's active LinkedIn tab to the target
+ * profile (if it isn't there already), then ask the content script to open
+ * the Connect modal and type the rendered body into the textarea. The user
+ * still clicks Send (MASTER §19.2 Mode A invariant).
+ */
+async function handleOutreachPrefillConnect(
+  payload: OutreachPrefillConnectPayload,
+): Promise<MessageResponse<OutreachPrefillResult>> {
+  const prospect = await getProspectById(payload.prospect_id);
+  if (!prospect) {
+    return { ok: false, error: `Prospect ${payload.prospect_id} not found` };
+  }
+
+  let tab = await getActiveLinkedInTab();
+  if (!tab) {
+    return {
+      ok: false,
+      error:
+        'Open a LinkedIn tab in the active window, then try again (Mode A requires a live LinkedIn session).',
+    };
+  }
+
+  // Navigate if we're not already on the prospect's profile.
+  const onProfile =
+    typeof tab.url === 'string' &&
+    tab.url.toLowerCase().includes(`/in/${prospect.slug.toLowerCase()}`);
+  if (!onProfile) {
+    await chrome.tabs.update(tab.id!, { url: prospect.url });
+    // Wait for the tab to finish loading before dispatching the prefill.
+    await waitForTabComplete(tab.id!, 20_000);
+    const refreshed = await chrome.tabs.get(tab.id!);
+    tab = refreshed;
+  }
+
+  const res = await sendMessageToTab(tab.id!, {
+    type: 'OUTREACH_PREFILL_CONNECT_IN_TAB',
+    payload,
+  });
+
+  // Always draft an `outreach_actions` row (state = 'draft') so the user can
+  // later confirm via "Mark request sent" even if the content script missed
+  // the modal. The idempotency key dedupes across retries.
+  await handleOutreachActionRecord({
+    prospect_id: payload.prospect_id,
+    kind: 'connection_request_sent',
+    state: 'draft',
+    template_id: payload.template_id ?? null,
+    template_version: payload.template_version ?? null,
+    rendered_body: payload.rendered_body,
+  });
+
+  if (!res.ok) {
+    return { ok: false, error: res.error };
+  }
+  return res;
+}
+
+function waitForTabComplete(tabId: number, timeoutMs: number): Promise<void> {
+  return new Promise((resolve) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      chrome.tabs.onUpdated.removeListener(listener);
+      resolve();
+    }, timeoutMs);
+    const listener = (
+      updatedId: number,
+      info: chrome.tabs.TabChangeInfo,
+    ) => {
+      if (updatedId !== tabId) return;
+      if (info.status !== 'complete') return;
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      chrome.tabs.onUpdated.removeListener(listener);
+      resolve();
+    };
+    chrome.tabs.onUpdated.addListener(listener);
+  });
+}
+
 async function exportProspectsCsv(
   filter: ProspectQuery | null,
 ): Promise<{ csv: string; row_count: number }> {
@@ -659,6 +977,23 @@ registerMessageRouter(async (msg) => {
       });
       return { ok: true, data: row };
     }
+    case 'OUTREACH_QUEUE_QUERY': {
+      const data = await handleOutreachQueueQuery(msg.payload ?? {});
+      return { ok: true, data };
+    }
+    case 'OUTREACH_ACTION_RECORD': {
+      const row = await handleOutreachActionRecord(msg.payload);
+      return { ok: true, data: row };
+    }
+    case 'OUTREACH_SKIP_TODAY': {
+      const data = await handleOutreachSkipToday(
+        msg.payload.prospect_id,
+        msg.payload.skip,
+      );
+      return { ok: true, data };
+    }
+    case 'OUTREACH_PREFILL_CONNECT':
+      return handleOutreachPrefillConnect(msg.payload);
     default:
       return { ok: false, error: `Unhandled message: ${(msg as Message).type}` };
   }

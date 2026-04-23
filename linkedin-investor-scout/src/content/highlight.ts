@@ -37,6 +37,8 @@ import {
   extractFeedEventsFromDocument,
   FeedEventBatcher,
 } from './feed-events';
+import { prefillConnectModal } from './outreach-prefill';
+import { CONNECT_NOTE_CHAR_CAP } from '@/shared/constants';
 
 // ——— Module state (content-script scope, one instance per tab) ———
 
@@ -1085,6 +1087,18 @@ chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
         },
       });
       return;
+    }
+    case 'OUTREACH_PREFILL_CONNECT_IN_TAB': {
+      void prefillConnectModal(msg.payload, CONNECT_NOTE_CHAR_CAP).then(
+        (res) => {
+          try {
+            sendResponse(res);
+          } catch {
+            /* channel already closed — ignore */
+          }
+        },
+      );
+      return true; // keep the message channel open for the async send
     }
     case 'PROSPECTS_UPDATED':
       void refreshSlugMap();

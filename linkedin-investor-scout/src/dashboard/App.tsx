@@ -4,12 +4,14 @@ import {
   Inbox,
   MessageSquareText,
   Radar,
+  Send,
   Settings as SettingsIcon,
 } from 'lucide-react';
 import { sendMessage } from '@/shared/messaging';
 import type { ProspectLevel } from '@/shared/types';
 import { useDashboardStore, type DashboardRoute } from './store';
 import { ProspectsRoute } from './routes/Prospects';
+import { OutreachQueueRoute } from './routes/OutreachQueue';
 import { EngagementTasksRoute } from './routes/EngagementTasks';
 import { SettingsRoute } from './routes/Settings';
 import { TemplatesRoute } from './routes/Templates';
@@ -21,6 +23,7 @@ const ROUTES: Array<{
   Icon: React.ComponentType<{ className?: string }>;
 }> = [
   { id: 'prospects', label: 'Prospects', Icon: Radar },
+  { id: 'outreach_queue', label: 'Outreach queue', Icon: Send },
   { id: 'engagement_tasks', label: 'Engagement tasks', Icon: Inbox },
   { id: 'templates', label: 'Templates', Icon: MessageSquareText },
   { id: 'settings', label: 'Settings', Icon: SettingsIcon },
@@ -29,6 +32,7 @@ const ROUTES: Array<{
 
 const VALID_ROUTES: DashboardRoute[] = [
   'prospects',
+  'outreach_queue',
   'engagement_tasks',
   'templates',
   'settings',
@@ -174,6 +178,7 @@ export default function App() {
       </aside>
       <main className="min-h-screen md:ml-56">
         {route === 'prospects' && <ProspectsRoute />}
+        {route === 'outreach_queue' && <OutreachQueueRoute />}
         {route === 'engagement_tasks' && <EngagementTasksRoute />}
         {route === 'templates' && <TemplatesRoute />}
         {route === 'settings' && <SettingsRoute />}

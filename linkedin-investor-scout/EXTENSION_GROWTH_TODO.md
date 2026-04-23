@@ -2,7 +2,7 @@
 
 Last updated: 2026-04-23
 Owner: Mirza + Codex
-Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. **Phase 1.2 scoring-recompute triggers + §19.4 queue ordering + Phase 4.1 popup daily quick-glance landed 2026-04-23** — `src/shared/prospect-scoring.ts` orchestrates the DB-aware scoring pass and is wired into scan-complete, `FEED_EVENTS_UPSERT_BULK`, and `SETTINGS_UPDATE` (keyword / firm / tier-threshold edits trigger a full rescore). `takePendingProspectsBatch` now sorts `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` with v1-parity fallback for null tier/score rows. Popup renders a `Today` row (invites / visits / messages / inbox unread) with a 20%-remaining budget chip, backed by a new `DAILY_SNAPSHOT_QUERY` message. **Phase 1.4 template CRUD + keyword/firm/tier/caps Settings UI landed 2026-04-23** — new `src/dashboard/routes/Templates.tsx` tab with connect-note / first-message / follow-up editors, `{{placeholder}}` renderer (`src/shared/templates.ts`), 300-char Connect-note cap warning, archive/restore of prior versions, `TEMPLATES_LIST` / `TEMPLATE_UPSERT` / `TEMPLATE_ARCHIVE` message handlers. Settings page now exposes Outreach caps (daily/weekly invites/visits/messages, shared-bucket toggle, warm-visit toggle), Tier thresholds, and full CRUD for keyword + firm seed lists (triggers the existing `SETTINGS_UPDATE` rescore path). Sprint 2 remaining: Outreach Queue UX (1.3 Mode A prefill flow) + A/B template reporting (deferred to v2.1).
+Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. **Phase 1.2 scoring-recompute triggers + §19.4 queue ordering + Phase 4.1 popup daily quick-glance landed 2026-04-23** — `src/shared/prospect-scoring.ts` orchestrates the DB-aware scoring pass and is wired into scan-complete, `FEED_EVENTS_UPSERT_BULK`, and `SETTINGS_UPDATE` (keyword / firm / tier-threshold edits trigger a full rescore). `takePendingProspectsBatch` now sorts `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` with v1-parity fallback for null tier/score rows. Popup renders a `Today` row (invites / visits / messages / inbox unread) with a 20%-remaining budget chip, backed by a new `DAILY_SNAPSHOT_QUERY` message. **Phase 1.4 template CRUD + keyword/firm/tier/caps Settings UI landed 2026-04-23** — new `src/dashboard/routes/Templates.tsx` tab with connect-note / first-message / follow-up editors, `{{placeholder}}` renderer (`src/shared/templates.ts`), 300-char Connect-note cap warning, archive/restore of prior versions, `TEMPLATES_LIST` / `TEMPLATE_UPSERT` / `TEMPLATE_ARCHIVE` message handlers. Settings page now exposes Outreach caps (daily/weekly invites/visits/messages, shared-bucket toggle, warm-visit toggle), Tier thresholds, and full CRUD for keyword + firm seed lists (triggers the existing `SETTINGS_UPDATE` rescore path). **Phase 1.3 Outreach Queue UX (Mode A) landed 2026-04-23** — new `src/dashboard/routes/OutreachQueue.tsx` tab with tier/level/action/include-skipped filters, Next Best Target card, budget strip, and per-row Open profile / Prefill Connect / Copy template / Mark sent / Skip for today actions. Background owns `outreach_actions` FSM writes (idempotent via `{prospect}:{kind}:{day}` keys) and dispatches `OUTREACH_PREFILL_CONNECT_IN_TAB` to the active LinkedIn tab — `src/content/outreach-prefill.ts` opens the Connect modal (via the aria-label CTA from `example2.html`), handles the Stage-1 "Add a note" prompt, types the rendered body into the textarea, and highlights Send (user still clicks per §19.2). Popup carries a "Next best target" row under the daily glance. 34 new unit tests in `tests/outreach-queue.test.ts` cover queue ordering, recommender rules, live-action semantics, budget gating (incl. shared bucket), skip-today filtering, and idempotency-key stability. Sprint 2 remaining: A/B template reporting (deferred to v2.1).
 
 ## Interview resolutions (2026-04-22)
 
@@ -303,31 +303,35 @@ _Scoring helper landed 2026-04-22 in [`src/shared/scoring.ts`](./src/shared/scor
 
 ### 1.3 Outreach queue UX (Mode A only)
 
-- [ ] Add Dashboard tab: `Outreach Queue`.
-- [ ] Filters:
-  - status,
-  - level,
-  - action type,
-  - tier,
-  - due today/overdue.
-- [ ] Queue actions:
-  - `Open next profile` — navigates the active tab to the prospect's canonical URL.
-  - `Prefill Connect modal` — opens Connect dialog on the loaded profile, types the rendered note into the textarea, highlights the Send button. **User clicks Send.** (Mode A — the only send mode in v2.)
-  - `Copy template` — clipboard copy of rendered note / message for manual paste flows.
-  - `Mark request sent` — manual override if auto-detector misses.
-  - `Mark message sent` — manual override for DMs.
-  - `Skip for today`.
-- [ ] Mode A state machine ownership:
-  - Background owns `outreach_queue` FSM (`draft → approved → sent → accepted | declined | expired | withdrawn`).
-  - Content script owns DOM interaction (open modal, fill textarea).
-  - Detector (Phase 5.3) owns the `approved → sent` transition, keyed on dialog unmount + toast signal within 3s of Send click.
-  - On detector miss, user's manual `Mark request sent` is the fallback; row routes through `needs_review`.
-- [ ] Pre-invite profile visit warming:
-  - before a `connection_request_sent` is queued for a prospect, auto-queue a `profile_visit` action 24–72h earlier on the same prospect so the target receives a "X viewed your profile" notification first (measurable lift on accept rate).
-  - visit consumes `max_profile_visits_per_day` from the unified bucket; skip the warming slot if budget is exhausted but do not block the invite.
-  - user-toggleable in Settings (`warm_visit_before_invite`, **default `true`** per interview).
-  - dedupe: skip warming if any `profile_visit` on this prospect already exists within the last 14 days.
-- [ ] One-click "Next Best Target" button in popup (opens top-of-queue prospect, no auto-send).
+_Landed 2026-04-23. See [`src/dashboard/routes/OutreachQueue.tsx`](./src/dashboard/routes/OutreachQueue.tsx), [`src/shared/outreach-queue.ts`](./src/shared/outreach-queue.ts), the new `OUTREACH_*` handlers in [`src/background/index.ts`](./src/background/index.ts), and [`src/content/outreach-prefill.ts`](./src/content/outreach-prefill.ts). The detector that flips `sent → accepted` lives in Phase 5.3 and is still open._
+
+- [x] Add Dashboard tab: `Outreach Queue`.
+- [x] Filters:
+  - [x] level,
+  - [x] action type,
+  - [x] tier,
+  - [x] include-skipped toggle.
+  - [ ] status (lifecycle_status filter) — deferred; `has_pending_invite` / `skipped_today` chips on the row cover the common cases. _(low priority — revisit if users ask)_
+  - [ ] due today/overdue — deferred; requires `next_action_due_at` to be written somewhere first (currently always null). _(lands with the staleness scheduler in Phase 3.3)_
+- [x] Queue actions:
+  - [x] `Open profile` — opens the prospect URL in a new tab (leaves the user's active LinkedIn window intact for the prefill flow).
+  - [x] `Prefill Connect modal` — navigates the active LinkedIn tab to the profile (if not already there), opens the Connect modal via the `example2.html` aria-label CTA, handles the Stage-1 "Add a note" prompt, types the rendered body into the textarea, and highlights Send. **User clicks Send.** (Mode A — the only send mode in v2.)
+  - [x] `Copy template` — clipboard copy of the active connect-note / first-message template rendered against the prospect.
+  - [x] `Mark request sent` — records an idempotent `connection_request_sent` row in `sent` state + bumps `daily_usage.invites_sent` / `visits` (shared bucket).
+  - [x] `Mark message sent` — records a `message_sent` row + bumps `daily_usage.messages_sent`.
+  - [x] `Skip for today` — persisted as activity_log entries (`outreach_skipped_today` / `outreach_unskipped_today`) so the skip set survives service-worker restarts without a schema bump.
+- [x] Mode A state machine ownership:
+  - [x] Background owns `outreach_queue` FSM (`draft → approved → sent → accepted | declined | expired | withdrawn`). Idempotency key = `{prospect_id}:{kind}:{yyyy-mm-dd}`; upsert path handles detector races + manual-override collisions.
+  - [x] Content script owns DOM interaction (open modal, fill textarea) via `prefillConnectModal()` in `src/content/outreach-prefill.ts`. Uses a native-setter + synthetic-event path so React's modal doesn't reset the value on focus.
+  - [ ] Detector (Phase 5.3) owns the `approved → sent` transition, keyed on dialog unmount + toast signal within 3s of Send click. _(not in this landing — Phase 5.3)_
+  - [x] On detector miss, user's manual `Mark request sent` is the fallback; the `needs_review` sidelane is reachable but currently only set explicitly by downstream reconciliation code.
+- [~] Pre-invite profile visit warming:
+  - [x] Recommender surfaces a `profile_visit` before the invite when `warm_visit_before_invite` is on and no prior visit exists for the prospect (logic lives in `recommendAction()`).
+  - [x] Visit counts against `max_profile_visits_per_day` via `incrementDailyUsage({ visits: 1 })` on `sent`. Shared bucket is respected at read time by the budget gate.
+  - [x] Settings toggle already exposed (`warm_visit_before_invite`, default `true`).
+  - [ ] 14-day dedupe window on prior visits — currently we de-recommend if *any* prior `profile_visit` exists for the prospect. Tighten in a follow-up once we have enough real data to know whether 14d is the right window.
+  - [ ] 24–72h delay between warming visit and the subsequent invite — currently the invite becomes the next recommendation immediately after the visit is recorded. Needs a timer/cursor (lands with Phase 3.3 scheduler work).
+- [x] One-click "Next best target" card in popup (opens the Outreach Queue dashboard tab pre-loaded on the top candidate that fits today's caps).
 
 ### 1.4 Template system (single template per type — no A/B in v2.0)
 
@@ -655,8 +659,9 @@ Acceptance criteria:
   - DB version bump and defaults for outreach caps.
 - [ ] `src/shared/db.ts`
   - migration + CRUD/query helpers for new stores.
-- [ ] `src/background/index.ts`
-  - handlers for `FEED_EVENTS_UPSERT_BULK`, queue queries, action completion, template CRUD, reconciliation messages.
+- [~] `src/background/index.ts`
+  - [x] handlers for `FEED_EVENTS_UPSERT_BULK`, template CRUD, outreach queue queries (`OUTREACH_QUEUE_QUERY`), outreach action recording + skip (`OUTREACH_ACTION_RECORD`, `OUTREACH_SKIP_TODAY`), Mode A modal dispatch (`OUTREACH_PREFILL_CONNECT`).
+  - [ ] reconciliation messages (Phase 5.x).
 - [ ] `src/content/highlight.ts`
   - event extraction + debounced bulk upsert messaging.
 - [ ] `src/content/*` (new detector module)
@@ -690,7 +695,7 @@ Front-loads the harvester so scoring has real feed-recency signal by the time ou
 - [x] Phase 2.3 (Engagement Tasks UI + `chrome.action` badge) _(landed 2026-04-23)_
 - [x] Phase 1.2 scoring-recompute triggers + §19.4 queue ordering _(landed 2026-04-23 — `src/shared/prospect-scoring.ts`, scan-complete + feed-event + settings-edit hooks)_
 - [x] Phase 4.1 popup daily quick-glance row _(landed 2026-04-23 — `DailyGlanceSection` + `DAILY_SNAPSHOT_QUERY`)_
-- [ ] Phase 1.3 (Outreach Queue UX + Mode A prefill flow + pre-invite visit warming)
+- [x] Phase 1.3 (Outreach Queue UX + Mode A prefill flow + pre-invite visit warming) _(landed 2026-04-23 — see §1.3 above; 24–72h visit-delay scheduler deferred to Phase 3.3)_
 - [x] Phase 1.4 (single-template-per-type CRUD with placeholders + length cap) _(landed 2026-04-23 — `src/dashboard/routes/Templates.tsx`, `src/shared/templates.ts`, background CRUD handlers)_
 - [x] Keyword / firm seed-list Settings UI (prerequisite for scoring to differentiate tiers beyond `level`) _(landed 2026-04-23 — `KeywordsSection` + `FirmsSection` + `OutreachCapsSection` + `TierThresholdsSection` in Settings page)_
 
