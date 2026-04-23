@@ -46,6 +46,11 @@ export const SCORE_WEIGHTS = Object.freeze({
   recency_half_life_days: 30,
   cooldown_days: 14,
   cooldown_penalty: -30,
+  // Phase 3.3: freshly-unlocked 2nd-degree rows get a flat boost for the first
+  // `recent_unlock_days` after the level transition. Keeps the queue honest
+  // about acting on new reachability while the window is still warm.
+  recent_unlock_boost: 25,
+  recent_unlock_days: 7,
 });
 
 export const DEFAULT_PROFILE_VISIT_DWELL_MS = 8000;

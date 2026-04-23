@@ -53,6 +53,8 @@ export interface ProspectScoreBreakdown {
   mutuals: number;
   recency: number;
   cooldown: number;
+  /** Phase 3.3 — flat boost for 2nd-degree rows within the unlock window. */
+  recent_unlock: number;
   total: number;
 }
 
@@ -641,6 +643,18 @@ export interface DailySnapshot {
   usage: DailyUsage;
   /** Count of `feed_events.task_status = 'new'` across all prospects. */
   inbox_new_count: number;
+  /**
+   * Phase 4.1 — outreach_actions that transitioned to `accepted` inside
+   * today's local day bucket. Populated by the acceptance watcher
+   * (Phase 3.3) when a prospect's level flips to `1st` after we sent them
+   * an invite.
+   */
+  accepts_today: number;
+  /**
+   * Phase 4.1 — live `connection_request_sent` rows waiting on resolution.
+   * Drives the "Pending invites" pill in the popup daily glance.
+   */
+  pending_invites: number;
 }
 
 // ———————————————————————————————————————————————————————————

@@ -7,9 +7,12 @@ import {
   putScanState,
   resetStuckInProgressProspects,
   takePendingProspectsBatch,
+  updateOutreachAction,
   updateProspect,
+  listOutreachActionsForProspect,
 } from '@/shared/db';
 import { recomputeAndPersistProspect } from '@/shared/prospect-scoring';
+import { detectAcceptanceOnLevelChange } from '@/shared/acceptance-watcher';
 import { broadcast } from '@/shared/messaging';
 import { jitterAround, localDayBucket, randomDelayMs } from '@/shared/time';
 import {
@@ -331,7 +334,46 @@ async function scanSingleProspect(
     const redirectPatch = await buildRedirectPatch(prospect, tabId);
 
     const now = Date.now();
-    const levelChanged = d.level !== prospect.level;
+    const previousLevel = prospect.level;
+    const levelChanged = d.level !== previousLevel;
+
+    // Phase 3.3 acceptance watcher: a transition from a pre-connected level
+    // (2nd / 3rd / OOON) to `1st` implies the prospect accepted an invite we
+    // previously sent. Decide the action + lifecycle patch BEFORE writing the
+    // prospect row so we can bundle `lifecycle_status = 'connected'` into the
+    // same update and flip the matching outreach_action row to `accepted`.
+    let acceptanceLifecycle: Prospect['lifecycle_status'] | null = null;
+    let acceptedActionId: number | null = null;
+    if (levelChanged) {
+      try {
+        const history = await listOutreachActionsForProspect(prospect.id);
+        const outcome = detectAcceptanceOnLevelChange({
+          oldLevel: previousLevel,
+          newLevel: d.level,
+          history,
+          currentLifecycleStatus: prospect.lifecycle_status,
+        });
+        if (outcome.next_lifecycle_status) {
+          acceptanceLifecycle = outcome.next_lifecycle_status;
+        }
+        if (outcome.accepted && outcome.invite_to_accept) {
+          const updated = await updateOutreachAction(
+            outcome.invite_to_accept.id,
+            {
+              state: 'accepted',
+              resolved_at: now,
+            },
+          );
+          acceptedActionId = updated.id;
+        }
+      } catch (error) {
+        console.warn('[investor-scout] acceptance watcher failed', {
+          prospectId: prospect.id,
+          error: error instanceof Error ? error.message : error,
+        });
+      }
+    }
+
     await updateProspect(prospect.id, {
       ...redirectPatch,
       level: d.level,
@@ -345,6 +387,7 @@ async function scanSingleProspect(
       // Phase 3.3 unlock tracking hook — stamp the transition so later sprints
       // can query level-change history without a separate event store.
       ...(levelChanged ? { last_level_change_at: now } : {}),
+      ...(acceptanceLifecycle ? { lifecycle_status: acceptanceLifecycle } : {}),
     });
 
     // Phase 1.2 recompute trigger: scan completion refreshes score/tier.
@@ -368,10 +411,39 @@ async function scanSingleProspect(
         original_url: prospect.url,
         level: d.level,
         level_changed: levelChanged,
+        previous_level: levelChanged ? previousLevel : undefined,
         name: d.name,
         company: d.company,
       },
     });
+
+    if (levelChanged) {
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: 'level_transition',
+        prospect_id: prospect.id,
+        data: {
+          from: previousLevel,
+          to: d.level,
+          accepted_action_id: acceptedActionId,
+        },
+      });
+    }
+
+    if (acceptedActionId !== null) {
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: 'outreach_accepted',
+        prospect_id: prospect.id,
+        data: {
+          outreach_action_id: acceptedActionId,
+          from_level: previousLevel,
+          to_level: d.level,
+        },
+      });
+    }
 
     return { kind: 'done', level: d.level };
   } catch (error) {

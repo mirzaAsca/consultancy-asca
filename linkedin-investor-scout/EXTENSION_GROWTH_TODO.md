@@ -2,7 +2,7 @@
 
 Last updated: 2026-04-23
 Owner: Mirza + Codex
-Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. **Phase 1.2 scoring-recompute triggers + §19.4 queue ordering + Phase 4.1 popup daily quick-glance landed 2026-04-23** — `src/shared/prospect-scoring.ts` orchestrates the DB-aware scoring pass and is wired into scan-complete, `FEED_EVENTS_UPSERT_BULK`, and `SETTINGS_UPDATE` (keyword / firm / tier-threshold edits trigger a full rescore). `takePendingProspectsBatch` now sorts `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` with v1-parity fallback for null tier/score rows. Popup renders a `Today` row (invites / visits / messages / inbox unread) with a 20%-remaining budget chip, backed by a new `DAILY_SNAPSHOT_QUERY` message. **Phase 1.4 template CRUD + keyword/firm/tier/caps Settings UI landed 2026-04-23** — new `src/dashboard/routes/Templates.tsx` tab with connect-note / first-message / follow-up editors, `{{placeholder}}` renderer (`src/shared/templates.ts`), 300-char Connect-note cap warning, archive/restore of prior versions, `TEMPLATES_LIST` / `TEMPLATE_UPSERT` / `TEMPLATE_ARCHIVE` message handlers. Settings page now exposes Outreach caps (daily/weekly invites/visits/messages, shared-bucket toggle, warm-visit toggle), Tier thresholds, and full CRUD for keyword + firm seed lists (triggers the existing `SETTINGS_UPDATE` rescore path). **Phase 1.3 Outreach Queue UX (Mode A) landed 2026-04-23** — new `src/dashboard/routes/OutreachQueue.tsx` tab with tier/level/action/include-skipped filters, Next Best Target card, budget strip, and per-row Open profile / Prefill Connect / Copy template / Mark sent / Skip for today actions. Background owns `outreach_actions` FSM writes (idempotent via `{prospect}:{kind}:{day}` keys) and dispatches `OUTREACH_PREFILL_CONNECT_IN_TAB` to the active LinkedIn tab — `src/content/outreach-prefill.ts` opens the Connect modal (via the aria-label CTA from `example2.html`), handles the Stage-1 "Add a note" prompt, types the rendered body into the textarea, and highlights Send (user still clicks per §19.2). Popup carries a "Next best target" row under the daily glance. 34 new unit tests in `tests/outreach-queue.test.ts` cover queue ordering, recommender rules, live-action semantics, budget gating (incl. shared bucket), skip-today filtering, and idempotency-key stability. Sprint 2 remaining: A/B template reporting (deferred to v2.1).
+Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Phase 3.3 unlock tracking + acceptance watcher + popup accepts/pending landed 2026-04-23** — scan-worker detects level transitions and flips matching live `connection_request_sent` rows to `accepted` (pure logic in [`src/shared/acceptance-watcher.ts`](./src/shared/acceptance-watcher.ts), 13 unit tests). Newly-unlocked 2nd-degree rows get a flat `recent_unlock_boost` (+25 for 7d) so they promote tiers cleanly; `scoreProspect` now takes `last_level_change_at` and exposes `breakdown.recent_unlock`. `DailySnapshot` carries `accepts_today` + `pending_invites`; popup renders them beneath the budget tiles. Activity log gains `level_transition` + `outreach_accepted` events for auditability. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. **Phase 1.2 scoring-recompute triggers + §19.4 queue ordering + Phase 4.1 popup daily quick-glance landed 2026-04-23** — `src/shared/prospect-scoring.ts` orchestrates the DB-aware scoring pass and is wired into scan-complete, `FEED_EVENTS_UPSERT_BULK`, and `SETTINGS_UPDATE` (keyword / firm / tier-threshold edits trigger a full rescore). `takePendingProspectsBatch` now sorts `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` with v1-parity fallback for null tier/score rows. Popup renders a `Today` row (invites / visits / messages / inbox unread) with a 20%-remaining budget chip, backed by a new `DAILY_SNAPSHOT_QUERY` message. **Phase 1.4 template CRUD + keyword/firm/tier/caps Settings UI landed 2026-04-23** — new `src/dashboard/routes/Templates.tsx` tab with connect-note / first-message / follow-up editors, `{{placeholder}}` renderer (`src/shared/templates.ts`), 300-char Connect-note cap warning, archive/restore of prior versions, `TEMPLATES_LIST` / `TEMPLATE_UPSERT` / `TEMPLATE_ARCHIVE` message handlers. Settings page now exposes Outreach caps (daily/weekly invites/visits/messages, shared-bucket toggle, warm-visit toggle), Tier thresholds, and full CRUD for keyword + firm seed lists (triggers the existing `SETTINGS_UPDATE` rescore path). **Phase 1.3 Outreach Queue UX (Mode A) landed 2026-04-23** — new `src/dashboard/routes/OutreachQueue.tsx` tab with tier/level/action/include-skipped filters, Next Best Target card, budget strip, and per-row Open profile / Prefill Connect / Copy template / Mark sent / Skip for today actions. Background owns `outreach_actions` FSM writes (idempotent via `{prospect}:{kind}:{day}` keys) and dispatches `OUTREACH_PREFILL_CONNECT_IN_TAB` to the active LinkedIn tab — `src/content/outreach-prefill.ts` opens the Connect modal (via the aria-label CTA from `example2.html`), handles the Stage-1 "Add a note" prompt, types the rendered body into the textarea, and highlights Send (user still clicks per §19.2). Popup carries a "Next best target" row under the daily glance. 34 new unit tests in `tests/outreach-queue.test.ts` cover queue ordering, recommender rules, live-action semantics, budget gating (incl. shared bucket), skip-today filtering, and idempotency-key stability. Sprint 2 remaining: A/B template reporting (deferred to v2.1).
 
 ## Interview resolutions (2026-04-22)
 
@@ -485,20 +485,22 @@ Acceptance criteria:
 
 ### 3.3 Unlock tracking
 
-- [ ] On scan completion, detect level transitions:
-  - `OUT_OF_NETWORK -> 3rd`
-  - `3rd -> 2nd`
-  - `2nd -> 1st`
-- [ ] Log transitions in `level_history`.
-- [ ] Surface "newly unlocked 2nd-degree" in queue with highest priority.
-- [ ] Add acceptance watcher:
-  - if outreach state is `sent` and level becomes `1st`, mark `accepted`.
-  - auto-generate follow-up draft (manual send only).
+_Landed 2026-04-23. Level transitions + acceptance watcher ship on the scan-complete path in [`src/background/scan-worker.ts`](./src/background/scan-worker.ts); the detection logic is pure in [`src/shared/acceptance-watcher.ts`](./src/shared/acceptance-watcher.ts) (13 unit tests). Newly-unlocked 2nd-degree rows get a +25 scoring boost for the 7 days after the level change — see `recentUnlockScore` in [`src/shared/scoring.ts`](./src/shared/scoring.ts). Follow-up draft auto-generation + dashboard unlock surfacing are open follow-ups._
+
+- [x] On scan completion, detect level transitions:
+  - [x] `OUT_OF_NETWORK -> 3rd`
+  - [x] `3rd -> 2nd`
+  - [x] `2nd -> 1st`
+- [x] Log transitions in `activity_log` (event `level_transition` with `{ from, to, accepted_action_id }`). _(No dedicated `level_history` store — the activity log is the system of record; `Prospect.last_level_change_at` stamps the most recent transition for scoring.)_
+- [x] Surface "newly unlocked 2nd-degree" in queue with highest priority. _(Implemented as a flat +`SCORE_WEIGHTS.recent_unlock_boost` bonus on 2nd-degree rows within `recent_unlock_days` of the transition. Promotes borderline rows into a higher tier for the window.)_
+- [~] Add acceptance watcher:
+  - [x] if outreach state is live (`draft` / `approved` / `sent` / `needs_review`) and level becomes `1st`, mark `accepted`. _(Scan-worker bundles the transition into the same DB write as the level bump; `outreach_actions.resolved_at` is stamped and `Prospect.lifecycle_status` flips to `connected`. Organic accepts — no prior invite — still flip lifecycle.)_
+  - [ ] auto-generate follow-up draft (manual send only). _(Deferred — `followup_message_sent` template already exists via Phase 1.4; wiring the draft-insert happens alongside the Phase 5.5 reconciliation UX so the timeline/undo affordances land together.)_
 
 Acceptance criteria:
 
 - [ ] You can run daily crawl sessions and see net-new events/tasks by mode.
-- [ ] Newly unlocked 2nd-degree investors are auto-prioritized.
+- [x] Newly unlocked 2nd-degree investors are auto-prioritized. _(recent_unlock_boost in `src/shared/scoring.ts` promotes fresh 2nd-degree rows by a flat +25 for 7 days; outreach queue sort order already reads `tier DESC, priority_score DESC` so the boost shows up in `next_best` first.)_
 
 ---
 
@@ -510,9 +512,9 @@ _Landed 2026-04-23 — popup renders a `Today` section above the Scan controls b
 
 - [x] Add a new row to the popup showing today's operational numbers:
   - [x] `Today: X/15 invites · Y/40 visits · Z events captured · N inbox unread`. _(per-metric tile with used/cap + progress bar; inbox tile shows `new` count and today's captured events)_
-  - [ ] `Accepts today: A · Pending invites: P` (pending = `sent` + not yet resolved). _(deferred — requires `outreach_actions` writers, wire with Phase 1.3)_
+  - [x] `Accepts today: A · Pending invites: P` (pending = `sent` + not yet resolved). _(Landed alongside Phase 3.3 — `countAcceptedActionsForDay` + `countPendingInvites` in [`src/shared/db.ts`](./src/shared/db.ts); `DAILY_SNAPSHOT_QUERY` surfaces both and the popup `DailyGlanceSection` renders them in the row beneath the budget tiles.)_
   - [x] Budget remaining + warning chip if <20% of daily budget left.
-- [ ] Popup "Next Best Target" CTA reads the top-of-queue tier + score. _(lands with Phase 1.3 Outreach Queue)_
+- [x] Popup "Next Best Target" CTA reads the top-of-queue tier + score. _(Landed 2026-04-23 with Phase 1.3 — `NextBestTargetRow` in `src/popup/App.tsx` fires `OUTREACH_QUEUE_QUERY` with `limit: 1` and opens the dashboard queue on click.)_
 
 ### 4.2 Dashboard analytics (weekly deep-dive)
 
@@ -703,7 +705,7 @@ Front-loads the harvester so scoring has real feed-recency signal by the time ou
 
 - [ ] Phase 3.1 (continuous harvester + manual Feed Crawl Session button)
 - [ ] Phase 3.2 (top/recent mode switching + per-mode telemetry)
-- [ ] Phase 3.3 (unlock tracking + acceptance watcher)
+- [x] Phase 3.3 (unlock tracking + acceptance watcher) _(landed 2026-04-23 — `src/shared/acceptance-watcher.ts` + scan-worker wiring; follow-up draft auto-gen deferred to Phase 5.5)_
 
 **Sprint 4 — Analytics + health (v2.0 release candidate):**
 

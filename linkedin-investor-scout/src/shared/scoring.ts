@@ -42,6 +42,7 @@ function emptyBreakdown(): ProspectScoreBreakdown {
     mutuals: 0,
     recency: 0,
     cooldown: 0,
+    recent_unlock: 0,
     total: 0,
   };
 }
@@ -123,6 +124,30 @@ function cooldownScore(
 }
 
 /**
+ * Phase 3.3 "newly unlocked 2nd-degree" bonus. Only fires for 2nd-degree rows
+ * whose `last_level_change_at` falls inside the unlock window — 3rd / OOON
+ * transitions aren't actionable outreach yet, and the caller already biases
+ * the queue toward newer rows via `last_outreach_at ASC`. The bonus is flat
+ * (not decayed) so the tier promotion is crisp: either the row is hot-off-
+ * the-unlock-press or it isn't.
+ */
+function recentUnlockScore(
+  level: Prospect['level'],
+  lastLevelChangeAt: number | null,
+  now: number,
+): number {
+  if (level !== '2nd') return 0;
+  // Guard against `undefined` (unsafe test casts) and NaN (arithmetic on
+  // non-finite inputs would otherwise sneak through the window check).
+  if (lastLevelChangeAt == null || !Number.isFinite(lastLevelChangeAt)) {
+    return 0;
+  }
+  const days = (now - lastLevelChangeAt) / MS_PER_DAY;
+  if (days < 0 || days > SCORE_WEIGHTS.recent_unlock_days) return 0;
+  return SCORE_WEIGHTS.recent_unlock_boost;
+}
+
+/**
  * Map a total score to a tier bucket using inclusive-lower-bound thresholds.
  *
  * Defaults: **S ≥ 140, A ≥ 100, B ≥ 60, C ≥ 30, skip < 30**. The thresholds
@@ -152,7 +177,12 @@ export function tierForScore(
 export function scoreProspect(
   prospect: Pick<
     Prospect,
-    'level' | 'headline' | 'company' | 'mutual_count' | 'last_outreach_at'
+    | 'level'
+    | 'headline'
+    | 'company'
+    | 'mutual_count'
+    | 'last_outreach_at'
+    | 'last_level_change_at'
   >,
   outreach: Pick<OutreachSettings, 'keywords' | 'firms' | 'tier_thresholds'>,
   context: ScoringContext,
@@ -171,7 +201,12 @@ export function scoreProspect(
   const mutuals = mutualsScore(prospect.mutual_count);
   const recency = recencyScore(context.last_feed_event_at, context.now);
   const cooldown = cooldownScore(prospect.last_outreach_at, context.now);
-  const total = level + keyword + firm + mutuals + recency + cooldown;
+  const recent_unlock = recentUnlockScore(
+    prospect.level,
+    prospect.last_level_change_at,
+    context.now,
+  );
+  const total = level + keyword + firm + mutuals + recency + cooldown + recent_unlock;
 
   const breakdown: ProspectScoreBreakdown = {
     level,
@@ -180,6 +215,7 @@ export function scoreProspect(
     mutuals,
     recency,
     cooldown,
+    recent_unlock,
     total,
   };
   const tier = tierForScore(total, outreach.tier_thresholds);

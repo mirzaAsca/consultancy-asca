@@ -1176,6 +1176,74 @@ export async function getAllOutreachActionsByProspect(): Promise<
 }
 
 /**
+ * Phase 3.3 — find the latest live (`draft` / `approved` / `sent` /
+ * `needs_review`) `connection_request_sent` action for a prospect. Used by
+ * the scan-worker acceptance watcher to credit an invite when the
+ * prospect's level flips to `1st`.
+ */
+export async function getLiveConnectionRequestForProspect(
+  prospectId: number,
+): Promise<OutreachAction | undefined> {
+  const db = await openScoutDb();
+  const rows = await db.getAllFromIndex(
+    'outreach_actions',
+    'by_prospect_id',
+    prospectId,
+  );
+  const live = rows.filter(
+    (r) =>
+      r.kind === 'connection_request_sent' &&
+      (r.state === 'draft' ||
+        r.state === 'approved' ||
+        r.state === 'sent' ||
+        r.state === 'needs_review'),
+  );
+  live.sort((a, b) => {
+    const as = a.sent_at ?? 0;
+    const bs = b.sent_at ?? 0;
+    if (bs !== as) return bs - as;
+    return b.created_at - a.created_at;
+  });
+  return live[0];
+}
+
+/**
+ * Phase 4.1 — count `outreach_actions` that transitioned to `accepted` inside
+ * the given local day bucket. Uses `resolved_at` as the timestamp (stamped
+ * by {@link updateOutreachAction} when the state is a terminal one).
+ */
+export async function countAcceptedActionsForDay(
+  dayBucket: string,
+): Promise<number> {
+  const db = await openScoutDb();
+  const rows = await db.getAllFromIndex(
+    'outreach_actions',
+    'by_state',
+    'accepted',
+  );
+  let count = 0;
+  for (const r of rows) {
+    if (r.resolved_at === null) continue;
+    if (localDayBucket(r.resolved_at) === dayBucket) count++;
+  }
+  return count;
+}
+
+/**
+ * Phase 4.1 — count live `connection_request_sent` rows currently in the
+ * `sent` state. This is the "Pending invites" surface in the popup.
+ */
+export async function countPendingInvites(): Promise<number> {
+  const db = await openScoutDb();
+  const rows = await db.getAllFromIndex('outreach_actions', 'by_state', 'sent');
+  let count = 0;
+  for (const r of rows) {
+    if (r.kind === 'connection_request_sent') count++;
+  }
+  return count;
+}
+
+/**
  * Sum of `daily_usage.invites_sent` across the trailing 7 day buckets
  * (inclusive of today). Used to enforce the `weekly_invites` cap.
  */

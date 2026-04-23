@@ -953,6 +953,8 @@ function DailyGlanceSection({
   const messagesUsed = snapshot?.usage.messages_sent ?? 0;
   const eventsToday = snapshot?.usage.feed_events_captured ?? 0;
   const inboxNew = snapshot?.inbox_new_count ?? 0;
+  const acceptsToday = snapshot?.accepts_today ?? 0;
+  const pendingInvites = snapshot?.pending_invites ?? 0;
 
   const invitesCap = caps?.daily_invites ?? 0;
   const visitsCap = caps?.daily_visits ?? 0;
@@ -978,6 +980,16 @@ function DailyGlanceSection({
         <BudgetTile label="Visits" used={visitsUsed} cap={visitsCap} />
         <BudgetTile label="Messages" used={messagesUsed} cap={messagesCap} />
         <InboxTile eventsToday={eventsToday} inboxNew={inboxNew} />
+      </div>
+      <div className="mt-2 flex items-center justify-between rounded-md border border-gray-800 bg-bg px-2 py-1 text-[10px] text-gray-400">
+        <span>
+          <span className="text-emerald-300">{acceptsToday.toLocaleString()}</span>{' '}
+          accepts today
+        </span>
+        <span>
+          <span className="text-blue-300">{pendingInvites.toLocaleString()}</span>{' '}
+          pending invites
+        </span>
       </div>
       {anyLow && (
         <div className="mt-2 text-[10px] text-amber-300">

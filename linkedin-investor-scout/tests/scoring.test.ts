@@ -30,11 +30,24 @@ function baseOutreach(
 
 function baseProspect(
   overrides: Partial<
-    Pick<Prospect, 'level' | 'headline' | 'company' | 'mutual_count' | 'last_outreach_at'>
+    Pick<
+      Prospect,
+      | 'level'
+      | 'headline'
+      | 'company'
+      | 'mutual_count'
+      | 'last_outreach_at'
+      | 'last_level_change_at'
+    >
   > = {},
 ): Pick<
   Prospect,
-  'level' | 'headline' | 'company' | 'mutual_count' | 'last_outreach_at'
+  | 'level'
+  | 'headline'
+  | 'company'
+  | 'mutual_count'
+  | 'last_outreach_at'
+  | 'last_level_change_at'
 > {
   return {
     level: overrides.level ?? 'NONE',
@@ -42,6 +55,7 @@ function baseProspect(
     company: overrides.company ?? null,
     mutual_count: overrides.mutual_count ?? null,
     last_outreach_at: overrides.last_outreach_at ?? null,
+    last_level_change_at: overrides.last_level_change_at ?? null,
   };
 }
 
@@ -305,6 +319,116 @@ describe('scoreProspect — combined fixture', () => {
     );
     expect(result.score).toBe(SCORE_WEIGHTS.level_out_of_network);
     expect(result.tier).toBe('skip');
+  });
+});
+
+describe('scoreProspect — recent unlock bonus (Phase 3.3)', () => {
+  it('2nd-degree unlocked within window → +recent_unlock_boost', () => {
+    const result = scoreProspect(
+      baseProspect({
+        level: '2nd',
+        last_level_change_at: NOW - 2 * MS_PER_DAY,
+      }),
+      baseOutreach(),
+      baseContext,
+    );
+    expect(result.breakdown.recent_unlock).toBe(
+      SCORE_WEIGHTS.recent_unlock_boost,
+    );
+    expect(result.score).toBe(
+      SCORE_WEIGHTS.level_2nd + SCORE_WEIGHTS.recent_unlock_boost,
+    );
+  });
+
+  it('2nd-degree unlocked outside window → no bonus', () => {
+    const result = scoreProspect(
+      baseProspect({
+        level: '2nd',
+        last_level_change_at:
+          NOW - (SCORE_WEIGHTS.recent_unlock_days + 1) * MS_PER_DAY,
+      }),
+      baseOutreach(),
+      baseContext,
+    );
+    expect(result.breakdown.recent_unlock).toBe(0);
+    expect(result.score).toBe(SCORE_WEIGHTS.level_2nd);
+  });
+
+  it('2nd-degree with no unlock timestamp → no bonus', () => {
+    const result = scoreProspect(
+      baseProspect({ level: '2nd', last_level_change_at: null }),
+      baseOutreach(),
+      baseContext,
+    );
+    expect(result.breakdown.recent_unlock).toBe(0);
+  });
+
+  it('3rd-degree inside window → no bonus (only 2nd is actionable)', () => {
+    const result = scoreProspect(
+      baseProspect({
+        level: '3rd',
+        last_level_change_at: NOW - 2 * MS_PER_DAY,
+      }),
+      baseOutreach(),
+      baseContext,
+    );
+    expect(result.breakdown.recent_unlock).toBe(0);
+  });
+
+  it('OUT_OF_NETWORK inside window → no bonus', () => {
+    const result = scoreProspect(
+      baseProspect({
+        level: 'OUT_OF_NETWORK',
+        last_level_change_at: NOW - 1 * MS_PER_DAY,
+      }),
+      baseOutreach(),
+      baseContext,
+    );
+    expect(result.breakdown.recent_unlock).toBe(0);
+  });
+
+  it('future timestamp (clock skew) → no bonus (no retroactive credit)', () => {
+    const result = scoreProspect(
+      baseProspect({
+        level: '2nd',
+        last_level_change_at: NOW + 2 * MS_PER_DAY,
+      }),
+      baseOutreach(),
+      baseContext,
+    );
+    expect(result.breakdown.recent_unlock).toBe(0);
+  });
+
+  it('boost is additive to other signals and can promote tier', () => {
+    // Plain 2nd with a mid firm + some mutuals: ~100+25+5 = 130 (A tier).
+    // With fresh unlock: +25 → 155, bumping to S.
+    const fresh = scoreProspect(
+      baseProspect({
+        level: '2nd',
+        company: 'Mid Ventures',
+        mutual_count: 3,
+        last_level_change_at: NOW - 1 * MS_PER_DAY,
+      }),
+      baseOutreach({
+        firms: [{ name: 'Mid Ventures', weight: 25, tier: 'mid' }],
+      }),
+      baseContext,
+    );
+    const stale = scoreProspect(
+      baseProspect({
+        level: '2nd',
+        company: 'Mid Ventures',
+        mutual_count: 3,
+        last_level_change_at: null,
+      }),
+      baseOutreach({
+        firms: [{ name: 'Mid Ventures', weight: 25, tier: 'mid' }],
+      }),
+      baseContext,
+    );
+    expect(fresh.score).toBe(stale.score + SCORE_WEIGHTS.recent_unlock_boost);
+    expect(fresh.tier).toBe('S');
+    expect(stale.tier).toBe('A');
   });
 });
 

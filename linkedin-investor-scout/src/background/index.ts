@@ -11,7 +11,9 @@ import {
   bulkSetActivity,
   bulkUpdateFeedEventTaskStatus,
   clearAllData,
+  countAcceptedActionsForDay,
   countFeedEventsByTaskStatus,
+  countPendingInvites,
   getActivityLogForProspect,
   getAllOutreachActionsByProspect,
   getAllProspects,
@@ -916,13 +918,21 @@ registerMessageRouter(async (msg) => {
     }
     case 'DAILY_SNAPSHOT_QUERY': {
       const bucket = localDayBucket(Date.now());
-      const [usage, inboxNew] = await Promise.all([
+      const [usage, inboxNew, acceptsToday, pendingInvites] = await Promise.all([
         getDailyUsage(bucket),
         countFeedEventsByTaskStatus('new'),
+        countAcceptedActionsForDay(bucket),
+        countPendingInvites(),
       ]);
       return {
         ok: true,
-        data: { day_bucket: bucket, usage, inbox_new_count: inboxNew },
+        data: {
+          day_bucket: bucket,
+          usage,
+          inbox_new_count: inboxNew,
+          accepts_today: acceptsToday,
+          pending_invites: pendingInvites,
+        },
       };
     }
     case 'FEED_EVENTS_QUERY': {
