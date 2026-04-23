@@ -200,10 +200,15 @@ export function buildCandidates(
     filter.actions && filter.actions.length > 0
       ? new Set<OutreachActionKind>(filter.actions)
       : null;
+  const lifecycleSet =
+    filter.lifecycle_statuses && filter.lifecycle_statuses.length > 0
+      ? new Set(filter.lifecycle_statuses)
+      : null;
 
   const candidates: OutreachQueueCandidate[] = [];
   for (const p of prospects) {
     if (!levelSet.has(p.level)) continue;
+    if (lifecycleSet && !lifecycleSet.has(p.lifecycle_status)) continue;
 
     const tier = p.tier;
     if (tier === null) {

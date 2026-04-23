@@ -279,6 +279,35 @@ describe('buildCandidates', () => {
     expect(result.map((c) => c.prospect_id)).toEqual([2, 3, 1]);
   });
 
+  it('honours filter.lifecycle_statuses when provided', () => {
+    const prospects: Prospect[] = [
+      makeProspect({ id: 1, level: '2nd', lifecycle_status: 'new' }),
+      makeProspect({
+        id: 2,
+        level: '2nd',
+        lifecycle_status: 'ready_for_connect',
+      }),
+      makeProspect({
+        id: 3,
+        level: '2nd',
+        lifecycle_status: 'request_sent',
+      }),
+    ];
+    const onlyReady = buildCandidates(prospects, new Map(), {
+      filter: { lifecycle_statuses: ['ready_for_connect'] },
+      skippedProspectIds: new Set(),
+      warm_visit_before_invite: false,
+    });
+    expect(onlyReady.map((c) => c.prospect_id)).toEqual([2]);
+
+    const newOrReady = buildCandidates(prospects, new Map(), {
+      filter: { lifecycle_statuses: ['new', 'ready_for_connect'] },
+      skippedProspectIds: new Set(),
+      warm_visit_before_invite: false,
+    });
+    expect(newOrReady.map((c) => c.prospect_id).sort()).toEqual([1, 2]);
+  });
+
   it('excludes skipped prospects unless include_skipped is true', () => {
     const prospects: Prospect[] = [
       makeProspect({ id: 1 }),

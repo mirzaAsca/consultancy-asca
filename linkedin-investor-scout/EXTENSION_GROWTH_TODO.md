@@ -311,7 +311,7 @@ _Landed 2026-04-23. See [`src/dashboard/routes/OutreachQueue.tsx`](./src/dashboa
   - [x] action type,
   - [x] tier,
   - [x] include-skipped toggle.
-  - [ ] status (lifecycle_status filter) — deferred; `has_pending_invite` / `skipped_today` chips on the row cover the common cases. _(low priority — revisit if users ask)_
+  - [x] status (lifecycle_status filter) — landed 2026-04-23 — `lifecycle_statuses` field on `OutreachQueueFilter` in [`src/shared/types.ts`](./src/shared/types.ts); matching filter loop in [`src/shared/outreach-queue.ts`](./src/shared/outreach-queue.ts) `buildCandidates`; Status chip in [`src/dashboard/routes/OutreachQueue.tsx`](./src/dashboard/routes/OutreachQueue.tsx) with the six non-`do_not_contact` lifecycle labels. New unit test in `tests/outreach-queue.test.ts` pins single- and multi-value filtering.
   - [ ] due today/overdue — deferred; requires `next_action_due_at` to be written somewhere first (currently always null). _(lands with the staleness scheduler in Phase 3.3)_
 - [x] Queue actions:
   - [x] `Open profile` — opens the prospect URL in a new tab (leaves the user's active LinkedIn window intact for the prefill flow).
@@ -535,9 +535,9 @@ _Landed 2026-04-23. Pure aggregator lives in [`src/shared/analytics.ts`](./src/s
   - [x] by firm tier _(derived from `score_breakdown.firm` weight: top ≥ 30, mid ≥ 15, boutique > 0)_,
   - [x] by event type source (post / comment / repost / reaction / mention / tagged / no-event).
 - [ ] **Template A/B reporting deferred to v2.1** — single-template v2.0 doesn't need it. Log template id/version now so v2.1 can reconstruct. _(still pending — outreach writers don't stamp template_id yet; wiring tracked under Phase 1.4 carry-over)_
-- [~] Cap recommendations:
+- [x] Cap recommendations:
   - [x] show historical completion + warning trend _(implicit via the 30-day actions chart + 12-week accept-rate chart; breach floor surfaces on the Health tab)_,
-  - [ ] suggest manual cap adjustments (never auto-escalate) _(deferred — the analytics route surfaces a read-only "review manually" note pointing at Settings; explicit suggestions land with Phase 4.2 v2 once we have 4+ weeks of steady data to anchor the recommendation heuristic)_.
+  - [x] suggest manual cap adjustments (never auto-escalate) _(landed 2026-04-23 — `deriveCapRecommendation` in [`src/dashboard/routes/Analytics.tsx`](./src/dashboard/routes/Analytics.tsx) reads `snapshot.accept_rate_12w` over a trailing 4-week window (invite-weighted) and compares against `DEFAULT_KILL_SWITCH_THRESHOLDS.accept_rate_floor` / `invites_sent_min`. Three tones: `warn` when rate < floor or < 1.5× floor (advises lowering cap / holding steady), `good` when healthy (notes headroom but never suggests an auto-escalate), `info` when sample size is below `invites_sent_min`. Surfaced via `<CapRecommendations>` section with a contextual icon + bullet details — replaces the prior static prose card. Honors the v2 "never auto-escalate" invariant.)_
 
 ### 4.3 Health snapshots + kill switch
 

@@ -18,6 +18,7 @@ import type {
   OutreachQueueCandidate,
   OutreachQueuePage,
   ProspectLevel,
+  ProspectLifecycleStatus,
   ProspectTier,
 } from '@/shared/types';
 import { CONNECT_NOTE_CHAR_CAP } from '@/shared/constants';
@@ -45,6 +46,27 @@ const ACTION_OPTIONS: OutreachActionKind[] = [
   'followup_message_sent',
 ];
 
+// `do_not_contact` is always filtered out by the recommender, so we don't
+// offer it as a chip — its inclusion would only ever yield an empty list.
+const LIFECYCLE_OPTIONS: ProspectLifecycleStatus[] = [
+  'new',
+  'ready_for_visit',
+  'ready_for_connect',
+  'request_sent',
+  'connected',
+  'followup_due',
+];
+
+const LIFECYCLE_LABEL: Record<ProspectLifecycleStatus, string> = {
+  new: 'New',
+  ready_for_visit: 'Ready for visit',
+  ready_for_connect: 'Ready for connect',
+  request_sent: 'Request sent',
+  connected: 'Connected',
+  followup_due: 'Follow-up due',
+  do_not_contact: 'Do not contact',
+};
+
 const TIER_STYLE: Record<Exclude<ProspectTier, null>, string> = {
   S: 'border-amber-500/50 bg-amber-900/30 text-amber-200',
   A: 'border-emerald-500/50 bg-emerald-900/25 text-emerald-200',
@@ -67,6 +89,9 @@ export function OutreachQueueRoute() {
   const [actions, setActions] = useState<Set<OutreachActionKind>>(
     () => new Set<OutreachActionKind>(),
   );
+  const [lifecycles, setLifecycles] = useState<Set<ProspectLifecycleStatus>>(
+    () => new Set<ProspectLifecycleStatus>(),
+  );
   const [includeSkipped, setIncludeSkipped] = useState(false);
 
   const openProspectDrawer = useDashboardStore((s) => s.openDrawer);
@@ -81,6 +106,8 @@ export function OutreachQueueRoute() {
           tiers: tiers.size > 0 ? Array.from(tiers) : undefined,
           levels: levels.size > 0 ? Array.from(levels) : undefined,
           actions: actions.size > 0 ? Array.from(actions) : undefined,
+          lifecycle_statuses:
+            lifecycles.size > 0 ? Array.from(lifecycles) : undefined,
           include_skipped: includeSkipped,
           limit: 500,
         },
@@ -89,7 +116,7 @@ export function OutreachQueueRoute() {
     } finally {
       setLoading(false);
     }
-  }, [tiers, levels, actions, includeSkipped]);
+  }, [tiers, levels, actions, lifecycles, includeSkipped]);
 
   useEffect(() => {
     void refresh();
@@ -133,12 +160,14 @@ export function OutreachQueueRoute() {
     (tiers.size !== TIER_OPTIONS.length ? 1 : 0) +
     (levels.size !== LEVEL_OPTIONS.length ? 1 : 0) +
     (actions.size > 0 ? 1 : 0) +
+    (lifecycles.size > 0 ? 1 : 0) +
     (includeSkipped ? 1 : 0);
 
   const resetFilters = () => {
     setTiers(new Set(TIER_OPTIONS));
     setLevels(new Set(LEVEL_OPTIONS));
     setActions(new Set());
+    setLifecycles(new Set());
     setIncludeSkipped(false);
   };
 
@@ -370,6 +399,17 @@ export function OutreachQueueRoute() {
             }))}
             selected={Array.from(actions)}
             onToggle={(v) => toggle(setActions)(v as OutreachActionKind)}
+          />
+          <FilterPill
+            label="Status"
+            options={LIFECYCLE_OPTIONS.map((v) => ({
+              value: v,
+              label: LIFECYCLE_LABEL[v],
+            }))}
+            selected={Array.from(lifecycles)}
+            onToggle={(v) =>
+              toggle(setLifecycles)(v as ProspectLifecycleStatus)
+            }
           />
 
           <label className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-gray-800 bg-bg px-2 py-1 text-[11px] text-gray-300 hover:border-gray-600">

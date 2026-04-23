@@ -791,6 +791,12 @@ export interface OutreachQueueFilter {
   levels?: ProspectLevel[];
   /** Restrict to one or more recommended action kinds. Empty → all. */
   actions?: OutreachActionKind[];
+  /**
+   * Restrict to one or more lifecycle statuses. Empty / undefined → all
+   * except `do_not_contact` (which the recommender already excludes).
+   * Useful for isolating e.g. `followup_due` rows when chasing warm leads.
+   */
+  lifecycle_statuses?: ProspectLifecycleStatus[];
   /** If true, include rows the user marked "Skip for today". Default false. */
   include_skipped?: boolean;
   /** Hard limit on returned rows. Defaults to 200. */

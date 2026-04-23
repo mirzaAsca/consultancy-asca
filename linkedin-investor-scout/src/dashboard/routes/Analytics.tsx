@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BarChart3, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, BarChart3, CheckCircle2, Loader2, RefreshCw } from 'lucide-react';
 import { sendMessage } from '@/shared/messaging';
+import { DEFAULT_KILL_SWITCH_THRESHOLDS } from '@/shared/constants';
 import type {
   AnalyticsCohortRow,
   AnalyticsSnapshot,
@@ -255,20 +256,115 @@ export function AnalyticsRoute() {
         />
       </section>
 
-      <section className="rounded-md border border-gray-800 bg-bg-card p-4">
-        <h2 className="mb-2 text-sm font-semibold text-gray-100">
-          Cap recommendations
-        </h2>
-        <p className="text-[11px] text-gray-500">
-          Auto-cap escalation is intentionally disabled (v2 invariant). Review
-          the accept-rate trend above and adjust caps manually in{' '}
-          <code className="rounded bg-black/30 px-1 text-[10px]">Settings</code>
-          . Sustained 12-week accept rate below the kill-switch floor means
-          lower your daily invite cap before LinkedIn throttles you.
-        </p>
-      </section>
+      <CapRecommendations snapshot={snapshot} />
     </div>
   );
+}
+
+function CapRecommendations({ snapshot }: { snapshot: AnalyticsSnapshot }) {
+  const rec = deriveCapRecommendation(snapshot);
+  const tone =
+    rec.severity === 'warn'
+      ? 'border-amber-800 bg-amber-950/30'
+      : rec.severity === 'good'
+        ? 'border-emerald-800 bg-emerald-950/30'
+        : 'border-gray-800 bg-bg-card';
+  const Icon =
+    rec.severity === 'warn'
+      ? AlertTriangle
+      : rec.severity === 'good'
+        ? CheckCircle2
+        : BarChart3;
+  const iconTone =
+    rec.severity === 'warn'
+      ? 'text-amber-400'
+      : rec.severity === 'good'
+        ? 'text-emerald-400'
+        : 'text-gray-400';
+  return (
+    <section className={`rounded-md border p-4 ${tone}`}>
+      <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-100">
+        <Icon className={`h-3.5 w-3.5 ${iconTone}`} />
+        Cap recommendations
+      </h2>
+      <p className="mb-2 text-[12px] text-gray-200">{rec.headline}</p>
+      {rec.details.length > 0 && (
+        <ul className="mb-2 list-disc space-y-0.5 pl-5 text-[11px] text-gray-400">
+          {rec.details.map((d, i) => (
+            <li key={i}>{d}</li>
+          ))}
+        </ul>
+      )}
+      <p className="text-[10px] text-gray-500">
+        Auto-cap escalation is intentionally disabled (v2 invariant). Adjust
+        caps manually in{' '}
+        <code className="rounded bg-black/30 px-1 text-[10px]">Settings</code>.
+      </p>
+    </section>
+  );
+}
+
+function deriveCapRecommendation(snapshot: AnalyticsSnapshot): {
+  severity: 'info' | 'warn' | 'good';
+  headline: string;
+  details: string[];
+} {
+  const floor = DEFAULT_KILL_SWITCH_THRESHOLDS.accept_rate_floor;
+  const minSample = DEFAULT_KILL_SWITCH_THRESHOLDS.invites_sent_min;
+  const weeks = snapshot.accept_rate_12w;
+  // Rolling trailing 4-week window — short enough to react, long enough to
+  // smooth a single bad week. Ignore weeks with no invites.
+  const recent = weeks.slice(-4).filter((w) => w.invites_sent > 0);
+  const totals = recent.reduce(
+    (acc, w) => ({
+      invites: acc.invites + w.invites_sent,
+      accepts: acc.accepts + w.accepts,
+    }),
+    { invites: 0, accepts: 0 },
+  );
+  const details: string[] = [];
+  if (totals.invites < minSample) {
+    details.push(
+      `Only ${totals.invites} invites in the last 4 weeks — need ≥${minSample} before the recommendation is reliable.`,
+    );
+    return {
+      severity: 'info',
+      headline:
+        'Not enough recent invite volume to make a cap recommendation. Keep the current caps and revisit after a few more invites.',
+      details,
+    };
+  }
+  const rate = totals.accepts / totals.invites;
+  const ratePct = (rate * 100).toFixed(1);
+  const floorPct = (floor * 100).toFixed(0);
+  details.push(
+    `4-week accept rate: ${ratePct}% on ${totals.invites} invites (floor ${floorPct}%).`,
+  );
+  const safetyWeeks = recent.length;
+  if (rate < floor) {
+    return {
+      severity: 'warn',
+      headline:
+        `Accept rate is below the kill-switch floor. Lower daily invite cap and revisit templates / target list before LinkedIn throttles you.`,
+      details,
+    };
+  }
+  if (rate < floor * 1.5) {
+    return {
+      severity: 'warn',
+      headline:
+        'Accept rate is close to the kill-switch floor. Hold caps steady; do not escalate.',
+      details,
+    };
+  }
+  // Healthy. Comment on headroom but never suggest an automatic escalation —
+  // just say "you have room if you want it" and leave the choice to the user.
+  return {
+    severity: 'good',
+    headline:
+      `Accept rate is healthy across ${safetyWeeks} of the last 4 weeks. Current caps look sustainable — escalate manually only if you want more volume.`,
+    details,
+  };
 }
 
 function ActionsChart({ points }: { points: DailyActionsPoint[] }) {
