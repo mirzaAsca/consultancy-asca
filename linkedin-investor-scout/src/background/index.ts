@@ -22,6 +22,7 @@ import {
   getDailyUsage,
   getDailyUsageRange,
   getLastHealthBreachAt,
+  getLiveConnectionRequestForProspect,
   getOutreachActionByIdempotencyKey,
   getProspectById,
   getProspectStats,
@@ -66,6 +67,8 @@ import type {
   CsvCommitPayload,
   FeedCrawlSessionResult,
   FeedCrawlStatus,
+  LinkedInRestrictionBannerPayload,
+  LinkedInRestrictionBannerResult,
   Message,
   MessageResponse,
   MessageResponseMap,
@@ -76,11 +79,19 @@ import type {
   OutreachPrefillResult,
   OutreachQueueFilter,
   OutreachQueuePage,
+  OutreachWithdrawDetectedPayload,
+  OutreachWithdrawResult,
   ProspectQuery,
   Settings,
   TemplateUpsertPayload,
 } from '@/shared/types';
-import { pauseScan, resumeScan, runScanLoop, startScan } from './scan-worker';
+import {
+  pauseScan,
+  resumeScan,
+  runScanLoop,
+  startScan,
+  triggerHealthBreach,
+} from './scan-worker';
 import { registerLifecycleHooks, registerScanAlarms } from './startup';
 import {
   FEED_TEST_MIN_PROFILES_FOR_ALL_LEVELS,
@@ -634,6 +645,107 @@ async function handleOutreachSkipToday(
     data: { day_bucket: bucket },
   });
   return { prospect_id: prospectId, skipped: skip };
+}
+
+/**
+ * Phase 5.6 — a content-detected invite withdrawal lands here. Resolve the
+ * most recent live `connection_request_sent` for the prospect, flip it to
+ * `withdrawn`, and credit the budget back against the day the invite was
+ * originally sent (so weekly totals stay accurate). Idempotent against
+ * double-fires from the content observer — a row already in `withdrawn`
+ * short-circuits.
+ */
+async function handleOutreachWithdrawDetected(
+  payload: OutreachWithdrawDetectedPayload,
+): Promise<OutreachWithdrawResult> {
+  const live = await getLiveConnectionRequestForProspect(payload.prospect_id);
+  if (!live) {
+    await appendActivityLog({
+      ts: Date.now(),
+      level: 'warn',
+      event: 'outreach_withdraw_unmatched',
+      prospect_id: payload.prospect_id,
+      data: { slug: payload.slug, withdrawn_at: payload.withdrawn_at },
+    });
+    return { matched: false, action_id: null, credited_day_bucket: null };
+  }
+  // Only `sent` rows consumed budget; earlier states never bumped daily_usage,
+  // so we don't credit for them.
+  const creditBucket =
+    live.state === 'sent' && live.sent_at !== null
+      ? localDayBucket(live.sent_at)
+      : null;
+
+  const now = Date.now();
+  await updateOutreachAction(live.id, {
+    state: 'withdrawn',
+    resolved_at: now,
+  });
+  if (creditBucket) {
+    // Shared bucket: an invite also consumed a visit slot. Mirror the
+    // bump path in `bumpDailyUsageForKind` so the credit matches exactly.
+    await incrementDailyUsage(creditBucket, {
+      invites_sent: -1,
+      visits: -1,
+    });
+  }
+  await appendActivityLog({
+    ts: now,
+    level: 'info',
+    event: 'outreach_withdrawn',
+    prospect_id: payload.prospect_id,
+    data: {
+      action_id: live.id,
+      slug: payload.slug,
+      sent_at: live.sent_at,
+      credited_day_bucket: creditBucket,
+    },
+  });
+  // Cooldown penalty (last_outreach_at) now refers to a withdrawn row — keep
+  // `last_outreach_at` as-is so the user doesn't burn a fresh cooldown when
+  // re-inviting. Scoring will treat the cooldown as active per §1.2.
+  try {
+    await recomputeProspectsByIds([payload.prospect_id]);
+  } catch (error) {
+    console.warn('[investor-scout] recompute after withdrawal failed', {
+      prospect_id: payload.prospect_id,
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+  void broadcastProspectsUpdated([payload.prospect_id]);
+  return {
+    matched: true,
+    action_id: live.id,
+    credited_day_bucket: creditBucket,
+  };
+}
+
+/**
+ * Phase 4.3 / 5.3 — content script saw a LinkedIn restriction banner on the
+ * current page. Trip the kill switch via the scan-worker helper; cooldown
+ * gate in `resumeScan()` enforces the 24h recovery window.
+ */
+async function handleLinkedInRestrictionBanner(
+  payload: LinkedInRestrictionBannerPayload,
+): Promise<LinkedInRestrictionBannerResult> {
+  await appendActivityLog({
+    ts: Date.now(),
+    level: 'warn',
+    event: 'restriction_banner_seen',
+    prospect_id: null,
+    data: {
+      kind: payload.kind,
+      phrase: payload.phrase,
+      page_url: payload.page_url,
+    },
+  });
+  const state = await triggerHealthBreach(
+    'restriction_banner',
+    `${payload.kind}: ${payload.phrase}`,
+  );
+  const tripped =
+    state.status === 'auto_paused' && state.auto_pause_reason === 'health_breach';
+  return { tripped };
 }
 
 async function getActiveLinkedInTab(): Promise<chrome.tabs.Tab | null> {
@@ -1261,6 +1373,14 @@ registerMessageRouter(async (msg) => {
     }
     case 'OUTREACH_PREFILL_CONNECT':
       return handleOutreachPrefillConnect(msg.payload);
+    case 'OUTREACH_WITHDRAW_DETECTED': {
+      const data = await handleOutreachWithdrawDetected(msg.payload);
+      return { ok: true, data };
+    }
+    case 'LINKEDIN_RESTRICTION_BANNER': {
+      const data = await handleLinkedInRestrictionBanner(msg.payload);
+      return { ok: true, data };
+    }
     case 'FEED_CRAWL_SESSION_START':
       return handleFeedCrawlSessionStart();
     case 'FEED_CRAWL_SESSION_STOP':

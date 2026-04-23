@@ -43,6 +43,7 @@ import {
 import type {
   AutoPauseReason,
   HealthBreach,
+  HealthBreachReason,
   HealthCooldown,
   Prospect,
   ProspectLevel,
@@ -200,6 +201,37 @@ export async function resumeScan(): Promise<ResumeScanResult> {
   });
   void runScanLoop();
   return { ok: true, state };
+}
+
+/**
+ * Phase 4.3 / 5.3 — trip the kill switch from outside the scan loop (e.g.
+ * a content-script-detected restriction banner). Idempotent: repeated calls
+ * while already `auto_paused(health_breach)` log a duplicate notice only
+ * once per tick, no state churn.
+ *
+ * Captcha / rate_limit / auth_wall auto-pauses are triggered inline by the
+ * scan worker itself; this helper is dedicated to the `health_breach` lane.
+ */
+export async function triggerHealthBreach(
+  reason: HealthBreachReason,
+  detail: string,
+): Promise<ScanState> {
+  const current = await getScanState();
+  if (
+    current.status === 'auto_paused' &&
+    current.auto_pause_reason === 'health_breach'
+  ) {
+    return current;
+  }
+  const state = await autoPause('health_breach', null);
+  await appendActivityLog({
+    ts: Date.now(),
+    level: 'error',
+    event: 'kill_switch_tripped',
+    prospect_id: null,
+    data: { breach: { reason, detail } },
+  });
+  return state;
 }
 
 async function autoPause(reason: AutoPauseReason, prospectId: number | null) {

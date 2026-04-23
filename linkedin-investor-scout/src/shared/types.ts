@@ -404,6 +404,16 @@ export type Message =
       type: 'OUTREACH_PREFILL_CONNECT';
       payload: OutreachPrefillConnectPayload;
     }
+  // Phase 5.6 — invite withdrawal detector (content → background)
+  | {
+      type: 'OUTREACH_WITHDRAW_DETECTED';
+      payload: OutreachWithdrawDetectedPayload;
+    }
+  // Phase 4.3 / 5.3 — LinkedIn restriction-banner detector (content → background)
+  | {
+      type: 'LINKEDIN_RESTRICTION_BANNER';
+      payload: LinkedInRestrictionBannerPayload;
+    }
   // Phase 3.1/3.2 — Feed Crawl Session (manual)
   | { type: 'FEED_CRAWL_SESSION_START' }
   | { type: 'FEED_CRAWL_SESSION_STOP' }
@@ -464,6 +474,8 @@ export interface MessageResponseMap {
   OUTREACH_SKIP_TODAY: { prospect_id: number; skipped: boolean };
   OUTREACH_PREFILL_CONNECT: OutreachPrefillResult;
   OUTREACH_PREFILL_CONNECT_IN_TAB: OutreachPrefillResult;
+  OUTREACH_WITHDRAW_DETECTED: OutreachWithdrawResult;
+  LINKEDIN_RESTRICTION_BANNER: LinkedInRestrictionBannerResult;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   FEED_CRAWL_SESSION_START: FeedCrawlStatus;
   FEED_CRAWL_SESSION_STOP: FeedCrawlStatus;
@@ -846,6 +858,46 @@ export interface OutreachPrefillResult {
   filled_body: string | null;
   /** True if the content script wrote a draft row before returning. */
   draft_action_id: number | null;
+}
+
+/**
+ * Phase 5.6 — emitted by the content-side withdrawal watcher when LinkedIn
+ * confirms the invite row was withdrawn (row removed or toast shown within
+ * the observation window). The prospect is resolved in-tab via the
+ * SlugMap cache.
+ */
+export interface OutreachWithdrawDetectedPayload {
+  prospect_id: number;
+  slug: string;
+  /** Epoch ms of the Withdraw click. */
+  withdrawn_at: number;
+}
+
+export interface OutreachWithdrawResult {
+  /** True when a live `connection_request_sent` row was found and flipped. */
+  matched: boolean;
+  /** ID of the outreach_action row that was flipped (if any). */
+  action_id: number | null;
+  /** Day bucket that received the budget credit (invites/visits). */
+  credited_day_bucket: string | null;
+}
+
+/**
+ * Phase 4.3 / 5.3 — emitted by the content-side restriction-banner watcher
+ * when LinkedIn shows an account-restriction warning on any page. Background
+ * trips the kill switch with `auto_pause_reason = 'health_breach'` and a
+ * `restriction_banner` detail.
+ */
+export interface LinkedInRestrictionBannerPayload {
+  kind: 'account_restricted' | 'unusual_activity' | 'temporary_restriction';
+  /** Short excerpt of the matched phrase for activity-log auditability. */
+  phrase: string;
+  /** URL of the page where the banner was seen. */
+  page_url: string;
+}
+
+export interface LinkedInRestrictionBannerResult {
+  tripped: boolean;
 }
 
 /** Per-day skip flag (scoped to the local day bucket). */

@@ -21,7 +21,9 @@
  */
 
 import type {
+  LinkedInRestrictionBannerPayload,
   OutreachActionRecordPayload,
+  OutreachWithdrawDetectedPayload,
   SlugMap,
   Settings,
 } from '@/shared/types';
@@ -35,6 +37,12 @@ import {
   decideMessageVerdict,
   type MessageDetectorEvent,
 } from '@/shared/message-sent-detector';
+import {
+  DEFAULT_WITHDRAWAL_WINDOW_MS,
+  decideWithdrawalVerdict,
+  type WithdrawalEvent,
+} from '@/shared/withdrawal-detector';
+import { matchRestrictionBanner } from '@/shared/restriction-banner-detector';
 import { slugFromLinkedInPathname } from '@/shared/url';
 
 /**
@@ -45,6 +53,9 @@ import { slugFromLinkedInPathname } from '@/shared/url';
  */
 let visitWatcherSlug: string | null = null;
 let messageWatcherThreadId: string | null = null;
+let withdrawalWatcherAttachedPath: string | null = null;
+let restrictionBannerWatcherStarted = false;
+let restrictionBannerAlreadyReported = false;
 
 /** Wall-clock guard for the hidden-tab grace window (default 2s). */
 const HIDDEN_GRACE_MS = 2_000;
@@ -70,6 +81,16 @@ export function startInteractionDetectorsForUrl(
   if (threadMatch) {
     maybeStartMessageSentDetector(threadMatch[1], getSlugMap);
   }
+  // Phase 5.6 — invitation-manager Sent tab. Both `/sent/` and `/sent` trail
+  // forms are valid; match permissively.
+  if (/^\/mynetwork\/invitation[-_]manager\/sent\/?$/i.test(pathname)) {
+    maybeStartWithdrawalDetector(getSlugMap);
+  } else {
+    withdrawalWatcherAttachedPath = null;
+  }
+  // Phase 4.3 / 5.3 — restriction banner watcher runs once per content-script
+  // lifetime; re-checking on route change is cheap but not required.
+  startRestrictionBannerWatcher();
 }
 
 // ——— Profile visit detector (Phase 5.6) ———
@@ -374,6 +395,210 @@ function resolveThreadRecipient(
   return { id, slug };
 }
 
+// ——— Invite withdrawal detector (Phase 5.6, example7.html) ———
+
+/**
+ * Attach a single delegated capture-phase click listener on the invitation-
+ * manager Sent tab. Each Withdraw button is an `<a aria-label="Withdraw
+ * invitation sent to {NAME}">` nested in a row that also carries the target
+ * profile's `/in/{slug}/` link. On click we snapshot the row's slug and then
+ * watch for the row to unmount (LinkedIn removes it from the DOM on a
+ * successful withdrawal) or for an undo toast.
+ */
+function maybeStartWithdrawalDetector(getSlugMap: () => SlugMap): void {
+  const path = location.pathname;
+  if (withdrawalWatcherAttachedPath === path) return;
+  withdrawalWatcherAttachedPath = path;
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest<HTMLAnchorElement>(
+        'a[aria-label^="Withdraw invitation sent to "]',
+      );
+      if (!anchor) return;
+      // Walk up to the invite row — the nearest `<li>` / `<article>` /
+      // `[componentkey]` container is the row LinkedIn removes on success.
+      const row =
+        anchor.closest<HTMLElement>('li, article, [componentkey], [data-testid]') ??
+        anchor.parentElement;
+      if (!row) return;
+      const slug = findSlugInside(row);
+      if (!slug) return;
+      const summary = getSlugMap()[slug];
+      if (!summary) return;
+      const clickedAt = Date.now();
+      watchWithdrawalOutcome({
+        row,
+        slug,
+        prospect_id: summary.id,
+        clickedAt,
+      });
+    },
+    true,
+  );
+}
+
+function findSlugInside(row: HTMLElement): string | null {
+  const anchors = Array.from(
+    row.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]'),
+  );
+  for (const a of anchors) {
+    try {
+      const path = new URL(a.href, location.origin).pathname;
+      const slug = slugFromLinkedInPathname(path);
+      if (slug) return slug;
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+interface WithdrawalWatchArgs {
+  row: HTMLElement;
+  slug: string;
+  prospect_id: number;
+  clickedAt: number;
+}
+
+function watchWithdrawalOutcome(args: WithdrawalWatchArgs): void {
+  const events: WithdrawalEvent[] = [
+    { kind: 'withdraw_clicked', t: args.clickedAt },
+  ];
+  let settled = false;
+
+  const settle = (): void => {
+    if (settled) return;
+    const verdict = decideWithdrawalVerdict(events);
+    if (verdict === 'pending') return;
+    settled = true;
+    cleanup();
+    if (verdict === 'withdrawn') {
+      emitWithdrawal({
+        prospect_id: args.prospect_id,
+        slug: args.slug,
+        withdrawn_at: args.clickedAt,
+      });
+    }
+  };
+
+  const rowObserver = new MutationObserver(() => {
+    if (!document.contains(args.row)) {
+      events.push({ kind: 'row_removed', t: Date.now() });
+      settle();
+    }
+  });
+  // Observe the row's parent chain — LinkedIn may remove the row itself or
+  // its wrapper, so we watch the list container.
+  const watchTarget =
+    args.row.parentElement ?? args.row.closest('ul, main') ?? document.body;
+  rowObserver.observe(watchTarget, { childList: true, subtree: true });
+
+  const toastObserver = new MutationObserver(() => {
+    // LinkedIn undo toast: an `[role="alert"]` or `.artdeco-toast-item` with
+    // "Withdrew" in its text. We treat its appearance as a confirmation and
+    // attach a one-shot Undo click listener to flip the verdict.
+    const toast = document.querySelector<HTMLElement>(
+      '[role="alert"], .artdeco-toast-item',
+    );
+    if (!toast) return;
+    const text = toast.textContent?.toLowerCase() ?? '';
+    if (text.includes('withdr') || text.includes('invitation')) {
+      events.push({ kind: 'toast_seen', t: Date.now() });
+      const undo = toast.querySelector<HTMLButtonElement>(
+        'button[aria-label*="Undo" i], button',
+      );
+      if (undo) {
+        undo.addEventListener(
+          'click',
+          () => {
+            events.push({ kind: 'undo_clicked', t: Date.now() });
+            settle();
+          },
+          { once: true, capture: true },
+        );
+      }
+      settle();
+    }
+  });
+  toastObserver.observe(document.body, { childList: true, subtree: true });
+
+  const timeoutHandle = window.setTimeout(() => {
+    events.push({ kind: 'timeout', t: Date.now() });
+    settle();
+  }, DEFAULT_WITHDRAWAL_WINDOW_MS + 1_500);
+
+  function cleanup(): void {
+    rowObserver.disconnect();
+    toastObserver.disconnect();
+    window.clearTimeout(timeoutHandle);
+  }
+}
+
+// ——— Restriction banner detector (Phase 4.3 / 5.3) ———
+
+/**
+ * Runs on any `linkedin.com/*` page. On initial mount + every mutation, scan
+ * high-level text containers (role="alert", artdeco-toast, banner-like
+ * divs) for LinkedIn's "account restricted" / "unusual activity" copy. On a
+ * positive match, emit the payload to the background which trips the kill
+ * switch. Only one report per page-load (`restrictionBannerAlreadyReported`).
+ */
+function startRestrictionBannerWatcher(): void {
+  if (restrictionBannerWatcherStarted) return;
+  restrictionBannerWatcherStarted = true;
+
+  const check = (): void => {
+    if (restrictionBannerAlreadyReported) return;
+    const candidates = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        [
+          '[role="alert"]',
+          '.artdeco-toast-item',
+          '.artdeco-notice',
+          'main[role="main"] h1',
+          'main[role="main"] h2',
+          'section[aria-labelledby]',
+        ].join(', '),
+      ),
+    );
+    for (const el of candidates) {
+      const text = el.textContent ?? '';
+      if (text.length === 0 || text.length > 5_000) continue;
+      const hit = matchRestrictionBanner(text);
+      if (hit) {
+        restrictionBannerAlreadyReported = true;
+        emitRestrictionBanner({
+          kind: hit.kind,
+          phrase: hit.phrase,
+          page_url: location.href,
+        });
+        return;
+      }
+    }
+  };
+
+  // Initial check — restriction pages render the banner before our content
+  // script loads on many surfaces.
+  check();
+
+  const observer = new MutationObserver(() => {
+    if (restrictionBannerAlreadyReported) {
+      observer.disconnect();
+      return;
+    }
+    check();
+  });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+}
+
 // ——— Shared emitter ———
 
 function emit(payload: OutreachActionRecordPayload): void {
@@ -392,8 +617,43 @@ function emit(payload: OutreachActionRecordPayload): void {
   }
 }
 
+function emitWithdrawal(payload: OutreachWithdrawDetectedPayload): void {
+  try {
+    chrome.runtime.sendMessage(
+      { type: 'OUTREACH_WITHDRAW_DETECTED', payload },
+      () => {
+        void chrome.runtime.lastError;
+      },
+    );
+  } catch (error) {
+    console.warn('[investor-scout] withdrawal emit failed', {
+      prospect_id: payload.prospect_id,
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
+function emitRestrictionBanner(payload: LinkedInRestrictionBannerPayload): void {
+  try {
+    chrome.runtime.sendMessage(
+      { type: 'LINKEDIN_RESTRICTION_BANNER', payload },
+      () => {
+        void chrome.runtime.lastError;
+      },
+    );
+  } catch (error) {
+    console.warn('[investor-scout] restriction-banner emit failed', {
+      kind: payload.kind,
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
 /** Test hook: reset module-level guards so the detectors re-bootstrap. */
 export function __resetInteractionDetectorsForTesting(): void {
   visitWatcherSlug = null;
   messageWatcherThreadId = null;
+  withdrawalWatcherAttachedPath = null;
+  restrictionBannerWatcherStarted = false;
+  restrictionBannerAlreadyReported = false;
 }
