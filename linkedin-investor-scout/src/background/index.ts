@@ -18,6 +18,8 @@ import {
   getAllOutreachActionsByProspect,
   getAllProspects,
   getDailyUsage,
+  getDailyUsageRange,
+  getLastHealthBreachAt,
   getOutreachActionByIdempotencyKey,
   getProspectById,
   getProspectStats,
@@ -27,7 +29,10 @@ import {
   getSlugMap,
   getWeeklyInvitesUsed,
   incrementDailyUsage,
+  listAcceptsSince,
+  listInvitesSince,
   listMessageTemplates,
+  listSafetyEventsSince,
   openScoutDb,
   OUTREACH_SKIP_EVENTS,
   putSettings,
@@ -42,6 +47,7 @@ import {
   updateProspectFromPatch,
   upsertFeedEventsBulk,
 } from '@/shared/db';
+import { computeHealthSnapshot } from '@/shared/health';
 import {
   buildCandidates,
   buildIdempotencyKey,
@@ -744,8 +750,16 @@ registerMessageRouter(async (msg) => {
       return { ok: true, data: state };
     }
     case 'SCAN_RESUME': {
-      const state = await resumeScan();
-      return { ok: true, data: state };
+      const res = await resumeScan();
+      if (!res.ok) {
+        // Surface the cooldown on the error channel — popup / dashboard
+        // read `error` directly; the cooldown object is logged for debugging.
+        console.info('[investor-scout] resume blocked by kill-switch cooldown', {
+          cooldown: res.cooldown,
+        });
+        return { ok: false, error: res.error };
+      }
+      return { ok: true, data: res.state };
     }
     case 'PROSPECTS_LIST': {
       const page = await queryProspects(msg.payload ?? {});
@@ -934,6 +948,38 @@ registerMessageRouter(async (msg) => {
           pending_invites: pendingInvites,
         },
       };
+    }
+    case 'HEALTH_SNAPSHOT_QUERY': {
+      const now = Date.now();
+      const bucket = localDayBucket(now);
+      const sevenDaysAgoMs = now - 7 * 86_400_000;
+      const [
+        settings,
+        daily_usage,
+        safety_events,
+        accepts,
+        invites,
+        last_breach_at,
+      ] = await Promise.all([
+        getSettings(),
+        getDailyUsageRange(bucket, 7),
+        listSafetyEventsSince(sevenDaysAgoMs),
+        listAcceptsSince(sevenDaysAgoMs),
+        listInvitesSince(sevenDaysAgoMs),
+        getLastHealthBreachAt(),
+      ]);
+      const snapshot = computeHealthSnapshot({
+        now,
+        today_bucket: bucket,
+        daily_usage,
+        safety_events,
+        accepts,
+        invites,
+        thresholds: settings.outreach.kill_switch_thresholds,
+        cooldown_hours: settings.outreach.health_cooldown_hours,
+        last_breach_at,
+      });
+      return { ok: true, data: snapshot };
     }
     case 'FEED_EVENTS_QUERY': {
       const page = await queryFeedEvents(msg.payload ?? {});

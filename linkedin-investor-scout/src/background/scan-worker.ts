@@ -1,9 +1,14 @@
 import {
   appendActivityLog,
+  getDailyUsageRange,
+  getLastHealthBreachAt,
   getProspectById,
   getProspectByUrl,
   getScanState,
   getSettings,
+  listAcceptsSince,
+  listInvitesSince,
+  listSafetyEventsSince,
   putScanState,
   resetStuckInProgressProspects,
   takePendingProspectsBatch,
@@ -13,6 +18,10 @@ import {
 } from '@/shared/db';
 import { recomputeAndPersistProspect } from '@/shared/prospect-scoring';
 import { detectAcceptanceOnLevelChange } from '@/shared/acceptance-watcher';
+import {
+  computeHealthSnapshot,
+  computeResumeCooldown,
+} from '@/shared/health';
 import { broadcast } from '@/shared/messaging';
 import { jitterAround, localDayBucket, randomDelayMs } from '@/shared/time';
 import {
@@ -21,6 +30,8 @@ import {
 } from '@/shared/url';
 import type {
   AutoPauseReason,
+  HealthBreach,
+  HealthCooldown,
   Prospect,
   ProspectLevel,
   ScanState,
@@ -128,9 +139,42 @@ export async function pauseScan(): Promise<ScanState> {
   return state;
 }
 
-export async function resumeScan(): Promise<ScanState> {
+/**
+ * Phase 4.3 — resume result carries an optional cooldown gate. When the scan
+ * was auto-paused due to a kill-switch breach, manual resume is rejected
+ * until `cooldown.until` elapses so the user is nudged to wait out the
+ * configured cooldown instead of re-igniting a broken session.
+ */
+export type ResumeScanResult =
+  | { ok: true; state: ScanState }
+  | { ok: false; error: string; cooldown: HealthCooldown };
+
+export async function resumeScan(): Promise<ResumeScanResult> {
   const current = await getScanState();
-  if (current.status === 'running') return current;
+  if (current.status === 'running') {
+    return { ok: true, state: current };
+  }
+
+  // Kill-switch cooldown gate. Only blocks resume when the pause was caused
+  // by a health breach — captcha / rate_limit / auth_wall auto-pauses should
+  // still resume freely once the user clears LinkedIn's challenge.
+  if (current.auto_pause_reason === 'health_breach') {
+    const settings = await getSettings();
+    const lastBreachAt = await getLastHealthBreachAt();
+    const cooldown = computeResumeCooldown({
+      now: Date.now(),
+      last_breach_at: lastBreachAt,
+      cooldown_hours: settings.outreach.health_cooldown_hours,
+    });
+    if (cooldown) {
+      return {
+        ok: false,
+        error: `Resume blocked: kill-switch cooldown active until ${new Date(cooldown.until).toLocaleString()}.`,
+        cooldown,
+      };
+    }
+  }
+
   const state = await setScanStatus({
     status: 'running',
     auto_pause_reason: null,
@@ -143,7 +187,7 @@ export async function resumeScan(): Promise<ScanState> {
     data: {},
   });
   void runScanLoop();
-  return state;
+  return { ok: true, state };
 }
 
 async function autoPause(reason: AutoPauseReason, prospectId: number | null) {
@@ -160,6 +204,62 @@ async function autoPause(reason: AutoPauseReason, prospectId: number | null) {
     data: { reason },
   });
   return state;
+}
+
+/**
+ * Phase 4.3 — evaluate the kill switch against the live health snapshot.
+ * Returns the triggered {@link HealthBreach} when the scan was transitioned
+ * to `auto_paused`, or `null` when we're still healthy.
+ *
+ * Called once per scanned prospect inside the loop so breaches react within
+ * a single row of scanning — no new alarms introduced (Phase 4.3 invariant).
+ */
+export async function checkAndTripKillSwitch(): Promise<HealthBreach | null> {
+  const current = await getScanState();
+  // Already tripped — don't re-trip or re-log. Manual resume clears it.
+  if (
+    current.status === 'auto_paused' &&
+    current.auto_pause_reason === 'health_breach'
+  ) {
+    return null;
+  }
+
+  const settings = await getSettings();
+  const now = Date.now();
+  const todayBucket = localDayBucket(now);
+  const sevenDaysAgoMs = now - 7 * 86_400_000;
+  const [daily_usage, safety_events, accepts, invites, last_breach_at] =
+    await Promise.all([
+      getDailyUsageRange(todayBucket, 7),
+      listSafetyEventsSince(sevenDaysAgoMs),
+      listAcceptsSince(sevenDaysAgoMs),
+      listInvitesSince(sevenDaysAgoMs),
+      getLastHealthBreachAt(),
+    ]);
+
+  const snapshot = computeHealthSnapshot({
+    now,
+    today_bucket: todayBucket,
+    daily_usage,
+    safety_events,
+    accepts,
+    invites,
+    thresholds: settings.outreach.kill_switch_thresholds,
+    cooldown_hours: settings.outreach.health_cooldown_hours,
+    last_breach_at,
+  });
+
+  if (!snapshot.breach) return null;
+
+  await autoPause('health_breach', null);
+  await appendActivityLog({
+    ts: Date.now(),
+    level: 'error',
+    event: 'kill_switch_tripped',
+    prospect_id: null,
+    data: { breach: snapshot.breach },
+  });
+  return snapshot.breach;
 }
 
 async function sleep(ms: number): Promise<void> {
@@ -618,6 +718,12 @@ export async function runScanLoop(): Promise<void> {
         // Daily cap tracks scan attempts, not only successful outcomes.
         const s = await getScanState();
         await setScanStatus({ scans_today: s.scans_today + 1 });
+
+        // Phase 4.3 — evaluate the kill switch on every scanned row so a
+        // breach halts the loop inside a single row rather than racing to
+        // burn through a batch.
+        const tripped = await checkAndTripKillSwitch();
+        if (tripped) return;
 
         if (next === 'stop') return;
       }

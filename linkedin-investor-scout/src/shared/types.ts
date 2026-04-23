@@ -146,6 +146,8 @@ export interface OutreachSettings {
   profile_visit_dwell_ms: number;
   /** Health-breach kill switch cooldown before manual resume is allowed. */
   health_cooldown_hours: number;
+  /** Phase 4.3 — kill-switch thresholds (editable at runtime via Settings). */
+  kill_switch_thresholds: KillSwitchThresholds;
   /** User-maintained keyword list consumed by the scoring engine. */
   keywords: OutreachKeyword[];
   /** User-maintained firm whitelist consumed by the scoring engine. */
@@ -185,7 +187,12 @@ export interface Settings {
 
 export type ScanWorkerStatus = 'idle' | 'running' | 'paused' | 'auto_paused';
 
-export type AutoPauseReason = 'captcha' | 'rate_limit' | 'auth_wall' | null;
+export type AutoPauseReason =
+  | 'captcha'
+  | 'rate_limit'
+  | 'auth_wall'
+  | 'health_breach'
+  | null;
 
 export interface ScanState {
   id: 'current';
@@ -229,6 +236,7 @@ export interface SettingsPatch {
     warm_visit_before_invite?: boolean;
     profile_visit_dwell_ms?: number;
     health_cooldown_hours?: number;
+    kill_switch_thresholds?: Partial<KillSwitchThresholds>;
     /** Full replace — caller owns the list. */
     keywords?: OutreachKeyword[];
     /** Full replace — caller owns the list. */
@@ -381,6 +389,7 @@ export type Message =
       payload: { ids: number[]; task_status: FeedTaskStatus };
     }
   | { type: 'DAILY_SNAPSHOT_QUERY' }
+  | { type: 'HEALTH_SNAPSHOT_QUERY' }
   | { type: 'TEMPLATES_LIST'; payload?: { kind?: MessageTemplateKind } }
   | { type: 'TEMPLATE_UPSERT'; payload: TemplateUpsertPayload }
   | { type: 'TEMPLATE_ARCHIVE'; payload: { id: number; archived: boolean } }
@@ -437,6 +446,7 @@ export interface MessageResponseMap {
   FEED_EVENT_UPDATE: FeedEvent;
   FEED_EVENTS_BULK_UPDATE: { updated: number };
   DAILY_SNAPSHOT_QUERY: DailySnapshot;
+  HEALTH_SNAPSHOT_QUERY: HealthSnapshot;
   TEMPLATES_LIST: MessageTemplate[];
   TEMPLATE_UPSERT: MessageTemplate;
   TEMPLATE_ARCHIVE: MessageTemplate;
@@ -769,4 +779,81 @@ export interface OutreachPrefillResult {
 export interface OutreachSkipMarker {
   prospect_id: number;
   day_bucket: string;
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — Phase 4.3 health snapshot + kill-switch + resume cooldown
+// ———————————————————————————————————————————————————————————
+
+/** Phase 4.3 — kill-switch thresholds (mutable at runtime via Settings). */
+export interface KillSwitchThresholds {
+  /** Min acceptance rate over the last 7d before kill-switch fires. 0–1. */
+  accept_rate_floor: number;
+  /** Minimum invites sent in 7d before accept rate is meaningful. */
+  invites_sent_min: number;
+  /** Rolling window for safety-trigger pile-up detection, in hours. */
+  safety_window_hours: number;
+  /** Max safety triggers inside the rolling window before breach. */
+  safety_trigger_max: number;
+}
+
+/** Phase 4.3 — 7-day rollup computed on demand from activity_log + daily_usage + outreach_actions. */
+export interface HealthSnapshot {
+  /** Local day bucket the snapshot was built against (inclusive "today"). */
+  day_bucket: string;
+  /** Rolling 7-day aggregates (today + previous 6 local days). */
+  invites_sent_7d: number;
+  accepts_7d: number;
+  /** `accepts_7d / invites_sent_7d`. Null when invites_sent_7d === 0. */
+  accept_rate_7d: number | null;
+  visits_7d: number;
+  messages_sent_7d: number;
+  feed_events_captured_7d: number;
+  /** Count of `scan_auto_paused` events in the last 7d, broken out by reason. */
+  safety_triggers_7d: {
+    captcha: number;
+    rate_limit: number;
+    auth_wall: number;
+    health_breach: number;
+    total: number;
+  };
+  /** Safety-trigger count inside the `safety_window_hours` rolling window (for live breach check). */
+  safety_triggers_in_window: number;
+  /** Per-day buckets (oldest → newest, length 7) for sparkline rendering. */
+  daily: HealthDaily[];
+  /** Current kill-switch state derived from the snapshot + thresholds. */
+  breach: HealthBreach | null;
+  /** Cooldown gate — null if resume is allowed right now. */
+  cooldown: HealthCooldown | null;
+  /** Thresholds applied to compute `breach` (snapshot of current settings). */
+  thresholds: KillSwitchThresholds;
+}
+
+export interface HealthDaily {
+  day_bucket: string;
+  invites_sent: number;
+  accepts: number;
+  visits: number;
+  messages_sent: number;
+  feed_events_captured: number;
+  safety_triggers: number;
+}
+
+export type HealthBreachReason =
+  | 'accept_rate_floor'
+  | 'safety_pileup'
+  | 'restriction_banner';
+
+export interface HealthBreach {
+  reason: HealthBreachReason;
+  detail: string;
+}
+
+export interface HealthCooldown {
+  /** Epoch ms of the breach that started the cooldown. */
+  since: number;
+  /** Epoch ms before which manual resume is rejected. */
+  until: number;
+  /** Hours the user configured when the cooldown was started. */
+  hours: number;
 }

@@ -10,6 +10,7 @@ import {
 export { ACTIVITY_LOG_MAX_ENTRIES, DB_NAME, DB_VERSION } from './constants';
 import type {
   ActivityKind,
+  AutoPauseReason,
   DailyUsage,
   FeedEvent,
   FeedEventInsert,
@@ -571,6 +572,10 @@ export async function getSettings(): Promise<Settings> {
           ...defaults.outreach.tier_thresholds,
           ...(rowOutreach?.tier_thresholds ?? {}),
         },
+        kill_switch_thresholds: {
+          ...defaults.outreach.kill_switch_thresholds,
+          ...(rowOutreach?.kill_switch_thresholds ?? {}),
+        },
         keywords: rowOutreach?.keywords ?? [],
         firms: rowOutreach?.firms ?? [],
       },
@@ -617,6 +622,10 @@ export async function putSettings(patch: SettingsPatch): Promise<Settings> {
       tier_thresholds: {
         ...current.outreach.tier_thresholds,
         ...patch.outreach?.tier_thresholds,
+      },
+      kill_switch_thresholds: {
+        ...current.outreach.kill_switch_thresholds,
+        ...patch.outreach?.kill_switch_thresholds,
       },
       keywords: patch.outreach?.keywords ?? current.outreach.keywords,
       firms: patch.outreach?.firms ?? current.outreach.firms,
@@ -1270,6 +1279,121 @@ export async function getWeeklyInvitesUsed(
   }
   await tx.done;
   return total;
+}
+
+/**
+ * Phase 4.3 — return `DailyUsage` rows for the trailing `days` buckets
+ * (oldest → newest, inclusive of today). Missing buckets are filled with
+ * zeroed rows so the caller always gets a dense array of length `days`.
+ */
+export async function getDailyUsageRange(
+  todayBucket: string,
+  days: number,
+): Promise<DailyUsage[]> {
+  const db = await openScoutDb();
+  const tx = db.transaction('daily_usage', 'readonly');
+  const [y, m, d] = todayBucket.split('-').map((v) => Number(v));
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) {
+    await tx.done;
+    return [];
+  }
+  const anchor = new Date(y, m - 1, d, 12, 0, 0, 0);
+  const out: DailyUsage[] = [];
+  // Walk oldest → newest so downstream rendering doesn't need to re-sort.
+  for (let i = days - 1; i >= 0; i--) {
+    const stamp = new Date(anchor);
+    stamp.setDate(anchor.getDate() - i);
+    const bucket = `${stamp.getFullYear()}-${String(stamp.getMonth() + 1).padStart(2, '0')}-${String(stamp.getDate()).padStart(2, '0')}`;
+    const row = await tx.store.get(bucket);
+    out.push(row ?? zeroDailyUsage(bucket));
+  }
+  await tx.done;
+  return out;
+}
+
+/**
+ * Phase 4.3 — return `scan_auto_paused` events since `sinceMs`. Caller uses
+ * this to compute the 7d safety-trigger rollup + live rolling-window breach.
+ */
+export async function listSafetyEventsSince(
+  sinceMs: number,
+): Promise<Array<{ ts: number; reason: AutoPauseReason }>> {
+  const db = await openScoutDb();
+  const all = await db.getAll('activity_log');
+  const out: Array<{ ts: number; reason: AutoPauseReason }> = [];
+  for (const entry of all) {
+    if (entry.event !== 'scan_auto_paused') continue;
+    if (entry.ts < sinceMs) continue;
+    const reason = (entry.data as { reason?: AutoPauseReason } | undefined)
+      ?.reason;
+    out.push({ ts: entry.ts, reason: reason ?? null });
+  }
+  out.sort((a, b) => a.ts - b.ts);
+  return out;
+}
+
+/**
+ * Phase 4.3 — accepted outreach_actions resolved at or after `sinceMs`.
+ * Returned as raw `{ resolved_at }` tuples so the pure health module doesn't
+ * depend on the full `OutreachAction` type.
+ */
+export async function listAcceptsSince(
+  sinceMs: number,
+): Promise<Array<{ resolved_at: number }>> {
+  const db = await openScoutDb();
+  const rows = await db.getAllFromIndex(
+    'outreach_actions',
+    'by_state',
+    'accepted',
+  );
+  const out: Array<{ resolved_at: number }> = [];
+  for (const r of rows) {
+    if (r.resolved_at === null) continue;
+    if (r.resolved_at < sinceMs) continue;
+    out.push({ resolved_at: r.resolved_at });
+  }
+  return out;
+}
+
+/**
+ * Phase 4.3 — `connection_request_sent` actions with a `sent_at` stamp at or
+ * after `sinceMs`. Includes rows in any post-sent state (sent / accepted /
+ * declined / expired / withdrawn) — the invite was physically sent.
+ */
+export async function listInvitesSince(
+  sinceMs: number,
+): Promise<Array<{ sent_at: number }>> {
+  const db = await openScoutDb();
+  const rows = await db.getAllFromIndex(
+    'outreach_actions',
+    'by_kind',
+    'connection_request_sent',
+  );
+  const out: Array<{ sent_at: number }> = [];
+  for (const r of rows) {
+    if (r.sent_at === null) continue;
+    if (r.sent_at < sinceMs) continue;
+    out.push({ sent_at: r.sent_at });
+  }
+  return out;
+}
+
+/**
+ * Phase 4.3 — timestamp of the most recent `scan_auto_paused` entry with
+ * `data.reason === 'health_breach'`. Seeds the resume-cooldown gate.
+ */
+export async function getLastHealthBreachAt(): Promise<number | null> {
+  const db = await openScoutDb();
+  const all = await db.getAll('activity_log');
+  let latest: number | null = null;
+  for (const entry of all) {
+    if (entry.event !== 'scan_auto_paused') continue;
+    const reason = (entry.data as { reason?: AutoPauseReason } | undefined)
+      ?.reason;
+    if (reason !== 'health_breach') continue;
+    if (latest === null || entry.ts > latest) latest = entry.ts;
+  }
+  return latest;
 }
 
 // ———————————————————————————————————————————————————————————

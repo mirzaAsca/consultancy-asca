@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   ClipboardList,
+  HeartPulse,
   Inbox,
   MessageSquareText,
   Radar,
@@ -13,6 +14,7 @@ import { useDashboardStore, type DashboardRoute } from './store';
 import { ProspectsRoute } from './routes/Prospects';
 import { OutreachQueueRoute } from './routes/OutreachQueue';
 import { EngagementTasksRoute } from './routes/EngagementTasks';
+import { HealthRoute } from './routes/Health';
 import { SettingsRoute } from './routes/Settings';
 import { TemplatesRoute } from './routes/Templates';
 import { LogsRoute } from './routes/Logs';
@@ -25,6 +27,7 @@ const ROUTES: Array<{
   { id: 'prospects', label: 'Prospects', Icon: Radar },
   { id: 'outreach_queue', label: 'Outreach queue', Icon: Send },
   { id: 'engagement_tasks', label: 'Engagement tasks', Icon: Inbox },
+  { id: 'health', label: 'Health', Icon: HeartPulse },
   { id: 'templates', label: 'Templates', Icon: MessageSquareText },
   { id: 'settings', label: 'Settings', Icon: SettingsIcon },
   { id: 'logs', label: 'Logs', Icon: ClipboardList },
@@ -34,6 +37,7 @@ const VALID_ROUTES: DashboardRoute[] = [
   'prospects',
   'outreach_queue',
   'engagement_tasks',
+  'health',
   'templates',
   'settings',
   'logs',
@@ -180,6 +184,7 @@ export default function App() {
         {route === 'prospects' && <ProspectsRoute />}
         {route === 'outreach_queue' && <OutreachQueueRoute />}
         {route === 'engagement_tasks' && <EngagementTasksRoute />}
+        {route === 'health' && <HealthRoute />}
         {route === 'templates' && <TemplatesRoute />}
         {route === 'settings' && <SettingsRoute />}
         {route === 'logs' && <LogsRoute />}

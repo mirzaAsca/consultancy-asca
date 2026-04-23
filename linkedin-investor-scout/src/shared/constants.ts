@@ -1,4 +1,5 @@
 import type {
+  KillSwitchThresholds,
   OutreachCaps,
   OutreachSettings,
   ScanState,
@@ -57,6 +58,22 @@ export const DEFAULT_PROFILE_VISIT_DWELL_MS = 8000;
 export const DEFAULT_HEALTH_COOLDOWN_HOURS = 24;
 
 /**
+ * Phase 4.3 — kill-switch defaults. Values chosen to trip only on real trouble:
+ *  - accept_rate_floor 15% mirrors the conservative baseline for LinkedIn
+ *    outreach; below that the list is likely stale or templates are off.
+ *  - invites_sent_min 20 avoids tripping on tiny sample sizes.
+ *  - safety_window 24h / max 2 captures "LinkedIn keeps challenging us today"
+ *    without reacting to a single captcha.
+ */
+export const DEFAULT_KILL_SWITCH_THRESHOLDS: Readonly<KillSwitchThresholds> =
+  Object.freeze({
+    accept_rate_floor: 0.15,
+    invites_sent_min: 20,
+    safety_window_hours: 24,
+    safety_trigger_max: 2,
+  });
+
+/**
  * Max rendered length of a Mode A connect-note before LinkedIn rejects it.
  * 300 = Premium tier ceiling observed on the live Connect modal fixture
  * (`example3.html`). Free tier is 200 — validate at runtime since LinkedIn
@@ -100,6 +117,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
     warm_visit_before_invite: true,
     profile_visit_dwell_ms: DEFAULT_PROFILE_VISIT_DWELL_MS,
     health_cooldown_hours: DEFAULT_HEALTH_COOLDOWN_HOURS,
+    kill_switch_thresholds: DEFAULT_KILL_SWITCH_THRESHOLDS,
     keywords: Object.freeze([]) as unknown as OutreachSettings['keywords'],
     firms: Object.freeze([]) as unknown as OutreachSettings['firms'],
   }),
@@ -126,6 +144,9 @@ export function createDefaultSettings(updatedAt: number = Date.now()): Settings 
       warm_visit_before_invite: DEFAULT_SETTINGS.outreach.warm_visit_before_invite,
       profile_visit_dwell_ms: DEFAULT_SETTINGS.outreach.profile_visit_dwell_ms,
       health_cooldown_hours: DEFAULT_SETTINGS.outreach.health_cooldown_hours,
+      kill_switch_thresholds: {
+        ...DEFAULT_SETTINGS.outreach.kill_switch_thresholds,
+      },
       keywords: [],
       firms: [],
     },

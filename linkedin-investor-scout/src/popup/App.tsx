@@ -80,6 +80,8 @@ const AUTO_PAUSE_COPY: Record<NonNullable<AutoPauseReason>, string> = {
   captcha: 'LinkedIn challenge / CAPTCHA detected. Solve it in a visible tab and resume.',
   rate_limit: 'Rate limit detected. Wait a while before resuming.',
   auth_wall: 'LinkedIn auth wall hit. Log back in, then resume.',
+  health_breach:
+    'Kill switch tripped — health thresholds breached. Review the Health tab; resume is blocked until the cooldown elapses.',
 };
 
 const OUT_OF_NETWORK_LABEL = 'OOO (Out of network)';

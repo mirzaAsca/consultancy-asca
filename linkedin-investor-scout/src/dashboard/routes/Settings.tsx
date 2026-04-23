@@ -264,6 +264,8 @@ export function SettingsRoute() {
 
       <TierThresholdsSection settings={settings} save={save} />
 
+      <HealthSection settings={settings} save={save} />
+
       <KeywordsSection settings={settings} save={save} />
 
       <FirmsSection settings={settings} save={save} />
@@ -557,6 +559,128 @@ function TierThresholdsSection({
         />
       </div>
     </section>
+  );
+}
+
+function HealthSection({
+  settings,
+  save,
+}: {
+  settings: Settings;
+  save: SaveFn;
+}) {
+  const cooldownHours = settings.outreach.health_cooldown_hours;
+  const ks = settings.outreach.kill_switch_thresholds;
+  return (
+    <section className="mb-5 rounded-md border border-gray-800 bg-bg-card p-4">
+      <h2 className="mb-1 text-sm font-semibold text-gray-100">
+        Health & kill switch
+      </h2>
+      <p className="mb-3 text-[11px] text-gray-500">
+        Phase 4.3 — when any of these thresholds trips, the scan auto-pauses
+        with a <code className="rounded bg-black/30 px-1 text-[10px]">health_breach</code>{' '}
+        reason. Manual resume is blocked until the cooldown elapses.
+      </p>
+      <div className="grid grid-cols-2 gap-3 text-xs">
+        <NumberField
+          label="Cooldown (hours)"
+          value={cooldownHours}
+          min={0}
+          max={168}
+          onChange={(v) =>
+            void save({ outreach: { health_cooldown_hours: v } })
+          }
+          help="0–168. How long resume stays blocked after a breach."
+        />
+        <FractionField
+          label="Accept rate floor"
+          value={ks.accept_rate_floor}
+          min={0}
+          max={1}
+          step={0.01}
+          onChange={(v) =>
+            void save({
+              outreach: { kill_switch_thresholds: { accept_rate_floor: v } },
+            })
+          }
+          help="Trip if 7d accept rate falls below this (0..1)."
+        />
+        <NumberField
+          label="Min invites (7d)"
+          value={ks.invites_sent_min}
+          min={0}
+          max={500}
+          onChange={(v) =>
+            void save({
+              outreach: { kill_switch_thresholds: { invites_sent_min: v } },
+            })
+          }
+          help="Sample size before accept-rate floor is meaningful."
+        />
+        <NumberField
+          label="Safety window (hours)"
+          value={ks.safety_window_hours}
+          min={1}
+          max={168}
+          onChange={(v) =>
+            void save({
+              outreach: { kill_switch_thresholds: { safety_window_hours: v } },
+            })
+          }
+          help="Rolling window for pile-up detection."
+        />
+        <NumberField
+          label="Max safety triggers"
+          value={ks.safety_trigger_max}
+          min={1}
+          max={20}
+          onChange={(v) =>
+            void save({
+              outreach: { kill_switch_thresholds: { safety_trigger_max: v } },
+            })
+          }
+          help="Captcha/rate-limit/auth-wall count inside the window before breach."
+        />
+      </div>
+    </section>
+  );
+}
+
+function FractionField({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  help,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (v: number) => void;
+  help?: string;
+}) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-gray-400">{label}</span>
+      <input
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => {
+          const raw = Number(e.target.value);
+          if (!Number.isFinite(raw)) return;
+          onChange(clamp(raw, min, max));
+        }}
+        className="w-full rounded-md border border-gray-800 bg-bg px-2 py-1 text-gray-100 focus:border-blue-500"
+      />
+      {help && <span className="text-[10px] text-gray-500">{help}</span>}
+    </label>
   );
 }
 

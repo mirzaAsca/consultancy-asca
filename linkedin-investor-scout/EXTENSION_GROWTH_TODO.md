@@ -60,7 +60,7 @@ Reason: best speed/risk balance, lower account risk, and easier iteration.
 
 - [x] **Mode A only** — every connect request must go through the prefill-modal + user-click-Send flow. No batch-approve, no headless sending, ever in v2. _(invariant codified in types + MASTER §19.2)_
 - [x] **Unified budget bucket** — invites and profile visits share one risk bucket (`shared_bucket = true`). Defaults: `daily_invites: 15`, `daily_visits: 40`, `weekly_invites: 80`. _(DEFAULT_OUTREACH_CAPS, `daily_usage` store)_
-- [ ] **Kill switch mandatory** — write actions auto-pause when health thresholds breach (7d accept-rate floor, repeated safety triggers, restriction-banner detection). Manual resume only, with a minimum cooldown (default 24h, Settings-configurable).
+- [x] **Kill switch mandatory** — write actions auto-pause when health thresholds breach (7d accept-rate floor, repeated safety triggers inside the rolling window). Manual resume only, with a minimum cooldown (default 24h, Settings-configurable). _(Landed 2026-04-23 — Phase 4.3 below. Restriction-banner detection remains open as a Phase 5.3 detector hook.)_
 - [x] **Idempotency keys** on every write and event — stable action id + event fingerprint prevent double-send / double-count across service-worker restarts. _(`outreach_actions.by_idempotency_key` unique + `feed_events.by_event_fingerprint` unique)_
 - [ ] **Active-tab-only operation** — all scheduled work (scan, harvest, outreach queue progression) is gated on `scan_state.status === 'running'` AND at least one open `linkedin.com/*` tab. No `chrome.alarms` except for daily-bucket rollover at local midnight and the existing 30s orphan-tab watchdog.
 - [x] **Local-only** — no network egress except to `linkedin.com`. No telemetry, no cloud sync, no external integration in v2.
@@ -534,18 +534,20 @@ _Landed 2026-04-23 — popup renders a `Today` section above the Scan controls b
 
 ### 4.3 Health snapshots + kill switch
 
-- [ ] Daily `health_snapshots` rollup at local midnight:
-  - invites sent/accepted (7d),
-  - accept rate (7d),
-  - captcha/rate-limit/auth-wall hits (7d),
-  - harvested events (7d),
-  - profile visits (7d).
-- [ ] Kill-switch triggers (auto-pause with `auto_pause_reason = 'health_threshold'`):
-  - `accept_rate_7d < 15%` AND `invites_sent_7d >= 20` (sample-size gate),
-  - any 2 safety triggers in same 24h window,
-  - LinkedIn restriction banner detected by content script.
-- [ ] **Kill-switch cooldown:** after breach, manual resume is gated by a minimum `health_cooldown_hours` (default **24**, Settings-configurable). User cannot resume sooner even with typed confirmation.
-- [ ] Dashboard `/health` route with sparkline charts + threshold indicators.
+_Landed 2026-04-23. Computed on-demand from activity_log + daily_usage + outreach_actions (no dedicated `health_snapshots` store — keeps the DB schema flat and cheaper than a midnight rollup for 7 rows). Pure logic in [`src/shared/health.ts`](./src/shared/health.ts) (`computeHealthSnapshot`, `detectKillSwitchBreach`, `computeResumeCooldown`, `buildWeekBuckets`) with 21 unit tests in [`tests/health.test.ts`](./tests/health.test.ts). New `AutoPauseReason = 'health_breach'` fires via `checkAndTripKillSwitch()` at the tail of every scanned row inside the scan loop (no new `chrome.alarms` — Phase 4.3 invariant). Dashboard `/health` route in [`src/dashboard/routes/Health.tsx`](./src/dashboard/routes/Health.tsx) renders threshold tiles + 7-day stacked sparkline + breach banner with countdown + Resume button that surfaces the cooldown error. Settings page gains a Health section for `health_cooldown_hours` (0–168) + the four kill-switch threshold fields._
+
+- [x] Daily `health_snapshots` rollup at local midnight: _(implemented as on-demand aggregation via `HEALTH_SNAPSHOT_QUERY` — the rollup store was skipped; 7 days of daily_usage + filtered activity_log + outreach_actions are cheap to read on tab open)_
+  - [x] invites sent/accepted (7d),
+  - [x] accept rate (7d),
+  - [x] captcha/rate-limit/auth-wall hits (7d),
+  - [x] harvested events (7d),
+  - [x] profile visits (7d).
+- [x] Kill-switch triggers (auto-pause with `auto_pause_reason = 'health_breach'`):
+  - [x] `accept_rate_7d < accept_rate_floor` (default 15%) AND `invites_sent_7d >= invites_sent_min` (default 20) — sample-size gate,
+  - [x] any `safety_trigger_max` (default 2) safety triggers in `safety_window_hours` (default 24h) rolling window.
+  - [ ] LinkedIn restriction banner detected by content script. _(deferred — lives with Phase 5.3 detector hooks; `HealthBreachReason` already carries `restriction_banner` so the wiring is a one-line `autoPause('health_breach')` from the detector once it lands.)_
+- [x] **Kill-switch cooldown:** after breach, manual resume is gated by a minimum `health_cooldown_hours` (default **24**, Settings-configurable). `resumeScan()` returns an error with the cooldown payload until `last_breach_at + cooldown_hours` elapses — captcha / rate_limit / auth_wall auto-pauses are NOT gated so the user can still clear a CAPTCHA and resume.
+- [x] Dashboard `/health` route with sparkline charts + threshold indicators. _(pure Tailwind div stacked bars — no chart library.)_
 
 Acceptance criteria:
 
@@ -710,7 +712,7 @@ Front-loads the harvester so scoring has real feed-recency signal by the time ou
 **Sprint 4 — Analytics + health (v2.0 release candidate):**
 
 - [ ] Phase 4.2 core analytics (KPIs, cohort slices — no A/B in v2.0)
-- [ ] Phase 4.3 health snapshots + kill-switch thresholds + 24h cooldown
+- [x] Phase 4.3 health snapshots + kill-switch thresholds + 24h cooldown _(landed 2026-04-23 — `src/shared/health.ts`, `src/dashboard/routes/Health.tsx`, `checkAndTripKillSwitch()` + `resumeScan()` cooldown gate in `src/background/scan-worker.ts`, Settings HealthSection; restriction-banner detector deferred to Phase 5.3.)_
 
 **Sprint 5 — Auto reconciliation:**
 
