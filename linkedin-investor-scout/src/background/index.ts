@@ -33,6 +33,7 @@ import {
   getWeeklyInvitesUsed,
   incrementDailyUsage,
   listAcceptsSince,
+  listFeedEventsForProspect,
   listInvitesSince,
   listMessageTemplates,
   listSafetyEventsSince,
@@ -81,6 +82,8 @@ import type {
   OutreachQueuePage,
   OutreachWithdrawDetectedPayload,
   OutreachWithdrawResult,
+  ReactionToggledDetectedPayload,
+  ReactionToggledDetectedResult,
   ProspectQuery,
   Settings,
   TemplateUpsertPayload,
@@ -750,6 +753,68 @@ async function handleLinkedInRestrictionBanner(
   return { tripped };
 }
 
+/**
+ * Phase 5.3 — content script saw the user react to (or un-react from) a
+ * feed post whose author/reposter is a tracked prospect. We log the
+ * engagement and, when the reaction targets a post we already have in
+ * `feed_events` for this prospect, promote its `task_status` from `new`
+ * to `done`. The user has engaged with the signal, so it falls out of
+ * the unread engagement inbox. Un-reacts within the same observation
+ * window reverse the inbox state change.
+ *
+ * No daily_usage bump: reactions are zero-friction and don't count
+ * against the invite/visit/message budget. No outreach_actions row
+ * either — reactions aren't outreach.
+ */
+async function handleReactionToggledDetected(
+  payload: ReactionToggledDetectedPayload,
+): Promise<ReactionToggledDetectedResult> {
+  const now = Date.now();
+  await appendActivityLog({
+    ts: now,
+    level: 'info',
+    event:
+      payload.direction === 'reacted'
+        ? 'reaction_given_to_prospect_post'
+        : 'reaction_removed_from_prospect_post',
+    prospect_id: payload.prospect_id,
+    data: {
+      slug: payload.slug,
+      reaction_kind: payload.reaction_kind,
+      activity_urn: payload.activity_urn,
+      page_url: payload.page_url,
+      detected_at: payload.detected_at,
+    },
+  });
+
+  // Correlate the reaction to a feed_events row. Prefer an exact URN match
+  // when available; otherwise match on the most recent `new` row for the
+  // prospect so we still clear the inbox in the common case where the
+  // card's activity URN couldn't be resolved client-side.
+  const rows = await listFeedEventsForProspect(payload.prospect_id);
+  let targets: number[] = [];
+  if (payload.activity_urn) {
+    targets = rows
+      .filter((r) => r.activity_urn === payload.activity_urn)
+      .map((r) => r.id);
+  }
+  if (targets.length === 0) {
+    const newestNew = rows.find((r) => r.task_status === 'new');
+    if (newestNew) targets = [newestNew.id];
+  }
+
+  const nextStatus = payload.direction === 'reacted' ? 'done' : 'new';
+  const updated = await bulkUpdateFeedEventTaskStatus(targets, nextStatus);
+  if (updated > 0) {
+    scheduleBadgeRefresh();
+  }
+
+  return {
+    matched: updated > 0,
+    updated_feed_event_ids: targets.slice(0, updated),
+  };
+}
+
 async function getActiveLinkedInTab(): Promise<chrome.tabs.Tab | null> {
   const tabs = await chrome.tabs.query({
     active: true,
@@ -1381,6 +1446,10 @@ registerMessageRouter(async (msg) => {
     }
     case 'LINKEDIN_RESTRICTION_BANNER': {
       const data = await handleLinkedInRestrictionBanner(msg.payload);
+      return { ok: true, data };
+    }
+    case 'REACTION_TOGGLED_DETECTED': {
+      const data = await handleReactionToggledDetected(msg.payload);
       return { ok: true, data };
     }
     case 'FEED_CRAWL_SESSION_START':

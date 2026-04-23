@@ -24,9 +24,17 @@ import type {
   LinkedInRestrictionBannerPayload,
   OutreachActionRecordPayload,
   OutreachWithdrawDetectedPayload,
+  ReactionToggledDetectedPayload,
   SlugMap,
   Settings,
 } from '@/shared/types';
+import { extractActivityUrnFromElement } from '@/shared/urn';
+import {
+  decideReactionVerdict,
+  parseReactionState,
+  type ReactionDetectorEvent,
+  type ReactionKind,
+} from '@/shared/reaction-toggled-detector';
 import { DEFAULT_PROFILE_VISIT_DWELL_MS } from '@/shared/constants';
 import {
   decideVisitVerdict,
@@ -56,6 +64,13 @@ let messageWatcherThreadId: string | null = null;
 let withdrawalWatcherAttachedPath: string | null = null;
 let restrictionBannerWatcherStarted = false;
 let restrictionBannerAlreadyReported = false;
+/** Reaction buttons we've already attached a watcher to (avoid duplicates). */
+const reactionWatcherAttached = new WeakSet<Element>();
+/** Global feed-scan observer — runs once per content-script lifetime. */
+let reactionFeedObserverStarted = false;
+
+/** How long to keep a single reaction watcher alive after the baseline read. */
+const REACTION_WATCH_WINDOW_MS = 45_000;
 
 /** Wall-clock guard for the hidden-tab grace window (default 2s). */
 const HIDDEN_GRACE_MS = 2_000;
@@ -91,6 +106,11 @@ export function startInteractionDetectorsForUrl(
   // Phase 4.3 / 5.3 — restriction banner watcher runs once per content-script
   // lifetime; re-checking on route change is cheap but not required.
   startRestrictionBannerWatcher();
+  // Phase 5.3 — reaction-toggled watcher runs on any page that could host a
+  // feed card (home feed, profile detail, company pages, search). Attaching
+  // once per content-script lifetime is cheap — the per-button guard
+  // (`reactionWatcherAttached`) prevents duplicate observers.
+  startReactionToggledWatcher(getSlugMap);
 }
 
 // ——— Profile visit detector (Phase 5.6) ———
@@ -599,6 +619,190 @@ function startRestrictionBannerWatcher(): void {
   });
 }
 
+// ——— Reaction-toggled detector (Phase 5.3, example9.html) ———
+
+/**
+ * Walk the document for reaction buttons and attach per-button watchers.
+ * Each button's aria-label follows `"Reaction button state: {kind}"` so we
+ * observe the attribute and fire when the kind transitions. We only emit
+ * for reactions on posts whose author (or reposter) is a tracked prospect
+ * — unrelated posts are ignored.
+ */
+function startReactionToggledWatcher(getSlugMap: () => SlugMap): void {
+  if (reactionFeedObserverStarted) return;
+  reactionFeedObserverStarted = true;
+
+  const scan = (): void => {
+    const buttons = document.querySelectorAll<HTMLElement>(
+      'button[aria-label^="Reaction button state:" i]',
+    );
+    for (const btn of Array.from(buttons)) {
+      maybeAttachReactionWatcher(btn, getSlugMap);
+    }
+  };
+
+  // Initial scan — the feed may already have rendered several cards.
+  scan();
+
+  // Re-scan on DOM mutations. LinkedIn lazy-loads cards as the user scrolls,
+  // so fresh reaction buttons appear continuously.
+  const observer = new MutationObserver(() => {
+    scan();
+  });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+function maybeAttachReactionWatcher(
+  btn: HTMLElement,
+  getSlugMap: () => SlugMap,
+): void {
+  if (reactionWatcherAttached.has(btn)) return;
+
+  // Resolve the prospect this post is attributed to — if the card's author
+  // isn't in the SlugMap, there's nothing to record.
+  const card = findFeedCardContainer(btn);
+  if (!card) return;
+  const slug = findAuthorSlugForCard(card);
+  if (!slug) return;
+  const summary = getSlugMap()[slug];
+  if (!summary) return;
+
+  reactionWatcherAttached.add(btn);
+
+  const events: ReactionDetectorEvent[] = [];
+  let settled = false;
+
+  const baseline = parseReactionState(btn.getAttribute('aria-label'));
+  if (baseline) {
+    events.push({ kind: 'state_observed', state: baseline, t: Date.now() });
+  }
+
+  const settle = (): void => {
+    if (settled) return;
+    const verdict = decideReactionVerdict(events);
+    if (verdict === 'pending') return;
+    settled = true;
+    cleanup();
+    if (verdict === 'no_change') return;
+    const latest = latestObservedState(events);
+    const activityUrn = extractActivityUrnFromElement(card);
+    const reactionKind =
+      verdict === 'reacted' && latest && latest !== 'no_reaction'
+        ? (latest as Exclude<ReactionKind, 'no_reaction'>)
+        : null;
+    emitReactionToggled({
+      prospect_id: summary.id,
+      slug,
+      direction: verdict === 'reacted' ? 'reacted' : 'unreacted',
+      reaction_kind: reactionKind,
+      activity_urn: activityUrn,
+      page_url: location.href,
+      detected_at: Date.now(),
+    });
+  };
+
+  const attrObserver = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      if (m.attributeName !== 'aria-label') continue;
+      const next = parseReactionState(btn.getAttribute('aria-label'));
+      if (!next) continue;
+      const last = latestObservedState(events);
+      if (last === next) continue;
+      events.push({ kind: 'state_observed', state: next, t: Date.now() });
+      settle();
+    }
+  });
+  attrObserver.observe(btn, { attributes: true, attributeFilter: ['aria-label'] });
+
+  const timeoutHandle = window.setTimeout(() => {
+    events.push({ kind: 'timeout', t: Date.now() });
+    settle();
+  }, REACTION_WATCH_WINDOW_MS);
+
+  function cleanup(): void {
+    attrObserver.disconnect();
+    window.clearTimeout(timeoutHandle);
+  }
+}
+
+function latestObservedState(
+  events: ReadonlyArray<ReactionDetectorEvent>,
+): ReactionKind | null {
+  for (let i = events.length - 1; i >= 0; i--) {
+    const e = events[i];
+    if (e.kind === 'state_observed') return e.state;
+  }
+  return null;
+}
+
+function findFeedCardContainer(el: Element): HTMLElement | null {
+  // Primary: the SDUI feed-card wrapper observed in `example8.html` /
+  // `example9.html`. Fall back to legacy `feed-shared-update-v2` and
+  // `data-urn` anchors for older surfaces.
+  return (
+    el.closest<HTMLElement>(
+      [
+        'div[componentkey*="FeedType_"]',
+        'div[data-testid*="FeedType_MAIN_FEED"]',
+        'article[data-urn*="urn:li:activity"]',
+        'div[data-urn*="urn:li:activity"]',
+        'div.feed-shared-update-v2',
+      ].join(', '),
+    ) ?? null
+  );
+}
+
+function findAuthorSlugForCard(card: HTMLElement): string | null {
+  // The control-menu aria-label carries the author's name, but the
+  // `/in/{slug}` anchor next to it is what we actually need. When the card
+  // has multiple `/in/` anchors (mentions, tagged people), prefer one that
+  // sits inside the same subtree as an `aria-label^="Open control menu for
+  // post by"` element — that's the author / reposter per `example8.html`.
+  const ctrl = card.querySelector<HTMLElement>(
+    '[aria-label^="Open control menu for post by " i], [aria-label^="Hide post by " i]',
+  );
+  if (ctrl) {
+    const scope = ctrl.closest('header, div');
+    const anchor = scope?.querySelector<HTMLAnchorElement>('a[href*="/in/"]');
+    if (anchor) {
+      const slug = slugFromHref(anchor.href);
+      if (slug) return slug;
+    }
+  }
+  // Fallback: first `/in/` anchor within the card.
+  const anchor = card.querySelector<HTMLAnchorElement>('a[href*="/in/"]');
+  if (!anchor) return null;
+  return slugFromHref(anchor.href);
+}
+
+function slugFromHref(href: string): string | null {
+  try {
+    const path = new URL(href, location.origin).pathname;
+    return slugFromLinkedInPathname(path);
+  } catch {
+    return null;
+  }
+}
+
+function emitReactionToggled(payload: ReactionToggledDetectedPayload): void {
+  try {
+    chrome.runtime.sendMessage(
+      { type: 'REACTION_TOGGLED_DETECTED', payload },
+      () => {
+        void chrome.runtime.lastError;
+      },
+    );
+  } catch (error) {
+    console.warn('[investor-scout] reaction emit failed', {
+      prospect_id: payload.prospect_id,
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
 // ——— Shared emitter ———
 
 function emit(payload: OutreachActionRecordPayload): void {
@@ -656,4 +860,5 @@ export function __resetInteractionDetectorsForTesting(): void {
   withdrawalWatcherAttachedPath = null;
   restrictionBannerWatcherStarted = false;
   restrictionBannerAlreadyReported = false;
+  reactionFeedObserverStarted = false;
 }

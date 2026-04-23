@@ -414,6 +414,11 @@ export type Message =
       type: 'LINKEDIN_RESTRICTION_BANNER';
       payload: LinkedInRestrictionBannerPayload;
     }
+  // Phase 5.3 — organic reaction-toggle detector (content → background)
+  | {
+      type: 'REACTION_TOGGLED_DETECTED';
+      payload: ReactionToggledDetectedPayload;
+    }
   // Phase 3.1/3.2 — Feed Crawl Session (manual)
   | { type: 'FEED_CRAWL_SESSION_START' }
   | { type: 'FEED_CRAWL_SESSION_STOP' }
@@ -476,6 +481,7 @@ export interface MessageResponseMap {
   OUTREACH_PREFILL_CONNECT_IN_TAB: OutreachPrefillResult;
   OUTREACH_WITHDRAW_DETECTED: OutreachWithdrawResult;
   LINKEDIN_RESTRICTION_BANNER: LinkedInRestrictionBannerResult;
+  REACTION_TOGGLED_DETECTED: ReactionToggledDetectedResult;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   FEED_CRAWL_SESSION_START: FeedCrawlStatus;
   FEED_CRAWL_SESSION_STOP: FeedCrawlStatus;
@@ -917,6 +923,47 @@ export interface LinkedInRestrictionBannerPayload {
 
 export interface LinkedInRestrictionBannerResult {
   tripped: boolean;
+}
+
+/**
+ * Phase 5.3 — emitted by the content-side reaction-toggled watcher when the
+ * user reacts to (or un-reacts from) a feed post whose author or reposter
+ * is a tracked prospect. Background logs the engagement and, when the post
+ * correlates to an existing `feed_events` row via `activity_urn`, promotes
+ * its `task_status` from `new` → `done` (the user has engaged with the
+ * signal, so it falls out of the unread engagement inbox).
+ *
+ * The detector also fires on "unreacted" transitions so reconciliation can
+ * reverse the inbox state change if the user undoes their reaction within
+ * the observation window.
+ */
+export interface ReactionToggledDetectedPayload {
+  prospect_id: number;
+  slug: string;
+  /** Whether the user added or removed a reaction on the post. */
+  direction: 'reacted' | 'unreacted';
+  /** Final reaction kind when direction = 'reacted'. Null when removed. */
+  reaction_kind:
+    | 'like'
+    | 'celebrate'
+    | 'support'
+    | 'love'
+    | 'insightful'
+    | 'funny'
+    | null;
+  /** Activity URN of the post, when the content script could resolve it. */
+  activity_urn: string | null;
+  /** URL of the page where the reaction happened. */
+  page_url: string;
+  /** Epoch ms when the transition was observed. */
+  detected_at: number;
+}
+
+export interface ReactionToggledDetectedResult {
+  /** True when at least one `feed_events` row was updated. */
+  matched: boolean;
+  /** IDs of feed_events rows whose task_status was flipped. */
+  updated_feed_event_ids: number[];
 }
 
 /** Per-day skip flag (scoped to the local day bucket). */
