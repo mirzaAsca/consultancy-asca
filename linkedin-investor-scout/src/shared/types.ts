@@ -365,6 +365,10 @@ export type Message =
   | { type: 'FEED_TEST_SEED_RANDOM_LEVELS' }
   // content (highlight) → background
   | { type: 'SLUGS_QUERY' }
+  | {
+      type: 'FEED_EVENTS_UPSERT_BULK';
+      payload: { events: FeedEventInsert[] };
+    }
   // background → content (highlight) direct tab message
   | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
   // background → all listeners (broadcast)
@@ -398,6 +402,7 @@ export interface MessageResponseMap {
   EXPORT_CSV: { csv: string; row_count: number };
   FEED_TEST_SEED_RANDOM_LEVELS: { seeded: number; collected: number; tab_id: number };
   SLUGS_QUERY: SlugMap;
+  FEED_EVENTS_UPSERT_BULK: { inserted: number; updated: number };
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   PROSPECTS_UPDATED: void;
   SCAN_STATE_CHANGED: void;

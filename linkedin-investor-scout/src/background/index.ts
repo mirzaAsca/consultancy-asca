@@ -15,13 +15,16 @@ import {
   getScanState,
   getSettings,
   getSlugMap,
+  incrementDailyUsage,
   openScoutDb,
   putSettings,
   queryActivityLog,
   queryProspects,
   replaceAllProspects,
   updateProspectFromPatch,
+  upsertFeedEventsBulk,
 } from '@/shared/db';
+import { localDayBucket } from '@/shared/time';
 import { broadcast, registerMessageRouter } from '@/shared/messaging';
 import type {
   CsvCommitPayload,
@@ -385,6 +388,19 @@ registerMessageRouter(async (msg) => {
     case 'SLUGS_QUERY': {
       const map = await getSlugMap();
       return { ok: true, data: map };
+    }
+    case 'FEED_EVENTS_UPSERT_BULK': {
+      const events = msg.payload?.events ?? [];
+      if (events.length === 0) {
+        return { ok: true, data: { inserted: 0, updated: 0 } };
+      }
+      const result = await upsertFeedEventsBulk(events);
+      if (result.inserted > 0) {
+        await incrementDailyUsage(localDayBucket(Date.now()), {
+          feed_events_captured: result.inserted,
+        });
+      }
+      return { ok: true, data: result };
     }
     default:
       return { ok: false, error: `Unhandled message: ${(msg as Message).type}` };

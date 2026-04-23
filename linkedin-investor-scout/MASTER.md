@@ -814,7 +814,7 @@ Not landed in this PR; see `EXTENSION_GROWTH_TODO.md` sprint plan:
 
 - Phase 1.3 Outreach Queue UX (Mode A prefill flow).
 - Phase 1.4 Message template CRUD UI (the store exists and has CRUD helpers; UI pending).
-- Phase 2.2 Content-script feed-event extraction (debounced 500ms / max batch 50 via `upsertFeedEventsBulk`, which is already shipped and unit-tested).
+- ~~Phase 2.2 Content-script feed-event extraction~~ — landed 2026-04-23. `src/content/feed-events.ts` pure extractor + `FeedEventBatcher` (500 ms debounce / max batch 50), wired into the existing highlight scan pass. `FEED_EVENTS_UPSERT_BULK` message + background handler bump `daily_usage.feed_events_captured` on insert.
 - Phase 2.3 Engagement Tasks inbox + `chrome.action` badge.
 - Phase 3.x Continuous harvester + unlock discovery.
 - Phase 4.x Analytics + health + kill switch.

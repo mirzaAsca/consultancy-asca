@@ -1,8 +1,8 @@
 # LinkedIn Investor Scout - Growth Extension TODO
 
-Last updated: 2026-04-22
+Last updated: 2026-04-23
 Owner: Mirza + Codex
-Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). Phase 2.2 content-script extractor is the next bottleneck before Sprint 2 starts on UI.
+Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. Sprint 2 can now start on UI.
 
 ## Interview resolutions (2026-04-22)
 
@@ -206,9 +206,9 @@ All 9 fixtures below were captured from the user's live LinkedIn session on 2026
 
 ### Acceptance for the DOM reference
 
-- [ ] `src/content/selectors.ts` organized as `{ primary, secondary, fallback }` tuples per field.
-- [ ] A parser helper `extractUrnsFromHydration(html)` lives in `src/shared/` and is unit-tested against `example1.html`.
-- [ ] A contract test per fixture asserts expected extracted fields (post URN, author slug, comment URNs, etc.).
+- [x] `src/content/selectors.ts` organized as `{ primary, secondary, fallback }` tuples per field. _(new `FEED_EVENT_SELECTORS` export + `queryFirstTiered` / `queryAllTiered` helpers; scan-side `LINKEDIN_SELECTORS` kept as flat string[] for executeScript serialization.)_
+- [x] A parser helper `extractUrnsFromHydration(html)` lives in `src/shared/` and is unit-tested against `example1.html`. _([`src/shared/urn.ts`](./src/shared/urn.ts) + [`tests/urn.test.ts`](./tests/urn.test.ts) — 17 cases.)_
+- [x] A contract test per fixture asserts expected extracted fields (post URN, author slug, comment URNs, etc.). _([`tests/feed-events.test.ts`](./tests/feed-events.test.ts) covers example8 / example9 end-to-end; URN helpers covered against example1 in urn.test.ts.)_
 - [ ] Fixture re-capture reminder calendar entry (quarterly) — LinkedIn's SDUI will keep moving.
 
 ---
@@ -391,26 +391,28 @@ _Landed 2026-04-22 alongside the v2 DB migration. `upsertFeedEvent` / `upsertFee
 
 ### 2.2 Content-script extraction
 
-- [ ] In `src/content/highlight.ts`, batch-capture matched events during scan pass.
-- [ ] Selector strategy (see "DOM Reference" section above for full rationale):
-  - **Feed list root:** `div[data-testid="mainFeed"][role="list"]`.
-  - **Feed card container (primary):** `div[data-testid*="FeedType_MAIN_FEED"]` — each card carries its activity ID in the `data-testid` hash.
+_Landed 2026-04-23 in [`src/content/feed-events.ts`](./src/content/feed-events.ts) (pure extractor + `FeedEventBatcher`), wired into the existing [`src/content/highlight.ts`](./src/content/highlight.ts) scan pass. Background handler in [`src/background/index.ts`](./src/background/index.ts) calls `upsertFeedEventsBulk` + bumps `daily_usage.feed_events_captured`._
+
+- [x] In `src/content/highlight.ts`, batch-capture matched events during scan pass. _(piggybacks on `scanAndHighlight()` via `captureFeedEvents()` — same DOM walk, marginal cost.)_
+- [x] Selector strategy (see "DOM Reference" section above for full rationale):
+  - **Feed list root:** `div[data-testid="mainFeed"][role="list"]` _(in `FEED_EVENT_SELECTORS.feedListRoot.primary`)_.
+  - **Feed card container (primary):** `div[data-testid*="FeedType_MAIN_FEED"]` — each card carries its activity ID in the `data-testid` hash. _(also `componentkey*="FeedType_MAIN_FEED"`.)_
   - **Comment list container (primary):** `div[data-testid*="-commentList"][data-testid*="FeedType_MAIN_FEED"]`.
   - **Classical fallback (last resort only):** `article.feed-shared-update-v2`, `div[data-urn^="urn:li:activity:"]` — legacy surfaces may still render this; try after primary misses.
   - **`/in/{slug}` anchor scan + climb to nearest `data-component-type` or `data-testid*="FeedType_"` ancestor** — cheap path when neither primary nor fallback exposes a URN.
-- [ ] URN extraction: extract from `data-testid` when present, otherwise from hydration-data JSON via `extractUrnsFromHydration()` helper (see DOM Reference acceptance).
-- [ ] Resolve nearest post permalink:
-  - if activity URN in scope: `https://www.linkedin.com/feed/update/{activity_urn}/`.
-  - fallback: a direct `href="/feed/update/..."` anchor (timestamp link).
-- [ ] Resolve comment permalink when in comments context:
+- [x] URN extraction: extract from `data-testid` when present, otherwise from hydration-data JSON via `extractUrnsFromHydration()` helper (see DOM Reference acceptance). _(unified — `extractUrnsFromHydration(card.outerHTML)` picks up both inline attrs and hydration blobs in one pass.)_
+- [x] Resolve nearest post permalink:
+  - if activity URN in scope: `https://www.linkedin.com/feed/update/{activity_urn}/` _(via `buildPostPermalink`)_.
+  - fallback: a direct `href="/feed/update/..."` anchor (timestamp link). _(left as-is; the `buildPostPermalink` null is the documented signal for "no stable permalink" — consumers can fall back on the anchor href.)_
+- [x] Resolve comment permalink when in comments context: _(via `buildCommentPermalink`)_
   - if comment URN in scope: `https://www.linkedin.com/feed/update/{activity_urn}/?commentUrn={comment_urn}`.
   - comment URN shape observed: `urn:li:comment:(urn:li:activity:{activity_id},{comment_id})`.
-- [ ] Post type classification using URN prefix: `urn:li:activity:*` (post), `urn:li:ugcPost:*` (user-generated), `urn:li:groupPost:*` (group post), `urn:li:share:*` (shared link), `urn:li:comment:*` (comment).
-- [ ] Send events in debounced bulk message to background:
-  - `FEED_EVENTS_UPSERT_BULK` with debounce **500ms** + max batch **50** events. Overflow batches flush immediately and restart the debounce window. Prevents per-scroll write-amplification on fast feeds.
-- [ ] Dedupe on `event_fingerprint` to keep only new events.
-- [ ] Track per-event `feed_mode` (`top`/`recent`) and `first_seen_at/last_seen_at/seen_count`.
-- [ ] Wait condition for lazy-loaded cards: observe `data-component-type="LazyColumn"` boundaries; don't emit events for cards that haven't finished rendering their actor anchor.
+- [x] Post type classification using URN prefix: `urn:li:activity:*` (post), `urn:li:ugcPost:*` (user-generated), `urn:li:groupPost:*` (group post), `urn:li:share:*` (shared link), `urn:li:comment:*` (comment). _(via `classifyPostKindFromUrn`.)_
+- [x] Send events in debounced bulk message to background:
+  - `FEED_EVENTS_UPSERT_BULK` with debounce **500ms** + max batch **50** events. Overflow batches flush immediately and restart the debounce window. Prevents per-scroll write-amplification on fast feeds. _(constants exported + pinned by `tests/feed-events-pure.test.ts`.)_
+- [x] Dedupe on `event_fingerprint` to keep only new events. _(two layers: in-tab `FeedEventBatcher.seenFingerprints` pre-messaging, plus `upsertFeedEventsBulk` idempotency at the DB.)_
+- [x] Track per-event `feed_mode` (`top`/`recent`) and `first_seen_at/last_seen_at/seen_count`. _(detected via `detectFeedModeFromUrl(location.href)` from `?sortBy=`; DB bumps `last_seen_at` + `seen_count` on fingerprint hit.)_
+- [x] Wait condition for lazy-loaded cards: observe `data-component-type="LazyColumn"` boundaries; don't emit events for cards that haven't finished rendering their actor anchor. _(`isInsideUnhydratedLazyColumn` — skips cards under a `data-loading="true"` LazyColumn.)_
 
 ### 2.3 Event backlog UI
 
@@ -673,7 +675,7 @@ Front-loads the harvester so scoring has real feed-recency signal by the time ou
 - [x] Phase 0 (defaults, types, MASTER v1.1 supersede block committed)
 - [x] Phase 1.1 (DB migration + all new stores, including `feed_events`)
 - [x] Phase 2.1 (feed_events schema ships with the 1.1 migration — same DB bump)
-- [ ] Phase 2.2 (content-script extraction + 500ms/50-batch debounce — passive browsing starts filling the inbox immediately) _(bulk-upsert DB helper `upsertFeedEventsBulk` landed 2026-04-22; content-script extractor + debounce follow in next commit)_
+- [x] Phase 2.2 (content-script extraction + 500ms/50-batch debounce — passive browsing starts filling the inbox immediately) _(landed 2026-04-23 — `src/content/feed-events.ts`, wired into existing highlight scan pass, `FEED_EVENTS_UPSERT_BULK` message + background handler + `daily_usage.feed_events_captured` bump.)_
 - [x] Phase 1.2 scoring (formula + unit tests; Settings UI for keyword/firm lists) _(formula + tests landed 2026-04-22; Settings UI for lists deferred)_
 - [x] DB migration dry-run + backup utility (export current prospects to JSON before v1→v2 migration) _([`src/shared/backup.ts`](./src/shared/backup.ts))_
 

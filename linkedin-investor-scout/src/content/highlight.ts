@@ -32,6 +32,11 @@ import {
   isCommenterAnchor,
   isPostAuthorAnchor,
 } from './highlight-mentions';
+import {
+  detectFeedModeFromUrl,
+  extractFeedEventsFromDocument,
+  FeedEventBatcher,
+} from './feed-events';
 
 // ——— Module state (content-script scope, one instance per tab) ———
 
@@ -57,6 +62,7 @@ let scheduled = false;
 let rescanTimer: number | null = null;
 let repositionScheduled = false;
 const containerBadges = new Map<HTMLElement, HTMLElement>();
+const feedEventBatcher = new FeedEventBatcher();
 const FEED_TEST_DEFAULT_MAX_PROFILES = 200;
 /** Horizontal gap between a badge's right edge and the outer post card. */
 const BADGE_GAP_PX = 16;
@@ -863,12 +869,33 @@ function getMarkedContainers(root: ParentNode): HTMLElement[] {
   return out;
 }
 
+function captureFeedEvents(root: ParentNode): void {
+  if (!slugMapReady) return;
+  if (Object.keys(slugMap).length === 0) return;
+  try {
+    const events = extractFeedEventsFromDocument(root, {
+      slugMap,
+      feedMode: detectFeedModeFromUrl(location.href),
+      now: Date.now(),
+    });
+    if (events.length > 0) feedEventBatcher.enqueue(events);
+  } catch (error) {
+    warn('feed_events_extract_error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 function scanAndHighlight(root: ParentNode = document): void {
   if (!slugMapReady) return;
   if (!settings?.highlight?.enabled) {
     removeAllHighlights();
     return;
   }
+
+  // Piggyback on the highlight pass to harvest feed events into the v2
+  // `feed_events` store. Pure DOM walk, already-warm anchors — marginal cost.
+  captureFeedEvents(root);
 
   const anchors = root.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
   const activeContainers = new Set<HTMLElement>();
@@ -1011,6 +1038,9 @@ async function refreshSlugMap(): Promise<void> {
   }
   slugMap = res.data ?? {};
   slugMapReady = true;
+  // Prospect set changed — invalidate the in-tab dedupe memory so newly-
+  // added prospects get their on-screen events captured on the next pass.
+  feedEventBatcher.resetSeen();
   log('slug_map_loaded', { count: Object.keys(slugMap).length });
   scheduleScan();
 }
