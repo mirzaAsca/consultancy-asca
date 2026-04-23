@@ -3,9 +3,15 @@ import {
   prospectsToCsv,
 } from '@/shared/csv';
 import {
+  addInteractionEvent,
   addMessageTemplate,
   addOutreachAction,
   appendActivityLog,
+  consumeCorrelationToken,
+  gcExpiredCorrelationTokens,
+  listCorrelationTokensForProspect,
+  listInteractionEvents,
+  putCorrelationToken,
   bulkDeleteProspects,
   bulkRescanProspects,
   bulkSetActivity,
@@ -51,6 +57,13 @@ import {
   updateProspectFromPatch,
   upsertFeedEventsBulk,
 } from '@/shared/db';
+import { CORRELATION_TOKEN_DEFAULT_WINDOW_MS } from '@/shared/constants';
+import {
+  buildInteractionFingerprint,
+  computeReconciliationStatus,
+  generateCorrelationTokenId,
+  pickMatchingToken,
+} from '@/shared/reconciliation';
 import { computeAnalyticsSnapshot } from '@/shared/analytics';
 import { computeHealthSnapshot } from '@/shared/health';
 import {
@@ -65,9 +78,15 @@ import {
 import { localDayBucket } from '@/shared/time';
 import { broadcast, registerMessageRouter } from '@/shared/messaging';
 import type {
+  CorrelationToken,
   CsvCommitPayload,
   FeedCrawlSessionResult,
   FeedCrawlStatus,
+  InteractionEvent,
+  InteractionEventInsert,
+  InteractionListQuery,
+  InteractionTokenOpenPayload,
+  InteractionType,
   LinkedInRestrictionBannerPayload,
   LinkedInRestrictionBannerResult,
   Message,
@@ -708,6 +727,18 @@ async function handleOutreachWithdrawDetected(
       credited_day_bucket: creditBucket,
     },
   });
+  try {
+    await recordInteractionAndReconcile({
+      prospect_id: payload.prospect_id,
+      interaction_type: 'invite_withdrawn',
+      activity_urn: null,
+      target_url: null,
+      detected_at: now,
+      data: { action_id: live.id, sent_at: live.sent_at },
+    });
+  } catch (error) {
+    console.warn('[investor-scout] withdrawal reconcile failed', { error });
+  }
   // Cooldown penalty (last_outreach_at) now refers to a withdrawn row — keep
   // `last_outreach_at` as-is so the user doesn't burn a fresh cooldown when
   // re-inviting. Scoring will treat the cooldown as active per §1.2.
@@ -756,6 +787,132 @@ async function handleLinkedInRestrictionBanner(
 }
 
 /**
+ * Phase 5.4 — shared reconciliation path. Called by every detector handler
+ * after it has resolved the prospect + (optionally) the activity URN. Writes
+ * one interaction_events row, correlates it to the most recent live
+ * correlation_token for this prospect + action (if any), consumes that
+ * token, and returns whether the detection was auto-matched.
+ */
+async function recordInteractionAndReconcile(args: {
+  prospect_id: number;
+  interaction_type: InteractionType;
+  activity_urn: string | null;
+  target_url: string | null;
+  detected_at: number;
+  data?: Record<string, unknown>;
+}): Promise<{
+  interaction_id: number;
+  matched: boolean;
+  token: string | null;
+  task_id: number | null;
+}> {
+  // GC first so a stale expired token can't falsely match.
+  void gcExpiredCorrelationTokens(args.detected_at);
+  const tokens = await listCorrelationTokensForProspect(args.prospect_id);
+  const match = pickMatchingToken(
+    tokens,
+    args.prospect_id,
+    args.interaction_type,
+    args.detected_at,
+  );
+  const { status, confidence } = computeReconciliationStatus({
+    tokenMatched: match !== null,
+    urnResolved: args.activity_urn !== null,
+  });
+  const fingerprint = buildInteractionFingerprint({
+    prospect_id: args.prospect_id,
+    interaction_type: args.interaction_type,
+    activity_urn: args.activity_urn,
+    detected_at: args.detected_at,
+  });
+  const row: InteractionEventInsert = {
+    prospect_id: args.prospect_id,
+    interaction_type: args.interaction_type,
+    fingerprint,
+    activity_urn: args.activity_urn,
+    target_url: args.target_url,
+    detected_at: args.detected_at,
+    confidence,
+    reconciliation_status: status,
+    source_task_id: match?.task_id ?? null,
+    source_token: match?.token ?? null,
+    data: args.data ?? {},
+  };
+  const id = await addInteractionEvent(row);
+  if (match) {
+    await consumeCorrelationToken(match.token);
+  }
+  return {
+    interaction_id: id,
+    matched: match !== null,
+    token: match?.token ?? null,
+    task_id: match?.task_id ?? null,
+  };
+}
+
+async function handleInteractionTokenOpen(
+  payload: InteractionTokenOpenPayload,
+): Promise<{ token: string; expires_at: number }> {
+  const now = Date.now();
+  void gcExpiredCorrelationTokens(now);
+  const windowMs = Math.max(
+    60_000,
+    payload.window_ms ?? CORRELATION_TOKEN_DEFAULT_WINDOW_MS,
+  );
+  const token: CorrelationToken = {
+    token: generateCorrelationTokenId(now),
+    task_id: payload.task_id ?? null,
+    prospect_id: payload.prospect_id,
+    action_expected: payload.action_expected,
+    opened_at: now,
+    expires_at: now + windowMs,
+    consumed: false,
+  };
+  await putCorrelationToken(token);
+  await appendActivityLog({
+    ts: now,
+    level: 'info',
+    event: 'inbox_token_opened',
+    prospect_id: payload.prospect_id,
+    data: {
+      token: token.token,
+      task_id: token.task_id,
+      action_expected: token.action_expected,
+      expires_at: token.expires_at,
+    },
+  });
+  // Also write a low-confidence `opened_from_inbox` interaction row so the
+  // audit trail records the click regardless of whether a detector ever
+  // correlates against the token.
+  const fingerprint = buildInteractionFingerprint({
+    prospect_id: payload.prospect_id,
+    interaction_type: 'opened_from_inbox',
+    activity_urn: null,
+    detected_at: now,
+  });
+  await addInteractionEvent({
+    prospect_id: payload.prospect_id,
+    interaction_type: 'opened_from_inbox',
+    fingerprint,
+    activity_urn: null,
+    target_url: null,
+    detected_at: now,
+    confidence: 'medium',
+    reconciliation_status: 'matched',
+    source_task_id: payload.task_id ?? null,
+    source_token: token.token,
+    data: { action_expected: payload.action_expected },
+  });
+  return { token: token.token, expires_at: token.expires_at };
+}
+
+async function handleInteractionsList(
+  query: InteractionListQuery,
+): Promise<InteractionEvent[]> {
+  return listInteractionEvents(query);
+}
+
+/**
  * Phase 5.3 — content script saw the user react to (or un-react from) a
  * feed post whose author/reposter is a tracked prospect. We log the
  * engagement and, when the reaction targets a post we already have in
@@ -788,6 +945,19 @@ async function handleReactionToggledDetected(
       detected_at: payload.detected_at,
     },
   });
+
+  try {
+    await recordInteractionAndReconcile({
+      prospect_id: payload.prospect_id,
+      interaction_type: payload.direction === 'reacted' ? 'reacted' : 'unreacted',
+      activity_urn: payload.activity_urn,
+      target_url: payload.page_url,
+      detected_at: now,
+      data: { reaction_kind: payload.reaction_kind },
+    });
+  } catch (error) {
+    console.warn('[investor-scout] reaction reconcile failed', { error });
+  }
 
   // Correlate the reaction to a feed_events row. Prefer an exact URN match
   // when available; otherwise match on the most recent `new` row for the
@@ -840,6 +1010,18 @@ async function handleCommentPostedDetected(
       detected_at: payload.detected_at,
     },
   });
+
+  try {
+    await recordInteractionAndReconcile({
+      prospect_id: payload.prospect_id,
+      interaction_type: 'commented',
+      activity_urn: payload.activity_urn,
+      target_url: payload.page_url,
+      detected_at: now,
+    });
+  } catch (error) {
+    console.warn('[investor-scout] comment reconcile failed', { error });
+  }
 
   const rows = await listFeedEventsForProspect(payload.prospect_id);
   let targets: number[] = [];
@@ -1491,6 +1673,14 @@ registerMessageRouter(async (msg) => {
       return handleOutreachPrefillConnect(msg.payload);
     case 'OUTREACH_WITHDRAW_DETECTED': {
       const data = await handleOutreachWithdrawDetected(msg.payload);
+      return { ok: true, data };
+    }
+    case 'INTERACTION_TOKEN_OPEN': {
+      const data = await handleInteractionTokenOpen(msg.payload);
+      return { ok: true, data };
+    }
+    case 'INTERACTIONS_LIST': {
+      const data = await handleInteractionsList(msg.payload ?? {});
       return { ok: true, data };
     }
     case 'LINKEDIN_RESTRICTION_BANNER': {

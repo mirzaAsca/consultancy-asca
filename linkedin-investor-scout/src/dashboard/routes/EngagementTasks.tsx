@@ -22,6 +22,25 @@ import { formatRelativeTime } from '../helpers';
 import { LevelBadge } from '../components/Badges';
 import { useDashboardStore } from '../store';
 
+async function trackOpenFromInbox(
+  taskId: number,
+  prospectId: number,
+  action: 'reacted' | 'commented',
+): Promise<void> {
+  try {
+    await sendMessage({
+      type: 'INTERACTION_TOKEN_OPEN',
+      payload: {
+        task_id: taskId,
+        prospect_id: prospectId,
+        action_expected: action,
+      },
+    });
+  } catch {
+    // Best-effort: token write failure should not block the link open.
+  }
+}
+
 const STATUS_OPTIONS: FeedTaskStatus[] = ['new', 'queued', 'done', 'ignored'];
 const KIND_OPTIONS: FeedEventKind[] = [
   'post',
@@ -449,6 +468,9 @@ function TaskRow({
             href={row.post_url}
             target="_blank"
             rel="noopener noreferrer"
+            onMouseDown={() => {
+              void trackOpenFromInbox(row.id, row.prospect_id, 'reacted');
+            }}
             className="inline-flex items-center gap-1 truncate text-[11px] text-blue-300 hover:text-blue-200"
             title={row.post_url}
           >
@@ -463,6 +485,9 @@ function TaskRow({
             href={row.comment_url}
             target="_blank"
             rel="noopener noreferrer"
+            onMouseDown={() => {
+              void trackOpenFromInbox(row.id, row.prospect_id, 'commented');
+            }}
             className="inline-flex items-center gap-1 truncate text-[11px] text-purple-300 hover:text-purple-200"
             title={row.comment_url}
           >

@@ -18,6 +18,10 @@ import type {
   FeedEventQuery,
   FeedEventRow,
   FeedTaskStatus,
+  CorrelationToken,
+  InteractionEvent,
+  InteractionEventInsert,
+  InteractionListQuery,
   LogEntry,
   LogEntryInsert,
   LogQuery,
@@ -108,6 +112,25 @@ export interface ScoutDBSchema extends DBSchema {
   daily_usage: {
     key: string; // day_bucket
     value: DailyUsage;
+  };
+  // ——— v3 stores (Phase 5 reconciliation) ———
+  interaction_events: {
+    key: number;
+    value: InteractionEvent;
+    indexes: {
+      by_prospect_id: number;
+      by_fingerprint: string;
+      by_source_task_id: number;
+      by_detected_at: number;
+    };
+  };
+  correlation_tokens: {
+    key: string; // token
+    value: CorrelationToken;
+    indexes: {
+      by_expires_at: number;
+      by_prospect_id: number;
+    };
   };
 }
 
@@ -243,6 +266,23 @@ export function openScoutDb(): Promise<IDBPDatabase<ScoutDBSchema>> {
           templates.createIndex('by_kind', 'kind');
 
           db.createObjectStore('daily_usage', { keyPath: 'day_bucket' });
+        }
+
+        if (oldVersion < 3) {
+          const interactions = db.createObjectStore('interaction_events', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+          interactions.createIndex('by_prospect_id', 'prospect_id');
+          interactions.createIndex('by_fingerprint', 'fingerprint', { unique: true });
+          interactions.createIndex('by_source_task_id', 'source_task_id');
+          interactions.createIndex('by_detected_at', 'detected_at');
+
+          const tokens = db.createObjectStore('correlation_tokens', {
+            keyPath: 'token',
+          });
+          tokens.createIndex('by_expires_at', 'expires_at');
+          tokens.createIndex('by_prospect_id', 'prospect_id');
         }
 
         console.info('[investor-scout] db upgraded', {
@@ -1081,6 +1121,8 @@ export async function clearAllData(): Promise<void> {
       'outreach_actions',
       'feed_events',
       'daily_usage',
+      'interaction_events',
+      'correlation_tokens',
     ],
     'readwrite',
   );
@@ -1090,6 +1132,8 @@ export async function clearAllData(): Promise<void> {
   await tx.objectStore('outreach_actions').clear();
   await tx.objectStore('feed_events').clear();
   await tx.objectStore('daily_usage').clear();
+  await tx.objectStore('interaction_events').clear();
+  await tx.objectStore('correlation_tokens').clear();
   await tx.done;
 }
 
@@ -1765,4 +1809,120 @@ export async function incrementDailyUsage(
   await tx.store.put(next);
   await tx.done;
   return next;
+}
+
+// ———————————————————————————————————————————————————————————
+// v3 — interaction_events CRUD
+// ———————————————————————————————————————————————————————————
+
+/**
+ * Append an interaction_event row. Returns the existing id on fingerprint
+ * collision (same detector fired twice for the same event) — keeps the audit
+ * trail append-only without letting dupes inflate counts.
+ */
+export async function addInteractionEvent(
+  row: InteractionEventInsert,
+): Promise<number> {
+  const db = await openScoutDb();
+  const tx = db.transaction('interaction_events', 'readwrite');
+  const store = tx.objectStore('interaction_events');
+  const existing = await store.index('by_fingerprint').get(row.fingerprint);
+  if (existing) {
+    await tx.done;
+    return existing.id;
+  }
+  const id = (await store.add(row as InteractionEvent)) as number;
+  await tx.done;
+  return id;
+}
+
+export async function listInteractionEvents(
+  query: InteractionListQuery = {},
+): Promise<InteractionEvent[]> {
+  const db = await openScoutDb();
+  const limit = Math.max(1, query.limit ?? 200);
+  if (typeof query.prospect_id === 'number') {
+    const rows = await db.getAllFromIndex(
+      'interaction_events',
+      'by_prospect_id',
+      IDBKeyRange.only(query.prospect_id),
+    );
+    return rows
+      .sort((a, b) => b.detected_at - a.detected_at)
+      .slice(0, limit);
+  }
+  if (Array.isArray(query.task_ids) && query.task_ids.length > 0) {
+    const tx = db.transaction('interaction_events', 'readonly');
+    const idx = tx.objectStore('interaction_events').index('by_source_task_id');
+    const out: InteractionEvent[] = [];
+    for (const id of query.task_ids) {
+      const rows = await idx.getAll(IDBKeyRange.only(id));
+      out.push(...rows);
+    }
+    await tx.done;
+    return out
+      .sort((a, b) => b.detected_at - a.detected_at)
+      .slice(0, limit);
+  }
+  const all = await db.getAll('interaction_events');
+  return all
+    .sort((a, b) => b.detected_at - a.detected_at)
+    .slice(0, limit);
+}
+
+// ———————————————————————————————————————————————————————————
+// v3 — correlation_tokens CRUD
+// ———————————————————————————————————————————————————————————
+
+export async function putCorrelationToken(
+  token: CorrelationToken,
+): Promise<void> {
+  const db = await openScoutDb();
+  await db.put('correlation_tokens', token);
+}
+
+export async function getCorrelationToken(
+  value: string,
+): Promise<CorrelationToken | undefined> {
+  const db = await openScoutDb();
+  return db.get('correlation_tokens', value);
+}
+
+export async function listCorrelationTokensForProspect(
+  prospectId: number,
+): Promise<CorrelationToken[]> {
+  const db = await openScoutDb();
+  return db.getAllFromIndex(
+    'correlation_tokens',
+    'by_prospect_id',
+    IDBKeyRange.only(prospectId),
+  );
+}
+
+export async function consumeCorrelationToken(value: string): Promise<void> {
+  const db = await openScoutDb();
+  const tx = db.transaction('correlation_tokens', 'readwrite');
+  const store = tx.objectStore('correlation_tokens');
+  const row = await store.get(value);
+  if (row) {
+    row.consumed = true;
+    await store.put(row);
+  }
+  await tx.done;
+}
+
+/** GC expired tokens. Called opportunistically on write paths. */
+export async function gcExpiredCorrelationTokens(now: number): Promise<number> {
+  const db = await openScoutDb();
+  const tx = db.transaction('correlation_tokens', 'readwrite');
+  const idx = tx.objectStore('correlation_tokens').index('by_expires_at');
+  let cursor = await idx.openCursor(IDBKeyRange.upperBound(now));
+  let removed = 0;
+  while (cursor) {
+    await cursor.delete();
+    removed += 1;
+    cursor = await cursor.continue();
+  }
+  await tx.done;
+  return removed;
 }

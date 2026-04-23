@@ -436,6 +436,8 @@ export type Message =
     }
   | { type: 'FEED_CRAWL_RUN_IN_TAB'; payload: { session_id: string } }
   | { type: 'FEED_CRAWL_CANCEL_IN_TAB'; payload: { session_id: string } }
+  | { type: 'INTERACTION_TOKEN_OPEN'; payload: InteractionTokenOpenPayload }
+  | { type: 'INTERACTIONS_LIST'; payload?: InteractionListQuery }
   // background → all listeners (broadcast)
   | { type: 'PROSPECTS_UPDATED'; payload: { changed_ids: number[] } }
   | { type: 'SCAN_STATE_CHANGED'; payload: ScanState }
@@ -488,6 +490,8 @@ export interface MessageResponseMap {
   LINKEDIN_RESTRICTION_BANNER: LinkedInRestrictionBannerResult;
   REACTION_TOGGLED_DETECTED: ReactionToggledDetectedResult;
   COMMENT_POSTED_DETECTED: CommentPostedDetectedResult;
+  INTERACTION_TOKEN_OPEN: InteractionTokenOpenResult;
+  INTERACTIONS_LIST: InteractionEvent[];
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   FEED_CRAWL_SESSION_START: FeedCrawlStatus;
   FEED_CRAWL_SESSION_STOP: FeedCrawlStatus;
@@ -659,6 +663,96 @@ export interface FeedEvent {
 }
 
 export type FeedEventInsert = Omit<FeedEvent, 'id'>;
+
+// ———————————————————————————————————————————————————————————
+// v3 — Phase 5 reconciliation (interaction_events + correlation_tokens)
+// ———————————————————————————————————————————————————————————
+
+/** Kinds of manual LinkedIn actions the content-side detectors can observe. */
+export type InteractionType =
+  | 'opened_from_inbox'
+  | 'reacted'
+  | 'unreacted'
+  | 'commented'
+  | 'invite_sent'
+  | 'message_sent'
+  | 'profile_visited'
+  | 'invite_withdrawn';
+
+/** Outcome of correlating an interaction to an open inbox token. */
+export type ReconciliationStatus = 'matched' | 'needs_review' | 'unmatched';
+
+export type InteractionConfidence = 'high' | 'medium' | 'low';
+
+/**
+ * Phase 5.4 — one detected manual action against a prospect. Always written,
+ * even when no live correlation token exists (organic interactions still
+ * count). When a token matches, `source_token` / `source_task_id` are
+ * populated and `reconciliation_status = 'matched'`.
+ */
+export interface InteractionEvent {
+  id: number;
+  prospect_id: number;
+  interaction_type: InteractionType;
+  /** Stable dedupe key; unique index. */
+  fingerprint: string;
+  /** Activity / comment URN if the detector resolved one (else null). */
+  activity_urn: string | null;
+  /** URL of the page where the detection fired. */
+  target_url: string | null;
+  detected_at: number;
+  confidence: InteractionConfidence;
+  reconciliation_status: ReconciliationStatus;
+  /** FeedEvent id when this action was correlated to an inbox task. */
+  source_task_id: number | null;
+  /** Correlation token value that matched this interaction, if any. */
+  source_token: string | null;
+  /** Arbitrary structured context for audit trail (reaction_kind, etc.). */
+  data: Record<string, unknown>;
+}
+
+export type InteractionEventInsert = Omit<InteractionEvent, 'id'>;
+
+/**
+ * Phase 5.6 — persisted correlation token. The dashboard writes one to IDB
+ * before opening a LinkedIn URL for an inbox task; the content-side detector
+ * running in the freshly-opened tab consumes it (via background) and stamps
+ * the produced interaction_event as `matched`. Persisted (not in-memory) so
+ * service-worker recycles + cross-tab operation work.
+ */
+export interface CorrelationToken {
+  /** UUID-ish; primary key + the value the detector's handler looks up. */
+  token: string;
+  task_id: number | null;
+  prospect_id: number;
+  action_expected: InteractionType;
+  opened_at: number;
+  /** Epoch ms after which the token is invalid. GC'd on write paths. */
+  expires_at: number;
+  /** True once consumed by a matching detector. One-shot by default. */
+  consumed: boolean;
+}
+
+export interface InteractionTokenOpenPayload {
+  task_id?: number | null;
+  prospect_id: number;
+  action_expected: InteractionType;
+  /** Override the default correlation window (ms). */
+  window_ms?: number;
+}
+
+export interface InteractionTokenOpenResult {
+  token: string;
+  expires_at: number;
+}
+
+export interface InteractionListQuery {
+  prospect_id?: number;
+  /** If set, restrict to interactions attached to these feed_event ids. */
+  task_ids?: number[];
+  /** Hard cap on returned rows; default 200. */
+  limit?: number;
+}
 
 /** Filter + pagination payload for the Engagement Tasks dashboard table. */
 export interface FeedEventQuery {

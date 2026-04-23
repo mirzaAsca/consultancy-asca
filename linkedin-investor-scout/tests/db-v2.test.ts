@@ -40,15 +40,17 @@ beforeEach(async () => {
 });
 
 describe('v2 — schema bump + new stores', () => {
-  it('opens at DB_VERSION=2 with all v2 stores present', async () => {
+  it('opens at current DB_VERSION with all v2 + v3 stores present', async () => {
     const db = await openScoutDb();
     expect(db.version).toBe(DB_VERSION);
     const names = Array.from(db.objectStoreNames).sort();
     expect(names).toEqual(
       [
         'activity_log',
+        'correlation_tokens',
         'daily_usage',
         'feed_events',
+        'interaction_events',
         'message_templates',
         'outreach_actions',
         'prospects',

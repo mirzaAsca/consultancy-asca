@@ -570,26 +570,20 @@ Goal: when you open an Inbox/Queue item in a new tab and act manually on LinkedI
 
 ### 5.1 Tracking model
 
-- [ ] Add store `interaction_events`:
-  - `id`
-  - `prospect_id`
-  - `source_task_id` (engagement task/outreach row id)
-  - `interaction_type` (`opened_from_inbox`, `reacted`, `commented`, `invite_sent`, `message_sent`, `profile_visited`)
-  - `target_url`
-  - `fingerprint` (unique idempotency key)
-  - `detected_at`
-  - `confidence` (`high`, `medium`, `low`)
-- [ ] Add lightweight state on task/outreach rows:
-  - `last_opened_from_inbox_at`
-  - `auto_updated_at`
-  - `reconciliation_status` (`matched`, `needs_review`, `unmatched`)
+_Landed 2026-04-23 — DB bumped to v3 in [`src/shared/constants.ts`](./src/shared/constants.ts); new `interaction_events` + `correlation_tokens` stores in [`src/shared/db.ts`](./src/shared/db.ts). The `interaction_events` audit trail is append-only (dedupe via the unique `by_fingerprint` index) and carries `reconciliation_status` + `confidence` + `source_task_id` + `source_token` per row. Per-row state on `feed_events` / `outreach_actions` is intentionally unchanged — interaction_events is the system of record, joined by `source_task_id` or `prospect_id` when the UI needs it._
+
+- [x] Add store `interaction_events`:
+  - `id`, `prospect_id`, `interaction_type` (`opened_from_inbox` / `reacted` / `unreacted` / `commented` / `invite_sent` / `message_sent` / `profile_visited` / `invite_withdrawn`), `fingerprint` (unique), `activity_urn`, `target_url`, `detected_at`, `confidence` (`high` / `medium` / `low`), `reconciliation_status` (`matched` / `needs_review` / `unmatched`), `source_task_id`, `source_token`, `data`.
+- [x] Add store `correlation_tokens` — IDB-persisted so MV3 service-worker recycles + cross-tab correlation still work. Keyed on the token value; indexed by `by_expires_at` + `by_prospect_id`. GC'd on every write via `gcExpiredCorrelationTokens` (upperBound cursor on `expires_at`).
+- [ ] Add lightweight state on task/outreach rows (deferred — the interaction_events row is sufficient audit for v2.0; promote if the Auto-tracked badge turns out to be expensive to compute on-read).
 
 ### 5.2 Inbox open instrumentation
 
-- [ ] All "Open post/comment/profile" buttons from Inbox/Queue open via tracked link wrapper:
-  - include internal context (`task_id`, `prospect_id`, `action_expected`).
-- [ ] Emit `opened_from_inbox` event before tab open.
-- [ ] Keep short-lived in-memory + IDB correlation window (for example 30-60 min).
+_Landed 2026-04-23 — [`src/dashboard/routes/EngagementTasks.tsx`](./src/dashboard/routes/EngagementTasks.tsx) fires `INTERACTION_TOKEN_OPEN` via `onMouseDown` on the post / comment link before the browser dispatches the `<a target="_blank">` click. `onMouseDown` fires strictly before `onClick`, so the write kicks off on the background service worker in parallel with the tab-open. Fire-and-forget — a token write failure can't block the user's navigation._
+
+- [x] "Open post" / "Open comment" buttons in Engagement Tasks open via a tracked wrapper that fires `INTERACTION_TOKEN_OPEN` with `{ task_id, prospect_id, action_expected: 'reacted' | 'commented' }` before navigation. Outreach Queue "Open profile" / "Prefill Connect" wiring deferred — queue actions already write idempotent `outreach_actions` rows so the reconciliation overlap is smaller; adding profile-visit tokens is a follow-up.
+- [x] Emit `opened_from_inbox` interaction event synchronously when the token is written — background stamps it as `reconciliation_status = 'matched'` against the fresh token so the click itself is auditable even when no downstream detector fires.
+- [x] Persist the correlation token in IDB (`correlation_tokens` store) — survives MV3 service-worker recycles + cross-tab operation (click in dashboard tab, detector fires in LinkedIn tab). Default window 45 min via `CORRELATION_TOKEN_DEFAULT_WINDOW_MS`; Settings-tunable not yet wired.
 
 ### 5.3 Action detectors (content script)
 
@@ -603,17 +597,16 @@ Goal: when you open an Inbox/Queue item in a new tab and act manually on LinkedI
 
 ### 5.4 Reconciliation engine
 
-- [ ] Match detected action to most likely open Inbox/Queue item using:
-  - `prospect_id`/slug,
-  - URL normalization,
-  - event type,
-  - time window.
-- [ ] Auto-transition states:
-  - engagement task `new/viewed -> engaged`
-  - outreach row `approved -> sent`
-  - queue item `ready -> completed`
-- [ ] If confidence is not high:
-  - set `needs_review` and show quick confirm chip in dashboard (one-click accept).
+_Landed 2026-04-23 — pure matcher in [`src/shared/reconciliation.ts`](./src/shared/reconciliation.ts) (`pickMatchingToken`, `isActionCompatible`, `computeReconciliationStatus`, `buildInteractionFingerprint`, `generateCorrelationTokenId`) with 18 unit tests in [`tests/reconciliation.test.ts`](./tests/reconciliation.test.ts). Wired from detector handlers in [`src/background/index.ts`](./src/background/index.ts) via the shared `recordInteractionAndReconcile` helper (reaction / comment / withdrawal paths). Auto-transition of dependent rows (feed_events / outreach_actions / lifecycle_status) is the follow-up; for v2.0 the reconciled `interaction_event` row is the source of truth the UI can join against._
+
+- [x] Match detected action to the most likely open Inbox/Queue item using `prospect_id` + action compatibility (`reacted` tokens match `unreacted` observations — the user may undo inside the window) + time window (expired tokens are excluded after `gcExpiredCorrelationTokens`).
+- [x] Token selection picks the most recently opened non-expired non-consumed token (`sort((a, b) => b.opened_at - a.opened_at)[0]`). Tokens are one-shot — `consumeCorrelationToken` flips `consumed = true` when matched, so a second detector firing against the same click can't double-match it.
+- [x] Confidence ladder:
+  - token matched + URN resolved → `high` / `matched`
+  - token matched + no URN → `medium` / `matched`
+  - no token → `low` / `unmatched` (captured as organic — row still lands in the audit trail)
+- [~] Auto-transition states — feed_events already flip `new → done` on URN match via the existing Phase 5.3 detector handlers; queue item / outreach row state transitions beyond the existing Mode A + acceptance + withdrawal paths remain open. Deferred for v2.0.
+- [ ] `needs_review` sidelane with one-click confirm chip — deferred; the status enum already carries `'needs_review'` so the UI can light up without a schema change.
 
 ### 5.5 UX + auditability
 
@@ -645,11 +638,7 @@ Goal: when you open an Inbox/Queue item in a new tab and act manually on LinkedI
   - ~~Content script watches `linkedin.com/mynetwork/invitation-manager/sent/` and connect-modal withdraw flows for the toast/confirmation.~~ _(Sent-tab flow covers the common case; connect-modal mid-flight withdrawal is rare and deferred.)_
   - ~~On detect: outreach row `sent -> withdrawn`, credit daily/weekly invite budget back (subject to LinkedIn actually restoring the slot — never assume).~~ _(Credit is applied to the `sent_at` day bucket, not today's, so weekly invite totals stay accurate. We credit knowing LinkedIn may or may not actually restore the slot — the user can re-invite at their discretion.)_
   - ~~Log withdrawal in activity log with original `sent_at` + elapsed time.~~ _(`outreach_withdrawn` event logs `action_id`, `slug`, original `sent_at`, and the `credited_day_bucket`; elapsed time is `Date.now() - sent_at` at read time.)_
-- [ ] **Cross-tab correlation.**
-  - Inbox click in tab A must correlate to detector firing in tab B.
-  - Correlation tokens stored in IDB (not in-memory) so service-worker restarts don't drop them.
-  - Token record: `{ token, task_id, prospect_id, action_expected, opened_at, expires_at }`.
-  - Tokens expire after the correlation window (default 45 min, Settings-configurable) and are garbage-collected.
+- [x] **Cross-tab correlation.** _(landed 2026-04-23 — tokens live in the new `correlation_tokens` IDB store, keyed on the token value with `by_expires_at` + `by_prospect_id` indexes. Matching happens exclusively via background message handlers so a token written from the dashboard tab is immediately visible to a detector firing in a LinkedIn tab. `gcExpiredCorrelationTokens` runs on every `INTERACTION_TOKEN_OPEN` and every detector reconcile so a stale token can't false-match. Token record shape: `{ token, task_id, prospect_id, action_expected, opened_at, expires_at, consumed }` — the `consumed` flag makes tokens one-shot and prevents fan-out across duplicate detector fires. Default 45 min window via `CORRELATION_TOKEN_DEFAULT_WINDOW_MS`; Settings knob deferred.)_
 
 Acceptance criteria:
 
@@ -673,7 +662,7 @@ Acceptance criteria:
 - [~] `src/background/index.ts`
   - [x] handlers for `FEED_EVENTS_UPSERT_BULK`, template CRUD, outreach queue queries (`OUTREACH_QUEUE_QUERY`), outreach action recording + skip (`OUTREACH_ACTION_RECORD`, `OUTREACH_SKIP_TODAY`), Mode A modal dispatch (`OUTREACH_PREFILL_CONNECT`).
   - [x] Feed Crawl Session handlers (`FEED_CRAWL_SESSION_START` / `STOP` / `STATUS`) + tab-direct `FEED_CRAWL_RUN_IN_TAB` / `FEED_CRAWL_CANCEL_IN_TAB` dispatch.
-  - [ ] reconciliation messages (Phase 5.x).
+  - [x] reconciliation messages (Phase 5.1/5.2/5.4/5.6) — `INTERACTION_TOKEN_OPEN` / `INTERACTIONS_LIST` handlers in `src/background/index.ts` (2026-04-23). `recordInteractionAndReconcile` helper now runs at the tail of the existing reaction / comment / withdrawal detector handlers; profile-visit + message-sent + invite-sent reconcile paths remain a follow-up (those detectors already write `outreach_actions` via idempotency key, so the reconciliation overlap is smaller).
 - [ ] `src/content/highlight.ts`
   - event extraction + debounced bulk upsert messaging.
 - [ ] `src/content/*` (new detector module)

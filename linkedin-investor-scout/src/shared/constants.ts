@@ -10,10 +10,11 @@ import type {
 export const DB_NAME = 'linkedin-investor-scout';
 /**
  * v1 (scan/prospect MVP) → v2 (outreach engine: new Prospect fields,
- * + outreach_actions / daily_usage / message_templates / feed_events stores).
+ * + outreach_actions / daily_usage / message_templates / feed_events stores)
+ * → v3 (Phase 5 reconciliation: interaction_events + correlation_tokens).
  * See `db.ts` upgrade() hook and `MASTER.md` §19 v1.1 amendment block.
  */
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 export const ACTIVITY_LOG_MAX_ENTRIES = 2000;
 
 // ——— v2 outreach defaults (Phase 0 / MASTER v1.1 §19) ———
@@ -123,6 +124,15 @@ export const DEFAULT_KILL_SWITCH_THRESHOLDS: Readonly<KillSwitchThresholds> =
  * can change either.
  */
 export const CONNECT_NOTE_CHAR_CAP = 300;
+
+/**
+ * Phase 5.6 — default correlation window between an inbox "Open" click and a
+ * matching detector firing in the opened tab. 45 min matches the user's
+ * typical inbox → act rhythm; tokens older than this are GC'd on the next
+ * write and the detector falls back to confidence = 'medium' with
+ * reconciliation_status = 'unmatched' (organic interaction).
+ */
+export const CORRELATION_TOKEN_DEFAULT_WINDOW_MS = 45 * 60 * 1000;
 
 // ——— v2 Phase 3.1 / 3.2 — Manual Feed Crawl Session ———
 
