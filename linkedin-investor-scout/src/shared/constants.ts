@@ -58,6 +58,14 @@ export const DEFAULT_PROFILE_VISIT_DWELL_MS = 8000;
 export const DEFAULT_HEALTH_COOLDOWN_HOURS = 24;
 
 /**
+ * MASTER §19.4 — S/A-tier rows whose `last_scanned` is older than this window
+ * get flipped back to `pending` at scan-loop entry so the queue surfaces fresh
+ * level / metadata signal for the highest-value targets. Lower-tier rows wait
+ * for a manual rescan or full re-import.
+ */
+export const STALE_SA_TIER_REQUEUE_DAYS = 30;
+
+/**
  * Phase 4.3 — kill-switch defaults. Values chosen to trip only on real trouble:
  *  - accept_rate_floor 15% mirrors the conservative baseline for LinkedIn
  *    outreach; below that the list is likely stale or templates are off.

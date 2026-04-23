@@ -10,12 +10,14 @@ import {
   listInvitesSince,
   listSafetyEventsSince,
   putScanState,
+  requeueStaleSATierProspects,
   resetStuckInProgressProspects,
   takePendingProspectsBatch,
   updateOutreachAction,
   updateProspect,
   listOutreachActionsForProspect,
 } from '@/shared/db';
+import { STALE_SA_TIER_REQUEUE_DAYS } from '@/shared/constants';
 import { recomputeAndPersistProspect } from '@/shared/prospect-scoring';
 import { detectAcceptanceOnLevelChange } from '@/shared/acceptance-watcher';
 import {
@@ -648,6 +650,21 @@ export async function runScanLoop(): Promise<void> {
   if (loopRunning) return;
   loopRunning = true;
   try {
+    // MASTER §19.4 — at the top of every scan-loop entry, refresh the queue
+    // for stale S/A-tier rows so they jump priority on this pass. Cheap (one
+    // index walk over `done` rows) and idempotent — re-running yields zero
+    // additional flips until another row crosses the cutoff.
+    const requeued = await requeueStaleSATierProspects(STALE_SA_TIER_REQUEUE_DAYS);
+    if (requeued > 0) {
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: 'stale_sa_tier_requeued',
+        prospect_id: null,
+        data: { count: requeued, stale_days: STALE_SA_TIER_REQUEUE_DAYS },
+      });
+    }
+
     while (true) {
       let state = await getScanState();
       if (state.status !== 'running') break;

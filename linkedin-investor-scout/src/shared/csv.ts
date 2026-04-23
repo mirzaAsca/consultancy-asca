@@ -188,7 +188,11 @@ export function buildProspectInsertsFromCanonicalUrls(
   return out;
 }
 
-/** CSV export columns (order matters — matches MASTER spec §6.3). */
+/**
+ * CSV export columns. Order is frozen at v2.0 — see MASTER §6.3 / §19.3
+ * (the v1.1 amendment block). Append-only: never reorder, never remove.
+ * v2.1+ additions go at the end.
+ */
 export const EXPORT_COLUMNS = [
   'url',
   'level',
@@ -202,6 +206,12 @@ export const EXPORT_COLUMNS = [
   'commented',
   'messaged',
   'notes',
+  // v2.0 additions (MASTER §19.3 — appended after `notes`):
+  'score',
+  'tier',
+  'lifecycle_status',
+  'mutual_count',
+  'last_outreach_at',
 ] as const;
 
 export function prospectsToCsv(rows: Prospect[]): string {
@@ -220,6 +230,13 @@ export function prospectsToCsv(rows: Prospect[]): string {
     commented: r.activity.commented ? 'true' : 'false',
     messaged: r.activity.messaged ? 'true' : 'false',
     notes: r.notes ?? '',
+    score: r.priority_score ?? '',
+    tier: r.tier ?? '',
+    lifecycle_status: r.lifecycle_status,
+    mutual_count: r.mutual_count ?? '',
+    last_outreach_at: r.last_outreach_at
+      ? new Date(r.last_outreach_at).toISOString()
+      : '',
   }));
   return Papa.unparse(data, {
     columns: EXPORT_COLUMNS as unknown as string[],

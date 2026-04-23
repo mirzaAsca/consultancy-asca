@@ -251,12 +251,40 @@ export function OutreachQueueRoute() {
   ) => {
     setBusyId(candidate.prospect_id);
     try {
+      // Phase 1.4 carry-over — stamp the active template id+version on the
+      // recorded action so v2.1 A/B reporting can attribute sends without a
+      // schema migration. Falls back to nulls when no template kind matches
+      // (e.g. profile_visit / followup_message_sent today) or when the user
+      // hasn't authored an active template yet — same legacy behavior.
+      const templateKind: 'connect_note' | 'first_message' | null =
+        kind === 'connection_request_sent'
+          ? 'connect_note'
+          : kind === 'message_sent'
+            ? 'first_message'
+            : null;
+      let templateId: number | null = null;
+      let templateVersion: number | null = null;
+      if (templateKind) {
+        const list = await sendMessage({
+          type: 'TEMPLATES_LIST',
+          payload: { kind: templateKind },
+        });
+        if (list.ok) {
+          const active = list.data.find((t) => !t.archived);
+          if (active) {
+            templateId = active.id;
+            templateVersion = active.version;
+          }
+        }
+      }
       const res = await sendMessage({
         type: 'OUTREACH_ACTION_RECORD',
         payload: {
           prospect_id: candidate.prospect_id,
           kind,
           state: 'sent',
+          template_id: templateId,
+          template_version: templateVersion,
         },
       });
       if (res.ok) {

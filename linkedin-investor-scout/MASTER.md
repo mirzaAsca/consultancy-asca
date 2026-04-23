@@ -796,9 +796,11 @@ The v2.0 frozen column order appends after `notes`:
 url,level,name,headline,company,location,scan_status,last_scanned,connected,commented,messaged,notes,score,tier,lifecycle_status,mutual_count,last_outreach_at
 ```
 
+Emitted by `prospectsToCsv()` in [`src/shared/csv.ts`](./src/shared/csv.ts) (landed 2026-04-23). Order is append-only at v2.0 — never reorder, never remove existing columns; v2.1+ additions go at the tail. Null `score` / `tier` / `mutual_count` / `last_outreach_at` render as empty cells; `last_outreach_at` is ISO-stamped when set; `lifecycle_status` is never null (defaults to `'new'`).
+
 ### 19.4 Supersedes §7.2 — Scan Queue ordering
 
-Change from `id ASC` to **`tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST`**. S/A-tier rows stale > 30d are priority-requeued on the next pass.
+Change from `id ASC` to **`tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST`**. S/A-tier rows stale > `STALE_SA_TIER_REQUEUE_DAYS` (default 30) are priority-requeued on the next pass — `requeueStaleSATierProspects()` runs once at every `runScanLoop()` entry, flips `done` rows whose `tier IN ('S','A')` AND `last_scanned < now - 30d` back to `'pending'` (resetting `scan_attempts` + `scan_error`), and logs `stale_sa_tier_requeued` to `activity_log` when the count is non-zero. Only `done` rows are eligible — `failed` rows are gated by retry policy and `in_progress` rows belong to an active scan tab.
 
 ### 19.5 New sections (landed in this PR as foundation; UI follows in later sprints)
 

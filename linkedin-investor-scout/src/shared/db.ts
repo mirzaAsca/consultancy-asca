@@ -522,6 +522,47 @@ export async function bulkAddProspectsInChunks(
   }
 }
 
+/**
+ * MASTER §19.4 — flip `done` S/A-tier prospects whose `last_scanned` is older
+ * than `staleDays` back to `'pending'` so the worker re-checks them on the
+ * next scan pass. Fresh metadata (level transitions, role changes) on the
+ * highest-value targets is worth more than the marginal scan cost.
+ *
+ * Only `done` rows are eligible: `failed` rows are gated by retry policy and
+ * `in_progress` rows belong to an active scan tab.
+ */
+export async function requeueStaleSATierProspects(
+  staleDays: number,
+  now: number = Date.now(),
+): Promise<number> {
+  if (!Number.isFinite(staleDays) || staleDays <= 0) return 0;
+  const cutoff = now - staleDays * 24 * 60 * 60 * 1000;
+  const db = await openScoutDb();
+  const tx = db.transaction('prospects', 'readwrite');
+  const index = tx.store.index('by_scan_status');
+  let cursor = await index.openCursor(IDBKeyRange.only('done'));
+  let n = 0;
+  while (cursor) {
+    const row = cursor.value;
+    const isPriorityTier = row.tier === 'S' || row.tier === 'A';
+    const wasScannedBeforeCutoff =
+      typeof row.last_scanned === 'number' && row.last_scanned < cutoff;
+    if (isPriorityTier && wasScannedBeforeCutoff) {
+      await cursor.update({
+        ...row,
+        scan_status: 'pending',
+        scan_attempts: 0,
+        scan_error: null,
+        updated_at: now,
+      });
+      n++;
+    }
+    cursor = await cursor.continue();
+  }
+  await tx.done;
+  return n;
+}
+
 /** Reset rows stuck in `in_progress` (e.g. after browser restart). */
 export async function resetStuckInProgressProspects(): Promise<number> {
   const db = await openScoutDb();

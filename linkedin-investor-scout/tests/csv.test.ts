@@ -132,12 +132,104 @@ describe('prospectsToCsv', () => {
     const csv = prospectsToCsv([row]);
     const [header, data] = csv.trim().split('\n');
     expect(header).toBe(
-      'url,level,name,headline,company,location,scan_status,last_scanned,connected,commented,messaged,notes',
+      'url,level,name,headline,company,location,scan_status,last_scanned,connected,commented,messaged,notes,score,tier,lifecycle_status,mutual_count,last_outreach_at',
     );
     expect(data).toContain('https://www.linkedin.com/in/alpha/');
     expect(data).toContain('2nd');
     expect(data).toContain('Alpha Person');
     expect(data).toContain('true');
     expect(data).toContain('2026-04-18T12:00:00.000Z');
+  });
+
+  it('serializes v2 columns when set (score, tier, lifecycle, mutuals, last_outreach_at)', () => {
+    const lastOutreach = Date.UTC(2026, 3, 20, 9, 30, 0);
+    const row: Prospect = {
+      id: 2,
+      url: 'https://www.linkedin.com/in/beta/',
+      slug: 'beta',
+      level: '2nd',
+      name: 'Beta Person',
+      headline: 'Partner @ Acme Capital',
+      company: 'Acme Capital',
+      location: 'NYC',
+      scan_status: 'done',
+      scan_error: null,
+      scan_attempts: 1,
+      last_scanned: Date.UTC(2026, 3, 19, 0, 0, 0),
+      activity: {
+        connected: false,
+        connected_at: null,
+        commented: false,
+        commented_at: null,
+        messaged: false,
+        messaged_at: null,
+      },
+      notes: '',
+      created_at: 0,
+      updated_at: 0,
+      lifecycle_status: 'request_sent',
+      priority_score: 152,
+      score_breakdown: null,
+      tier: 'S',
+      mutual_count: 12,
+      next_action: null,
+      next_action_due_at: null,
+      last_level_change_at: null,
+      last_outreach_at: lastOutreach,
+    };
+    const csv = prospectsToCsv([row]);
+    const [, data] = csv.trim().split('\n');
+    const cells = data.split(',');
+    // Order must follow EXPORT_COLUMNS — frozen at v2.0 per MASTER §19.3.
+    expect(cells[12]).toBe('152'); // score
+    expect(cells[13]).toBe('S'); // tier
+    expect(cells[14]).toBe('request_sent'); // lifecycle_status
+    expect(cells[15]).toBe('12'); // mutual_count
+    expect(cells[16]).toBe('2026-04-20T09:30:00.000Z'); // last_outreach_at
+  });
+
+  it('emits empty cells for unset v2 columns (null score/tier/mutuals/outreach)', () => {
+    const row: Prospect = {
+      id: 3,
+      url: 'https://www.linkedin.com/in/gamma/',
+      slug: 'gamma',
+      level: 'NONE',
+      name: null,
+      headline: null,
+      company: null,
+      location: null,
+      scan_status: 'pending',
+      scan_error: null,
+      scan_attempts: 0,
+      last_scanned: null,
+      activity: {
+        connected: false,
+        connected_at: null,
+        commented: false,
+        commented_at: null,
+        messaged: false,
+        messaged_at: null,
+      },
+      notes: '',
+      created_at: 0,
+      updated_at: 0,
+      lifecycle_status: 'new',
+      priority_score: null,
+      score_breakdown: null,
+      tier: null,
+      mutual_count: null,
+      next_action: null,
+      next_action_due_at: null,
+      last_level_change_at: null,
+      last_outreach_at: null,
+    };
+    const csv = prospectsToCsv([row]);
+    const [, data] = csv.trim().split('\n');
+    const cells = data.split(',');
+    expect(cells[12]).toBe(''); // score
+    expect(cells[13]).toBe(''); // tier
+    expect(cells[14]).toBe('new'); // lifecycle_status — never null
+    expect(cells[15]).toBe(''); // mutual_count
+    expect(cells[16]).toBe(''); // last_outreach_at
   });
 });

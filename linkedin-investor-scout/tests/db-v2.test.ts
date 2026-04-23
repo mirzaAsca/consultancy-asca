@@ -25,6 +25,8 @@ import {
   putSettings,
   queryFeedEvents,
   replaceAllProspects,
+  requeueStaleSATierProspects,
+  updateProspect,
   updateFeedEventTaskStatus,
   updateMessageTemplate,
   updateOutreachAction,
@@ -536,6 +538,146 @@ describe('v2 — daily_usage', () => {
     const after = await incrementDailyUsage('2026-04-22', { invites_sent: -100 });
     expect(after.invites_sent).toBe(0);
     expect(after.visits).toBe(3);
+  });
+});
+
+describe('v2 — requeueStaleSATierProspects (MASTER §19.4)', () => {
+  // Helper: bulk-seed N prospects in a single `replaceAllProspects` call (which
+  // wipes the table per call — must not be looped) and apply per-row patches.
+  async function seedRows(
+    rowsSpec: Array<{
+      slug: string;
+      tier: 'S' | 'A' | 'B' | 'C' | null;
+      scanStatus: 'done' | 'pending' | 'in_progress' | 'failed';
+      daysSinceScan: number | null;
+    }>,
+    now: number,
+  ): Promise<number[]> {
+    await replaceAllProspects(
+      rowsSpec.map((spec) =>
+        prospectInsertFromRawUrl(`https://linkedin.com/in/${spec.slug}`),
+      ),
+    );
+    const db = await openScoutDb();
+    const all = await db.getAll('prospects');
+    // replaceAllProspects preserves insertion order; align by index.
+    const ids: number[] = [];
+    for (let i = 0; i < rowsSpec.length; i++) {
+      const row = all[i];
+      const spec = rowsSpec[i];
+      await updateProspect(row.id, {
+        tier: spec.tier,
+        scan_status: spec.scanStatus,
+        last_scanned:
+          spec.daysSinceScan === null
+            ? null
+            : now - spec.daysSinceScan * 24 * 60 * 60 * 1000,
+        scan_attempts: 2,
+        scan_error: 'previous-error',
+      });
+      ids.push(row.id);
+    }
+    return ids;
+  }
+
+  it('flips done S/A-tier rows scanned > 30d ago back to pending', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    // Seed three rows in one bulk insert so we keep IDs predictable.
+    await replaceAllProspects([
+      prospectInsertFromRawUrl('https://linkedin.com/in/stale-s'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/stale-a'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/fresh-s'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/stale-b'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/stale-s-pending'),
+    ]);
+    const db = await openScoutDb();
+    const rows = await db.getAll('prospects');
+    const [staleS, staleA, freshS, staleB, staleSPending] = rows;
+    const day = 24 * 60 * 60 * 1000;
+    await updateProspect(staleS.id, {
+      tier: 'S',
+      scan_status: 'done',
+      last_scanned: now - 31 * day,
+      scan_attempts: 2,
+      scan_error: 'old-err',
+    });
+    await updateProspect(staleA.id, {
+      tier: 'A',
+      scan_status: 'done',
+      last_scanned: now - 45 * day,
+    });
+    await updateProspect(freshS.id, {
+      tier: 'S',
+      scan_status: 'done',
+      last_scanned: now - 5 * day,
+    });
+    await updateProspect(staleB.id, {
+      tier: 'B',
+      scan_status: 'done',
+      last_scanned: now - 90 * day,
+    });
+    // S-tier but currently pending — must NOT be touched (already in queue).
+    await updateProspect(staleSPending.id, {
+      tier: 'S',
+      scan_status: 'pending',
+      last_scanned: now - 60 * day,
+    });
+
+    const flipped = await requeueStaleSATierProspects(30, now);
+    expect(flipped).toBe(2);
+
+    const after = await db.getAll('prospects');
+    const byId = new Map(after.map((r) => [r.id, r]));
+    expect(byId.get(staleS.id)!.scan_status).toBe('pending');
+    expect(byId.get(staleS.id)!.scan_attempts).toBe(0);
+    expect(byId.get(staleS.id)!.scan_error).toBeNull();
+    expect(byId.get(staleA.id)!.scan_status).toBe('pending');
+    expect(byId.get(freshS.id)!.scan_status).toBe('done'); // not stale
+    expect(byId.get(staleB.id)!.scan_status).toBe('done'); // wrong tier
+    expect(byId.get(staleSPending.id)!.scan_status).toBe('pending'); // already pending
+  });
+
+  it('skips rows with null tier or null last_scanned', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    const [untieredId, neverScannedId] = await seedRows(
+      [
+        {
+          slug: 'untiered',
+          tier: null,
+          scanStatus: 'done',
+          daysSinceScan: 90,
+        },
+        {
+          slug: 'never-scanned',
+          tier: 'S',
+          scanStatus: 'done',
+          daysSinceScan: null,
+        },
+      ],
+      now,
+    );
+    expect(await requeueStaleSATierProspects(30, now)).toBe(0);
+    const db = await openScoutDb();
+    expect((await db.get('prospects', untieredId))!.scan_status).toBe('done');
+    expect((await db.get('prospects', neverScannedId))!.scan_status).toBe('done');
+  });
+
+  it('returns 0 for non-positive or non-finite stale windows', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    await seedRows(
+      [
+        {
+          slug: 'old-s',
+          tier: 'S',
+          scanStatus: 'done',
+          daysSinceScan: 365,
+        },
+      ],
+      now,
+    );
+    expect(await requeueStaleSATierProspects(0, now)).toBe(0);
+    expect(await requeueStaleSATierProspects(-1, now)).toBe(0);
+    expect(await requeueStaleSATierProspects(NaN, now)).toBe(0);
   });
 });
 
