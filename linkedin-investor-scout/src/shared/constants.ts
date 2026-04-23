@@ -58,6 +58,16 @@ export const DEFAULT_PROFILE_VISIT_DWELL_MS = 8000;
 export const DEFAULT_HEALTH_COOLDOWN_HOURS = 24;
 
 /**
+ * Phase 3.3 — when an invite is accepted (level transition → `1st`), schedule
+ * the follow-up message as a draft due this many days out. 3 days is the
+ * sweet spot: long enough that the acceptance notification has been seen and
+ * the connection isn't cold, short enough that the context is still fresh.
+ * Manual send only — the draft is surfaced in the outreach queue; the user
+ * still copies + pastes into the LinkedIn composer per §19.2.
+ */
+export const FOLLOWUP_DRAFT_DELAY_MS = 3 * 24 * 60 * 60 * 1000;
+
+/**
  * MASTER §19.4 — S/A-tier rows whose `last_scanned` is older than this window
  * get flipped back to `pending` at scan-loop entry so the queue surfaces fresh
  * level / metadata signal for the highest-value targets. Lower-tier rows wait

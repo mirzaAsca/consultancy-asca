@@ -236,7 +236,7 @@ _Landed 2026-04-22 in [`src/shared/types.ts`](./src/shared/types.ts) and [`src/s
   - `max_messages_per_day` (default **10** — manual send only, cap is for draft-surfacing)
   - `max_weekly_invites` (default **80**)
   - `shared_bucket` (default `true` — invites count against visits too)
-- [ ] "Safe mode" = these defaults. Dashboard → Settings exposes sliders/inputs for override, with a warning banner if the user sets anything above 2× default. _(defaults live, UI in follow-up)_
+- [x] "Safe mode" = these defaults. Dashboard → Settings exposes sliders/inputs for override, with a warning banner if the user sets anything above 2× default. _(landed 2026-04-23 — `OutreachCapsSection` in [`src/dashboard/routes/Settings.tsx`](./src/dashboard/routes/Settings.tsx) renders a red banner listing every cap over 2× `DEFAULT_OUTREACH_CAPS`; warns that LinkedIn risk scales non-linearly.)_
 - [ ] Rollout gates (simplified — no Mode B/C):
   - `v2.0-alpha`: harvester + inbox only, passive browsing fills `feed_events`.
   - `v2.0-beta`: scoring + tier filtering + health dashboard + kill switch. Still no write automation.
@@ -296,7 +296,7 @@ _Scoring helper landed 2026-04-22 in [`src/shared/scoring.ts`](./src/shared/scor
 - [x] Recompute score on:
   - [x] scan completion, _(wired in `scanSingleProspect` after the `done` write — [`src/background/scan-worker.ts`](./src/background/scan-worker.ts))_
   - [x] feed event ingestion (any new `feed_event` for the prospect), _(`FEED_EVENTS_UPSERT_BULK` handler — [`src/background/index.ts`](./src/background/index.ts))_
-  - [ ] outreach action completion (`invite_sent`, `accepted`, `withdrawn`), _(deferred — outreach writers don't exist yet; wire when Phase 1.3 lands)_
+  - [x] outreach action completion (`invite_sent`, `accepted`, `withdrawn`), _(landed 2026-04-23 — `handleOutreachActionRecord` in [`src/background/index.ts`](./src/background/index.ts) calls `recomputeProspectsByIds([action.prospect_id])` after every record write so the cooldown penalty (−30 inside the 14-day window) refreshes as soon as `last_outreach_at` moves)_
   - [x] keyword/firm list edits (full rescore). _(`SETTINGS_UPDATE` handler diffs `outreach.keywords` / `outreach.firms` / `tier_thresholds` and calls `recomputeAllProspects` on change)_
 - [x] Scan queue ordering: `tier DESC, score DESC, last_scanned ASC NULLS FIRST`. _(Sort order landed 2026-04-23 in `takePendingProspectsBatch` / `compareScanQueueOrder`.)_ S/A-tier rows > 30d stale jump priority on next pass. _(Stale-row re-queue mechanism still TODO — sort preserves ordering once rows are flagged pending by an upstream helper.)_
 - [x] Unit tests cover each input in isolation + a combined fixture with a representative scored prospect row. _([`tests/scoring.test.ts`](./tests/scoring.test.ts))_
@@ -500,7 +500,7 @@ _Landed 2026-04-23. Level transitions + acceptance watcher ship on the scan-comp
 - [x] Surface "newly unlocked 2nd-degree" in queue with highest priority. _(Implemented as a flat +`SCORE_WEIGHTS.recent_unlock_boost` bonus on 2nd-degree rows within `recent_unlock_days` of the transition. Promotes borderline rows into a higher tier for the window.)_
 - [~] Add acceptance watcher:
   - [x] if outreach state is live (`draft` / `approved` / `sent` / `needs_review`) and level becomes `1st`, mark `accepted`. _(Scan-worker bundles the transition into the same DB write as the level bump; `outreach_actions.resolved_at` is stamped and `Prospect.lifecycle_status` flips to `connected`. Organic accepts — no prior invite — still flip lifecycle.)_
-  - [ ] auto-generate follow-up draft (manual send only). _(Deferred — `followup_message_sent` template already exists via Phase 1.4; wiring the draft-insert happens alongside the Phase 5.5 reconciliation UX so the timeline/undo affordances land together.)_
+  - [x] auto-generate follow-up draft (manual send only). _(landed 2026-04-23 — scan-worker acceptance path in [`src/background/scan-worker.ts`](./src/background/scan-worker.ts) fetches the active `followup` template via `getActiveMessageTemplate`, renders against the freshly-updated prospect, inserts an `outreach_actions` row (kind `followup_message_sent`, state `draft`) with idempotency key keyed to the due-day bucket (`now + FOLLOWUP_DRAFT_DELAY_MS`, default 3 days), and stamps `prospect.next_action` + `next_action_due_at`. Collisions on the unique idempotency_key index (rescan of an already-accepted row) are logged and swallowed. Existing in-flight `draft`/`approved` follow-ups are not duplicated. Null template → row is still created without a rendered body so the queue still surfaces the touch. Logged as `followup_draft_created` activity event.)_
 
 Acceptance criteria:
 

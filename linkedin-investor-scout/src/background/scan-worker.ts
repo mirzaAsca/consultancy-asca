@@ -1,5 +1,7 @@
 import {
+  addOutreachAction,
   appendActivityLog,
+  getActiveMessageTemplate,
   getDailyUsageRange,
   getLastHealthBreachAt,
   getProspectById,
@@ -17,7 +19,15 @@ import {
   updateProspect,
   listOutreachActionsForProspect,
 } from '@/shared/db';
-import { STALE_SA_TIER_REQUEUE_DAYS } from '@/shared/constants';
+import {
+  FOLLOWUP_DRAFT_DELAY_MS,
+  STALE_SA_TIER_REQUEUE_DAYS,
+} from '@/shared/constants';
+import { buildIdempotencyKey } from '@/shared/outreach-queue';
+import {
+  buildRenderContextFromProspect,
+  renderTemplate,
+} from '@/shared/templates';
 import { recomputeAndPersistProspect } from '@/shared/prospect-scoring';
 import { detectAcceptanceOnLevelChange } from '@/shared/acceptance-watcher';
 import {
@@ -446,6 +456,8 @@ async function scanSingleProspect(
     // same update and flip the matching outreach_action row to `accepted`.
     let acceptanceLifecycle: Prospect['lifecycle_status'] | null = null;
     let acceptedActionId: number | null = null;
+    let followupDraftId: number | null = null;
+    let followupDueAt: number | null = null;
     if (levelChanged) {
       try {
         const history = await listOutreachActionsForProspect(prospect.id);
@@ -467,6 +479,65 @@ async function scanSingleProspect(
             },
           );
           acceptedActionId = updated.id;
+
+          // Phase 3.3 — auto-generate a follow-up draft so the queue surfaces
+          // the next touch without the user having to remember. Manual send
+          // only per §19.2 (Mode A ceiling); this just pre-renders body and
+          // stamps `next_action` on the prospect. Idempotency key uses the
+          // day-bucket of the due date so re-scans on the same day don't
+          // create a second draft, and same-bucket duplicates are absorbed
+          // by the unique index on `outreach_actions.by_idempotency_key`.
+          try {
+            const existingDraft = history.find(
+              (h) =>
+                h.kind === 'followup_message_sent' &&
+                (h.state === 'draft' || h.state === 'approved'),
+            );
+            if (!existingDraft) {
+              followupDueAt = now + FOLLOWUP_DRAFT_DELAY_MS;
+              const template = await getActiveMessageTemplate('followup');
+              let renderedBody: string | null = null;
+              if (template) {
+                const ctx = buildRenderContextFromProspect({
+                  name: d.name,
+                  slug: prospect.slug,
+                  company: d.company,
+                  headline: d.headline,
+                  mutual_count: prospect.mutual_count,
+                });
+                renderedBody = renderTemplate(template.body, ctx).rendered;
+              }
+              const dueBucket = localDayBucket(followupDueAt);
+              followupDraftId = await addOutreachAction({
+                prospect_id: prospect.id,
+                kind: 'followup_message_sent',
+                state: 'draft',
+                idempotency_key: buildIdempotencyKey(
+                  prospect.id,
+                  'followup_message_sent',
+                  dueBucket,
+                ),
+                template_id: template?.id ?? null,
+                template_version: template?.version ?? null,
+                rendered_body: renderedBody,
+                source_feed_event_id: null,
+                created_at: now,
+                approved_at: null,
+                sent_at: null,
+                resolved_at: null,
+                notes: null,
+              });
+            }
+          } catch (error) {
+            // A collision on the unique idempotency_key index is the expected
+            // path on rescan-of-already-accepted; log and move on.
+            console.warn('[investor-scout] follow-up draft create failed', {
+              prospectId: prospect.id,
+              error: error instanceof Error ? error.message : error,
+            });
+            followupDraftId = null;
+            followupDueAt = null;
+          }
         }
       } catch (error) {
         console.warn('[investor-scout] acceptance watcher failed', {
@@ -490,6 +561,12 @@ async function scanSingleProspect(
       // can query level-change history without a separate event store.
       ...(levelChanged ? { last_level_change_at: now } : {}),
       ...(acceptanceLifecycle ? { lifecycle_status: acceptanceLifecycle } : {}),
+      ...(followupDraftId !== null && followupDueAt !== null
+        ? {
+            next_action: 'followup_message_sent' as const,
+            next_action_due_at: followupDueAt,
+          }
+        : {}),
     });
 
     // Phase 1.2 recompute trigger: scan completion refreshes score/tier.
@@ -543,6 +620,20 @@ async function scanSingleProspect(
           outreach_action_id: acceptedActionId,
           from_level: previousLevel,
           to_level: d.level,
+        },
+      });
+    }
+
+    if (followupDraftId !== null) {
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: 'followup_draft_created',
+        prospect_id: prospect.id,
+        data: {
+          outreach_action_id: followupDraftId,
+          accepted_action_id: acceptedActionId,
+          due_at: followupDueAt,
         },
       });
     }

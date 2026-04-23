@@ -564,6 +564,17 @@ async function handleOutreachActionRecord(
       template_id: action.template_id,
     },
   });
+  // Phase 1.2 recompute trigger: outreach action completion refreshes the
+  // cooldown penalty (`last_outreach_at` just moved) so score/tier stay
+  // current. Failure here must not fail the action write.
+  try {
+    await recomputeProspectsByIds([action.prospect_id]);
+  } catch (error) {
+    console.warn('[investor-scout] recompute after outreach action failed', {
+      prospectId: action.prospect_id,
+      error: error instanceof Error ? error.message : error,
+    });
+  }
   void broadcastProspectsUpdated([action.prospect_id]);
   return action;
 }

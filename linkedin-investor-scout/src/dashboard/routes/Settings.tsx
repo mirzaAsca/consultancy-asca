@@ -7,6 +7,7 @@ import type {
   Settings,
   SettingsPatch,
 } from '@/shared/types';
+import { DEFAULT_OUTREACH_CAPS } from '@/shared/constants';
 
 const CLEAR_PHRASE = 'CLEAR';
 
@@ -434,6 +435,14 @@ function OutreachCapsSection({
 }) {
   const caps = settings.outreach.caps;
   const warmVisit = settings.outreach.warm_visit_before_invite;
+  const overCapFields = (
+    [
+      ['Daily invites', caps.daily_invites, DEFAULT_OUTREACH_CAPS.daily_invites],
+      ['Daily visits', caps.daily_visits, DEFAULT_OUTREACH_CAPS.daily_visits],
+      ['Daily messages', caps.daily_messages, DEFAULT_OUTREACH_CAPS.daily_messages],
+      ['Weekly invites', caps.weekly_invites, DEFAULT_OUTREACH_CAPS.weekly_invites],
+    ] as const
+  ).filter(([, value, def]) => value > def * 2);
   return (
     <section className="mb-5 rounded-md border border-gray-800 bg-bg-card p-4">
       <h2 className="mb-1 text-sm font-semibold text-gray-100">Outreach caps</h2>
@@ -441,6 +450,26 @@ function OutreachCapsSection({
         Daily / weekly budget for Mode A outreach. Invites and visits share one
         risk bucket when shared bucket is on.
       </p>
+      {overCapFields.length > 0 && (
+        <div className="mb-3 flex items-start gap-2 rounded-md border border-red-900/60 bg-red-950/20 p-3">
+          <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />
+          <div className="text-[11px] text-red-200/90">
+            <div className="font-semibold text-red-200">
+              Above safe-mode ceiling (2× default)
+            </div>
+            <div className="mt-0.5 text-red-200/70">
+              {overCapFields
+                .map(
+                  ([label, value, def]) =>
+                    `${label}: ${value} (default ${def}, 2× = ${def * 2})`,
+                )
+                .join(' · ')}
+              . LinkedIn risk scales non-linearly — expect more CAPTCHAs and
+              faster kill-switch trips. Dial back unless you know what you're doing.
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-3 text-xs">
         <NumberField
           label="Daily invites"
