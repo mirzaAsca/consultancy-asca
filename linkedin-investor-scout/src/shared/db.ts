@@ -1123,6 +1123,17 @@ export async function getOutreachActionById(
 }
 
 /**
+ * Phase 4.2 — every outreach_actions row. Used by the analytics snapshot
+ * (30-day activity by kind + 12-week accept rate). Volume is small (hundreds
+ * of rows at steady state) so a full read is cheaper than multiple indexed
+ * scans, and keeps the pure aggregator deterministic.
+ */
+export async function getAllOutreachActions(): Promise<OutreachAction[]> {
+  const db = await openScoutDb();
+  return db.getAll('outreach_actions');
+}
+
+/**
  * Lookup by idempotency key — call this before insert to avoid unique-index
  * aborts on double-send races across service-worker restarts.
  */
@@ -1460,6 +1471,15 @@ export async function upsertFeedEventsBulk(
   }
   await tx.done;
   return { inserted, updated };
+}
+
+/**
+ * Phase 4.2 — every feed_events row. Used by the analytics snapshot for
+ * captured-vs-handled ratio + event-to-action latency + cohort-by-event-kind.
+ */
+export async function getAllFeedEvents(): Promise<FeedEvent[]> {
+  const db = await openScoutDb();
+  return db.getAll('feed_events');
 }
 
 export async function listFeedEventsForProspect(

@@ -15,6 +15,8 @@ import {
   countFeedEventsByTaskStatus,
   countPendingInvites,
   getActivityLogForProspect,
+  getAllFeedEvents,
+  getAllOutreachActions,
   getAllOutreachActionsByProspect,
   getAllProspects,
   getDailyUsage,
@@ -47,6 +49,7 @@ import {
   updateProspectFromPatch,
   upsertFeedEventsBulk,
 } from '@/shared/db';
+import { computeAnalyticsSnapshot } from '@/shared/analytics';
 import { computeHealthSnapshot } from '@/shared/health';
 import {
   buildCandidates,
@@ -978,6 +981,36 @@ registerMessageRouter(async (msg) => {
         thresholds: settings.outreach.kill_switch_thresholds,
         cooldown_hours: settings.outreach.health_cooldown_hours,
         last_breach_at,
+      });
+      return { ok: true, data: snapshot };
+    }
+    case 'ANALYTICS_SNAPSHOT_QUERY': {
+      const now = Date.now();
+      const bucket = localDayBucket(now);
+      const [prospects, outreach_actions, feed_events, daily_usage] =
+        await Promise.all([
+          getAllProspects(),
+          getAllOutreachActions(),
+          getAllFeedEvents(),
+          getDailyUsageRange(bucket, 30),
+        ]);
+      const snapshot = computeAnalyticsSnapshot({
+        now,
+        today_bucket: bucket,
+        prospects: prospects.map((p) => ({
+          id: p.id,
+          level: p.level,
+          firm_score: p.score_breakdown?.firm ?? null,
+        })),
+        outreach_actions,
+        feed_events: feed_events.map((ev) => ({
+          id: ev.id,
+          prospect_id: ev.prospect_id,
+          event_kind: ev.event_kind,
+          first_seen_at: ev.first_seen_at,
+          task_status: ev.task_status,
+        })),
+        daily_usage,
       });
       return { ok: true, data: snapshot };
     }

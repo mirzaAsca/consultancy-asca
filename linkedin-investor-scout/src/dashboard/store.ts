@@ -5,6 +5,7 @@ export type DashboardRoute =
   | 'prospects'
   | 'outreach_queue'
   | 'engagement_tasks'
+  | 'analytics'
   | 'health'
   | 'templates'
   | 'settings'

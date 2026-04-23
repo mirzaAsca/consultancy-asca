@@ -390,6 +390,7 @@ export type Message =
     }
   | { type: 'DAILY_SNAPSHOT_QUERY' }
   | { type: 'HEALTH_SNAPSHOT_QUERY' }
+  | { type: 'ANALYTICS_SNAPSHOT_QUERY' }
   | { type: 'TEMPLATES_LIST'; payload?: { kind?: MessageTemplateKind } }
   | { type: 'TEMPLATE_UPSERT'; payload: TemplateUpsertPayload }
   | { type: 'TEMPLATE_ARCHIVE'; payload: { id: number; archived: boolean } }
@@ -447,6 +448,7 @@ export interface MessageResponseMap {
   FEED_EVENTS_BULK_UPDATE: { updated: number };
   DAILY_SNAPSHOT_QUERY: DailySnapshot;
   HEALTH_SNAPSHOT_QUERY: HealthSnapshot;
+  ANALYTICS_SNAPSHOT_QUERY: AnalyticsSnapshot;
   TEMPLATES_LIST: MessageTemplate[];
   TEMPLATE_UPSERT: MessageTemplate;
   TEMPLATE_ARCHIVE: MessageTemplate;
@@ -856,4 +858,72 @@ export interface HealthCooldown {
   until: number;
   /** Hours the user configured when the cooldown was started. */
   hours: number;
+}
+
+// ———————————————————————————————————————————————————————————
+// v2 — Phase 4.2 weekly deep-dive analytics snapshot
+// ———————————————————————————————————————————————————————————
+
+/** Coarse firm-weight bucket used in cohort slices. */
+export type FirmTierBucket = 'top' | 'mid' | 'boutique' | 'none';
+
+export interface DailyActionsPoint {
+  day_bucket: string;
+  profile_visit: number;
+  connection_request_sent: number;
+  message_sent: number;
+  followup_message_sent: number;
+  feed_events_captured: number;
+}
+
+export interface WeeklyAcceptRatePoint {
+  /** Monday of the week in local time, `YYYY-MM-DD`. */
+  week_start: string;
+  invites_sent: number;
+  accepts: number;
+  /** accepts / invites_sent. Null when invites_sent === 0. */
+  accept_rate: number | null;
+}
+
+export interface EventToActionLatency {
+  sample_size: number;
+  median_ms: number | null;
+  p90_ms: number | null;
+}
+
+export interface InboxRatio {
+  captured: number;
+  /** `queued` + `done` + `ignored`. */
+  handled: number;
+  new_count: number;
+  /** handled / captured. Null when captured === 0. */
+  handled_rate: number | null;
+}
+
+export interface AnalyticsCohortRow<K extends string> {
+  key: K;
+  invites_sent: number;
+  accepts: number;
+  accept_rate: number | null;
+}
+
+export interface AnalyticsTotals30d {
+  invites_sent: number;
+  accepts: number;
+  messages_sent: number;
+  profile_visits: number;
+  feed_events_captured: number;
+}
+
+export interface AnalyticsSnapshot {
+  generated_at: number;
+  today_bucket: string;
+  actions_30d: DailyActionsPoint[];
+  accept_rate_12w: WeeklyAcceptRatePoint[];
+  event_to_action: EventToActionLatency;
+  inbox_ratio: InboxRatio;
+  cohort_by_level: AnalyticsCohortRow<ProspectLevel>[];
+  cohort_by_firm_tier: AnalyticsCohortRow<FirmTierBucket>[];
+  cohort_by_event_kind: AnalyticsCohortRow<FeedEventKind | 'no_event'>[];
+  totals_30d: AnalyticsTotals30d;
 }
