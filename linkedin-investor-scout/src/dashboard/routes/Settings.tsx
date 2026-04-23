@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { AlertTriangle, Check, Loader2 } from 'lucide-react';
+import { AlertTriangle, Check, Loader2, Plus, Trash2 } from 'lucide-react';
 import { sendMessage } from '@/shared/messaging';
-import type { Settings, SettingsPatch } from '@/shared/types';
+import type {
+  OutreachFirm,
+  OutreachKeyword,
+  Settings,
+  SettingsPatch,
+} from '@/shared/types';
 
 const CLEAR_PHRASE = 'CLEAR';
 
@@ -255,6 +260,14 @@ export function SettingsRoute() {
         </div>
       </section>
 
+      <OutreachCapsSection settings={settings} save={save} />
+
+      <TierThresholdsSection settings={settings} save={save} />
+
+      <KeywordsSection settings={settings} save={save} />
+
+      <FirmsSection settings={settings} save={save} />
+
       <section className="rounded-md border border-red-900/60 bg-red-950/20 p-4">
         <div className="mb-2 flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-red-400" />
@@ -402,4 +415,463 @@ function CheckRow({
       <span className="text-gray-200">{label}</span>
     </label>
   );
+}
+
+// —————————————————————————————————————————————————————————————
+// v2 outreach settings sections (Phase 1.2)
+// —————————————————————————————————————————————————————————————
+
+type SaveFn = (patch: SettingsPatch) => Promise<void>;
+
+function OutreachCapsSection({
+  settings,
+  save,
+}: {
+  settings: Settings;
+  save: SaveFn;
+}) {
+  const caps = settings.outreach.caps;
+  const warmVisit = settings.outreach.warm_visit_before_invite;
+  return (
+    <section className="mb-5 rounded-md border border-gray-800 bg-bg-card p-4">
+      <h2 className="mb-1 text-sm font-semibold text-gray-100">Outreach caps</h2>
+      <p className="mb-3 text-[11px] text-gray-500">
+        Daily / weekly budget for Mode A outreach. Invites and visits share one
+        risk bucket when shared bucket is on.
+      </p>
+      <div className="grid grid-cols-2 gap-3 text-xs">
+        <NumberField
+          label="Daily invites"
+          value={caps.daily_invites}
+          min={0}
+          max={100}
+          onChange={(v) => void save({ outreach: { caps: { daily_invites: v } } })}
+          help="Conservative default 15."
+        />
+        <NumberField
+          label="Daily visits"
+          value={caps.daily_visits}
+          min={0}
+          max={500}
+          onChange={(v) => void save({ outreach: { caps: { daily_visits: v } } })}
+          help="Includes pre-invite warming visits."
+        />
+        <NumberField
+          label="Daily messages"
+          value={caps.daily_messages}
+          min={0}
+          max={100}
+          onChange={(v) => void save({ outreach: { caps: { daily_messages: v } } })}
+          help="Manual-send only; cap is for draft surfacing."
+        />
+        <NumberField
+          label="Weekly invites"
+          value={caps.weekly_invites}
+          min={0}
+          max={500}
+          onChange={(v) => void save({ outreach: { caps: { weekly_invites: v } } })}
+          help="Ceiling, not target. Default 80."
+        />
+      </div>
+      <div className="mt-3 flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <label className="w-36 text-xs text-gray-400">Shared bucket</label>
+          <Toggle
+            on={caps.shared_bucket}
+            onChange={(v) =>
+              void save({ outreach: { caps: { shared_bucket: v } } })
+            }
+          />
+          <span className="text-[11px] text-gray-500">
+            Invites count against the visit budget too.
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <label className="w-36 text-xs text-gray-400">Warm visit before invite</label>
+          <Toggle
+            on={warmVisit}
+            onChange={(v) =>
+              void save({ outreach: { warm_visit_before_invite: v } })
+            }
+          />
+          <span className="text-[11px] text-gray-500">
+            Auto-queue a profile visit 24–72h before a connect request.
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TierThresholdsSection({
+  settings,
+  save,
+}: {
+  settings: Settings;
+  save: SaveFn;
+}) {
+  const t = settings.outreach.tier_thresholds;
+  return (
+    <section className="mb-5 rounded-md border border-gray-800 bg-bg-card p-4">
+      <h2 className="mb-1 text-sm font-semibold text-gray-100">Tier thresholds</h2>
+      <p className="mb-3 text-[11px] text-gray-500">
+        Inclusive lower bound on the scoring total. Editing any threshold triggers
+        a full rescore of every prospect.
+      </p>
+      <div className="grid grid-cols-4 gap-3 text-xs">
+        <NumberField
+          label="S ≥"
+          value={t.S}
+          min={0}
+          max={500}
+          onChange={(v) =>
+            void save({ outreach: { tier_thresholds: { S: v } } })
+          }
+        />
+        <NumberField
+          label="A ≥"
+          value={t.A}
+          min={0}
+          max={500}
+          onChange={(v) =>
+            void save({ outreach: { tier_thresholds: { A: v } } })
+          }
+        />
+        <NumberField
+          label="B ≥"
+          value={t.B}
+          min={0}
+          max={500}
+          onChange={(v) =>
+            void save({ outreach: { tier_thresholds: { B: v } } })
+          }
+        />
+        <NumberField
+          label="C ≥"
+          value={t.C}
+          min={0}
+          max={500}
+          onChange={(v) =>
+            void save({ outreach: { tier_thresholds: { C: v } } })
+          }
+        />
+      </div>
+    </section>
+  );
+}
+
+function KeywordsSection({
+  settings,
+  save,
+}: {
+  settings: Settings;
+  save: SaveFn;
+}) {
+  const keywords = settings.outreach.keywords;
+  const [term, setTerm] = useState('');
+  const [weight, setWeight] = useState(40);
+  const [kind, setKind] = useState<OutreachKeyword['kind']>('strong');
+
+  const add = () => {
+    const clean = term.trim();
+    if (!clean) return;
+    const next: OutreachKeyword[] = [
+      ...keywords,
+      { term: clean, weight: clamp(weight, 0, 40), kind },
+    ];
+    void save({ outreach: { keywords: next } });
+    setTerm('');
+  };
+
+  const updateAt = (index: number, patch: Partial<OutreachKeyword>) => {
+    const next = keywords.map((k, i) => (i === index ? { ...k, ...patch } : k));
+    void save({ outreach: { keywords: next } });
+  };
+
+  const removeAt = (index: number) => {
+    const next = keywords.filter((_, i) => i !== index);
+    void save({ outreach: { keywords: next } });
+  };
+
+  return (
+    <section className="mb-5 rounded-md border border-gray-800 bg-bg-card p-4">
+      <h2 className="mb-1 text-sm font-semibold text-gray-100">
+        Headline keywords
+      </h2>
+      <p className="mb-3 text-[11px] text-gray-500">
+        Case-insensitive substring match against each prospect's headline.
+        Strong matches typically score +40, soft matches +15. Editing the list
+        triggers a full rescore.
+      </p>
+      <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border border-gray-800 bg-bg px-2 py-2">
+        <input
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') add();
+          }}
+          placeholder="e.g. Partner"
+          className="min-w-[10rem] flex-1 rounded-md border border-gray-800 bg-bg px-2 py-1 text-xs text-gray-100 focus:border-blue-500"
+        />
+        <select
+          value={kind}
+          onChange={(e) => {
+            const k = e.target.value as OutreachKeyword['kind'];
+            setKind(k);
+            setWeight(k === 'strong' ? 40 : 15);
+          }}
+          className="rounded-md border border-gray-800 bg-bg px-2 py-1 text-xs text-gray-100 focus:border-blue-500"
+        >
+          <option value="strong">strong</option>
+          <option value="soft">soft</option>
+        </select>
+        <input
+          type="number"
+          min={0}
+          max={40}
+          value={weight}
+          onChange={(e) => setWeight(Number(e.target.value) || 0)}
+          className="w-16 rounded-md border border-gray-800 bg-bg px-2 py-1 text-xs text-gray-100 focus:border-blue-500"
+          aria-label="Weight"
+        />
+        <button
+          type="button"
+          onClick={add}
+          disabled={!term.trim()}
+          className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Plus className="h-3 w-3" /> Add
+        </button>
+      </div>
+
+      {keywords.length === 0 ? (
+        <p className="py-2 text-[11px] italic text-gray-500">
+          No keywords yet. Add a few — partner, investor, principal, angel — so
+          scoring can differentiate past connection level.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          {keywords.map((kw, i) => (
+            <div
+              key={`${kw.term}-${i}`}
+              className="flex items-center gap-2 rounded-md border border-gray-800 bg-bg px-2 py-1.5 text-xs"
+            >
+              <input
+                value={kw.term}
+                onChange={(e) => updateAt(i, { term: e.target.value })}
+                className="min-w-[8rem] flex-1 rounded-md border border-gray-800 bg-bg-card px-2 py-1 text-gray-100 focus:border-blue-500"
+              />
+              <select
+                value={kw.kind}
+                onChange={(e) =>
+                  updateAt(i, { kind: e.target.value as OutreachKeyword['kind'] })
+                }
+                className="rounded-md border border-gray-800 bg-bg-card px-1.5 py-1 text-gray-100 focus:border-blue-500"
+              >
+                <option value="strong">strong</option>
+                <option value="soft">soft</option>
+              </select>
+              <input
+                type="number"
+                min={0}
+                max={40}
+                value={kw.weight}
+                onChange={(e) =>
+                  updateAt(i, { weight: clamp(Number(e.target.value) || 0, 0, 40) })
+                }
+                className="w-14 rounded-md border border-gray-800 bg-bg-card px-1.5 py-1 text-gray-100 focus:border-blue-500"
+                aria-label="Weight"
+              />
+              <button
+                type="button"
+                onClick={() => removeAt(i)}
+                className="rounded p-1 text-gray-500 hover:bg-red-900/40 hover:text-red-300"
+                aria-label={`Remove ${kw.term}`}
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function FirmsSection({
+  settings,
+  save,
+}: {
+  settings: Settings;
+  save: SaveFn;
+}) {
+  const firms = settings.outreach.firms;
+  const [name, setName] = useState('');
+  const [weight, setWeight] = useState(40);
+  const [tier, setTier] = useState<OutreachFirm['tier']>('top');
+
+  const defaultWeightFor = (t: OutreachFirm['tier']) =>
+    t === 'top' ? 40 : t === 'mid' ? 25 : 15;
+
+  const add = () => {
+    const clean = name.trim();
+    if (!clean) return;
+    const next: OutreachFirm[] = [
+      ...firms,
+      { name: clean, weight: clamp(weight, 0, 40), tier },
+    ];
+    void save({ outreach: { firms: next } });
+    setName('');
+  };
+
+  const updateAt = (index: number, patch: Partial<OutreachFirm>) => {
+    const next = firms.map((f, i) => (i === index ? { ...f, ...patch } : f));
+    void save({ outreach: { firms: next } });
+  };
+
+  const removeAt = (index: number) => {
+    const next = firms.filter((_, i) => i !== index);
+    void save({ outreach: { firms: next } });
+  };
+
+  return (
+    <section className="mb-5 rounded-md border border-gray-800 bg-bg-card p-4">
+      <h2 className="mb-1 text-sm font-semibold text-gray-100">Firm whitelist</h2>
+      <p className="mb-3 text-[11px] text-gray-500">
+        Case-insensitive substring match against each prospect's company. Tier
+        is a categorical label; weight is the scoring contribution (0–40).
+      </p>
+      <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border border-gray-800 bg-bg px-2 py-2">
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') add();
+          }}
+          placeholder="e.g. Sequoia"
+          className="min-w-[10rem] flex-1 rounded-md border border-gray-800 bg-bg px-2 py-1 text-xs text-gray-100 focus:border-blue-500"
+        />
+        <select
+          value={tier}
+          onChange={(e) => {
+            const t = e.target.value as OutreachFirm['tier'];
+            setTier(t);
+            setWeight(defaultWeightFor(t));
+          }}
+          className="rounded-md border border-gray-800 bg-bg px-2 py-1 text-xs text-gray-100 focus:border-blue-500"
+        >
+          <option value="top">top</option>
+          <option value="mid">mid</option>
+          <option value="boutique">boutique</option>
+        </select>
+        <input
+          type="number"
+          min={0}
+          max={40}
+          value={weight}
+          onChange={(e) => setWeight(Number(e.target.value) || 0)}
+          className="w-16 rounded-md border border-gray-800 bg-bg px-2 py-1 text-xs text-gray-100 focus:border-blue-500"
+          aria-label="Weight"
+        />
+        <button
+          type="button"
+          onClick={add}
+          disabled={!name.trim()}
+          className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Plus className="h-3 w-3" /> Add
+        </button>
+      </div>
+
+      {firms.length === 0 ? (
+        <p className="py-2 text-[11px] italic text-gray-500">
+          No firms yet. Add top-tier VCs you want to prioritize.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          {firms.map((f, i) => (
+            <div
+              key={`${f.name}-${i}`}
+              className="flex items-center gap-2 rounded-md border border-gray-800 bg-bg px-2 py-1.5 text-xs"
+            >
+              <input
+                value={f.name}
+                onChange={(e) => updateAt(i, { name: e.target.value })}
+                className="min-w-[8rem] flex-1 rounded-md border border-gray-800 bg-bg-card px-2 py-1 text-gray-100 focus:border-blue-500"
+              />
+              <select
+                value={f.tier}
+                onChange={(e) =>
+                  updateAt(i, { tier: e.target.value as OutreachFirm['tier'] })
+                }
+                className="rounded-md border border-gray-800 bg-bg-card px-1.5 py-1 text-gray-100 focus:border-blue-500"
+              >
+                <option value="top">top</option>
+                <option value="mid">mid</option>
+                <option value="boutique">boutique</option>
+              </select>
+              <input
+                type="number"
+                min={0}
+                max={40}
+                value={f.weight}
+                onChange={(e) =>
+                  updateAt(i, { weight: clamp(Number(e.target.value) || 0, 0, 40) })
+                }
+                className="w-14 rounded-md border border-gray-800 bg-bg-card px-1.5 py-1 text-gray-100 focus:border-blue-500"
+                aria-label="Weight"
+              />
+              <button
+                type="button"
+                onClick={() => removeAt(i)}
+                className="rounded p-1 text-gray-500 hover:bg-red-900/40 hover:text-red-300"
+                aria-label={`Remove ${f.name}`}
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function NumberField({
+  label,
+  value,
+  min,
+  max,
+  onChange,
+  help,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (v: number) => void;
+  help?: string;
+}) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-gray-400">{label}</span>
+      <input
+        type="number"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => {
+          const raw = Number(e.target.value);
+          if (!Number.isFinite(raw)) return;
+          onChange(clamp(Math.round(raw), min, max));
+        }}
+        className="w-full rounded-md border border-gray-800 bg-bg px-2 py-1 text-gray-100 focus:border-blue-500"
+      />
+      {help && <span className="text-[10px] text-gray-500">{help}</span>}
+    </label>
+  );
+}
+
+function clamp(v: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, v));
 }

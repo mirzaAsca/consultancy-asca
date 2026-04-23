@@ -379,6 +379,9 @@ export type Message =
       payload: { ids: number[]; task_status: FeedTaskStatus };
     }
   | { type: 'DAILY_SNAPSHOT_QUERY' }
+  | { type: 'TEMPLATES_LIST'; payload?: { kind?: MessageTemplateKind } }
+  | { type: 'TEMPLATE_UPSERT'; payload: TemplateUpsertPayload }
+  | { type: 'TEMPLATE_ARCHIVE'; payload: { id: number; archived: boolean } }
   // background → content (highlight) direct tab message
   | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
   // background → all listeners (broadcast)
@@ -418,6 +421,9 @@ export interface MessageResponseMap {
   FEED_EVENT_UPDATE: FeedEvent;
   FEED_EVENTS_BULK_UPDATE: { updated: number };
   DAILY_SNAPSHOT_QUERY: DailySnapshot;
+  TEMPLATES_LIST: MessageTemplate[];
+  TEMPLATE_UPSERT: MessageTemplate;
+  TEMPLATE_ARCHIVE: MessageTemplate;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   PROSPECTS_UPDATED: void;
   SCAN_STATE_CHANGED: void;
@@ -576,6 +582,21 @@ export interface MessageTemplate {
 }
 
 export type MessageTemplateInsert = Omit<MessageTemplate, 'id'>;
+
+/**
+ * Payload for the `TEMPLATE_UPSERT` message.
+ *
+ * - Omit `id` → create a new template row (background assigns id + version).
+ * - Include `id` → patch the named fields on that row (name/body/archived);
+ *   `kind` and `version` are immutable once written.
+ */
+export interface TemplateUpsertPayload {
+  id?: number;
+  kind: MessageTemplateKind;
+  name?: string;
+  body: string;
+  archived?: boolean;
+}
 
 // ———————————————————————————————————————————————————————————
 // v2 — daily_usage store (budget counters, keyed by local day bucket)

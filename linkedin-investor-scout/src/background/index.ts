@@ -3,6 +3,7 @@ import {
   prospectsToCsv,
 } from '@/shared/csv';
 import {
+  addMessageTemplate,
   appendActivityLog,
   bulkDeleteProspects,
   bulkRescanProspects,
@@ -19,6 +20,7 @@ import {
   getSettings,
   getSlugMap,
   incrementDailyUsage,
+  listMessageTemplates,
   openScoutDb,
   putSettings,
   queryActivityLog,
@@ -26,6 +28,7 @@ import {
   queryProspects,
   replaceAllProspects,
   updateFeedEventTaskStatus,
+  updateMessageTemplate,
   updateProspectFromPatch,
   upsertFeedEventsBulk,
 } from '@/shared/db';
@@ -40,8 +43,10 @@ import type {
   Message,
   MessageResponse,
   MessageResponseMap,
+  MessageTemplate,
   ProspectQuery,
   Settings,
+  TemplateUpsertPayload,
 } from '@/shared/types';
 import { pauseScan, resumeScan, runScanLoop, startScan } from './scan-worker';
 import { registerLifecycleHooks, registerScanAlarms } from './startup';
@@ -320,6 +325,69 @@ function outreachScoringChanged(prev: Settings, next: Settings): boolean {
   );
 }
 
+/**
+ * Upsert a message template. With `id` — updates `name`/`body`/`archived` on
+ * the existing row. Without — adds a new row and auto-assigns the next
+ * version number for the given `kind`.
+ */
+async function handleTemplateUpsert(
+  payload: TemplateUpsertPayload,
+): Promise<MessageTemplate> {
+  const now = Date.now();
+  if (typeof payload.id === 'number') {
+    const patch: Partial<Omit<MessageTemplate, 'id' | 'kind'>> = {
+      body: payload.body,
+    };
+    if (typeof payload.name === 'string') patch.name = payload.name;
+    if (typeof payload.archived === 'boolean') patch.archived = payload.archived;
+    const next = await updateMessageTemplate(payload.id, patch);
+    await appendActivityLog({
+      ts: now,
+      level: 'info',
+      event: 'template_updated',
+      prospect_id: null,
+      data: { id: next.id, kind: next.kind, version: next.version },
+    });
+    return next;
+  }
+  const existing = await listMessageTemplates(payload.kind);
+  const maxVersion = existing.reduce(
+    (acc, t) => (t.version > acc ? t.version : acc),
+    0,
+  );
+  const version = maxVersion + 1;
+  const insertName =
+    typeof payload.name === 'string' && payload.name.trim()
+      ? payload.name.trim()
+      : `${payload.kind} v${version}`;
+  const id = await addMessageTemplate({
+    kind: payload.kind,
+    version,
+    name: insertName,
+    body: payload.body,
+    archived: payload.archived ?? false,
+    created_at: now,
+    updated_at: now,
+  });
+  await appendActivityLog({
+    ts: now,
+    level: 'info',
+    event: 'template_created',
+    prospect_id: null,
+    data: { id, kind: payload.kind, version },
+  });
+  return {
+    id,
+    kind: payload.kind,
+    version,
+    name: insertName,
+    body: payload.body,
+    archived: payload.archived ?? false,
+    created_at: now,
+    updated_at: now,
+  };
+}
+
 async function exportProspectsCsv(
   filter: ProspectQuery | null,
 ): Promise<{ csv: string; row_count: number }> {
@@ -569,6 +637,27 @@ registerMessageRouter(async (msg) => {
       });
       scheduleBadgeRefresh();
       return { ok: true, data: { updated } };
+    }
+    case 'TEMPLATES_LIST': {
+      const rows = await listMessageTemplates(msg.payload?.kind);
+      return { ok: true, data: rows };
+    }
+    case 'TEMPLATE_UPSERT': {
+      const row = await handleTemplateUpsert(msg.payload);
+      return { ok: true, data: row };
+    }
+    case 'TEMPLATE_ARCHIVE': {
+      const row = await updateMessageTemplate(msg.payload.id, {
+        archived: msg.payload.archived,
+      });
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: msg.payload.archived ? 'template_archived' : 'template_unarchived',
+        prospect_id: null,
+        data: { id: row.id, kind: row.kind, version: row.version },
+      });
+      return { ok: true, data: row };
     }
     default:
       return { ok: false, error: `Unhandled message: ${(msg as Message).type}` };

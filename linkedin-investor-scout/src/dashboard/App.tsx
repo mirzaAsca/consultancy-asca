@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   ClipboardList,
   Inbox,
+  MessageSquareText,
   Radar,
   Settings as SettingsIcon,
 } from 'lucide-react';
@@ -11,6 +12,7 @@ import { useDashboardStore, type DashboardRoute } from './store';
 import { ProspectsRoute } from './routes/Prospects';
 import { EngagementTasksRoute } from './routes/EngagementTasks';
 import { SettingsRoute } from './routes/Settings';
+import { TemplatesRoute } from './routes/Templates';
 import { LogsRoute } from './routes/Logs';
 
 const ROUTES: Array<{
@@ -20,6 +22,7 @@ const ROUTES: Array<{
 }> = [
   { id: 'prospects', label: 'Prospects', Icon: Radar },
   { id: 'engagement_tasks', label: 'Engagement tasks', Icon: Inbox },
+  { id: 'templates', label: 'Templates', Icon: MessageSquareText },
   { id: 'settings', label: 'Settings', Icon: SettingsIcon },
   { id: 'logs', label: 'Logs', Icon: ClipboardList },
 ];
@@ -27,6 +30,7 @@ const ROUTES: Array<{
 const VALID_ROUTES: DashboardRoute[] = [
   'prospects',
   'engagement_tasks',
+  'templates',
   'settings',
   'logs',
 ];
@@ -171,6 +175,7 @@ export default function App() {
       <main className="min-h-screen md:ml-56">
         {route === 'prospects' && <ProspectsRoute />}
         {route === 'engagement_tasks' && <EngagementTasksRoute />}
+        {route === 'templates' && <TemplatesRoute />}
         {route === 'settings' && <SettingsRoute />}
         {route === 'logs' && <LogsRoute />}
       </main>

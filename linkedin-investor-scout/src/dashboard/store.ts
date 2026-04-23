@@ -4,6 +4,7 @@ import type { ProspectLevel, ProspectQuery, ScanStatus } from '@/shared/types';
 export type DashboardRoute =
   | 'prospects'
   | 'engagement_tasks'
+  | 'templates'
   | 'settings'
   | 'logs';
 

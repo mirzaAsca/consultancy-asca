@@ -52,6 +52,14 @@ export const DEFAULT_PROFILE_VISIT_DWELL_MS = 8000;
 export const DEFAULT_HEALTH_COOLDOWN_HOURS = 24;
 
 /**
+ * Max rendered length of a Mode A connect-note before LinkedIn rejects it.
+ * 300 = Premium tier ceiling observed on the live Connect modal fixture
+ * (`example3.html`). Free tier is 200 — validate at runtime since LinkedIn
+ * can change either.
+ */
+export const CONNECT_NOTE_CHAR_CAP = 300;
+
+/**
  * Deep-frozen canonical defaults. Treat as read-only; use
  * {@link createDefaultSettings} when you need a mutable copy to persist.
  */

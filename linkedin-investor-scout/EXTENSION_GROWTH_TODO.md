@@ -2,7 +2,7 @@
 
 Last updated: 2026-04-23
 Owner: Mirza + Codex
-Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. **Phase 1.2 scoring-recompute triggers + §19.4 queue ordering + Phase 4.1 popup daily quick-glance landed 2026-04-23** — `src/shared/prospect-scoring.ts` orchestrates the DB-aware scoring pass and is wired into scan-complete, `FEED_EVENTS_UPSERT_BULK`, and `SETTINGS_UPDATE` (keyword / firm / tier-threshold edits trigger a full rescore). `takePendingProspectsBatch` now sorts `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` with v1-parity fallback for null tier/score rows. Popup renders a `Today` row (invites / visits / messages / inbox unread) with a 20%-remaining budget chip, backed by a new `DAILY_SNAPSHOT_QUERY` message. Sprint 2 remaining: Outreach Queue UX (1.3) + template CRUD UI (1.4) + keyword/firm Settings UI.
+Status: **Canonical v2 plan.** `TODO-v2.md` is superseded — see that file's header for the pointer. **Sprint 1 foundations landed 2026-04-22** (Phase 0 + 1.1 + 2.1 + scoring helper + backup utility + MASTER v1.1 §19). **Phase 2.2 content-script extractor landed 2026-04-23** — `extractUrnsFromHydration` helper, `FEED_EVENT_SELECTORS` tuples, debounced bulk `FEED_EVENTS_UPSERT_BULK` (500ms / max-50), piggybacked on the existing highlight scan pass. **Phase 1.2 scoring-recompute triggers + §19.4 queue ordering + Phase 4.1 popup daily quick-glance landed 2026-04-23** — `src/shared/prospect-scoring.ts` orchestrates the DB-aware scoring pass and is wired into scan-complete, `FEED_EVENTS_UPSERT_BULK`, and `SETTINGS_UPDATE` (keyword / firm / tier-threshold edits trigger a full rescore). `takePendingProspectsBatch` now sorts `tier DESC, priority_score DESC, last_scanned ASC NULLS FIRST` with v1-parity fallback for null tier/score rows. Popup renders a `Today` row (invites / visits / messages / inbox unread) with a 20%-remaining budget chip, backed by a new `DAILY_SNAPSHOT_QUERY` message. **Phase 1.4 template CRUD + keyword/firm/tier/caps Settings UI landed 2026-04-23** — new `src/dashboard/routes/Templates.tsx` tab with connect-note / first-message / follow-up editors, `{{placeholder}}` renderer (`src/shared/templates.ts`), 300-char Connect-note cap warning, archive/restore of prior versions, `TEMPLATES_LIST` / `TEMPLATE_UPSERT` / `TEMPLATE_ARCHIVE` message handlers. Settings page now exposes Outreach caps (daily/weekly invites/visits/messages, shared-bucket toggle, warm-visit toggle), Tier thresholds, and full CRUD for keyword + firm seed lists (triggers the existing `SETTINGS_UPDATE` rescore path). Sprint 2 remaining: Outreach Queue UX (1.3 Mode A prefill flow) + A/B template reporting (deferred to v2.1).
 
 ## Interview resolutions (2026-04-22)
 
@@ -292,7 +292,7 @@ _Scoring helper landed 2026-04-22 in [`src/shared/scoring.ts`](./src/shared/scor
   | Cooldown | −30 | Applied if `last_outreach_at` within 14 days. |
 
 - [x] Tier thresholds (Settings-configurable, defaults: **S ≥ 140, A ≥ 100, B ≥ 60, C ≥ 30, skip < 30**). _(DEFAULT_TIER_THRESHOLDS + `settings.outreach.tier_thresholds`)_
-- [ ] Keyword + firm seed lists are user-maintained via Settings UI. Provide CRUD for both lists with per-item weight fields; persist in the `settings` store. _(storage shape + putSettings merge landed; UI follows)_
+- [x] Keyword + firm seed lists are user-maintained via Settings UI. Provide CRUD for both lists with per-item weight fields; persist in the `settings` store. _(landed 2026-04-23 — `KeywordsSection` + `FirmsSection` in [`src/dashboard/routes/Settings.tsx`](./src/dashboard/routes/Settings.tsx); per-row edit + add/remove, full-replace semantics via `SETTINGS_UPDATE`.)_
 - [x] Recompute score on:
   - [x] scan completion, _(wired in `scanSingleProspect` after the `done` write — [`src/background/scan-worker.ts`](./src/background/scan-worker.ts))_
   - [x] feed event ingestion (any new `feed_event` for the prospect), _(`FEED_EVENTS_UPSERT_BULK` handler — [`src/background/index.ts`](./src/background/index.ts))_
@@ -331,24 +331,26 @@ _Scoring helper landed 2026-04-22 in [`src/shared/scoring.ts`](./src/shared/scor
 
 ### 1.4 Template system (single template per type — no A/B in v2.0)
 
-- [ ] Add basic template CRUD (exactly one active template per type in v2.0):
-  - connection note template (rendered into Connect modal textarea, Mode A).
-  - first message template (manual send — clipboard copy only).
-  - follow-up template (manual send — clipboard copy only).
-- [ ] Message/follow-up templates are **clipboard-copy only**. The extension never submits the LinkedIn message composer. (Mode A is invite-only.)
-- [ ] Support placeholders:
-  - `{{first_name}}`
-  - `{{company}}`
-  - `{{mutual_context}}`
-  - `{{headline}}`
-  - `{{mutual_count}}`
-  - `{{recent_post_snippet}}` — pulled from the latest `feed_event` for this prospect; empty string if none.
-- [ ] Render preview before copy/prefill.
-- [ ] Log template id/version on each completed action (future-proofs v2.1 A/B without paying the cost now).
-- [ ] Enforce invite-note rendered length cap before prefill (Premium: 300 chars; validate at runtime since LinkedIn can change it).
+_Landed 2026-04-23. See [`src/dashboard/routes/Templates.tsx`](./src/dashboard/routes/Templates.tsx), [`src/shared/templates.ts`](./src/shared/templates.ts), and the `TEMPLATES_LIST` / `TEMPLATE_UPSERT` / `TEMPLATE_ARCHIVE` handlers in [`src/background/index.ts`](./src/background/index.ts). Outreach-action surfacing (prefill / clipboard copy) lands with Phase 1.3 — the template store + renderer are the prerequisite._
+
+- [x] Add basic template CRUD (exactly one active template per type in v2.0):
+  - [x] connection note template (rendered into Connect modal textarea, Mode A).
+  - [x] first message template (manual send — clipboard copy only).
+  - [x] follow-up template (manual send — clipboard copy only).
+- [x] Message/follow-up templates are **clipboard-copy only**. The extension never submits the LinkedIn message composer. (Mode A is invite-only.) _(enforced by the UI kind-switch — only the connect_note preview carries the Mode A cap check; messaging templates remain copy-only until the outreach queue wires them up.)_
+- [x] Support placeholders:
+  - [x] `{{first_name}}`
+  - [x] `{{company}}`
+  - [x] `{{mutual_context}}`
+  - [x] `{{headline}}`
+  - [x] `{{mutual_count}}`
+  - [x] `{{recent_post_snippet}}` — pulled from the latest `feed_event` for this prospect; empty string if none. _(renderer supports it via `TemplateRenderContext.recent_post_snippet`; the live lookup lands with Phase 1.3 outreach queue wiring.)_
+- [x] Render preview before copy/prefill. _(Templates route shows a live preview against a sample `TemplateRenderContext`; missing/unknown-placeholder warnings rendered inline.)_
+- [ ] Log template id/version on each completed action (future-proofs v2.1 A/B without paying the cost now). _(deferred — outreach_actions writers don't exist yet; wire when Phase 1.3 lands. `OutreachAction.template_id` + `template_version` columns already exist.)_
+- [x] Enforce invite-note rendered length cap before prefill (Premium: 300 chars; validate at runtime since LinkedIn can change it). _(cap constant `CONNECT_NOTE_CHAR_CAP` in `src/shared/constants.ts`; red warning in preview when exceeded, yellow when > 90 %.)_
 - [ ] Template quality lint:
-  - warn when rendered preview is empty or >20% of scored-in-range targets render missing/empty variables.
-- [ ] **A/B infrastructure deferred to v2.1** — design template table with `version` + `archived` fields so multi-variant can land later without migration.
+  - warn when rendered preview is empty or >20% of scored-in-range targets render missing/empty variables. _(partial — the editor preview warns on missing/unknown placeholders against sample context; the >20 %-of-targets corpus lint runs against live prospects and lands with Phase 1.3.)_
+- [x] **A/B infrastructure deferred to v2.1** — design template table with `version` + `archived` fields so multi-variant can land later without migration. _(already designed; the v2.0 UI creates v1 on first save and bumps the version on every new-draft save after an archive.)_
 
 Acceptance criteria:
 
@@ -689,8 +691,8 @@ Front-loads the harvester so scoring has real feed-recency signal by the time ou
 - [x] Phase 1.2 scoring-recompute triggers + §19.4 queue ordering _(landed 2026-04-23 — `src/shared/prospect-scoring.ts`, scan-complete + feed-event + settings-edit hooks)_
 - [x] Phase 4.1 popup daily quick-glance row _(landed 2026-04-23 — `DailyGlanceSection` + `DAILY_SNAPSHOT_QUERY`)_
 - [ ] Phase 1.3 (Outreach Queue UX + Mode A prefill flow + pre-invite visit warming)
-- [ ] Phase 1.4 (single-template-per-type CRUD with placeholders + length cap)
-- [ ] Keyword / firm seed-list Settings UI (prerequisite for scoring to differentiate tiers beyond `level`)
+- [x] Phase 1.4 (single-template-per-type CRUD with placeholders + length cap) _(landed 2026-04-23 — `src/dashboard/routes/Templates.tsx`, `src/shared/templates.ts`, background CRUD handlers)_
+- [x] Keyword / firm seed-list Settings UI (prerequisite for scoring to differentiate tiers beyond `level`) _(landed 2026-04-23 — `KeywordsSection` + `FirmsSection` + `OutreachCapsSection` + `TierThresholdsSection` in Settings page)_
 
 **Sprint 3 — Crawler + unlock discovery:**
 
