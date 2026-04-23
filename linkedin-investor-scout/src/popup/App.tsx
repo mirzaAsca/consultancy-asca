@@ -19,6 +19,7 @@ import {
   Play,
   Radar,
   RefreshCw,
+  Rss,
   Upload,
 } from 'lucide-react';
 import {
@@ -30,6 +31,7 @@ import type {
   ActivityKind,
   AutoPauseReason,
   DailySnapshot,
+  FeedCrawlStatus,
   OutreachCaps,
   OutreachQueueCandidate,
   ProspectLevel,
@@ -198,6 +200,10 @@ export default function App() {
   const [feedTestBusy, setFeedTestBusy] = useState(false);
   const [feedTestCleanupBusy, setFeedTestCleanupBusy] = useState(false);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
+  const [feedCrawlStatus, setFeedCrawlStatus] = useState<FeedCrawlStatus | null>(
+    null,
+  );
+  const [feedCrawlBusy, setFeedCrawlBusy] = useState(false);
 
   const refreshStats = useCallback(async () => {
     setStatsLoading(true);
@@ -237,6 +243,11 @@ export default function App() {
     if (res.ok) setNextBest(res.data.next_best);
   }, []);
 
+  const refreshFeedCrawlStatus = useCallback(async () => {
+    const res = await sendMessage({ type: 'FEED_CRAWL_SESSION_STATUS' });
+    if (res.ok) setFeedCrawlStatus(res.data);
+  }, []);
+
   const refreshLastUpload = useCallback(async () => {
     const res = await sendMessage({
       type: 'LOGS_QUERY',
@@ -254,6 +265,7 @@ export default function App() {
     void refreshLastUpload();
     void refreshDailySnapshot();
     void refreshNextBest();
+    void refreshFeedCrawlStatus();
     const listener = (msg: { type?: string; payload?: unknown }) => {
       if (msg?.type === 'PROSPECTS_UPDATED') {
         void refreshStats();
@@ -274,11 +286,16 @@ export default function App() {
         void refreshDailySnapshot();
         void refreshNextBest();
       }
+      if (msg?.type === 'FEED_CRAWL_SESSION_CHANGED' && msg.payload) {
+        setFeedCrawlStatus(msg.payload as FeedCrawlStatus);
+        void refreshDailySnapshot();
+      }
     };
     chrome.runtime.onMessage.addListener(listener);
     return () => chrome.runtime.onMessage.removeListener(listener);
   }, [
     refreshDailySnapshot,
+    refreshFeedCrawlStatus,
     refreshLastUpload,
     refreshNextBest,
     refreshSettings,
@@ -449,6 +466,37 @@ export default function App() {
       setFeedTestBusy(false);
     }
   }, [feedTestBusy, refreshStats]);
+
+  const handleFeedCrawlStart = useCallback(async () => {
+    if (feedCrawlBusy || feedCrawlStatus?.running) return;
+    setFeedCrawlBusy(true);
+    try {
+      const res = await sendMessage({ type: 'FEED_CRAWL_SESSION_START' });
+      if (!res.ok) {
+        setToast({ kind: 'error', text: res.error });
+        return;
+      }
+      setFeedCrawlStatus(res.data);
+      setToast({
+        kind: 'success',
+        text: 'Feed Crawl Session started. Let LinkedIn render in the active tab.',
+      });
+    } finally {
+      setFeedCrawlBusy(false);
+    }
+  }, [feedCrawlBusy, feedCrawlStatus?.running]);
+
+  const handleFeedCrawlStop = useCallback(async () => {
+    if (feedCrawlBusy) return;
+    setFeedCrawlBusy(true);
+    try {
+      const res = await sendMessage({ type: 'FEED_CRAWL_SESSION_STOP' });
+      if (res.ok) setFeedCrawlStatus(res.data);
+      else setToast({ kind: 'error', text: res.error });
+    } finally {
+      setFeedCrawlBusy(false);
+    }
+  }, [feedCrawlBusy]);
 
   const handleFeedTestCleanup = useCallback(async () => {
     if (feedTestCleanupBusy) return;
@@ -789,6 +837,13 @@ export default function App() {
           <p className="mt-1 text-[10px] text-gray-500">
             Requires an active <code className="text-gray-400">linkedin.com/feed</code> tab with at least 4 unique <code className="text-gray-400">/in/</code> profiles rendered on the page (viewport or off-screen).
           </p>
+          <FeedCrawlSessionRow
+            status={feedCrawlStatus}
+            busy={feedCrawlBusy}
+            scanRunning={scanStatus === 'running'}
+            onStart={() => void handleFeedCrawlStart()}
+            onStop={() => void handleFeedCrawlStop()}
+          />
           <button
             type="button"
             onClick={() => void handleFeedTestCleanup()}
@@ -1116,6 +1171,85 @@ function NextBestTargetRow({
       </div>
       <span className="text-[11px] text-blue-300">Open →</span>
     </button>
+  );
+}
+
+/**
+ * Phase 3.1 / 3.2 — manual Feed Crawl Session controls. Sits in the Quick
+ * Actions strip beneath the label-seeding tools. While a session runs, the
+ * button flips to "Stop session" and the status line shows the live session
+ * start time; on idle it shows the last completed session summary (events
+ * captured, mode breakdown, stop reason).
+ */
+function FeedCrawlSessionRow({
+  status,
+  busy,
+  scanRunning,
+  onStart,
+  onStop,
+}: {
+  status: FeedCrawlStatus | null;
+  busy: boolean;
+  scanRunning: boolean;
+  onStart: () => void;
+  onStop: () => void;
+}) {
+  const running = status?.running ?? false;
+  const last = status?.last_result ?? null;
+  const disabled = busy || (!running && scanRunning);
+  const onClick = running ? onStop : onStart;
+
+  let summary: string;
+  if (running) {
+    const since = status?.started_at
+      ? new Date(status.started_at).toLocaleTimeString()
+      : '—';
+    summary = `Session running since ${since}. Stay on the tab.`;
+  } else if (last) {
+    const top = last.modes.find((m) => m.mode === 'top');
+    const recent = last.modes.find((m) => m.mode === 'recent');
+    const duration = Math.max(1, Math.round(last.duration_ms / 1000));
+    summary = `Last session: ${last.total_events_captured} new events (top ${
+      top?.events_captured ?? 0
+    }, recent ${recent?.events_captured ?? 0}, overlap ${
+      last.overlap_count
+    }) · ${duration}s · ${last.stop_reason.replace(/_/g, ' ')}`;
+  } else {
+    summary =
+      'Walks the active LinkedIn feed in Top then Recent to harvest new events.';
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-gray-700 bg-bg-card px-3 py-2 text-xs font-medium text-gray-200 hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        title={
+          scanRunning && !running
+            ? 'Pause the profile scanner before running a Feed Crawl Session'
+            : running
+              ? 'Stop the running Feed Crawl Session'
+              : 'Run a manual crawl pass across Top and Recent feed modes'
+        }
+      >
+        {busy ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : running ? (
+          <Pause className="h-3.5 w-3.5" />
+        ) : (
+          <Rss className="h-3.5 w-3.5" />
+        )}
+        {running ? 'Stop feed crawl session' : 'Run feed crawl session'}
+      </button>
+      <p className="mt-1 text-[10px] leading-snug text-gray-500">{summary}</p>
+      {scanRunning && !running && (
+        <p className="mt-0.5 text-[10px] text-amber-300/80">
+          Pause the profile scan first — they share the active LinkedIn tab.
+        </p>
+      )}
+    </>
   );
 }
 

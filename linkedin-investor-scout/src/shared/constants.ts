@@ -81,6 +81,41 @@ export const DEFAULT_KILL_SWITCH_THRESHOLDS: Readonly<KillSwitchThresholds> =
  */
 export const CONNECT_NOTE_CHAR_CAP = 300;
 
+// ——— v2 Phase 3.1 / 3.2 — Manual Feed Crawl Session ———
+
+/**
+ * Max scroll steps per mode pass. LinkedIn's feed lazy-loads ~6 cards per
+ * viewport; 20 is enough to walk a few hundred cards without hammering.
+ */
+export const FEED_CRAWL_MAX_SCROLLS_PER_MODE = 20;
+
+/**
+ * Stop the pass once this many *consecutive* scroll cycles yield zero new
+ * events — the feed has clearly run out of fresh prospect-authored cards.
+ */
+export const FEED_CRAWL_NO_NEW_EVENTS_STOP = 3;
+
+/** Gentle scroll step bounds (px). Applied with ±20 % gaussian jitter. */
+export const FEED_CRAWL_MIN_SCROLL_PX = 600;
+export const FEED_CRAWL_MAX_SCROLL_PX = 1200;
+
+/** Wait after each scroll so LinkedIn can hydrate the next batch of cards. */
+export const FEED_CRAWL_MIN_WAIT_MS = 2000;
+export const FEED_CRAWL_MAX_WAIT_MS = 5000;
+
+/**
+ * Max time we'll wait for the feed root to render after a mode-switch nav
+ * before aborting the pass. Covers slow starts / offline states.
+ */
+export const FEED_CRAWL_FEED_READY_TIMEOUT_MS = 15_000;
+
+/** Canonical URL per feed mode (§7.2 mode detection uses `?sortBy`). */
+export const FEED_CRAWL_MODE_URL: Readonly<Record<'top' | 'recent', string>> =
+  Object.freeze({
+    top: 'https://www.linkedin.com/feed/',
+    recent: 'https://www.linkedin.com/feed/?sortBy=LAST_MODIFIED',
+  });
+
 /**
  * Deep-frozen canonical defaults. Treat as read-only; use
  * {@link createDefaultSettings} when you need a mutable copy to persist.

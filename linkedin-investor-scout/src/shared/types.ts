@@ -404,17 +404,24 @@ export type Message =
       type: 'OUTREACH_PREFILL_CONNECT';
       payload: OutreachPrefillConnectPayload;
     }
+  // Phase 3.1/3.2 — Feed Crawl Session (manual)
+  | { type: 'FEED_CRAWL_SESSION_START' }
+  | { type: 'FEED_CRAWL_SESSION_STOP' }
+  | { type: 'FEED_CRAWL_SESSION_STATUS' }
   // background → content (highlight) direct tab message
   | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
   | {
       type: 'OUTREACH_PREFILL_CONNECT_IN_TAB';
       payload: OutreachPrefillConnectPayload;
     }
+  | { type: 'FEED_CRAWL_RUN_IN_TAB'; payload: { session_id: string } }
+  | { type: 'FEED_CRAWL_CANCEL_IN_TAB'; payload: { session_id: string } }
   // background → all listeners (broadcast)
   | { type: 'PROSPECTS_UPDATED'; payload: { changed_ids: number[] } }
   | { type: 'SCAN_STATE_CHANGED'; payload: ScanState }
   | { type: 'SETTINGS_CHANGED'; payload: Settings }
-  | { type: 'FEED_EVENTS_UPDATED'; payload: { new_count: number } };
+  | { type: 'FEED_EVENTS_UPDATED'; payload: { new_count: number } }
+  | { type: 'FEED_CRAWL_SESSION_CHANGED'; payload: FeedCrawlStatus };
 
 export type MessageResponse<T = unknown> =
   | { ok: true; data: T }
@@ -458,10 +465,16 @@ export interface MessageResponseMap {
   OUTREACH_PREFILL_CONNECT: OutreachPrefillResult;
   OUTREACH_PREFILL_CONNECT_IN_TAB: OutreachPrefillResult;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
+  FEED_CRAWL_SESSION_START: FeedCrawlStatus;
+  FEED_CRAWL_SESSION_STOP: FeedCrawlStatus;
+  FEED_CRAWL_SESSION_STATUS: FeedCrawlStatus;
+  FEED_CRAWL_RUN_IN_TAB: FeedCrawlSessionResult;
+  FEED_CRAWL_CANCEL_IN_TAB: { canceled: boolean };
   PROSPECTS_UPDATED: void;
   SCAN_STATE_CHANGED: void;
   SETTINGS_CHANGED: void;
   FEED_EVENTS_UPDATED: void;
+  FEED_CRAWL_SESSION_CHANGED: void;
 }
 
 /**
@@ -537,6 +550,64 @@ export type FeedEventKind =
 export type FeedPostKind = 'activity' | 'ugcPost' | 'groupPost' | 'share';
 
 export type FeedMode = 'top' | 'recent' | 'unknown';
+
+// ———————————————————————————————————————————————————————————
+// v2 — Phase 3.1 / 3.2 — Manual Feed Crawl Session
+// ———————————————————————————————————————————————————————————
+
+/**
+ * Why a manual-triggered crawl ended. `completed` means both modes ran to
+ * their natural stop (no-new-events-for-N-scrolls or max-scroll-cap).
+ */
+export type FeedCrawlStopReason =
+  | 'completed'
+  | 'max_scrolls'
+  | 'no_new_events'
+  | 'user_interaction'
+  | 'canceled'
+  | 'navigation_failed'
+  | 'error';
+
+/** Per-mode (`top` / `recent`) metrics captured during one pass. */
+export interface FeedCrawlModeMetrics {
+  mode: 'top' | 'recent';
+  scroll_steps: number;
+  events_captured: number;
+  started_at: number;
+  ended_at: number;
+  stop_reason: FeedCrawlStopReason;
+}
+
+/** Aggregate result for a full two-mode crawl session. */
+export interface FeedCrawlSessionResult {
+  session_id: string;
+  tab_id: number;
+  started_at: number;
+  ended_at: number;
+  duration_ms: number;
+  total_events_captured: number;
+  /**
+   * Count of events that appeared in *both* modes (same event_fingerprint) —
+   * overlap indicator per Phase 3.2 telemetry.
+   */
+  overlap_count: number;
+  modes: FeedCrawlModeMetrics[];
+  stop_reason: FeedCrawlStopReason;
+}
+
+/**
+ * Lightweight status snapshot for the popup. Either the session is running
+ * (then `result` is null + `started_at` is set) or it's idle (then `result`
+ * carries the most recent completed session, if any).
+ */
+export interface FeedCrawlStatus {
+  running: boolean;
+  tab_id: number | null;
+  session_id: string | null;
+  started_at: number | null;
+  last_result: FeedCrawlSessionResult | null;
+}
+
 
 export type FeedTaskStatus = 'new' | 'queued' | 'done' | 'ignored';
 

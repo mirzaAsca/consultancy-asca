@@ -38,6 +38,7 @@ import {
   FeedEventBatcher,
 } from './feed-events';
 import { prefillConnectModal } from './outreach-prefill';
+import { runFeedCrawlSession } from './feed-crawler';
 import { CONNECT_NOTE_CHAR_CAP } from '@/shared/constants';
 
 // ——— Module state (content-script scope, one instance per tab) ———
@@ -65,6 +66,15 @@ let rescanTimer: number | null = null;
 let repositionScheduled = false;
 const containerBadges = new Map<HTMLElement, HTMLElement>();
 const feedEventBatcher = new FeedEventBatcher();
+/**
+ * Per-tab record of feed-event fingerprints observed during this session.
+ * Shared with the manual Feed Crawl Session runner so it can count deltas
+ * per mode without coupling to the batcher's internal dedupe state.
+ */
+const crawlSeenFingerprints = new Set<string>();
+/** Running session id + cancellation flag the background can flip. */
+let activeCrawlSessionId: string | null = null;
+let activeCrawlCanceled = false;
 const FEED_TEST_DEFAULT_MAX_PROFILES = 200;
 /** Horizontal gap between a badge's right edge and the outer post card. */
 const BADGE_GAP_PX = 16;
@@ -880,7 +890,10 @@ function captureFeedEvents(root: ParentNode): void {
       feedMode: detectFeedModeFromUrl(location.href),
       now: Date.now(),
     });
-    if (events.length > 0) feedEventBatcher.enqueue(events);
+    if (events.length > 0) {
+      for (const ev of events) crawlSeenFingerprints.add(ev.event_fingerprint);
+      feedEventBatcher.enqueue(events);
+    }
   } catch (error) {
     warn('feed_events_extract_error', {
       error: error instanceof Error ? error.message : String(error),
@@ -1099,6 +1112,58 @@ chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
         },
       );
       return true; // keep the message channel open for the async send
+    }
+    case 'FEED_CRAWL_RUN_IN_TAB': {
+      const sessionId = msg.payload?.session_id ?? '';
+      activeCrawlSessionId = sessionId;
+      activeCrawlCanceled = false;
+      void runFeedCrawlSession({
+        session_id: sessionId,
+        tab_id: -1,
+        fingerprints: {
+          snapshot: () => new Set(crawlSeenFingerprints),
+          scanNow: () => scanAndHighlight(document),
+        },
+        isCanceled: () => activeCrawlCanceled,
+      })
+        .then(async (result) => {
+          // Flush any pending feed events before the background finalizes.
+          try {
+            await feedEventBatcher.flush();
+          } catch {
+            /* no-op — the event is already enqueued in-memory */
+          }
+          try {
+            sendResponse({ ok: true, data: result });
+          } catch {
+            /* channel already closed — ignore */
+          }
+        })
+        .catch((error) => {
+          try {
+            sendResponse({
+              ok: false,
+              error:
+                error instanceof Error ? error.message : 'feed crawl failed',
+            });
+          } catch {
+            /* channel already closed — ignore */
+          }
+        })
+        .finally(() => {
+          activeCrawlSessionId = null;
+          activeCrawlCanceled = false;
+        });
+      return true; // keep the message channel open
+    }
+    case 'FEED_CRAWL_CANCEL_IN_TAB': {
+      const sessionId = msg.payload?.session_id ?? '';
+      const canceled =
+        !!activeCrawlSessionId &&
+        (!sessionId || sessionId === activeCrawlSessionId);
+      if (canceled) activeCrawlCanceled = true;
+      sendResponse({ ok: true, data: { canceled } });
+      return;
     }
     case 'PROSPECTS_UPDATED':
       void refreshSlugMap();

@@ -64,6 +64,8 @@ import { localDayBucket } from '@/shared/time';
 import { broadcast, registerMessageRouter } from '@/shared/messaging';
 import type {
   CsvCommitPayload,
+  FeedCrawlSessionResult,
+  FeedCrawlStatus,
   Message,
   MessageResponse,
   MessageResponseMap,
@@ -717,6 +719,171 @@ function waitForTabComplete(tabId: number, timeoutMs: number): Promise<void> {
   });
 }
 
+// ——— Phase 3.1 / 3.2 — Feed Crawl Session state (SW-memory; best-effort) ———
+//
+// MV3 service workers recycle freely, so we treat this as a soft snapshot —
+// the source of truth for "what happened" is the activity_log. If the SW
+// recycles mid-session the popup will fall back to showing `idle`.
+
+interface FeedCrawlSessionState {
+  running: boolean;
+  tab_id: number | null;
+  session_id: string | null;
+  started_at: number | null;
+  last_result: FeedCrawlSessionResult | null;
+}
+
+const feedCrawlState: FeedCrawlSessionState = {
+  running: false,
+  tab_id: null,
+  session_id: null,
+  started_at: null,
+  last_result: null,
+};
+
+function snapshotFeedCrawlStatus(): FeedCrawlStatus {
+  return {
+    running: feedCrawlState.running,
+    tab_id: feedCrawlState.tab_id,
+    session_id: feedCrawlState.session_id,
+    started_at: feedCrawlState.started_at,
+    last_result: feedCrawlState.last_result,
+  };
+}
+
+function broadcastFeedCrawlStatus(): void {
+  broadcast({
+    type: 'FEED_CRAWL_SESSION_CHANGED',
+    payload: snapshotFeedCrawlStatus(),
+  });
+}
+
+async function handleFeedCrawlSessionStart(): Promise<
+  MessageResponse<FeedCrawlStatus>
+> {
+  if (feedCrawlState.running) {
+    return {
+      ok: false,
+      error: 'A Feed Crawl Session is already running in this browser.',
+    };
+  }
+
+  const tab = await getActiveTabInFocusedWindow();
+  if (!tab || typeof tab.id !== 'number' || !tab.url) {
+    return {
+      ok: false,
+      error:
+        'Open the LinkedIn feed in the active tab, then start the session.',
+    };
+  }
+  if (!isLinkedInFeedTabUrl(tab.url)) {
+    return {
+      ok: false,
+      error:
+        'Active tab must be https://www.linkedin.com/feed/ for a crawl session.',
+    };
+  }
+
+  const scanState = await getScanState();
+  if (scanState.status === 'running') {
+    return {
+      ok: false,
+      error:
+        'Pause the profile scanner before running a manual Feed Crawl Session (they would fight for the tab).',
+    };
+  }
+
+  const sessionId = `crawl-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const startedAt = Date.now();
+
+  feedCrawlState.running = true;
+  feedCrawlState.tab_id = tab.id;
+  feedCrawlState.session_id = sessionId;
+  feedCrawlState.started_at = startedAt;
+  broadcastFeedCrawlStatus();
+
+  await appendActivityLog({
+    ts: startedAt,
+    level: 'info',
+    event: 'feed_crawl_session_start',
+    prospect_id: null,
+    data: { session_id: sessionId, tab_id: tab.id, tab_url: tab.url },
+  });
+
+  // Fire-and-forget the tab dispatch. The content script is responsible for
+  // running the full two-mode pass and calling `sendResponse` on completion.
+  void sendMessageToTab(tab.id, {
+    type: 'FEED_CRAWL_RUN_IN_TAB',
+    payload: { session_id: sessionId },
+  }).then(async (res) => {
+    const endedAt = Date.now();
+    if (res.ok) {
+      const result: FeedCrawlSessionResult = { ...res.data, tab_id: tab.id! };
+      feedCrawlState.last_result = result;
+      await appendActivityLog({
+        ts: endedAt,
+        level: 'info',
+        event: 'feed_crawl_session_end',
+        prospect_id: null,
+        data: {
+          session_id: sessionId,
+          tab_id: tab.id,
+          duration_ms: result.duration_ms,
+          total_events_captured: result.total_events_captured,
+          overlap_count: result.overlap_count,
+          stop_reason: result.stop_reason,
+          modes: result.modes.map((m) => ({
+            mode: m.mode,
+            scroll_steps: m.scroll_steps,
+            events_captured: m.events_captured,
+            stop_reason: m.stop_reason,
+          })),
+        },
+      });
+    } else {
+      feedCrawlState.last_result = null;
+      await appendActivityLog({
+        ts: endedAt,
+        level: 'warn',
+        event: 'feed_crawl_session_failed',
+        prospect_id: null,
+        data: { session_id: sessionId, tab_id: tab.id, error: res.error },
+      });
+    }
+    feedCrawlState.running = false;
+    feedCrawlState.tab_id = null;
+    feedCrawlState.session_id = null;
+    feedCrawlState.started_at = null;
+    broadcastFeedCrawlStatus();
+  });
+
+  return { ok: true, data: snapshotFeedCrawlStatus() };
+}
+
+async function handleFeedCrawlSessionStop(): Promise<
+  MessageResponse<FeedCrawlStatus>
+> {
+  if (!feedCrawlState.running || feedCrawlState.tab_id == null) {
+    return { ok: true, data: snapshotFeedCrawlStatus() };
+  }
+  const tabId = feedCrawlState.tab_id;
+  const sessionId = feedCrawlState.session_id ?? '';
+  const res = await sendMessageToTab(tabId, {
+    type: 'FEED_CRAWL_CANCEL_IN_TAB',
+    payload: { session_id: sessionId },
+  });
+  if (!res.ok) {
+    // Force-clear the local flag — the content script is probably gone (tab
+    // closed or navigated away). The activity log will still show the start.
+    feedCrawlState.running = false;
+    feedCrawlState.tab_id = null;
+    feedCrawlState.session_id = null;
+    feedCrawlState.started_at = null;
+    broadcastFeedCrawlStatus();
+  }
+  return { ok: true, data: snapshotFeedCrawlStatus() };
+}
+
 async function exportProspectsCsv(
   filter: ProspectQuery | null,
 ): Promise<{ csv: string; row_count: number }> {
@@ -1083,6 +1250,12 @@ registerMessageRouter(async (msg) => {
     }
     case 'OUTREACH_PREFILL_CONNECT':
       return handleOutreachPrefillConnect(msg.payload);
+    case 'FEED_CRAWL_SESSION_START':
+      return handleFeedCrawlSessionStart();
+    case 'FEED_CRAWL_SESSION_STOP':
+      return handleFeedCrawlSessionStop();
+    case 'FEED_CRAWL_SESSION_STATUS':
+      return { ok: true, data: snapshotFeedCrawlStatus() };
     default:
       return { ok: false, error: `Unhandled message: ${(msg as Message).type}` };
   }
