@@ -419,6 +419,11 @@ export type Message =
       type: 'REACTION_TOGGLED_DETECTED';
       payload: ReactionToggledDetectedPayload;
     }
+  // Phase 5.3 — organic comment-posted detector (content → background)
+  | {
+      type: 'COMMENT_POSTED_DETECTED';
+      payload: CommentPostedDetectedPayload;
+    }
   // Phase 3.1/3.2 — Feed Crawl Session (manual)
   | { type: 'FEED_CRAWL_SESSION_START' }
   | { type: 'FEED_CRAWL_SESSION_STOP' }
@@ -482,6 +487,7 @@ export interface MessageResponseMap {
   OUTREACH_WITHDRAW_DETECTED: OutreachWithdrawResult;
   LINKEDIN_RESTRICTION_BANNER: LinkedInRestrictionBannerResult;
   REACTION_TOGGLED_DETECTED: ReactionToggledDetectedResult;
+  COMMENT_POSTED_DETECTED: CommentPostedDetectedResult;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   FEED_CRAWL_SESSION_START: FeedCrawlStatus;
   FEED_CRAWL_SESSION_STOP: FeedCrawlStatus;
@@ -963,6 +969,33 @@ export interface ReactionToggledDetectedResult {
   /** True when at least one `feed_events` row was updated. */
   matched: boolean;
   /** IDs of feed_events rows whose task_status was flipped. */
+  updated_feed_event_ids: number[];
+}
+
+/**
+ * Phase 5.3 — organic comment-posted detector (content → background).
+ *
+ * Fires when the user submits a comment inside a feed card authored by a
+ * tracked prospect and the submit correlates with both the composer
+ * clearing and a new comment node appending inside the same card. No
+ * daily_usage bump — comments don't consume invite/visit/message budget;
+ * no outreach_actions row — comments aren't outreach.
+ */
+export interface CommentPostedDetectedPayload {
+  prospect_id: number;
+  slug: string;
+  /** Activity URN of the parent post, when the content script could resolve it. */
+  activity_urn: string | null;
+  /** URL of the page where the comment was posted. */
+  page_url: string;
+  /** Epoch ms when the submit was observed. */
+  detected_at: number;
+}
+
+export interface CommentPostedDetectedResult {
+  /** True when at least one `feed_events` row was updated. */
+  matched: boolean;
+  /** IDs of feed_events rows whose task_status was flipped to `done`. */
   updated_feed_event_ids: number[];
 }
 

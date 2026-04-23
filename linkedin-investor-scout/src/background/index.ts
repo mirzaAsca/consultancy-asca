@@ -82,6 +82,8 @@ import type {
   OutreachQueuePage,
   OutreachWithdrawDetectedPayload,
   OutreachWithdrawResult,
+  CommentPostedDetectedPayload,
+  CommentPostedDetectedResult,
   ReactionToggledDetectedPayload,
   ReactionToggledDetectedResult,
   ProspectQuery,
@@ -815,6 +817,53 @@ async function handleReactionToggledDetected(
   };
 }
 
+/**
+ * Phase 5.3 — organic comment-posted detector handler. When the user
+ * posts a comment on a tracked prospect's feed card, log the activity
+ * and promote a matching `feed_events` row from `new` to `done`. Like
+ * the reaction handler: no daily_usage bump (comments don't consume
+ * budget), no outreach_actions row (comments aren't outreach).
+ */
+async function handleCommentPostedDetected(
+  payload: CommentPostedDetectedPayload,
+): Promise<CommentPostedDetectedResult> {
+  const now = Date.now();
+  await appendActivityLog({
+    ts: now,
+    level: 'info',
+    event: 'comment_posted_to_prospect_post',
+    prospect_id: payload.prospect_id,
+    data: {
+      slug: payload.slug,
+      activity_urn: payload.activity_urn,
+      page_url: payload.page_url,
+      detected_at: payload.detected_at,
+    },
+  });
+
+  const rows = await listFeedEventsForProspect(payload.prospect_id);
+  let targets: number[] = [];
+  if (payload.activity_urn) {
+    targets = rows
+      .filter((r) => r.activity_urn === payload.activity_urn)
+      .map((r) => r.id);
+  }
+  if (targets.length === 0) {
+    const newestNew = rows.find((r) => r.task_status === 'new');
+    if (newestNew) targets = [newestNew.id];
+  }
+
+  const updated = await bulkUpdateFeedEventTaskStatus(targets, 'done');
+  if (updated > 0) {
+    scheduleBadgeRefresh();
+  }
+
+  return {
+    matched: updated > 0,
+    updated_feed_event_ids: targets.slice(0, updated),
+  };
+}
+
 async function getActiveLinkedInTab(): Promise<chrome.tabs.Tab | null> {
   const tabs = await chrome.tabs.query({
     active: true,
@@ -1450,6 +1499,10 @@ registerMessageRouter(async (msg) => {
     }
     case 'REACTION_TOGGLED_DETECTED': {
       const data = await handleReactionToggledDetected(msg.payload);
+      return { ok: true, data };
+    }
+    case 'COMMENT_POSTED_DETECTED': {
+      const data = await handleCommentPostedDetected(msg.payload);
       return { ok: true, data };
     }
     case 'FEED_CRAWL_SESSION_START':

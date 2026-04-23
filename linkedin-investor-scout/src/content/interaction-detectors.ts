@@ -21,6 +21,7 @@
  */
 
 import type {
+  CommentPostedDetectedPayload,
   LinkedInRestrictionBannerPayload,
   OutreachActionRecordPayload,
   OutreachWithdrawDetectedPayload,
@@ -35,6 +36,11 @@ import {
   type ReactionDetectorEvent,
   type ReactionKind,
 } from '@/shared/reaction-toggled-detector';
+import {
+  DEFAULT_COMMENT_POST_WINDOW_MS,
+  decideCommentVerdict,
+  type CommentDetectorEvent,
+} from '@/shared/comment-posted-detector';
 import { DEFAULT_PROFILE_VISIT_DWELL_MS } from '@/shared/constants';
 import {
   decideVisitVerdict,
@@ -68,9 +74,16 @@ let restrictionBannerAlreadyReported = false;
 const reactionWatcherAttached = new WeakSet<Element>();
 /** Global feed-scan observer — runs once per content-script lifetime. */
 let reactionFeedObserverStarted = false;
+/** Comment composer submit buttons we've already wired up. */
+const commentSubmitWatcherAttached = new WeakSet<Element>();
+/** Global comment-composer scan observer — runs once per content-script lifetime. */
+let commentComposerObserverStarted = false;
 
 /** How long to keep a single reaction watcher alive after the baseline read. */
 const REACTION_WATCH_WINDOW_MS = 45_000;
+
+/** Absolute ceiling for a comment-posted watcher (safety timeout). */
+const COMMENT_WATCH_TIMEOUT_MS = 15_000;
 
 /** Wall-clock guard for the hidden-tab grace window (default 2s). */
 const HIDDEN_GRACE_MS = 2_000;
@@ -111,6 +124,10 @@ export function startInteractionDetectorsForUrl(
   // once per content-script lifetime is cheap — the per-button guard
   // (`reactionWatcherAttached`) prevents duplicate observers.
   startReactionToggledWatcher(getSlugMap);
+  // Phase 5.3 — comment-posted watcher. Same scope as the reaction
+  // watcher: anywhere a feed card can render. Per-submit-button guard
+  // (`commentSubmitWatcherAttached`) prevents duplicates across re-scans.
+  startCommentPostedWatcher(getSlugMap);
 }
 
 // ——— Profile visit detector (Phase 5.6) ———
@@ -853,6 +870,214 @@ function emitRestrictionBanner(payload: LinkedInRestrictionBannerPayload): void 
   }
 }
 
+// ——— Comment-posted detector (Phase 5.3) ———
+
+/**
+ * Watch for the user submitting a comment inside a feed card authored by
+ * a tracked prospect. Mirrors the reaction-toggled watcher: scan the feed
+ * for composer submit buttons, attach per-button watchers that observe
+ * click → composer-clear + new-comment-node correlation.
+ *
+ * Selectors are intentionally permissive — LinkedIn has shipped at least
+ * three comment-composer variants (classical `.comments-comment-box`,
+ * newer aria-labeled "Post comment" button, SDUI component). We target
+ * the submit control by common anchors and fall back to any submit-type
+ * button scoped inside a comment-composer-looking form.
+ */
+function startCommentPostedWatcher(getSlugMap: () => SlugMap): void {
+  if (commentComposerObserverStarted) return;
+  commentComposerObserverStarted = true;
+
+  const scan = (): void => {
+    const buttons = document.querySelectorAll<HTMLElement>(
+      [
+        'button.comments-comment-box__submit-button',
+        'button[aria-label="Post comment" i]',
+        'form.comments-comment-box__form button[type="submit"]',
+        'div.comments-comment-box form button[type="submit"]',
+      ].join(', '),
+    );
+    for (const btn of Array.from(buttons)) {
+      maybeAttachCommentPostedWatcher(btn, getSlugMap);
+    }
+  };
+
+  scan();
+
+  const observer = new MutationObserver(() => {
+    scan();
+  });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
+function maybeAttachCommentPostedWatcher(
+  btn: HTMLElement,
+  getSlugMap: () => SlugMap,
+): void {
+  if (commentSubmitWatcherAttached.has(btn)) return;
+
+  const card = findFeedCardContainer(btn);
+  if (!card) return;
+  const slug = findAuthorSlugForCard(card);
+  if (!slug) return;
+  const summary = getSlugMap()[slug];
+  if (!summary) return;
+
+  commentSubmitWatcherAttached.add(btn);
+
+  const composer = findCommentComposer(btn);
+  const commentList = findCommentListContainer(btn, card);
+
+  const events: CommentDetectorEvent[] = [];
+  let settled = false;
+  let listObserver: MutationObserver | null = null;
+  let composerObserver: MutationObserver | null = null;
+  let timeoutHandle: number | null = null;
+
+  const settle = (): void => {
+    if (settled) return;
+    const verdict = decideCommentVerdict(events);
+    if (verdict === 'pending') return;
+    settled = true;
+    cleanup();
+    if (verdict !== 'posted') return;
+    const activityUrn = extractActivityUrnFromElement(card);
+    emitCommentPosted({
+      prospect_id: summary.id,
+      slug,
+      activity_urn: activityUrn,
+      page_url: location.href,
+      detected_at: Date.now(),
+    });
+  };
+
+  const onSubmitClick = (): void => {
+    // Only one submit click per watcher lifetime — guarded by the
+    // `settled` flag and the pure verdict logic (`submit_clicked` is
+    // recorded once).
+    events.push({ kind: 'submit_clicked', t: Date.now() });
+
+    if (composer) {
+      composerObserver = new MutationObserver(() => {
+        if (isComposerEmpty(composer)) {
+          events.push({ kind: 'composer_cleared', t: Date.now() });
+          settle();
+        }
+      });
+      composerObserver.observe(composer, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+    }
+
+    if (commentList) {
+      listObserver = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          for (const node of Array.from(m.addedNodes)) {
+            if (!(node instanceof Element)) continue;
+            if (isCommentItemNode(node)) {
+              events.push({ kind: 'new_comment_appended', t: Date.now() });
+              settle();
+              return;
+            }
+          }
+        }
+      });
+      listObserver.observe(commentList, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    timeoutHandle = window.setTimeout(() => {
+      events.push({ kind: 'timeout', t: Date.now() });
+      settle();
+    }, Math.max(COMMENT_WATCH_TIMEOUT_MS, DEFAULT_COMMENT_POST_WINDOW_MS + 2_000));
+  };
+
+  btn.addEventListener('click', onSubmitClick, { capture: true });
+
+  function cleanup(): void {
+    btn.removeEventListener('click', onSubmitClick, { capture: true } as EventListenerOptions);
+    listObserver?.disconnect();
+    composerObserver?.disconnect();
+    if (timeoutHandle !== null) window.clearTimeout(timeoutHandle);
+  }
+}
+
+function findCommentComposer(btn: Element): HTMLElement | null {
+  const form = btn.closest<HTMLElement>(
+    'form.comments-comment-box__form, div.comments-comment-box, form',
+  );
+  if (!form) return null;
+  return (
+    form.querySelector<HTMLElement>(
+      '[contenteditable="true"][role="textbox"], .ql-editor[contenteditable="true"], div.comments-comment-box__editor',
+    ) ?? null
+  );
+}
+
+function findCommentListContainer(
+  btn: Element,
+  card: HTMLElement,
+): HTMLElement | null {
+  // Prefer the nearest commentList ancestor/sibling so a reply composer
+  // observes its own thread, not the card's top-level list.
+  const nearby =
+    btn
+      .closest<HTMLElement>('div[data-testid*="commentList" i]')
+      ?? card.querySelector<HTMLElement>('div[data-testid*="commentList" i]');
+  if (nearby) return nearby;
+  // Classical fallback.
+  return (
+    card.querySelector<HTMLElement>(
+      'ul.comments-comments-list, section.comments-comments-list',
+    ) ?? null
+  );
+}
+
+function isCommentItemNode(node: Element): boolean {
+  if (
+    node.matches(
+      'article.comments-comment-item, li.comments-comment-item, [aria-label^="View more options for" i]',
+    )
+  ) {
+    return true;
+  }
+  return node.querySelector(
+    'article.comments-comment-item, li.comments-comment-item, [aria-label^="View more options for" i]',
+  ) !== null;
+}
+
+function isComposerEmpty(el: HTMLElement): boolean {
+  // LinkedIn's contenteditable resets to `<p><br></p>` or empty after a
+  // successful post. Trim to be defensive about whitespace-only content.
+  const text = (el.textContent ?? '').replace(/​/g, '').trim();
+  if (text.length > 0) return false;
+  const html = el.innerHTML.trim().toLowerCase();
+  return html === '' || html === '<p><br></p>' || html === '<br>';
+}
+
+function emitCommentPosted(payload: CommentPostedDetectedPayload): void {
+  try {
+    chrome.runtime.sendMessage(
+      { type: 'COMMENT_POSTED_DETECTED', payload },
+      () => {
+        void chrome.runtime.lastError;
+      },
+    );
+  } catch (error) {
+    console.warn('[investor-scout] comment emit failed', {
+      prospect_id: payload.prospect_id,
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
 /** Test hook: reset module-level guards so the detectors re-bootstrap. */
 export function __resetInteractionDetectorsForTesting(): void {
   visitWatcherSlug = null;
@@ -861,4 +1086,5 @@ export function __resetInteractionDetectorsForTesting(): void {
   restrictionBannerWatcherStarted = false;
   restrictionBannerAlreadyReported = false;
   reactionFeedObserverStarted = false;
+  commentComposerObserverStarted = false;
 }
