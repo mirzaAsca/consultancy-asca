@@ -10,10 +10,22 @@
  */
 
 import type { CONNECT_NOTE_CHAR_CAP } from '@/shared/constants';
+import {
+  decideSendVerdict,
+  type DetectorEvent,
+} from '@/shared/send-detector';
 import type {
+  OutreachActionRecordPayload,
   OutreachPrefillConnectPayload,
   OutreachPrefillResult,
 } from '@/shared/types';
+
+/**
+ * How long to watch the dialog after prefill before giving up on the user
+ * clicking Send. 2 min covers realistic compose times (read note + edit +
+ * send) without leaving observers attached indefinitely.
+ */
+const INVITE_SEND_WATCH_TIMEOUT_MS = 120_000;
 
 /**
  * Scan the top card for the Connect CTA. Returns null when the button isn't
@@ -221,6 +233,22 @@ export async function prefillConnectModal(
 
   highlightSendButton();
 
+  // Phase 5.3 — attach the invite-sent detector so the user's Send click
+  // auto-flips the outreach row from `draft` → `sent` (no manual "Mark
+  // request sent" step). Fire-and-forget; failure here must not propagate
+  // because the background already wrote the draft row and the user can
+  // still confirm manually.
+  try {
+    watchForInviteSent({
+      prospect_id: payload.prospect_id,
+      template_id: payload.template_id ?? null,
+      template_version: payload.template_version ?? null,
+      rendered_body: body,
+    });
+  } catch (error) {
+    console.warn('[investor-scout] invite-sent watcher failed to attach', error);
+  }
+
   return {
     ok: true,
     data: {
@@ -229,6 +257,109 @@ export async function prefillConnectModal(
       draft_action_id: null,
     },
   };
+}
+
+/**
+ * Phase 5.3 — observe the Connect modal after prefill and, when the user
+ * clicks Send and the dialog unmounts within the detector window, emit an
+ * `OUTREACH_ACTION_RECORD` with `state: 'sent'` so the background upserts the
+ * existing draft row via its idempotency key. Mode A invariant: we never
+ * click Send ourselves — we only *observe* the user clicking it.
+ *
+ * Event-driven, not timer-driven: the verdict is recomputed whenever a new
+ * DOM event lands, and the watcher tears itself down on the first terminal
+ * verdict (`sent` / `canceled` / `unknown`).
+ */
+interface WatchForInviteSentArgs {
+  prospect_id: number;
+  template_id: number | null;
+  template_version: number | null;
+  rendered_body: string;
+}
+
+function watchForInviteSent(args: WatchForInviteSentArgs): void {
+  const dialog = document.querySelector<HTMLElement>(
+    '[role="dialog"]',
+  );
+  if (!dialog) return;
+  const sendButton = dialog.querySelector<HTMLButtonElement>(
+    'button[aria-label="Send invitation"]',
+  );
+  const cancelButton = dialog.querySelector<HTMLButtonElement>(
+    'button[aria-label="Cancel adding a note"], button[aria-label="Dismiss"]',
+  );
+
+  const events: DetectorEvent[] = [];
+  let settled = false;
+
+  const settle = (verdict: 'sent' | 'canceled' | 'unknown'): void => {
+    if (settled) return;
+    settled = true;
+    sendButton?.removeEventListener('click', onSendClick, true);
+    cancelButton?.removeEventListener('click', onCancelClick, true);
+    observer.disconnect();
+    window.clearTimeout(timeoutHandle);
+    if (verdict === 'sent') {
+      emitOutreachSent(args);
+    }
+    // `canceled` and `unknown` fall through — the existing draft row stays
+    // in place and the user can still confirm manually in the dashboard.
+  };
+
+  const recompute = (): void => {
+    const v = decideSendVerdict(events);
+    if (v === 'pending') return;
+    settle(v);
+  };
+
+  const onSendClick = (): void => {
+    events.push({ kind: 'send_clicked', t: Date.now() });
+    recompute();
+  };
+  const onCancelClick = (): void => {
+    events.push({ kind: 'cancel_clicked', t: Date.now() });
+    recompute();
+  };
+
+  sendButton?.addEventListener('click', onSendClick, true);
+  cancelButton?.addEventListener('click', onCancelClick, true);
+
+  const observer = new MutationObserver(() => {
+    if (!dialog.isConnected) {
+      events.push({ kind: 'dialog_removed', t: Date.now() });
+      recompute();
+    }
+  });
+  const watchRoot = dialog.parentElement ?? document.body;
+  observer.observe(watchRoot, { childList: true, subtree: true });
+
+  const timeoutHandle = window.setTimeout(() => {
+    events.push({ kind: 'timeout', t: Date.now() });
+    recompute();
+  }, INVITE_SEND_WATCH_TIMEOUT_MS);
+}
+
+function emitOutreachSent(args: WatchForInviteSentArgs): void {
+  const payload: OutreachActionRecordPayload = {
+    prospect_id: args.prospect_id,
+    kind: 'connection_request_sent',
+    state: 'sent',
+    template_id: args.template_id,
+    template_version: args.template_version,
+    rendered_body: args.rendered_body,
+  };
+  try {
+    chrome.runtime.sendMessage(
+      { type: 'OUTREACH_ACTION_RECORD', payload },
+      () => {
+        // Swallow lastError — the background returns a response we don't
+        // need to read; if the channel closed we've done our best.
+        void chrome.runtime.lastError;
+      },
+    );
+  } catch (error) {
+    console.warn('[investor-scout] failed to emit invite-sent event', error);
+  }
 }
 
 async function waitForAndClickAddNote(timeoutMs: number): Promise<boolean> {

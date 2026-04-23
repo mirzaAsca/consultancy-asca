@@ -323,7 +323,7 @@ _Landed 2026-04-23. See [`src/dashboard/routes/OutreachQueue.tsx`](./src/dashboa
 - [x] Mode A state machine ownership:
   - [x] Background owns `outreach_queue` FSM (`draft → approved → sent → accepted | declined | expired | withdrawn`). Idempotency key = `{prospect_id}:{kind}:{yyyy-mm-dd}`; upsert path handles detector races + manual-override collisions.
   - [x] Content script owns DOM interaction (open modal, fill textarea) via `prefillConnectModal()` in `src/content/outreach-prefill.ts`. Uses a native-setter + synthetic-event path so React's modal doesn't reset the value on focus.
-  - [ ] Detector (Phase 5.3) owns the `approved → sent` transition, keyed on dialog unmount + toast signal within 3s of Send click. _(not in this landing — Phase 5.3)_
+  - [x] Detector (Phase 5.3) owns the `approved → sent` transition, keyed on dialog unmount + toast signal within 3s of Send click. _(landed 2026-04-23 — after `prefillConnectModal` fills the textarea it calls `watchForInviteSent()` in [`src/content/outreach-prefill.ts`](./src/content/outreach-prefill.ts), which attaches capture-phase click listeners to the Send / Cancel buttons and a MutationObserver on the dialog's parent; the collected events are replayed through the pure `decideSendVerdict()` in [`src/shared/send-detector.ts`](./src/shared/send-detector.ts) (10 unit tests). On `sent` verdict the watcher dispatches an `OUTREACH_ACTION_RECORD` with `state: 'sent'`, which hits the existing background idempotency-key upsert path and flips the already-written draft row — no double-writes, no daily-usage double-bumps. `canceled` / `unknown` verdicts leave the draft in place for manual confirm. Mode A invariant honored: we observe clicks, never synthesize them.)_
   - [x] On detector miss, user's manual `Mark request sent` is the fallback; the `needs_review` sidelane is reachable but currently only set explicitly by downstream reconciliation code.
 - [~] Pre-invite profile visit warming:
   - [x] Recommender surfaces a `profile_visit` before the invite when `warm_visit_before_invite` is on and no prior visit exists for the prospect (logic lives in `recommendAction()`).
@@ -593,11 +593,11 @@ Goal: when you open an Inbox/Queue item in a new tab and act manually on LinkedI
 
 ### 5.3 Action detectors (content script)
 
-- [ ] Detect high-confidence manual outcomes:
-  - reaction state toggled on target post/comment,
-  - comment successfully posted in thread,
-  - connect request sent confirmation,
-  - message sent confirmation in thread.
+- [~] Detect high-confidence manual outcomes:
+  - [ ] reaction state toggled on target post/comment,
+  - [ ] comment successfully posted in thread,
+  - [x] connect request sent confirmation. _(landed 2026-04-23 — dialog-unmount + Send-click correlation in `watchForInviteSent` ([`src/content/outreach-prefill.ts`](./src/content/outreach-prefill.ts)); pure verdict logic in [`src/shared/send-detector.ts`](./src/shared/send-detector.ts); 10 unit tests in [`tests/send-detector.test.ts`](./tests/send-detector.test.ts). Emits `OUTREACH_ACTION_RECORD { state: 'sent' }` which upserts the existing draft via the stable `{prospect}:{kind}:{day}` idempotency key — daily_usage bump + `last_outreach_at` stamp happen exactly once per invite regardless of detector + manual-confirm overlap.)_
+  - [ ] message sent confirmation in thread.
 - [ ] Emit structured events to background for reconciliation.
 - [ ] Guard for SPA navigation and delayed DOM updates.
 
