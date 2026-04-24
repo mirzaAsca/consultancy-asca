@@ -1,0 +1,318 @@
+<!-- LinkedIn Reactions modal (4 reactors: 2 like, 1 celebrate, 1 support), captured 2026-04-22T17:43:36.031929
+  Key DOM findings:
+  * Dialog: role="dialog" (NO aria-label!) - identify by h2 text "Reactions"
+  * Tabs (filters): role="tab" with text "All N", "like N", "celebrate N", "support N", "love N", "insightful N", "funny N"
+  * Reactor item: <a href="https://www.linkedin.com/in/ACoAA..."> with aria-label="{reactionType} View {NAME}'s profile {1st|2nd|3rd} degree connection {HEADLINE}"
+  * Reactor anchor uses fsd_profile URN (ACoAA...) as href — NOT vanity slug.
+  * Reaction type image: <img alt="like|celebrate|support|love|insightful|funny"> maps to reaction kind
+  * Degree indicator in inline text: "1st degree connection" / "2nd" / "3rd"
+  * Dismiss button: aria-label="Dismiss"
+-->
+<div data-test-modal="" role="dialog" tabindex="-1" class="artdeco-modal artdeco-modal--layer-default social-details-reactors-modal" size="medium" aria-labelledby="social-details-reactors-modal__header">
+        <span class="a11y-text">Dialog content start.</span>
+            <button aria-label="Dismiss" id="ember495" class="artdeco-button artdeco-button--circle artdeco-button--muted artdeco-button--2 artdeco-button--tertiary ember-view artdeco-modal__dismiss" data-test-modal-close-btn="">        <svg role="none" aria-hidden="true" class="artdeco-button__icon " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" data-supported-dps="24x24" data-test-icon="close-medium">
+<!---->    
+    <use href="#close-medium" width="24" height="24"></use>
+</svg>
+
+
+<span class="artdeco-button__text">
+    
+</span></button>
+        
+        
+    
+          <div id="ember496" class="artdeco-modal__header social-details-reactors-modal__header-container pl5 pb0 artdeco-modal__header--custom ember-view">
+            <h2 id="social-details-reactors-modal__header" class="t-20 t-black--light t-normal">
+              Reactions
+            </h2>
+            
+    <div class="display-flex align-items-center">
+      <div id="ember497" class="social-details-reactors-tab__container artdeco-tabs artdeco-tabs--in-modal artdeco-tabs--size-t-40 ember-view">
+        <div aria-multiselectable="false" id="ember498" class="social-details-reactors-tab__tablist artdeco-tablist artdeco-tablist--no-wrap ember-view" role="tablist">
+            <button tabindex="0" aria-selected="true" id="ember499" class="ml0 p3 artdeco-tab active artdeco-tab--selected ember-view" role="tab" data-js-reaction-tab="ALL">
+              <div class="social-details-reactors-tab__icon-container social-details-reactors-tab__reaction-tab">
+                <span class="mr1">
+                  All
+                </span>
+                <span class="mr1">
+                  4
+                </span>
+              </div>
+            </button>
+              <button tabindex="0" aria-selected="false" id="ember500" class="ml0 p3 artdeco-tab ember-view" role="tab" data-js-reaction-tab="LIKE">
+                <div class="social-details-reactors-tab__icon-container">
+                  <span class="mr1">
+                    
+    <img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/2uxqgankkcxm505qn812vqyss" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium">
+  
+                  </span>
+                  <span class="mr1">
+                    2
+                  </span>
+                </div>
+              </button>
+              <button tabindex="0" aria-selected="false" id="ember501" class="ml0 p3 artdeco-tab ember-view" role="tab" data-js-reaction-tab="PRAISE">
+                <div class="social-details-reactors-tab__icon-container">
+                  <span class="mr1">
+                    
+    <img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cm8d2ytayynyhw5ieaare0tl3" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium">
+  
+                  </span>
+                  <span class="mr1">
+                    1
+                  </span>
+                </div>
+              </button>
+              <button tabindex="0" aria-selected="false" id="ember502" class="ml0 p3 artdeco-tab ember-view" role="tab" data-js-reaction-tab="APPRECIATION">
+                <div class="social-details-reactors-tab__icon-container">
+                  <span class="mr1">
+                    
+    <img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium">
+  
+                  </span>
+                  <span class="mr1">
+                    1
+                  </span>
+                </div>
+              </button>
+        
+</div>
+      </div>
+
+<!---->    </div>
+  
+          
+<!----></div>
+
+          <div id="ember503" class="artdeco-modal__content social-details-reactors-modal__content ember-view">
+            
+    <div class="social-details-reactors-tab-body">
+        <div class="scaffold-finite-scroll
+    scaffold-finite-scroll--infinite
+    ">
+  <!---->
+  
+      <div class="scaffold-finite-scroll__content">
+        
+            <ul class="artdeco-list artdeco-list--offset-1">
+<!---->                <li class="social-details-reactors-tab-body-list-item artdeco-list__item
+                    pt0
+                    full-width">
+                  <div>
+  
+                    <div class="inline-flex full-width">
+                      <a tabindex="0" rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/ACoAACl89V8BtByemIfMB_JfIvgs3wHr92l282k" id="ember504" class="link-without-hover-state ember-view" data-artdeco-is-focused="true">
+                        <div id="ember505" class="artdeco-entity-lockup artdeco-entity-lockup--size-4 ember-view">
+                          <div id="ember506" class="artdeco-entity-lockup__image artdeco-entity-lockup__image--type-circle ember-view" type="circle">
+                            <div class="relative">
+                              
+    <div class="ivm-image-view-model   ">
+        
+    <div class="ivm-view-attr__img-wrapper
+        
+        ">
+<!---->
+<!---->          <img width="100" src="https://media.licdn.com/dms/image/v2/D4D03AQE1F8i63-ip9w/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1711657332279?e=1778716800&amp;v=beta&amp;t=ZufkWJvPnT4EeaJG4Op90pRnXmNH9nZGEmh9lQqTjm0" loading="lazy" height="100" alt="" id="ember507" class="ivm-view-attr__img--centered EntityPhoto-circle-4   evi-image lazy-image ember-view">
+    </div>
+  
+          </div>
+  
+                              
+    <img class="reactions-icon social-details-reactors-tab-body__icon reactions-icon__consumption--small data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/4c1dzspg0yqfip47a9y26tnx8" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small">
+  
+                            </div>
+                          
+</div>
+                          <div id="ember508" class="artdeco-entity-lockup__content ember-view">
+                            <div id="ember509" class="artdeco-entity-lockup__title ember-view">
+                              <span aria-hidden="true"><span class="text-view-model" dir="ltr">Emina Silajdžić</span></span><span class="visually-hidden">View Emina Silajdžić’s profile</span>
+                            
+</div>
+                              <div id="ember510" class="artdeco-entity-lockup__badge ember-view">    <span class="a11y-text">1st degree connection</span>
+  <span class="artdeco-entity-lockup__degree" aria-hidden="true">
+    ·&nbsp;1st
+  </span>
+<!----><!----></div>
+                            <div id="ember511" class="artdeco-entity-lockup__caption ember-view">
+                              User Experience Designer @ Social Explorer | User Interaction, UX
+                            </div>
+                          </div>
+                        
+</div>
+                      </a>
+                    </div>
+                  
+</div>
+
+                </li>
+                <li class="social-details-reactors-tab-body-list-item artdeco-list__item
+                    
+                    full-width">
+                  <div>
+  
+                    <div class="inline-flex full-width">
+                      <a tabindex="0" rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/ACoAACXbycEBiQ2lq-sKMUItWJkrLMAWAenApVw" id="ember512" class="link-without-hover-state ember-view">
+                        <div id="ember513" class="artdeco-entity-lockup artdeco-entity-lockup--size-4 ember-view">
+                          <div id="ember514" class="artdeco-entity-lockup__image artdeco-entity-lockup__image--type-circle ember-view" type="circle">
+                            <div class="relative">
+                              
+    <div class="ivm-image-view-model   ">
+        
+    <div class="ivm-view-attr__img-wrapper
+        
+        ">
+<!---->
+<!---->          <img width="100" src="https://media.licdn.com/dms/image/v2/D4E03AQE83u4eprIMkg/profile-displayphoto-scale_100_100/B4EZrZjHLEIoAc-/0/1764586453414?e=1778716800&amp;v=beta&amp;t=zwzbfVuodwE8cT0v97b9nftmq90yf2H-hkipTUB2w9w" loading="lazy" height="100" alt="" id="ember515" class="ivm-view-attr__img--centered EntityPhoto-circle-4   evi-image lazy-image ember-view">
+    </div>
+  
+          </div>
+  
+                              
+    <img class="reactions-icon social-details-reactors-tab-body__icon reactions-icon__consumption--small data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/4c1dzspg0yqfip47a9y26tnx8" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small">
+  
+                            </div>
+                          
+</div>
+                          <div id="ember516" class="artdeco-entity-lockup__content ember-view">
+                            <div id="ember517" class="artdeco-entity-lockup__title ember-view">
+                              <span aria-hidden="true"><span class="text-view-model" dir="ltr">Eldan Kahrović</span></span><span class="visually-hidden">View Eldan Kahrović’s profile</span>
+                            
+</div>
+                              <div id="ember518" class="artdeco-entity-lockup__badge ember-view">    <span class="a11y-text">1st degree connection</span>
+  <span class="artdeco-entity-lockup__degree" aria-hidden="true">
+    ·&nbsp;1st
+  </span>
+<!----><!----></div>
+                            <div id="ember519" class="artdeco-entity-lockup__caption ember-view">
+                              Software Engineer
+                            </div>
+                          </div>
+                        
+</div>
+                      </a>
+                    </div>
+                  
+</div>
+
+                </li>
+                <li class="social-details-reactors-tab-body-list-item artdeco-list__item
+                    
+                    full-width">
+                  <div>
+  
+                    <div class="inline-flex full-width">
+                      <a tabindex="0" rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/ACoAAAM2GaIBCM-6DIBPkWJ4283EgUFld9toMnM" id="ember520" class="link-without-hover-state ember-view">
+                        <div id="ember521" class="artdeco-entity-lockup artdeco-entity-lockup--size-4 ember-view">
+                          <div id="ember522" class="artdeco-entity-lockup__image artdeco-entity-lockup__image--type-circle ember-view" type="circle">
+                            <div class="relative">
+                              
+    <div class="ivm-image-view-model   ">
+        
+    <div class="ivm-view-attr__img-wrapper
+        
+        ">
+<!---->
+<!---->          <img width="100" src="https://media.licdn.com/dms/image/v2/D4D35AQGvYtuoq9SGZw/profile-framedphoto-shrink_100_100/B4DZ1Nko5.JQAk-/0/1775122943941?e=1777478400&amp;v=beta&amp;t=k57QkOMlPWLPYzaCKc1sF-xTkuiTZiomXkJRELFk_xg" loading="lazy" height="100" alt="" id="ember523" class="ivm-view-attr__img--centered EntityPhoto-circle-4   evi-image lazy-image ember-view">
+    </div>
+  
+          </div>
+  
+                              
+    <img class="reactions-icon social-details-reactors-tab-body__icon reactions-icon__consumption--small data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/95fexuy2ghirrrdv9hkn489no" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small">
+  
+                            </div>
+                          
+</div>
+                          <div id="ember524" class="artdeco-entity-lockup__content ember-view">
+                            <div id="ember525" class="artdeco-entity-lockup__title ember-view">
+                              <span aria-hidden="true"><span class="text-view-model" dir="ltr">Alen Malkoč</span></span><span class="visually-hidden">View Alen Malkoč’s profile</span>
+                            
+</div>
+                              <div id="ember526" class="artdeco-entity-lockup__badge ember-view">    <span class="a11y-text">1st degree connection</span>
+  <span class="artdeco-entity-lockup__degree" aria-hidden="true">
+    ·&nbsp;1st
+  </span>
+<!----><!----></div>
+                            <div id="ember527" class="artdeco-entity-lockup__caption ember-view">
+                              Founder &amp; CEO @ FlyRank.ai | 10x.ai | Founder @ HulkApps (Acquired), Praella, Power Commerce | CRO @ Shop Circle | 5 Sold Companies | All-American in College Soccer, 2x National Champion &amp; Former Chicagoan, now BiH
+                            </div>
+                          </div>
+                        
+</div>
+                      </a>
+                    </div>
+                  
+</div>
+
+                </li>
+                <li class="social-details-reactors-tab-body-list-item artdeco-list__item
+                    
+                    full-width">
+                  <div>
+  
+                    <div class="inline-flex full-width">
+                      <a tabindex="0" rel="noopener noreferrer" target="_blank" href="https://www.linkedin.com/in/ACoAACei43sBoyIgqqtjG-XABVShIURqhl6w6DU" id="ember528" class="link-without-hover-state ember-view">
+                        <div id="ember529" class="artdeco-entity-lockup artdeco-entity-lockup--size-4 ember-view">
+                          <div id="ember530" class="artdeco-entity-lockup__image artdeco-entity-lockup__image--type-circle ember-view" type="circle">
+                            <div class="relative">
+                              
+    <div class="ivm-image-view-model   ">
+        
+    <div class="ivm-view-attr__img-wrapper
+        
+        ">
+<!---->
+<!---->          <img width="100" src="https://media.licdn.com/dms/image/v2/D5603AQG-w6bHgVICXg/profile-displayphoto-scale_100_100/B56Zn_euKEIYAc-/0/1760927870868?e=1778716800&amp;v=beta&amp;t=H9Ov2f9pNBT9y9lOh1QWpBb3egCLTee9Ageesn2-FAA" loading="lazy" height="100" alt="" id="ember531" class="ivm-view-attr__img--centered EntityPhoto-circle-4   evi-image lazy-image ember-view">
+    </div>
+  
+          </div>
+  
+                              
+    <img class="reactions-icon social-details-reactors-tab-body__icon reactions-icon__consumption--small data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/72p0gef8k748mc8rq861vx9bh" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small">
+  
+                            </div>
+                          
+</div>
+                          <div id="ember532" class="artdeco-entity-lockup__content ember-view">
+                            <div id="ember533" class="artdeco-entity-lockup__title ember-view">
+                              <span aria-hidden="true"><span class="text-view-model" dir="ltr">Jainish Patel</span></span><span class="visually-hidden">View Jainish Patel’s profile</span>
+                            
+</div>
+                              <div id="ember534" class="artdeco-entity-lockup__badge ember-view">    <span class="a11y-text">1st degree connection</span>
+  <span class="artdeco-entity-lockup__degree" aria-hidden="true">
+    ·&nbsp;1st
+  </span>
+<!----><!----></div>
+                            <div id="ember535" class="artdeco-entity-lockup__caption ember-view">
+                              Senior Mobile Engineer | 10+ Years in Mobile Development | Flutter, Swift, Kotlin | Expert in UI/UX, Payment &amp; Gamification Solutions | Driving Scalable, High-Performance Apps Across Finance, Streaming, Retail &amp; Health
+                            </div>
+                          </div>
+                        
+</div>
+                      </a>
+                    </div>
+                  
+</div>
+
+                </li>
+            </ul>
+          
+      </div>
+    
+
+<!---->
+    <div>
+  
+<!---->    
+</div>
+
+</div>
+    </div>
+  
+          </div>
+        
+  
+      
+        <span class="a11y-text">Dialog content end.</span>
+      </div>

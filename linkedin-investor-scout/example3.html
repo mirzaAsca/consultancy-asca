@@ -1,0 +1,82 @@
+<!-- LinkedIn Connect-with-note modal STAGE 2 (textarea visible, Send disabled because empty), captured 2026-04-22T17:41:28.425932
+  Key DOM findings:
+  * Dialog: role="dialog" aria-label="None"
+  * Textbox: tag=None role="None" aria-label="None"
+  * Send button: aria-label="Send invitation" disabled=True
+  * Cancel button: aria-label="Cancel adding a note"
+  * Char limit: Free tier shows 200 counter despite aria-label saying 300; Premium tier = 300
+  * Dismiss button with uid=7_6 in snapshot: top-right X, does NOT send
+  * "N personalized invitations remaining for this month" text — free-tier monthly invite cap signal
+-->
+<div data-test-modal="" role="dialog" tabindex="-1" class="artdeco-modal artdeco-modal--layer-default send-invite" size="medium" aria-labelledby="send-invite-modal">
+        <span class="a11y-text">Dialog content start.</span>
+            <button aria-label="Dismiss" id="ember27" class="artdeco-button artdeco-button--circle artdeco-button--muted artdeco-button--2 artdeco-button--tertiary ember-view artdeco-modal__dismiss" data-test-modal-close-btn="">        <svg role="none" aria-hidden="true" class="artdeco-button__icon " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" data-supported-dps="24x24" data-test-icon="close-medium">
+<!---->    
+    <use href="#close-medium" width="24" height="24"></use>
+</svg>
+
+
+<span class="artdeco-button__text">
+    
+</span></button>
+        
+
+          <div id="ember207" class="artdeco-modal__header ember-view">
+            <h2 id="send-invite-modal">
+              Add a note to your invitation
+            </h2>
+          
+<!----></div>
+            <div class="connect-button-send-invite__premium-upsell-message">
+              <!---->5 personalized invitations remaining for this month.<!---->
+            </div>
+          <div id="ember208" class="artdeco-modal__content ember-view">
+<!----><!----><!---->
+              <label for="custom-message">
+                <span class="visually-hidden">Please limit personal note to 300 characters.</span>
+<!---->              </label>
+              <div class="relative">
+                  <textarea name="message" rows="2" placeholder="Ex: We know each other from…" id="custom-message" class="ember-text-area ember-view connect-button-send-invite__custom-message" minlength="1" data-artdeco-is-focused="true"></textarea>                  <div class="display-flex align-items-center">
+<!---->                    <span aria-live="polite" class="t-14 t-black--light flex-1 text-align-right t-black--light">
+                      0/200
+                    </span>
+                  </div>
+                              </div>
+                <div class="pt4">
+                  
+        
+  <a class="sMoFxnUvRFhhNQEVePTHtfRkYCtZlsbHNAoxM  link-without-visited-state " href="http://www.linkedin.com/premium/products/?upsellOrderOrigin=Tracking%3Av1%3Ainvitations_custom_invite_compose_inline_upsell%3AOther%3AIn-Product&amp;referenceId=HPoMHJXLQaukACujbsrPIw%3D%3D&amp;isSS=false&amp;upsellSlotId=CUSTOM_INVITE_CHARACTER_LIMIT&amp;destRedirectURL=https%3A%2F%2Fwww.linkedin.com%2Fpreload%2Fcustom-invite%2F%3FvanityName%3Dmedin-aljukic-a98691203" data-test-app-aware-link="">
+      <h3 class="t-12 t-black--light t-normal pb1 t-14">
+        <!---->Send unlimited, longer invites with Premium—Subscribers have 14x more connections on average.<!---->
+
+      </h3>
+<!---->    <span class="display-flex align-items-start t-14">
+        <svg role="none" aria-hidden="true" class="mr1 flex-shrink-zero connect-button-send-invite__premium-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" data-supported-dps="24x24" data-test-icon="premium-chip-v2-medium">
+<!---->    
+    <use href="#premium-chip-v2-medium" width="24" height="24"></use>
+</svg>
+
+        <span>
+          <!---->Reactivate Premium<!---->
+        </span>
+    </span>
+  </a>
+
+  
+                </div>
+            
+<!---->
+          </div>
+          <div id="ember210" class="artdeco-modal__actionbar ember-view text-align-right">
+<!---->              <button aria-label="Cancel adding a note" id="ember211" class="artdeco-button artdeco-button--muted artdeco-button--2 artdeco-button--tertiary ember-view mr1"><!---->
+<span class="artdeco-button__text">
+    Cancel
+</span></button>
+              <button disabled="" aria-label="Send invitation" id="ember212" class="artdeco-button artdeco-button--2 artdeco-button--primary artdeco-button--disabled ember-view ml1"><!---->
+<span class="artdeco-button__text">
+    Send
+</span></button>
+          </div>
+              
+        <span class="a11y-text">Dialog content end.</span>
+      </div>
