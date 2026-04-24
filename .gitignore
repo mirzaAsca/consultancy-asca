@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 # Paper creator local datasets and exports (large generated artifacts, not for repo)
 scripts/paper-creator/data/
+
+.venv*
+__pycache__/
+*.pyc
