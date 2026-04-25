@@ -73,6 +73,21 @@ export function getOwnedTabIds(): number[] {
   return Array.from(ownedTabs.keys());
 }
 
+/**
+ * v2 invariant — scheduled scan work is gated on the user having at least
+ * one LinkedIn tab open. Tabs the worker created for its own profile scans
+ * don't count: the gate is meant to track user presence, not the worker's
+ * footprint.
+ */
+export async function hasOpenUserLinkedInTab(): Promise<boolean> {
+  const tabs = await chrome.tabs.query({
+    url: ['https://www.linkedin.com/*', 'https://linkedin.com/*'],
+  });
+  if (tabs.length === 0) return false;
+  const ownedIds = new Set(getOwnedTabIds());
+  return tabs.some((t) => typeof t.id !== 'number' || !ownedIds.has(t.id));
+}
+
 async function broadcastScanState(state: ScanState): Promise<void> {
   broadcast({ type: 'SCAN_STATE_CHANGED', payload: state });
 }
@@ -811,6 +826,20 @@ export async function runScanLoop(): Promise<void> {
     while (true) {
       let state = await getScanState();
       if (state.status !== 'running') break;
+
+      // v2 invariant: gate on the user having a LinkedIn tab open. We don't
+      // auto-pause — the user's intent is still 'running'; we just yield until
+      // a LinkedIn tab reappears (`onLinkedInTabOpened` re-fires the loop).
+      if (!(await hasOpenUserLinkedInTab())) {
+        await appendActivityLog({
+          ts: Date.now(),
+          level: 'info',
+          event: 'scan_loop_yield_no_linkedin_tab',
+          prospect_id: null,
+          data: {},
+        });
+        break;
+      }
 
       state = await rolloverDayBucketIfNeeded(state);
       const settings = await getSettings();

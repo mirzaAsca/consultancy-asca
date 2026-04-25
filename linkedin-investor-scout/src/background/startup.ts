@@ -2,6 +2,7 @@ import { appendActivityLog, getScanState, putScanState } from '@/shared/db';
 import { broadcast } from '@/shared/messaging';
 import { localDayBucket } from '@/shared/time';
 import {
+  getOwnedTabIds,
   reconcileOwnedTabs,
   resumeScanOnStartup,
   runScanLoop,
@@ -65,6 +66,35 @@ function computeNextLocalMidnight(nowMs: number): number {
   const d = new Date(nowMs);
   d.setHours(24, 0, 0, 0);
   return d.getTime();
+}
+
+function isLinkedInUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  return /^https:\/\/(www\.)?linkedin\.com\//.test(url);
+}
+
+/**
+ * v2 invariant — when scan is `running` but the loop has yielded because the
+ * user closed all LinkedIn tabs, re-fire it as soon as a fresh LinkedIn tab
+ * appears. Worker-owned scan tabs are excluded so their churn doesn't trigger
+ * spurious wakeups.
+ */
+export function registerLinkedInTabWatcher(): void {
+  const onTab = async (url: string | undefined, tabId: number | undefined): Promise<void> => {
+    if (!isLinkedInUrl(url)) return;
+    if (typeof tabId === 'number' && getOwnedTabIds().includes(tabId)) return;
+    const state = await getScanState();
+    if (state.status !== 'running') return;
+    void runScanLoop();
+  };
+
+  chrome.tabs.onCreated.addListener((tab) => {
+    void onTab(tab.url, tab.id);
+  });
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (!changeInfo.url) return;
+    void onTab(changeInfo.url, tabId ?? tab.id);
+  });
 }
 
 /** Wire service-worker lifecycle hooks: resume after crash or browser restart. */

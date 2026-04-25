@@ -134,7 +134,11 @@ import {
   triggerHealthBreach,
 } from './scan-worker';
 import { registerMigrationBoot } from './migration-boot';
-import { registerLifecycleHooks, registerScanAlarms } from './startup';
+import {
+  registerLifecycleHooks,
+  registerLinkedInTabWatcher,
+  registerScanAlarms,
+} from './startup';
 
 // Register pre/post-open DB hooks BEFORE anything else can call `openScoutDb()`.
 // The pre-open hook captures a JSON backup of the on-disk DB when a schema
@@ -2025,6 +2029,7 @@ registerMessageRouter(async (msg) => {
 
 registerLifecycleHooks();
 registerScanAlarms();
+registerLinkedInTabWatcher();
 
 chrome.runtime.onInstalled.addListener(async () => {
   try {
