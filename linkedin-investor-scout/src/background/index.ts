@@ -58,6 +58,7 @@ import {
   updateOutreachAction,
   updateProspect,
   updateProspectFromPatch,
+  upsertFeedEvent,
   upsertFeedEventsBulk,
 } from '@/shared/db';
 import { CORRELATION_TOKEN_DEFAULT_WINDOW_MS } from '@/shared/constants';
@@ -67,6 +68,13 @@ import {
   generateCorrelationTokenId,
   pickMatchingToken,
 } from '@/shared/reconciliation';
+import {
+  computeFeedEventFingerprint,
+} from '@/shared/scoring';
+import {
+  buildPostPermalink,
+  classifyPostKindFromUrn,
+} from '@/shared/urn';
 import { computeAnalyticsSnapshot } from '@/shared/analytics';
 import { computeHealthSnapshot } from '@/shared/health';
 import {
@@ -865,6 +873,53 @@ async function recordInteractionAndReconcile(args: {
   };
 }
 
+/**
+ * Phase 5.6 — "Always-on detectors, correlation-optional." When an organic
+ * reaction or comment fires on a tracked prospect's post that we don't yet
+ * have a `feed_events` row for (e.g. user navigated directly to the post,
+ * or the passive harvester missed it), upsert one so the activity is still
+ * captured and surfaces in the engagement-tasks audit trail. Spec maps the
+ * conceptual "engaged" state to our existing `task_status='done'` plus the
+ * `auto_tracked_source` stamp — the schema's task-status enum stays at
+ * `'new' | 'queued' | 'done' | 'ignored'` so analytics + badge counts don't
+ * need to learn a new value.
+ *
+ * Returns the row id when a new feed_events row was created or fingerprint-
+ * collapsed onto an existing one, or null when activity_urn is missing
+ * (without a stable URN we can't dedupe and risk creating duplicate rows).
+ */
+async function ensureOrganicFeedEvent(args: {
+  prospect_id: number;
+  slug: string;
+  activity_urn: string | null;
+  page_url: string | null;
+  now: number;
+}): Promise<number | null> {
+  if (!args.activity_urn) return null;
+  const fingerprint = computeFeedEventFingerprint({
+    prospect_id: args.prospect_id,
+    event_kind: 'post',
+    activity_urn: args.activity_urn,
+    comment_urn: null,
+  });
+  return upsertFeedEvent({
+    prospect_id: args.prospect_id,
+    slug: args.slug,
+    event_kind: 'post',
+    post_kind: classifyPostKindFromUrn(args.activity_urn),
+    post_url: buildPostPermalink(args.activity_urn) ?? args.page_url,
+    comment_url: null,
+    activity_urn: args.activity_urn,
+    comment_urn: null,
+    feed_mode: 'unknown',
+    event_fingerprint: fingerprint,
+    first_seen_at: args.now,
+    last_seen_at: args.now,
+    seen_count: 1,
+    task_status: 'new',
+  });
+}
+
 async function handleInteractionTokenOpen(
   payload: InteractionTokenOpenPayload,
 ): Promise<{ token: string; expires_at: number }> {
@@ -986,8 +1041,24 @@ async function handleReactionToggledDetected(
       .map((r) => r.id);
   }
   if (targets.length === 0) {
-    const newestNew = rows.find((r) => r.task_status === 'new');
-    if (newestNew) targets = [newestNew.id];
+    // Phase 5.6 — organic detection: when the URN is resolved but no row
+    // exists yet, mint one so the activity still lands in the audit trail.
+    // Skip on `unreacted` — there's nothing to revert and we don't want to
+    // create rows for posts the user is removing engagement from.
+    if (payload.direction === 'reacted' && payload.activity_urn) {
+      const organicId = await ensureOrganicFeedEvent({
+        prospect_id: payload.prospect_id,
+        slug: payload.slug,
+        activity_urn: payload.activity_urn,
+        page_url: payload.page_url,
+        now,
+      });
+      if (organicId !== null) targets = [organicId];
+    }
+    if (targets.length === 0) {
+      const newestNew = rows.find((r) => r.task_status === 'new');
+      if (newestNew) targets = [newestNew.id];
+    }
   }
 
   const nextStatus = payload.direction === 'reacted' ? 'done' : 'new';
@@ -1064,8 +1135,22 @@ async function handleCommentPostedDetected(
       .map((r) => r.id);
   }
   if (targets.length === 0) {
-    const newestNew = rows.find((r) => r.task_status === 'new');
-    if (newestNew) targets = [newestNew.id];
+    // Phase 5.6 — organic detection. Comments always represent engagement
+    // (no "uncomment" inverse), so we always upsert when we have a URN.
+    if (payload.activity_urn) {
+      const organicId = await ensureOrganicFeedEvent({
+        prospect_id: payload.prospect_id,
+        slug: payload.slug,
+        activity_urn: payload.activity_urn,
+        page_url: payload.page_url,
+        now,
+      });
+      if (organicId !== null) targets = [organicId];
+    }
+    if (targets.length === 0) {
+      const newestNew = rows.find((r) => r.task_status === 'new');
+      if (newestNew) targets = [newestNew.id];
+    }
   }
 
   const transitions = await bulkAutoTrackFeedEvents(targets, 'done', 'comment', now);
