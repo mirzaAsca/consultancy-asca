@@ -41,6 +41,73 @@ export interface TemplateRenderResult {
 /** `{{placeholder}}` with optional internal whitespace. */
 const PLACEHOLDER_RE = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g;
 
+/**
+ * Default share of scored-in-range targets that may render with at least one
+ * missing/empty variable before the corpus lint fires a warning. 0.20 = 20 %.
+ */
+export const TEMPLATE_CORPUS_LINT_THRESHOLD = 0.2;
+
+/**
+ * Result of running a template body across a corpus of prospect render
+ * contexts. Pure — caller owns sourcing the contexts (DB or sample data).
+ */
+export interface TemplateCorpusLintResult {
+  /** Number of contexts evaluated. */
+  sample_size: number;
+  /** Contexts where the rendered text was empty (after trimming). */
+  empty_count: number;
+  /** Contexts where at least one referenced placeholder rendered empty. */
+  any_missing_count: number;
+  /** Per-placeholder count of missing renders across the corpus. */
+  per_placeholder: Partial<Record<TemplatePlaceholder, number>>;
+  /**
+   * `any_missing_count / sample_size` (0..1). `null` when sample_size === 0.
+   */
+  missing_rate: number | null;
+  /** True when `missing_rate` is above the threshold. */
+  threshold_exceeded: boolean;
+  /** Threshold used to decide `threshold_exceeded`. */
+  threshold: number;
+}
+
+/**
+ * Run a template body against an array of render contexts and report how
+ * often placeholders resolve to empty strings. Used by the Templates UI to
+ * surface a corpus-level warning ("X% of your scored prospects render with
+ * blanks") so the user can see real coverage instead of relying on the
+ * single sample-context preview.
+ */
+export function lintTemplateAgainstCorpus(
+  body: string,
+  contexts: TemplateRenderContext[],
+  threshold: number = TEMPLATE_CORPUS_LINT_THRESHOLD,
+): TemplateCorpusLintResult {
+  const sample_size = contexts.length;
+  const per_placeholder: Partial<Record<TemplatePlaceholder, number>> = {};
+  let empty_count = 0;
+  let any_missing_count = 0;
+  for (const ctx of contexts) {
+    const result = renderTemplate(body, ctx);
+    if (!result.rendered.trim()) empty_count += 1;
+    if (result.missing.length > 0) any_missing_count += 1;
+    for (const m of result.missing) {
+      per_placeholder[m] = (per_placeholder[m] ?? 0) + 1;
+    }
+  }
+  const missing_rate = sample_size === 0 ? null : any_missing_count / sample_size;
+  const threshold_exceeded =
+    missing_rate !== null && missing_rate > threshold;
+  return {
+    sample_size,
+    empty_count,
+    any_missing_count,
+    per_placeholder,
+    missing_rate,
+    threshold_exceeded,
+    threshold,
+  };
+}
+
 function stringifyValue(value: unknown): string {
   if (value === null || value === undefined) return '';
   if (typeof value === 'string') return value;

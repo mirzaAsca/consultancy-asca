@@ -4,6 +4,7 @@ import { sendMessage } from '@/shared/messaging';
 import {
   TEMPLATE_PLACEHOLDERS,
   renderTemplate,
+  type TemplateCorpusLintResult,
   type TemplateRenderContext,
 } from '@/shared/templates';
 import { CONNECT_NOTE_CHAR_CAP } from '@/shared/constants';
@@ -45,6 +46,10 @@ export function TemplatesRoute() {
   const [error, setError] = useState<string | null>(null);
   const [editorBody, setEditorBody] = useState('');
   const [editorName, setEditorName] = useState('');
+  const [corpusLint, setCorpusLint] = useState<TemplateCorpusLintResult | null>(
+    null,
+  );
+  const [corpusLinting, setCorpusLinting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -85,6 +90,31 @@ export function TemplatesRoute() {
     setEditorBody(active?.body ?? '');
     setEditorName(active?.name ?? '');
   }, [active?.id, active?.body, active?.name]);
+
+  // Debounced corpus lint — re-run a sample render against scored-in-range
+  // prospects so the user sees how many would render with blank placeholders.
+  useEffect(() => {
+    const body = editorBody;
+    if (!body.trim()) {
+      setCorpusLint(null);
+      return;
+    }
+    let cancelled = false;
+    setCorpusLinting(true);
+    const t = setTimeout(async () => {
+      const res = await sendMessage({
+        type: 'TEMPLATE_LINT_CORPUS',
+        payload: { body },
+      });
+      if (cancelled) return;
+      setCorpusLinting(false);
+      if (res.ok) setCorpusLint(res.data);
+    }, 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [editorBody]);
 
   const save = async () => {
     setSaving(true);
@@ -304,6 +334,7 @@ export function TemplatesRoute() {
             {renderResult.unknown.map((u) => `{{${u}}}`).join(', ')}
           </p>
         )}
+        <CorpusLintPanel result={corpusLint} loading={corpusLinting} />
       </section>
 
       {archivedForKind.length > 0 && (
@@ -338,6 +369,81 @@ export function TemplatesRoute() {
             ))}
           </div>
         </section>
+      )}
+    </div>
+  );
+}
+
+function CorpusLintPanel({
+  result,
+  loading,
+}: {
+  result: TemplateCorpusLintResult | null;
+  loading: boolean;
+}) {
+  if (loading && !result) {
+    return (
+      <p className="mt-3 flex items-center gap-1.5 text-[11px] text-gray-500">
+        <Loader2 className="h-3 w-3 animate-spin" /> Linting against your
+        prospect corpus…
+      </p>
+    );
+  }
+  if (!result) return null;
+  if (result.sample_size === 0) {
+    return (
+      <p className="mt-3 text-[11px] text-gray-500">
+        No scored-in-range prospects yet — corpus lint will activate once you
+        have tiered rows.
+      </p>
+    );
+  }
+  const pct =
+    result.missing_rate !== null
+      ? Math.round(result.missing_rate * 100)
+      : 0;
+  const thresholdPct = Math.round(result.threshold * 100);
+  const tone = result.threshold_exceeded
+    ? 'border-red-900/60 bg-red-950/20 text-red-200'
+    : pct > 0
+      ? 'border-amber-900/60 bg-amber-950/20 text-amber-200'
+      : 'border-emerald-900/60 bg-emerald-950/20 text-emerald-200/90';
+  const topMissing = (Object.entries(result.per_placeholder) as Array<
+    [string, number]
+  >)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+  return (
+    <div className={`mt-3 rounded-md border p-3 text-[11px] ${tone}`}>
+      <div className="flex items-center justify-between">
+        <span className="font-semibold">
+          Corpus lint · n={result.sample_size}
+        </span>
+        <span>
+          {pct}% with blanks
+          {result.threshold_exceeded ? ` (over ${thresholdPct}% threshold)` : ''}
+        </span>
+      </div>
+      {result.empty_count > 0 && (
+        <div className="mt-1">
+          {result.empty_count} prospect
+          {result.empty_count === 1 ? '' : 's'} render the template as fully
+          empty.
+        </div>
+      )}
+      {topMissing.length > 0 && (
+        <div className="mt-1 text-current/80">
+          Most-missing:{' '}
+          {topMissing
+            .map(([name, count]) => `{{${name}}} (${count})`)
+            .join(' · ')}
+        </div>
+      )}
+      {result.threshold_exceeded && (
+        <div className="mt-1.5">
+          Consider relaxing the placeholders or seeding more headline / company
+          / mutuals data via scans.
+        </div>
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AlertTriangle, Check, Loader2, Plus, Trash2 } from 'lucide-react';
 import { sendMessage } from '@/shared/messaging';
 import type {
+  HealthSnapshot,
   OutreachFirm,
   OutreachKeyword,
   Settings,
@@ -13,6 +14,7 @@ const CLEAR_PHRASE = 'CLEAR';
 
 export function SettingsRoute() {
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [health, setHealth] = useState<HealthSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
@@ -22,8 +24,12 @@ export function SettingsRoute() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const res = await sendMessage({ type: 'SETTINGS_QUERY' });
-    if (res.ok) setSettings(res.data);
+    const [settingsRes, healthRes] = await Promise.all([
+      sendMessage({ type: 'SETTINGS_QUERY' }),
+      sendMessage({ type: 'HEALTH_SNAPSHOT_QUERY' }),
+    ]);
+    if (settingsRes.ok) setSettings(settingsRes.data);
+    if (healthRes.ok) setHealth(healthRes.data);
     setLoading(false);
   }, []);
 
@@ -261,7 +267,7 @@ export function SettingsRoute() {
         </div>
       </section>
 
-      <OutreachCapsSection settings={settings} save={save} />
+      <OutreachCapsSection settings={settings} save={save} health={health} />
 
       <TierThresholdsSection settings={settings} save={save} />
 
@@ -429,12 +435,25 @@ type SaveFn = (patch: SettingsPatch) => Promise<void>;
 function OutreachCapsSection({
   settings,
   save,
+  health,
 }: {
   settings: Settings;
   save: SaveFn;
+  health: HealthSnapshot | null;
 }) {
   const caps = settings.outreach.caps;
   const warmVisit = settings.outreach.warm_visit_before_invite;
+  const invites7d = health?.invites_sent_7d ?? null;
+  const weeklyPct =
+    invites7d !== null && caps.weekly_invites > 0
+      ? Math.min(100, Math.round((invites7d / caps.weekly_invites) * 100))
+      : null;
+  const overWeeklyCap = invites7d !== null && invites7d >= caps.weekly_invites;
+  const nearWeeklyCap =
+    invites7d !== null &&
+    !overWeeklyCap &&
+    weeklyPct !== null &&
+    weeklyPct >= 80;
   const overCapFields = (
     [
       ['Daily invites', caps.daily_invites, DEFAULT_OUTREACH_CAPS.daily_invites],
@@ -504,6 +523,44 @@ function OutreachCapsSection({
           help="Ceiling, not target. Default 80."
         />
       </div>
+      {invites7d !== null && (
+        <div
+          className={`mt-3 rounded-md border p-3 text-[11px] ${
+            overWeeklyCap
+              ? 'border-red-900/60 bg-red-950/20 text-red-200/90'
+              : nearWeeklyCap
+                ? 'border-amber-900/60 bg-amber-950/20 text-amber-200/90'
+                : 'border-gray-800 bg-bg-app/40 text-gray-400'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-gray-200">
+              Last 7d invites: {invites7d} / {caps.weekly_invites}
+            </span>
+            <span className="text-gray-500">
+              {weeklyPct !== null ? `${weeklyPct}%` : ''}
+            </span>
+          </div>
+          {weeklyPct !== null && (
+            <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-gray-800">
+              <div
+                className={`h-full ${
+                  overWeeklyCap
+                    ? 'bg-red-500'
+                    : nearWeeklyCap
+                      ? 'bg-amber-500'
+                      : 'bg-emerald-500/70'
+                }`}
+                style={{ width: `${weeklyPct}%` }}
+              />
+            </div>
+          )}
+          <div className="mt-1.5 text-gray-500">
+            Ceiling, not target. Adjust the cap based on observed account behavior
+            (accept rate, CAPTCHAs).
+          </div>
+        </div>
+      )}
       <div className="mt-3 flex flex-col gap-2">
         <div className="flex items-center gap-3">
           <label className="w-36 text-xs text-gray-400">Shared bucket</label>

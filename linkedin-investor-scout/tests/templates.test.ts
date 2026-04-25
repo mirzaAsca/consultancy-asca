@@ -2,8 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   buildRenderContextFromProspect,
   firstNameFromProspect,
+  lintTemplateAgainstCorpus,
   renderTemplate,
+  TEMPLATE_CORPUS_LINT_THRESHOLD,
   TEMPLATE_PLACEHOLDERS,
+  type TemplateRenderContext,
 } from '../src/shared/templates';
 
 describe('renderTemplate', () => {
@@ -113,5 +116,93 @@ describe('buildRenderContextFromProspect', () => {
       mutual_count: 5,
       recent_post_snippet: 'SaaS pricing post',
     });
+  });
+});
+
+describe('lintTemplateAgainstCorpus', () => {
+  const fullCtx: TemplateRenderContext = {
+    first_name: 'Alex',
+    company: 'Sequoia',
+    mutual_context: 'Mara',
+    headline: 'Partner',
+    mutual_count: 3,
+    recent_post_snippet: 'AI infra',
+  };
+  const partialCtx: TemplateRenderContext = {
+    ...fullCtx,
+    company: null,
+  };
+
+  it('reports zero missing when every context resolves every placeholder', () => {
+    const res = lintTemplateAgainstCorpus(
+      'Hi {{first_name}} from {{company}}',
+      [fullCtx, fullCtx, fullCtx],
+    );
+    expect(res.sample_size).toBe(3);
+    expect(res.any_missing_count).toBe(0);
+    expect(res.empty_count).toBe(0);
+    expect(res.missing_rate).toBe(0);
+    expect(res.threshold_exceeded).toBe(false);
+    expect(res.per_placeholder).toEqual({});
+  });
+
+  it('counts contexts where at least one referenced placeholder is empty', () => {
+    const body = 'Hi {{first_name}} from {{company}}';
+    const res = lintTemplateAgainstCorpus(body, [
+      fullCtx,
+      partialCtx,
+      partialCtx,
+    ]);
+    expect(res.sample_size).toBe(3);
+    expect(res.any_missing_count).toBe(2);
+    expect(res.per_placeholder.company).toBe(2);
+    expect(res.per_placeholder.first_name).toBeUndefined();
+    expect(res.missing_rate).toBeCloseTo(2 / 3);
+    expect(res.threshold_exceeded).toBe(true);
+  });
+
+  it('does not trip when missing rate equals the threshold (strict greater-than)', () => {
+    const body = 'Hi {{company}}';
+    // 1 of 5 missing = 0.20 — equal to default threshold, must NOT trip.
+    const contexts: TemplateRenderContext[] = [
+      fullCtx,
+      fullCtx,
+      fullCtx,
+      fullCtx,
+      partialCtx,
+    ];
+    const res = lintTemplateAgainstCorpus(body, contexts);
+    expect(res.missing_rate).toBeCloseTo(0.2);
+    expect(res.threshold).toBe(TEMPLATE_CORPUS_LINT_THRESHOLD);
+    expect(res.threshold_exceeded).toBe(false);
+  });
+
+  it('flags fully empty renders separately from per-placeholder misses', () => {
+    // Body that ONLY references company; partial ctx renders as a single space.
+    const res = lintTemplateAgainstCorpus('{{company}}', [
+      partialCtx,
+      partialCtx,
+    ]);
+    expect(res.empty_count).toBe(2);
+    expect(res.any_missing_count).toBe(2);
+  });
+
+  it('handles an empty corpus without dividing by zero', () => {
+    const res = lintTemplateAgainstCorpus('Hi {{first_name}}', []);
+    expect(res.sample_size).toBe(0);
+    expect(res.missing_rate).toBeNull();
+    expect(res.threshold_exceeded).toBe(false);
+  });
+
+  it('respects a custom threshold override', () => {
+    const body = 'Hi {{company}}';
+    // 1 of 4 missing = 0.25 > 0.10 custom threshold but < 0.30.
+    const contexts = [fullCtx, fullCtx, fullCtx, partialCtx];
+    expect(lintTemplateAgainstCorpus(body, contexts, 0.1).threshold_exceeded).toBe(
+      true,
+    );
+    expect(lintTemplateAgainstCorpus(body, contexts, 0.3).threshold_exceeded).toBe(
+      false,
+    );
   });
 });

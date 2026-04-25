@@ -394,6 +394,10 @@ export type Message =
   | { type: 'TEMPLATES_LIST'; payload?: { kind?: MessageTemplateKind } }
   | { type: 'TEMPLATE_UPSERT'; payload: TemplateUpsertPayload }
   | { type: 'TEMPLATE_ARCHIVE'; payload: { id: number; archived: boolean } }
+  | {
+      type: 'TEMPLATE_LINT_CORPUS';
+      payload: { body: string; sample_limit?: number };
+    }
   | { type: 'OUTREACH_QUEUE_QUERY'; payload?: OutreachQueueFilter }
   | { type: 'OUTREACH_ACTION_RECORD'; payload: OutreachActionRecordPayload }
   | {
@@ -490,6 +494,7 @@ export interface MessageResponseMap {
   TEMPLATES_LIST: MessageTemplate[];
   TEMPLATE_UPSERT: MessageTemplate;
   TEMPLATE_ARCHIVE: MessageTemplate;
+  TEMPLATE_LINT_CORPUS: import('./templates').TemplateCorpusLintResult;
   OUTREACH_QUEUE_QUERY: OutreachQueuePage;
   OUTREACH_ACTION_RECORD: OutreachAction;
   OUTREACH_SKIP_TODAY: { prospect_id: number; skipped: boolean };

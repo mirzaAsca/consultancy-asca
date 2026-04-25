@@ -78,6 +78,11 @@ import {
 import { computeAnalyticsSnapshot } from '@/shared/analytics';
 import { computeHealthSnapshot } from '@/shared/health';
 import {
+  buildRenderContextFromProspect,
+  lintTemplateAgainstCorpus,
+  TEMPLATE_CORPUS_LINT_THRESHOLD,
+} from '@/shared/templates';
+import {
   buildCandidates,
   buildIdempotencyKey,
   pickNextBest,
@@ -471,6 +476,55 @@ async function handleTemplateUpsert(
     created_at: now,
     updated_at: now,
   };
+}
+
+/**
+ * Phase 1.4 corpus lint — render the template body against the user's
+ * scored-in-range prospects and report how many would land with one or more
+ * empty placeholders. Pure rendering happens in `lintTemplateAgainstCorpus`;
+ * this handler just sources the contexts.
+ */
+async function handleTemplateLintCorpus(payload: {
+  body: string;
+  sample_limit?: number;
+}): Promise<import('@/shared/templates').TemplateCorpusLintResult> {
+  const sampleLimit = Math.max(
+    1,
+    Math.min(500, payload.sample_limit ?? 200),
+  );
+  const all = await getAllProspects();
+  // Scored-in-range = the user's actionable corpus: tier assigned, not 'skip',
+  // not 'do_not_contact'. These are the rows the template will actually render
+  // against in the outreach queue.
+  const eligible = all.filter(
+    (p) =>
+      p.tier !== null &&
+      p.tier !== 'skip' &&
+      p.lifecycle_status !== 'do_not_contact',
+  );
+  // Sort by tier rank then score so the lint reflects the prospects most likely
+  // to be touched first.
+  const TIER_RANK: Record<string, number> = { S: 4, A: 3, B: 2, C: 1 };
+  eligible.sort((a, b) => {
+    const ta = TIER_RANK[a.tier ?? ''] ?? 0;
+    const tb = TIER_RANK[b.tier ?? ''] ?? 0;
+    if (tb !== ta) return tb - ta;
+    return (b.priority_score ?? 0) - (a.priority_score ?? 0);
+  });
+  const sample = eligible.slice(0, sampleLimit);
+  // `recent_post_snippet` isn't persisted on FeedEvent in v2.0 — the renderer
+  // is wired up by the outreach queue path which fetches the snippet on
+  // demand. For the corpus lint we pass null so a template that references
+  // `{{recent_post_snippet}}` correctly counts as "missing" against any
+  // prospect (the placeholder really would be blank for them today).
+  const contexts = sample.map((p) =>
+    buildRenderContextFromProspect(p, { recent_post_snippet: null }),
+  );
+  return lintTemplateAgainstCorpus(
+    payload.body,
+    contexts,
+    TEMPLATE_CORPUS_LINT_THRESHOLD,
+  );
 }
 
 // ——— Outreach Queue (Phase 1.3) ———
@@ -1786,6 +1840,10 @@ registerMessageRouter(async (msg) => {
         data: { id: row.id, kind: row.kind, version: row.version },
       });
       return { ok: true, data: row };
+    }
+    case 'TEMPLATE_LINT_CORPUS': {
+      const data = await handleTemplateLintCorpus(msg.payload);
+      return { ok: true, data };
     }
     case 'OUTREACH_QUEUE_QUERY': {
       const data = await handleOutreachQueueQuery(msg.payload ?? {});
