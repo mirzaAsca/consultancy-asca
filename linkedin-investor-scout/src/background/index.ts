@@ -12,6 +12,7 @@ import {
   listCorrelationTokensForProspect,
   listInteractionEvents,
   listNeedsReviewInteractionEvents,
+  resolveInteractionEventReview,
   putCorrelationToken,
   bulkDeleteProspects,
   bulkRescanProspects,
@@ -1726,6 +1727,27 @@ registerMessageRouter(async (msg) => {
     case 'INTERACTIONS_NEEDS_REVIEW': {
       const data = await listNeedsReviewInteractionEvents(msg.payload?.limit ?? 200);
       return { ok: true, data };
+    }
+    case 'INTERACTION_REVIEW_RESOLVE': {
+      const row = await resolveInteractionEventReview(
+        msg.payload.id,
+        msg.payload.resolution,
+      );
+      if (!row) {
+        return { ok: false, error: 'Interaction event not found.' };
+      }
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'info',
+        event: 'interaction_review_resolved',
+        prospect_id: row.prospect_id,
+        data: {
+          interaction_event_id: row.id,
+          interaction_type: row.interaction_type,
+          resolution: msg.payload.resolution,
+        },
+      });
+      return { ok: true, data: row };
     }
     case 'FEED_EVENT_UNDO_AUTO_TRACK': {
       const row = await undoAutoTrackFeedEvent(msg.payload.id);

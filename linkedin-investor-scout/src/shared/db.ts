@@ -1794,6 +1794,41 @@ export async function listNeedsReviewInteractionEvents(
     .slice(0, Math.max(1, limit));
 }
 
+/**
+ * Phase 5.4 — resolve a `needs_review` interaction_event by promoting it to
+ * `matched` (Confirm) or downgrading to `unmatched` (Dismiss). Idempotent:
+ * resolving an already-resolved row returns the row unchanged. Returns null
+ * when the id doesn't exist.
+ */
+export async function resolveInteractionEventReview(
+  id: number,
+  resolution: 'matched' | 'unmatched',
+): Promise<InteractionEvent | null> {
+  const db = await openScoutDb();
+  const tx = db.transaction('interaction_events', 'readwrite');
+  const row = await tx.store.get(id);
+  if (!row) {
+    await tx.done;
+    return null;
+  }
+  if (row.reconciliation_status === resolution) {
+    await tx.done;
+    return row;
+  }
+  const next: InteractionEvent = {
+    ...row,
+    reconciliation_status: resolution,
+    data: {
+      ...row.data,
+      review_resolved_at: Date.now(),
+      review_resolution: resolution,
+    },
+  };
+  await tx.store.put(next);
+  await tx.done;
+  return next;
+}
+
 // ———————————————————————————————————————————————————————————
 // v2 — message_templates CRUD (single active template per kind in v2.0)
 // ———————————————————————————————————————————————————————————

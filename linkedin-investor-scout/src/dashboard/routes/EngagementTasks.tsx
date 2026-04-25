@@ -408,6 +408,18 @@ export function EngagementTasksRoute() {
           rows={needsReview}
           onClose={() => setShowNeedsReview(false)}
           onOpenProspect={openInProspects}
+          onResolve={async (id, resolution) => {
+            // Optimistic remove — the row leaves needs_review either way.
+            setNeedsReview((prev) => prev.filter((r) => r.id !== id));
+            try {
+              await sendMessage({
+                type: 'INTERACTION_REVIEW_RESOLVE',
+                payload: { id, resolution },
+              });
+            } catch {
+              void refresh();
+            }
+          }}
         />
       )}
 
@@ -667,10 +679,12 @@ function NeedsReviewPanel({
   rows,
   onClose,
   onOpenProspect,
+  onResolve,
 }: {
   rows: InteractionEvent[];
   onClose: () => void;
   onOpenProspect: (prospectId: number) => void;
+  onResolve: (id: number, resolution: 'matched' | 'unmatched') => void;
 }) {
   return (
     <div className="border-b border-amber-900/50 bg-amber-950/20 px-6 py-3 text-xs text-amber-100">
@@ -690,23 +704,45 @@ function NeedsReviewPanel({
       </div>
       <div className="space-y-1">
         {rows.slice(0, 20).map((ev) => (
-          <button
+          <div
             key={ev.id}
-            type="button"
-            onClick={() => onOpenProspect(ev.prospect_id)}
-            className="flex w-full items-center justify-between rounded border border-amber-900/40 bg-amber-950/30 px-2 py-1 text-left hover:border-amber-500"
+            className="flex w-full items-center justify-between gap-2 rounded border border-amber-900/40 bg-amber-950/30 px-2 py-1"
           >
-            <span className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onOpenProspect(ev.prospect_id)}
+              className="flex flex-1 items-center gap-2 text-left hover:text-white"
+            >
               <span className="font-mono text-[10px] uppercase tracking-wide text-amber-300">
                 {ev.interaction_type}
               </span>
               <span className="text-[11px] text-amber-100">prospect #{ev.prospect_id}</span>
               <span className="text-[10px] text-amber-400">conf: {ev.confidence}</span>
-            </span>
-            <span className="text-[10px] text-amber-300">
-              {formatRelativeTime(ev.detected_at)}
-            </span>
-          </button>
+              <span className="ml-auto text-[10px] text-amber-300">
+                {formatRelativeTime(ev.detected_at)}
+              </span>
+            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => onResolve(ev.id, 'matched')}
+                title="Confirm — promote to matched"
+                className="inline-flex items-center gap-0.5 rounded border border-emerald-800/60 bg-emerald-950/40 px-1.5 py-0.5 text-[10px] text-emerald-200 hover:border-emerald-500 hover:text-white"
+              >
+                <CheckCircle2 className="h-3 w-3" />
+                Confirm
+              </button>
+              <button
+                type="button"
+                onClick={() => onResolve(ev.id, 'unmatched')}
+                title="Dismiss — mark as unmatched"
+                className="inline-flex items-center gap-0.5 rounded border border-gray-700 bg-bg px-1.5 py-0.5 text-[10px] text-gray-300 hover:border-rose-500 hover:text-rose-200"
+              >
+                <XCircle className="h-3 w-3" />
+                Dismiss
+              </button>
+            </div>
+          </div>
         ))}
         {rows.length > 20 && (
           <div className="pt-1 text-center text-[10px] text-amber-400">

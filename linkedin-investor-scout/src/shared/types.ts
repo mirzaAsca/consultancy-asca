@@ -442,6 +442,11 @@ export type Message =
   | { type: 'FEED_EVENT_UNDO_AUTO_TRACK'; payload: { id: number } }
   // Phase 5.5 — list interaction_events with reconciliation_status='needs_review'.
   | { type: 'INTERACTIONS_NEEDS_REVIEW'; payload?: { limit?: number } }
+  // Phase 5.4 — one-click confirm/dismiss for a needs_review interaction_event.
+  | {
+      type: 'INTERACTION_REVIEW_RESOLVE';
+      payload: { id: number; resolution: 'matched' | 'unmatched' };
+    }
   // background → all listeners (broadcast)
   | { type: 'PROSPECTS_UPDATED'; payload: { changed_ids: number[] } }
   | { type: 'SCAN_STATE_CHANGED'; payload: ScanState }
@@ -498,6 +503,7 @@ export interface MessageResponseMap {
   INTERACTIONS_LIST: InteractionEvent[];
   FEED_EVENT_UNDO_AUTO_TRACK: FeedEvent;
   INTERACTIONS_NEEDS_REVIEW: InteractionEvent[];
+  INTERACTION_REVIEW_RESOLVE: InteractionEvent;
   FEED_TEST_COLLECT_VISIBLE_PROFILES: FeedVisibleProfilesResult;
   FEED_CRAWL_SESSION_START: FeedCrawlStatus;
   FEED_CRAWL_SESSION_STOP: FeedCrawlStatus;

@@ -78,6 +78,10 @@ let reactionFeedObserverStarted = false;
 const commentSubmitWatcherAttached = new WeakSet<Element>();
 /** Global comment-composer scan observer — runs once per content-script lifetime. */
 let commentComposerObserverStarted = false;
+/** Drawer/pop-out send buttons we've already attached a watcher to. */
+const drawerSendButtonWatcherAttached = new WeakSet<Element>();
+/** Global drawer-scan observer — runs once per content-script lifetime. */
+let drawerMessageObserverStarted = false;
 
 /** How long to keep a single reaction watcher alive after the baseline read. */
 const REACTION_WATCH_WINDOW_MS = 45_000;
@@ -109,6 +113,11 @@ export function startInteractionDetectorsForUrl(
   if (threadMatch) {
     maybeStartMessageSentDetector(threadMatch[1], getSlugMap);
   }
+  // Phase 5.6 — slide-out drawer + pop-out messaging surfaces. The drawer
+  // (`<aside id="msg-overlay">`) can render multiple thread bubbles
+  // simultaneously and survives SPA navigation, so we use a global
+  // MutationObserver instead of a route-scoped attach.
+  startDrawerMessageWatcher(getSlugMap);
   // Phase 5.6 — invitation-manager Sent tab. Both `/sent/` and `/sent` trail
   // forms are valid; match permissively.
   if (/^\/mynetwork\/invitation[-_]manager\/sent\/?$/i.test(pathname)) {
@@ -271,11 +280,11 @@ function maybeStartMessageSentDetector(
 
   // Wait for the composer + first message to render before attaching.
   const loadObserver = new MutationObserver(() => {
-    const composer = findComposer();
-    const sendButton = findSendButton();
+    const composer = findComposer(document);
+    const sendButton = findSendButton(document);
     if (composer && sendButton) {
       loadObserver.disconnect();
-      attachMessageSentWatcher(composer, sendButton, getSlugMap);
+      attachMessageSentWatcher(composer, sendButton, document, getSlugMap);
     }
   });
   loadObserver.observe(document.documentElement, {
@@ -283,35 +292,75 @@ function maybeStartMessageSentDetector(
     subtree: true,
   });
   // Immediate attempt — thread may already be hydrated.
-  const composer = findComposer();
-  const sendButton = findSendButton();
+  const composer = findComposer(document);
+  const sendButton = findSendButton(document);
   if (composer && sendButton) {
     loadObserver.disconnect();
-    attachMessageSentWatcher(composer, sendButton, getSlugMap);
+    attachMessageSentWatcher(composer, sendButton, document, getSlugMap);
   }
 }
 
-function findComposer(): HTMLElement | null {
-  return document.querySelector<HTMLElement>(
+function findComposer(root: ParentNode): HTMLElement | null {
+  return root.querySelector<HTMLElement>(
     'div.msg-form__contenteditable[role="textbox"], form.msg-form [contenteditable="true"][role="textbox"]',
   );
 }
 
-function findSendButton(): HTMLButtonElement | null {
-  return document.querySelector<HTMLButtonElement>(
+function findSendButton(root: ParentNode): HTMLButtonElement | null {
+  return root.querySelector<HTMLButtonElement>(
     'button.msg-form__send-button, form.msg-form button[type="submit"]',
   );
 }
 
-function findMessageList(): HTMLElement | null {
-  return document.querySelector<HTMLElement>(
+function findMessageList(root: ParentNode): HTMLElement | null {
+  return root.querySelector<HTMLElement>(
     'ul.msg-s-message-list-content, ul[role="list"].msg-s-message-list-content',
   );
+}
+
+/**
+ * Phase 5.6 — slide-out drawer + pop-out messaging detector. The drawer is
+ * `<aside id="msg-overlay">` rendered alongside the main app on
+ * feed / profile / search pages; it can host multiple expanded thread
+ * bubbles concurrently. Each bubble carries its own composer + send button +
+ * message list, scoped under a `.msg-overlay-conversation-bubble` container.
+ *
+ * Strategy: one global MutationObserver scans for newly-added send buttons
+ * inside drawer bubbles, dedup'd by a WeakSet, and attaches the existing
+ * scoped `attachMessageSentWatcher` to each. Recipient resolution scans
+ * `/in/{slug}` anchors *inside the bubble container* so multi-bubble
+ * drawers don't cross-attribute.
+ */
+function startDrawerMessageWatcher(getSlugMap: () => SlugMap): void {
+  if (drawerMessageObserverStarted) return;
+  drawerMessageObserverStarted = true;
+  const scan = (): void => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(
+      'aside#msg-overlay button.msg-form__send-button, ' +
+        'aside#msg-overlay form.msg-form button[type="submit"]',
+    );
+    for (const btn of Array.from(buttons)) {
+      if (drawerSendButtonWatcherAttached.has(btn)) continue;
+      const bubble =
+        btn.closest<HTMLElement>(
+          '.msg-overlay-conversation-bubble, .msg-convo-wrapper, [data-test-conversation-container]',
+        ) ?? btn.closest<HTMLElement>('aside#msg-overlay');
+      if (!bubble) continue;
+      const composer = findComposer(bubble);
+      if (!composer) continue;
+      drawerSendButtonWatcherAttached.add(btn);
+      attachMessageSentWatcher(composer, btn, bubble, getSlugMap);
+    }
+  };
+  const obs = new MutationObserver(() => scan());
+  obs.observe(document.documentElement, { childList: true, subtree: true });
+  scan();
 }
 
 function attachMessageSentWatcher(
   composer: HTMLElement,
   sendButton: HTMLButtonElement,
+  scope: ParentNode,
   getSlugMap: () => SlugMap,
 ): void {
   const events: MessageDetectorEvent[] = [];
@@ -322,13 +371,16 @@ function attachMessageSentWatcher(
     settled = true;
     cleanup();
     if (verdict === 'sent') {
-      const recipient = resolveThreadRecipient(getSlugMap());
+      const recipient = resolveThreadRecipient(scope, getSlugMap());
       if (recipient) {
         emit({
           prospect_id: recipient.id,
           kind: 'message_sent',
           state: 'sent',
-          notes: 'auto-detected via messaging-thread watcher',
+          notes:
+            scope === document
+              ? 'auto-detected via messaging-thread watcher'
+              : 'auto-detected via messaging-drawer watcher',
         });
       }
     }
@@ -346,7 +398,7 @@ function attachMessageSentWatcher(
   };
   sendButton.addEventListener('click', onSendClick, true);
 
-  const messageList = findMessageList();
+  const messageList = findMessageList(scope);
   const listObserver = new MutationObserver((mutations) => {
     for (const m of mutations) {
       for (const n of Array.from(m.addedNodes)) {
@@ -407,10 +459,11 @@ function attachMessageSentWatcher(
  * attribute the send and would rather skip than mis-attribute.
  */
 function resolveThreadRecipient(
+  scope: ParentNode,
   map: SlugMap,
 ): { id: number; slug: string } | null {
   const anchors = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]'),
+    scope.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]'),
   );
   const seen = new Map<string, number>();
   for (const a of anchors) {
