@@ -586,6 +586,7 @@ async function handleOutreachActionRecord(
 
   const existing = await getOutreachActionByIdempotencyKey(key);
   let action: OutreachAction;
+  let becameSent = false;
   if (existing) {
     const wasSent = existing.state === 'sent';
     action = await updateOutreachAction(existing.id, {
@@ -613,6 +614,7 @@ async function handleOutreachActionRecord(
           : existing.resolved_at,
     });
     if (!wasSent && action.state === 'sent') {
+      becameSent = true;
       await bumpDailyUsageForKind(bucket, action.kind);
       await stampProspectLastOutreachAt(action.prospect_id, now);
     }
@@ -657,6 +659,7 @@ async function handleOutreachActionRecord(
       notes: payload.notes ?? null,
     };
     if (action.state === 'sent') {
+      becameSent = true;
       await bumpDailyUsageForKind(bucket, action.kind);
       await stampProspectLastOutreachAt(action.prospect_id, now);
     }
@@ -674,6 +677,40 @@ async function handleOutreachActionRecord(
       template_id: action.template_id,
     },
   });
+  // Phase 5.3/5.6 — every non-sent → sent transition is a manual outreach
+  // action worth auditing in `interaction_events`. Detector-originated and
+  // queue-originated writes both flow here; reconciliation correlates to a
+  // live correlation token when one exists, otherwise lands as `unmatched`
+  // per the "always-on detectors, correlation-optional" spec. Fingerprint
+  // dedup (2s bucket) collapses detector + manual confirmation races onto a
+  // single audit row.
+  if (becameSent) {
+    const interactionType = mapOutreachKindToInteractionType(action.kind);
+    if (interactionType) {
+      try {
+        await recordInteractionAndReconcile({
+          prospect_id: action.prospect_id,
+          interaction_type: interactionType,
+          activity_urn: null,
+          target_url: null,
+          detected_at: now,
+          data: {
+            action_id: action.id,
+            kind: action.kind,
+            idempotency_key: action.idempotency_key,
+            template_id: action.template_id,
+            template_version: action.template_version,
+          },
+        });
+      } catch (error) {
+        console.warn('[investor-scout] outreach reconcile failed', {
+          prospect_id: action.prospect_id,
+          kind: action.kind,
+          error: error instanceof Error ? error.message : error,
+        });
+      }
+    }
+  }
   // Phase 1.2 recompute trigger: outreach action completion refreshes the
   // cooldown penalty (`last_outreach_at` just moved) so score/tier stay
   // current. Failure here must not fail the action write.
@@ -687,6 +724,26 @@ async function handleOutreachActionRecord(
   }
   void broadcastProspectsUpdated([action.prospect_id]);
   return action;
+}
+
+/**
+ * Phase 5.3/5.6 — map an outreach action kind to the InteractionType enum so
+ * every `sent` transition produces an `interaction_events` audit row. Returns
+ * null for kinds we don't audit (none today; switch is exhaustive for type
+ * safety as new kinds get added).
+ */
+function mapOutreachKindToInteractionType(
+  kind: OutreachAction['kind'],
+): InteractionType | null {
+  switch (kind) {
+    case 'profile_visit':
+      return 'profile_visited';
+    case 'connection_request_sent':
+      return 'invite_sent';
+    case 'message_sent':
+    case 'followup_message_sent':
+      return 'message_sent';
+  }
 }
 
 async function bumpDailyUsageForKind(
