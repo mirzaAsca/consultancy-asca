@@ -127,6 +127,7 @@ import type {
 } from '@/shared/types';
 import {
   pauseScan,
+  registerAutoPauseHook,
   resumeScan,
   runScanLoop,
   startScan,
@@ -1491,6 +1492,31 @@ async function handleFeedCrawlSessionStop(): Promise<
   }
   return { ok: true, data: snapshotFeedCrawlStatus() };
 }
+
+/**
+ * Phase 3.1 — when the scan worker auto-pauses (kill-switch trip, captcha,
+ * rate limit, auth wall) and a Feed Crawl Session is in flight, cancel it
+ * so the content-side crawler doesn't keep scrolling against a LinkedIn
+ * surface that just told us to back off. The cancel path reuses the
+ * existing FEED_CRAWL_CANCEL_IN_TAB dispatch so the session terminates
+ * with `stop_reason='canceled'` and lands a normal `feed_crawl_session_end`
+ * activity log entry — no new event types, no new state machine.
+ */
+registerAutoPauseHook(async (reason) => {
+  if (!feedCrawlState.running) return;
+  await appendActivityLog({
+    ts: Date.now(),
+    level: 'warn',
+    event: 'feed_crawl_session_safety_stop',
+    prospect_id: null,
+    data: {
+      reason,
+      session_id: feedCrawlState.session_id,
+      tab_id: feedCrawlState.tab_id,
+    },
+  });
+  await handleFeedCrawlSessionStop();
+});
 
 async function exportProspectsCsv(
   filter: ProspectQuery | null,

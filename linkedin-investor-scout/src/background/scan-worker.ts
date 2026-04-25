@@ -234,6 +234,19 @@ export async function triggerHealthBreach(
   return state;
 }
 
+/**
+ * Phase 3.1 — let other background modules react to auto-pause transitions
+ * without creating an import cycle (e.g. cancel an in-flight Feed Crawl
+ * Session when the kill-switch trips). Hooks fire in registration order;
+ * exceptions are swallowed so one bad hook can't block the pause itself.
+ */
+type AutoPauseHook = (reason: AutoPauseReason) => void | Promise<void>;
+const autoPauseHooks: AutoPauseHook[] = [];
+
+export function registerAutoPauseHook(hook: AutoPauseHook): void {
+  autoPauseHooks.push(hook);
+}
+
 async function autoPause(reason: AutoPauseReason, prospectId: number | null) {
   const state = await setScanStatus({
     status: 'auto_paused',
@@ -247,6 +260,13 @@ async function autoPause(reason: AutoPauseReason, prospectId: number | null) {
     prospect_id: prospectId,
     data: { reason },
   });
+  for (const hook of autoPauseHooks) {
+    try {
+      await hook(reason);
+    } catch (err) {
+      console.warn('[investor-scout] auto-pause hook threw', err);
+    }
+  }
   return state;
 }
 
