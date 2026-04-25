@@ -137,9 +137,31 @@ export interface ScoutDBSchema extends DBSchema {
 
 let dbPromise: Promise<IDBPDatabase<ScoutDBSchema>> | null = null;
 
+export interface DbBootHooks {
+  /** Runs once before the first `openDB()` call (typically: snapshot the on-disk
+   *  state for backup before the schema upgrade mutates it). Failures are
+   *  swallowed by the boot path so a failed snapshot can't block opening the DB.
+   */
+  preOpen?: () => Promise<void>;
+  /** Runs once immediately after the DB is opened. `oldVersion` is whichever
+   *  version was on disk before this open (equal to `newVersion` when no upgrade
+   *  was triggered). Used by the v1→v2 auto-rescore follow-up.
+   */
+  postOpen?: (info: { oldVersion: number; newVersion: number }) => Promise<void>;
+}
+
+let bootHooks: DbBootHooks = {};
+
+/** Register pre/post-open hooks that run around the first `openScoutDb()` call.
+ *  Idempotent — last call wins. Must be called before any `openScoutDb()`. */
+export function registerDbBootHooks(hooks: DbBootHooks): void {
+  bootHooks = { ...hooks };
+}
+
 /** Test helper: next openDB() creates a fresh connection. */
 export function resetDbConnectionForTests(): void {
   dbPromise = null;
+  bootHooks = {};
 }
 
 /** Close the singleton connection (required before deleteDB in tests). */
@@ -158,8 +180,20 @@ export async function deleteScoutDatabase(): Promise<void> {
 
 export function openScoutDb(): Promise<IDBPDatabase<ScoutDBSchema>> {
   if (!dbPromise) {
-    dbPromise = openDB<ScoutDBSchema>(DB_NAME, DB_VERSION, {
-      async upgrade(db, oldVersion, newVersion, transaction) {
+    dbPromise = (async () => {
+      if (bootHooks.preOpen) {
+        try {
+          await bootHooks.preOpen();
+        } catch (err) {
+          console.error('[investor-scout] db preOpen hook failed', {
+            error: err instanceof Error ? err.message : err,
+          });
+        }
+      }
+      let detectedOldVersion = DB_VERSION;
+      const db = await openDB<ScoutDBSchema>(DB_NAME, DB_VERSION, {
+        async upgrade(db, oldVersion, newVersion, transaction) {
+          detectedOldVersion = oldVersion;
         if (oldVersion < 1) {
           const prospects = db.createObjectStore('prospects', {
             keyPath: 'id',
@@ -309,6 +343,20 @@ export function openScoutDb(): Promise<IDBPDatabase<ScoutDBSchema>> {
         resetDbConnectionForTests();
       },
     });
+      if (bootHooks.postOpen) {
+        try {
+          await bootHooks.postOpen({
+            oldVersion: detectedOldVersion,
+            newVersion: DB_VERSION,
+          });
+        } catch (err) {
+          console.error('[investor-scout] db postOpen hook failed', {
+            error: err instanceof Error ? err.message : err,
+          });
+        }
+      }
+      return db;
+    })();
   }
   return dbPromise;
 }

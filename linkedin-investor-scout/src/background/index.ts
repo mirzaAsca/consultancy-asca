@@ -119,7 +119,14 @@ import {
   startScan,
   triggerHealthBreach,
 } from './scan-worker';
+import { registerMigrationBoot } from './migration-boot';
 import { registerLifecycleHooks, registerScanAlarms } from './startup';
+
+// Register pre/post-open DB hooks BEFORE anything else can call `openScoutDb()`.
+// The pre-open hook captures a JSON backup of the on-disk DB when a schema
+// upgrade is pending; the post-open hook auto-rescores prospects after the v1→v2
+// migration backfills them with null scores.
+registerMigrationBoot();
 import {
   FEED_TEST_MIN_PROFILES_FOR_ALL_LEVELS,
   FEED_TEST_MAX_PROFILES,
