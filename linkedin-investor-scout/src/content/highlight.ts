@@ -1129,6 +1129,7 @@ chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
           scanNow: () => scanAndHighlight(document),
         },
         isCanceled: () => activeCrawlCanceled,
+        passive: msg.payload?.passive === true,
       })
         .then(async (result) => {
           // Flush any pending feed events before the background finalizes.

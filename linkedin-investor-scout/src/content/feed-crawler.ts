@@ -51,9 +51,33 @@ export interface RunFeedCrawlOptions {
   onProgress?: (partial: Partial<FeedCrawlSessionResult>) => void;
   /** Signal set by a `FEED_CRAWL_CANCEL_IN_TAB` message from background. */
   isCanceled: () => boolean;
+  /**
+   * Phase 3.1 — passive mode (continuous harvester). When true, runs ONE
+   * mode pass against the tab's current URL without navigation, never
+   * switches to the other sort. Used by the background scheduler so the
+   * harvester never disrupts the user's chosen feed view.
+   */
+  passive?: boolean;
 }
 
 const MODES: Array<'top' | 'recent'> = ['top', 'recent'];
+
+/**
+ * Detect the current feed mode from `location.href`. Falls back to `top` when
+ * the URL doesn't carry a `?sortBy` we recognize — the manual session always
+ * normalizes via navigation, but the passive harvester needs to honor whatever
+ * surface the user is already looking at.
+ */
+function detectCurrentFeedMode(): 'top' | 'recent' {
+  try {
+    const url = new URL(location.href);
+    const sort = (url.searchParams.get('sortBy') ?? '').toUpperCase();
+    if (sort === 'LAST_MODIFIED' || sort === 'RECENT') return 'recent';
+    return 'top';
+  } catch {
+    return 'top';
+  }
+}
 
 export async function runFeedCrawlSession(
   opts: RunFeedCrawlOptions,
@@ -70,7 +94,13 @@ export async function runFeedCrawlSession(
 
   const baselineFingerprints = new Set(opts.fingerprints.snapshot());
 
-  for (const mode of MODES) {
+  // Phase 3.1 — passive mode runs a single pass against the tab's current
+  // mode, skipping any navigation. Manual sessions still walk Top → Recent.
+  const modes: Array<'top' | 'recent'> = opts.passive
+    ? [detectCurrentFeedMode()]
+    : MODES;
+
+  for (const mode of modes) {
     if (opts.isCanceled()) {
       sessionStop = 'canceled';
       break;
@@ -78,7 +108,12 @@ export async function runFeedCrawlSession(
 
     const modeStart = now();
     try {
-      const nav = await ensureFeedMode(mode);
+      // Passive harvester never navigates — it harvests whatever the user is
+      // already viewing. Skip the ensureFeedMode reload to avoid clobbering
+      // their tab.
+      const nav = opts.passive
+        ? { ok: true as const }
+        : await ensureFeedMode(mode);
       if (!nav.ok) {
         perMode.push({
           mode,

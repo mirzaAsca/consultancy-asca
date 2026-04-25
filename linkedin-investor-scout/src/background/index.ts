@@ -135,6 +135,11 @@ import {
 } from './scan-worker';
 import { registerMigrationBoot } from './migration-boot';
 import {
+  registerPassiveHarvester,
+  startPassiveHarvester,
+  stopPassiveHarvester,
+} from './passive-harvester';
+import {
   registerLifecycleHooks,
   registerLinkedInTabWatcher,
   registerScanAlarms,
@@ -1579,6 +1584,51 @@ registerAutoPauseHook(async (reason) => {
   await handleFeedCrawlSessionStop();
 });
 
+/**
+ * Phase 3.1 — dispatcher for one passive harvest cycle. The scheduler
+ * (src/background/passive-harvester.ts) calls this when its firing rules
+ * say "go." We dispatch a single-mode `FEED_CRAWL_RUN_IN_TAB` (passive=true)
+ * to the active LinkedIn feed tab so the content-side crawler runs against
+ * the user's current view without navigating.
+ */
+async function dispatchPassiveHarvestCycle(): Promise<
+  | { ok: true; data: FeedCrawlSessionResult }
+  | { ok: false; error: string; skipped?: boolean }
+> {
+  // Lose to the manual session — they share the same tab and we never
+  // want to compete.
+  if (feedCrawlState.running) {
+    return { ok: false, error: 'manual session running', skipped: true };
+  }
+  const tab = await getActiveTabInFocusedWindow();
+  if (!tab || typeof tab.id !== 'number' || !tab.url) {
+    return { ok: false, error: 'no active tab', skipped: true };
+  }
+  if (!isLinkedInFeedTabUrl(tab.url)) {
+    return { ok: false, error: 'active tab not on /feed', skipped: true };
+  }
+  const sessionId = `passive-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const res = await sendMessageToTab(tab.id, {
+    type: 'FEED_CRAWL_RUN_IN_TAB',
+    payload: { session_id: sessionId, passive: true },
+  });
+  if (!res.ok) return { ok: false, error: res.error };
+  return { ok: true, data: { ...res.data, tab_id: tab.id } };
+}
+
+registerPassiveHarvester({
+  dispatch: dispatchPassiveHarvestCycle,
+  isManualSessionRunning: () => feedCrawlState.running,
+  scanStatus: async () => (await getScanState()).status,
+});
+
+// Cancel passive harvest if the scan auto-pauses — same rationale as the
+// manual session safety stop above. The scheduler is also stopped through
+// the scan-worker pause path; this hook is a belt-and-suspenders guard.
+registerAutoPauseHook(async () => {
+  stopPassiveHarvester();
+});
+
 async function exportProspectsCsv(
   filter: ProspectQuery | null,
 ): Promise<{ csv: string; row_count: number }> {
@@ -1608,10 +1658,13 @@ registerMessageRouter(async (msg) => {
     }
     case 'SCAN_START': {
       const state = await startScan();
+      // Phase 3.1 — peer of scan-worker; runs only while scan is `running`.
+      if (state.status === 'running') startPassiveHarvester();
       return { ok: true, data: state };
     }
     case 'SCAN_PAUSE': {
       const state = await pauseScan();
+      stopPassiveHarvester();
       return { ok: true, data: state };
     }
     case 'SCAN_RESUME': {
@@ -1624,6 +1677,7 @@ registerMessageRouter(async (msg) => {
         });
         return { ok: false, error: res.error };
       }
+      if (res.state.status === 'running') startPassiveHarvester();
       return { ok: true, data: res.state };
     }
     case 'PROSPECTS_LIST': {
@@ -2047,6 +2101,19 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 // Seed the badge on every service-worker boot — MV3 workers recycle freely.
 scheduleBadgeRefresh();
+
+// Phase 3.1 — re-arm the passive harvester on every SW boot if scan was
+// already running. MV3 recycles the worker freely so without this the
+// harvester goes silent until the user pauses + resumes manually.
+void (async () => {
+  try {
+    const state = await getScanState();
+    if (state.status === 'running') startPassiveHarvester();
+  } catch {
+    /* harvester is best-effort — failing to arm is fine, the next start/resume
+       will re-arm. */
+  }
+})();
 
 chrome.action?.onClicked?.addListener?.((tab) => {
   console.info('[investor-scout] action clicked', { tabId: tab.id });

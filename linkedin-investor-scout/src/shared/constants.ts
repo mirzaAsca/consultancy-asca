@@ -170,6 +170,19 @@ export const FEED_CRAWL_MODE_URL: Readonly<Record<'top' | 'recent', string>> =
   });
 
 /**
+ * Phase 3.1 — passive continuous harvester. Background-side scheduler that
+ * runs a single-mode crawl pass against the user's active LinkedIn feed tab
+ * while scan_state.status === 'running'. No `chrome.alarms`; uses setTimeout
+ * polling so it stops cleanly when the scan pauses.
+ */
+/** Minimum user-idle window before a passive cycle is allowed to fire. */
+export const PASSIVE_HARVEST_USER_IDLE_MS = 30_000;
+/** Minimum gap between two passive cycles. */
+export const PASSIVE_HARVEST_COOLDOWN_MS = 5 * 60_000;
+/** How often the scheduler wakes up to evaluate firing conditions. */
+export const PASSIVE_HARVEST_TICK_INTERVAL_MS = 60_000;
+
+/**
  * Deep-frozen canonical defaults. Treat as read-only; use
  * {@link createDefaultSettings} when you need a mutable copy to persist.
  */

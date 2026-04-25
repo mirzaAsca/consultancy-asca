@@ -438,7 +438,10 @@ export type Message =
       type: 'OUTREACH_PREFILL_CONNECT_IN_TAB';
       payload: OutreachPrefillConnectPayload;
     }
-  | { type: 'FEED_CRAWL_RUN_IN_TAB'; payload: { session_id: string } }
+  | {
+      type: 'FEED_CRAWL_RUN_IN_TAB';
+      payload: { session_id: string; passive?: boolean };
+    }
   | { type: 'FEED_CRAWL_CANCEL_IN_TAB'; payload: { session_id: string } }
   | { type: 'INTERACTION_TOKEN_OPEN'; payload: InteractionTokenOpenPayload }
   | { type: 'INTERACTIONS_LIST'; payload?: InteractionListQuery }
