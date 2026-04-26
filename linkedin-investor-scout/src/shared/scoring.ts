@@ -123,7 +123,7 @@ function cooldownScore(
 
 /**
  * Phase 3.3 "newly unlocked 2nd-degree" bonus. Only fires for 2nd-degree rows
- * whose `last_level_change_at` falls inside the unlock window — 3rd / OOON
+ * whose `last_level_change_at` falls inside the unlock window — 3rd
  * transitions aren't actionable outreach yet, and the caller already biases
  * the queue toward newer rows via `last_outreach_at ASC`. The bonus is flat
  * (not decayed) so the tier promotion is crisp: either the row is hot-off-

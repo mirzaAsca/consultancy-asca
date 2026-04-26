@@ -2,6 +2,8 @@
 
 Based on current implementation in `README.md`, `MASTER.md`, and the extension code (`src/popup`, `src/background`, `src/content`, `src/shared`).
 
+> **v2.x note (2026-04-26):** This checklist was authored when the canonical level set was `1st` / `2nd` / `3rd` / `OUT_OF_NETWORK`. The OOO bucket was collapsed into `3rd` in v2.x (see [`MASTER.md`](./MASTER.md) §20 and the v2.x note in [`README.md`](./README.md)). The historical references to `OUT_OF_NETWORK` / `OOO` below are preserved as the as-built record of when the checklist was completed; the extension now ships with three level buckets. Re-running the random-level seeder today produces `1st` / `2nd` / `3rd` only.
+
 ## 0) Level Mapping Clarification (Do this first)
 
 - [x] Confirm and keep current canonical mapping: `1st`, `2nd`, `3rd`, `OUT_OF_NETWORK`.

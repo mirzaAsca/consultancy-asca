@@ -120,10 +120,10 @@ function mostRecentVisit(
 
 /**
  * Decide which action to surface next for a prospect. Rules (in order):
- *  - 2nd/3rd/OOO with no recent `profile_visit` (within 14d) + warming
+ *  - 2nd/3rd with no recent `profile_visit` (within 14d) + warming
  *    enabled → `profile_visit`.
- *  - 2nd/3rd/OOO with a recent visit < 24h old → null (warming in progress).
- *  - 2nd/3rd/OOO with no pending invite → `connection_request_sent`.
+ *  - 2nd/3rd with a recent visit < 24h old → null (warming in progress).
+ *  - 2nd/3rd with no pending invite → `connection_request_sent`.
  *  - 1st connected recently → `message_sent`.
  *  - 1st messaged 7+ days ago with no followup → `followup_message_sent`.
  *  - Everything else → null (no recommendation).

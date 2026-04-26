@@ -519,7 +519,7 @@ async function scanSingleProspect(
     const levelChanged = d.level !== previousLevel;
 
     // Phase 3.3 acceptance watcher: a transition from a pre-connected level
-    // (2nd / 3rd / OOON) to `1st` implies the prospect accepted an invite we
+    // (2nd / 3rd) to `1st` implies the prospect accepted an invite we
     // previously sent. Decide the action + lifecycle patch BEFORE writing the
     // prospect row so we can bundle `lifecycle_status = 'connected'` into the
     // same update and flip the matching outreach_action row to `accepted`.

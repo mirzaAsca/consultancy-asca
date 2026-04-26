@@ -27,7 +27,7 @@ Keep this block in sync with the detailed checkboxes below. Bump the count as yo
 Turn a flat CSV of scraped LinkedIn profile URLs (potential investors) into an actionable, continuously-enriched prospect list, and make it effortless to spot and engage those prospects on LinkedIn.
 
 ### 1.2 Two Core Features
-1. **Scan & Update** — Walk through uploaded LinkedIn profile URLs, open each profile in a hidden background tab, parse the connection-degree badge, and persist the result (`1st` / `2nd` / `3rd` / `out-of-network`) along with profile metadata.
+1. **Scan & Update** — Walk through uploaded LinkedIn profile URLs, open each profile in a hidden background tab, parse the connection-degree badge, and persist the result (`1st` / `2nd` / `3rd`) along with profile metadata. _(See §20 for the v2.x collapse of the legacy `OUT_OF_NETWORK` bucket into `3rd`.)_
 2. **Feed Highlight** — Anywhere on linkedin.com (feed, search, notifications, profile pages), detect if a visible profile is in the prospect list and visually mark it with a colored border + level badge so the user can connect, comment, or engage strategically.
 
 ### 1.3 Definition of Done (v1)
@@ -55,7 +55,7 @@ Turn a flat CSV of scraped LinkedIn profile URLs (potential investors) into an a
 - [x] CSV upload (single-column, no header, profile URLs only).
 - [x] URL normalization (strip query params, trailing slashes, `#` fragments, force lowercase host, canonicalize to `https://www.linkedin.com/in/{slug}/`).
 - [x] Background-tab scanning of LinkedIn profile pages to extract:
-  - [x] `level` (1st / 2nd / 3rd / out-of-network)
+  - [x] `level` (1st / 2nd / 3rd) _(legacy `out-of-network` bucket collapsed into `3rd` in v2.x — see §20)_
   - [x] `name`, `headline`, `company`, `location`
   - [x] `last_scanned` timestamp, `scan_status` (`pending` / `in_progress` / `done` / `failed` / `skipped`)
   - [x] `notes` (user-editable from dashboard)
@@ -179,7 +179,7 @@ interface Prospect {
   id: number;                          // auto-increment PK
   url: string;                         // canonical https://www.linkedin.com/in/{slug}/
   slug: string;                        // {slug} extracted for fast feed matching
-  level: 'NONE' | '1st' | '2nd' | '3rd' | 'OUT_OF_NETWORK';
+  level: 'NONE' | '1st' | '2nd' | '3rd';                  // v2.x: OUT_OF_NETWORK collapsed into 3rd (§20)
   name: string | null;
   headline: string | null;
   company: string | null;
@@ -219,8 +219,7 @@ interface Settings {
       first: string;                   // default '#22c55e' (green)
       second: string;                  // default '#3b82f6' (blue)
       third: string;                   // default '#a855f7' (purple)
-      out_of_network: string;          // default '#6b7280' (gray)
-    };
+    };                                 // v2.x: out_of_network color removed alongside the bucket collapse (§20)
     show_on: {
       post_authors: boolean;           // default true
       reposters: boolean;              // default true
@@ -351,7 +350,7 @@ const badgeText = badgeEl?.textContent?.trim().toLowerCase() || '';
 // Secondary: "You are connected to" / "Message" button heuristic
 // 1st: has "Message" as primary action AND no "Connect" button
 // 2nd: has "Connect" as primary action
-// 3rd / out-of-network: has "Follow" as primary action and no "Connect"
+// 3rd: has "Follow" as primary action and no "Connect"
 ```
 
 Mapping:
@@ -360,10 +359,10 @@ Mapping:
 | `1st` | `1st` |
 | `2nd` | `2nd` |
 | `3rd`, `3rd+` | `3rd` |
-| (missing) + no Connect button + no Message = `OUT_OF_NETWORK` |
+| (missing) + no Connect button + no Message = `3rd` |
 | If profile page is "Profile unavailable" / 404 | `scan_status = 'failed'`, `scan_error = 'profile_unavailable'` |
 
-`3rd` and `OUT_OF_NETWORK` are distinct levels; UI shorthand `OOO` always means `OUT_OF_NETWORK`.
+LinkedIn surfaces only three actionable degrees (`1st` / `2nd` / `3rd`); the legacy `OUT_OF_NETWORK` (`OOO`) bucket was collapsed into `3rd` in v2.x — see §20.
 
 **Selector resilience**: selectors are defined in a single module `content/selectors.ts`. If LinkedIn changes DOM, only this file needs updating. Each selector has 2–3 fallbacks tried in order.
 
@@ -418,7 +417,6 @@ CSS injected via content script:
 [data-lis-match="1st"] { box-shadow: 0 0 0 2px var(--lis-color-1st, #22c55e); }
 [data-lis-match="2nd"] { box-shadow: 0 0 0 2px var(--lis-color-2nd, #3b82f6); }
 [data-lis-match="3rd"] { box-shadow: 0 0 0 2px var(--lis-color-3rd, #a855f7); }
-[data-lis-match="OUT_OF_NETWORK"] { box-shadow: 0 0 0 2px var(--lis-color-oon, #6b7280); }
 
 .lis-badge {
   position: absolute; top: 8px; right: 8px; z-index: 10;
@@ -427,7 +425,7 @@ CSS injected via content script:
 }
 ```
 
-Badge text: `"1st · TARGET"`, `"2nd · TARGET"`, `"3rd · TARGET"`, `"OUT · TARGET"`.
+Badge text: `"1st · TARGET"`, `"2nd · TARGET"`, `"3rd · TARGET"`.
 
 CSS variables are set from the `settings.highlight.colors` on script init so user-customized colors propagate.
 
@@ -454,7 +452,7 @@ Layout (top to bottom):
 1. **Header**: Extension name + status dot (gray=idle, blue=running, yellow=paused, red=auto_paused).
 2. **List summary card**: `{N} prospects loaded · Last upload: {date}`. CTA "Upload new CSV" (file picker).
 3. **Scan controls**: Primary button toggles between `Start scan` / `Pause scan` / `Resume scan`. Below: `X of Y scanned · ETA {hh:mm}` + linear progress bar. Day counter: `{scans_today}/{daily_cap} today`.
-4. **Stats grid (4 tiles)**: counts of 1st / 2nd / 3rd / OOO, each clickable → opens dashboard pre-filtered.
+4. **Stats grid (3 tiles)**: counts of 1st / 2nd / 3rd, each clickable → opens dashboard pre-filtered. _(Pre-v2.x had a 4th OOO tile — see §20.)_
 5. **Quick actions**: `Export CSV (all)`, `Export CSV (filtered...)` (opens filter modal), `Test Feed Labels (Random)` (requires active `linkedin.com/feed` tab + at least 4 visible unique `/in/` profiles), `Open dashboard`, `View logs`.
 6. **Auto-pause banner** (conditional): red background, reason text, "Resume" button.
 
@@ -467,7 +465,7 @@ Sections (left-nav layout):
   - Clicking a row opens a right-side **drawer** with full profile details, editable `notes`, activity timeline pulled from `activity_log`, "Open on LinkedIn" button, "Rescan now" button.
 - **Settings**
   - Scan pacing: two sliders (min/max delay), daily cap input, retry toggle.
-  - Highlighter: master toggle, 4 color pickers (one per level), 5 checkboxes (where to highlight).
+  - Highlighter: master toggle, 3 color pickers (one per level), 5 checkboxes (where to highlight).
   - Data: `Clear all data` (typed confirm), `Export backup` (JSON of all stores — bonus, nice-to-have if time allows).
 - **Logs**
   - Reverse-chronological list from `activity_log`. Filter by level (info/warn/error) and event type. Export as JSON.
@@ -479,7 +477,6 @@ Sections (left-nav layout):
   - 1st: `#22c55e` (green-500)
   - 2nd: `#3b82f6` (blue-500)
   - 3rd: `#a855f7` (purple-500)
-  - OOO: `#6b7280` (gray-500)
 
 ---
 
@@ -628,7 +625,7 @@ Ordered for incremental verification. Each milestone ends with a runnable, testa
 - [x] Scan queue + scheduler with jitter and daily cap.
 - [x] Hidden-tab orchestration (`chrome.tabs.create` with `active: false`).
 - [x] `content/scan.ts` injection + selectors with 2–3 fallbacks.
-- [x] Level detection mapping (1st / 2nd / 3rd / OUT_OF_NETWORK / unavailable).
+- [x] Level detection mapping (1st / 2nd / 3rd / unavailable). _(v2.x: legacy `OUT_OF_NETWORK` collapsed into `3rd` — see §20.)_
 - [x] Name / headline / company / location extraction.
 - [x] Safety detection — CAPTCHA → `auto_paused`.
 - [x] Safety detection — rate-limit page → `auto_paused`.
@@ -694,7 +691,7 @@ Ordered for incremental verification. Each milestone ends with a runnable, testa
 - [x] Day-bucket rollover across timezones.
 - [x] Jitter delay stays within bounds.
 - [x] Feed test seeding guarantees all four levels are present when at least 4 profiles are collected.
-- [x] Highlight level mapping keeps `3rd` and `OUT_OF_NETWORK` (`OOO`) color variables separate.
+- [x] Highlight level mapping renders `1st` / `2nd` / `3rd` palettes; the legacy `OUT_OF_NETWORK` (`OOO`) variable was removed in v2.x (see §20) — `tests/highlight-levels.test.ts` asserts it no longer appears in the generated CSS.
 
 ### 14.2 Fixture / Contract
 - [x] `tests/selectors.fixtures.html` contains saved selector fixtures per level (`1st`, `2nd`, `3rd`, `oon`, `unavailable`) via named `<template>` blocks.
