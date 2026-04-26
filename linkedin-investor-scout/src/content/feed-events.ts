@@ -117,6 +117,26 @@ function classifyEventKind(
 }
 
 /**
+ * Kind precedence used to collapse multiple anchors of the same prospect
+ * inside a single card. LinkedIn renders an author as both an avatar
+ * (empty-text anchor) AND a name link — these are the same logical event
+ * and must dedupe to the more informative classification. Comments are
+ * handled separately (each comment URN is its own event).
+ *
+ * Priority: post > repost > reaction > tagged > mention. Higher wins.
+ */
+const NON_COMMENT_KIND_PRIORITY: Record<
+  Exclude<FeedEventKind, 'comment'>,
+  number
+> = {
+  post: 5,
+  repost: 4,
+  reaction: 3,
+  tagged: 2,
+  mention: 1,
+};
+
+/**
  * Determine whether an anchor is the card's primary author link. Strategy:
  * match by name against the `aria-label="Open control menu for post by X"`
  * button on the same card (stable hook across SDUI churn per TODO DOM Ref).
@@ -203,6 +223,11 @@ export function extractFeedEventsFromDocument(
     const commentListRoot = queryFirstTiered(card, FEED_EVENT_SELECTORS.commentList);
     const anchors = card.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
 
+    // Per-card, per-slug accumulator for non-comment events. LinkedIn renders
+    // a prospect as up to two anchors per card (avatar + name link); both
+    // must collapse to one event with the most informative classification.
+    const bestNonCommentBySlug = new Map<string, FeedEventInsert>();
+
     for (const anchor of Array.from(anchors)) {
       const href = anchor.getAttribute('href');
       if (!href) continue;
@@ -243,8 +268,6 @@ export function extractFeedEventsFromDocument(
         activity_urn: activityUrn,
         comment_urn: commentUrn,
       });
-      if (seenFingerprints.has(fingerprint)) continue;
-      seenFingerprints.add(fingerprint);
 
       const insert: FeedEventInsert = {
         prospect_id: summary.id,
@@ -262,6 +285,38 @@ export function extractFeedEventsFromDocument(
         seen_count: 1,
         task_status: 'new',
       };
+
+      if (kind === 'comment') {
+        // Each comment is its own event — distinct comment URN per row.
+        if (seenFingerprints.has(fingerprint)) continue;
+        seenFingerprints.add(fingerprint);
+        out.push(insert);
+        continue;
+      }
+
+      // Non-comment anchor: collapse per-slug within this card, keeping the
+      // higher-priority classification (post beats mention, etc.).
+      const existing = bestNonCommentBySlug.get(slug);
+      if (!existing) {
+        bestNonCommentBySlug.set(slug, insert);
+      } else {
+        const existingPriority =
+          NON_COMMENT_KIND_PRIORITY[
+            existing.event_kind as Exclude<FeedEventKind, 'comment'>
+          ] ?? 0;
+        const incomingPriority =
+          NON_COMMENT_KIND_PRIORITY[kind as Exclude<FeedEventKind, 'comment'>] ??
+          0;
+        if (incomingPriority > existingPriority) {
+          bestNonCommentBySlug.set(slug, insert);
+        }
+      }
+    }
+
+    // Flush per-slug winners after processing every anchor in this card.
+    for (const insert of bestNonCommentBySlug.values()) {
+      if (seenFingerprints.has(insert.event_fingerprint)) continue;
+      seenFingerprints.add(insert.event_fingerprint);
       out.push(insert);
     }
   }
