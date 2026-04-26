@@ -23,6 +23,7 @@ import {
   countAcceptedActionsForDay,
   countFeedEventsByTaskStatus,
   countPendingInvites,
+  getActiveMessageTemplate,
   getActivityLogForProspect,
   getAllFeedEvents,
   getAllOutreachActions,
@@ -584,6 +585,27 @@ async function handleOutreachQueueQuery(
  * `{prospect_id}:{kind}:{day_bucket}` key unless the caller overrides.
  * Bumps `daily_usage` + `prospect.last_outreach_at` on transition to `sent`.
  */
+/**
+ * Maps outreach kinds to the message-template kind used to render their body.
+ * Returns null for kinds that don't carry a template (currently `profile_visit`).
+ */
+function templateKindForOutreachKind(
+  kind: OutreachActionRecordPayload['kind'],
+): 'connect_note' | 'first_message' | 'followup' | null {
+  switch (kind) {
+    case 'connection_request_sent':
+      return 'connect_note';
+    case 'message_sent':
+      return 'first_message';
+    case 'followup_message_sent':
+      return 'followup';
+    case 'profile_visit':
+      return null;
+    default:
+      return null;
+  }
+}
+
 async function handleOutreachActionRecord(
   payload: OutreachActionRecordPayload,
 ): Promise<OutreachAction> {
@@ -592,6 +614,27 @@ async function handleOutreachActionRecord(
   const key =
     payload.idempotency_key ??
     buildIdempotencyKey(payload.prospect_id, payload.kind, bucket);
+
+  // Auto-resolve template_id/version for template-bearing kinds when the
+  // caller didn't stamp them. Future-proofs Phase 4.2 A/B reporting (v2.1)
+  // by ensuring detector-originated writes (send / message-sent detectors)
+  // carry the active template metadata they used to render.
+  if (
+    (payload.template_id === undefined || payload.template_id === null) &&
+    (payload.template_version === undefined || payload.template_version === null)
+  ) {
+    const tplKind = templateKindForOutreachKind(payload.kind);
+    if (tplKind !== null) {
+      const tpl = await getActiveMessageTemplate(tplKind);
+      if (tpl) {
+        payload = {
+          ...payload,
+          template_id: tpl.id,
+          template_version: tpl.version,
+        };
+      }
+    }
+  }
 
   const existing = await getOutreachActionByIdempotencyKey(key);
   let action: OutreachAction;
