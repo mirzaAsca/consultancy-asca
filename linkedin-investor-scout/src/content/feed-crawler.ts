@@ -232,6 +232,13 @@ async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
   attachUserInteractionGuards(onUserInteraction);
 
   try {
+    // Park focus on the document body so LinkedIn's keyboard-style scroll
+    // heuristics treat us like a user pressing Down. Without this, focus may
+    // sit on a link/button and our scrolls happen "outside" the user surface,
+    // which is part of why one big jump leaves the virtualized feed half-
+    // hydrated and visually broken.
+    seedDocumentFocus();
+
     // Kick a scan so any cards already on-screen count against the baseline
     // before we start scrolling (avoids inflating the first delta).
     opts.fingerprints.scanNow();
@@ -257,12 +264,7 @@ async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
       }
 
       const step = pickScrollStep(rng);
-      markProgrammaticScroll();
-      try {
-        window.scrollBy({ top: step, left: 0, behavior: 'auto' });
-      } catch {
-        window.scrollBy(0, step);
-      }
+      await humanScroll(step, rng, () => userInteracted || opts.isCanceled());
       scrollSteps += 1;
 
       const waitMs = pickWaitMs(rng);
@@ -350,32 +352,82 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Mimic a user holding the Down arrow / Page Down key: instead of one big
+ * `scrollBy({ top: 800 })` jump (which leaves LinkedIn's virtualized feed
+ * unable to hydrate the cards we flew past), step the scroll in 40–110 px
+ * sub-steps with 25–95 ms gaps between them. Each sub-step is small enough
+ * for the IntersectionObserver-driven card hydration to keep up, and the
+ * jittered cadence avoids fixed-interval fingerprints. Total scroll distance
+ * still equals the caller's `targetPx` budget.
+ */
+async function humanScroll(
+  targetPx: number,
+  rng: () => number,
+  shouldAbort: () => boolean,
+): Promise<void> {
+  const remaining = Math.max(0, Math.round(targetPx));
+  if (remaining === 0) return;
+  let scrolled = 0;
+  while (scrolled < remaining) {
+    if (shouldAbort()) return;
+    // 40–110 px per micro-step — roughly one Down-arrow press worth of pixels.
+    const stepBudget = remaining - scrolled;
+    const microStep = Math.min(
+      stepBudget,
+      40 + Math.round(rng() * 70),
+    );
+    try {
+      window.scrollBy({ top: microStep, left: 0, behavior: 'auto' });
+    } catch {
+      window.scrollBy(0, microStep);
+    }
+    scrolled += microStep;
+    if (scrolled >= remaining) break;
+    // 25–95 ms gap — fast enough to feel like a held keypress, slow enough
+    // for LinkedIn's lazy-loader to render the freshly-revealed slice.
+    await sleep(25 + Math.round(rng() * 70));
+  }
+}
+
+/**
+ * Park keyboard focus on the document so LinkedIn's scroll surface treats us
+ * like a user pressing arrow keys, not a script reaching past the page chrome.
+ * No-op if focus is already inside the page body.
+ */
+function seedDocumentFocus(): void {
+  try {
+    const active = document.activeElement;
+    if (active && active !== document.body && active !== document.documentElement) {
+      // Don't yank focus away from a composer / search input the user may have
+      // left active before clicking the crawl button.
+      const tag = active.tagName.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || (active as HTMLElement).isContentEditable) {
+        return;
+      }
+    }
+    const body = document.body;
+    if (!body) return;
+    const hadTabIndex = body.hasAttribute('tabindex');
+    if (!hadTabIndex) body.setAttribute('tabindex', '-1');
+    body.focus({ preventScroll: true });
+    if (!hadTabIndex) body.removeAttribute('tabindex');
+  } catch {
+    /* focus seeding is best-effort */
+  }
+}
+
 // ——— User-interaction guards ———
 //
-// The moment the user scrolls, clicks, or types while a crawl is running, we
-// must yield. Anything else feels hostile. We use bubble-phase listeners and
-// remove them as soon as the pass ends.
-
-const IDLE_SCROLL_WINDOW_MS = 1_500;
-let lastProgrammaticScrollAt = 0;
+// The moment the user wheels, taps, clicks, or types while a crawl is running,
+// we must yield. Raw `scroll` is intentionally not observed: LinkedIn layout
+// shifts and our own scrollBy calls can emit it after the programmatic scroll.
 
 function attachUserInteractionGuards(onInteract: () => void): void {
   document.addEventListener('keydown', onInteract, { passive: true });
   document.addEventListener('mousedown', onInteract, { passive: true });
   document.addEventListener('touchstart', onInteract, { passive: true });
   window.addEventListener('wheel', onInteract, { passive: true });
-  // Guard against programmatic scrolls: we mark a short window around our
-  // scrollBy call so the scroll listener ignores our own input.
-  const scrollHandler = () => {
-    if (Date.now() - lastProgrammaticScrollAt < IDLE_SCROLL_WINDOW_MS) return;
-    onInteract();
-  };
-  (onInteract as { __scrollHandler?: typeof scrollHandler }).__scrollHandler =
-    scrollHandler;
-  window.addEventListener('scroll', scrollHandler, {
-    passive: true,
-    capture: true,
-  });
 }
 
 function detachUserInteractionGuards(onInteract: () => void): void {
@@ -383,16 +435,6 @@ function detachUserInteractionGuards(onInteract: () => void): void {
   document.removeEventListener('mousedown', onInteract);
   document.removeEventListener('touchstart', onInteract);
   window.removeEventListener('wheel', onInteract);
-  const scrollHandler = (onInteract as { __scrollHandler?: EventListener })
-    .__scrollHandler;
-  if (scrollHandler) {
-    window.removeEventListener('scroll', scrollHandler, true);
-  }
-}
-
-/** Marks a programmatic scroll so the user-scroll guard ignores it. */
-export function markProgrammaticScroll(): void {
-  lastProgrammaticScrollAt = Date.now();
 }
 
 function logWarn(event: string, data: Record<string, unknown>): void {
