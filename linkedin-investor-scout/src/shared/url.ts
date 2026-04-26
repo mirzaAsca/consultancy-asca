@@ -8,6 +8,26 @@ export function validateLinkedInInUrl(input: string): boolean {
 }
 
 /**
+ * Phase 5.6 — extract a LinkedIn messaging thread id from a pathname.
+ *
+ * Covers the surfaces a Mode-A user actually lands on:
+ *   - `/messaging/thread/{id}/`        — full-page thread (and pop-out window).
+ *   - `/messaging/messageRoom/{id}/`   — older surface still rendered on some accounts.
+ *
+ * Returns `null` for `/messaging/compose/` (no thread id yet — different flow)
+ * and for any non-messaging pathname. The id segment is returned verbatim;
+ * LinkedIn's encoding (e.g. `2-MTM3MDcwOTM4XzE=`) is opaque and stable.
+ */
+export function extractMessagingThreadId(pathname: string): string | null {
+  const decoded = safeDecodePathname(pathname);
+  const match = decoded.match(/^\/messaging\/(?:thread|messageRoom)\/([^/]+)\/?$/i);
+  if (!match) return null;
+  const raw = match[1].trim();
+  if (!raw) return null;
+  return raw;
+}
+
+/**
  * Extract `/in/{slug}` slug from a pathname (handles `/in/slug/overlay/...`).
  */
 export function slugFromLinkedInPathname(pathname: string): string | null {

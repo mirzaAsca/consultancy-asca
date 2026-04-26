@@ -57,7 +57,10 @@ import {
   type WithdrawalEvent,
 } from '@/shared/withdrawal-detector';
 import { matchRestrictionBanner } from '@/shared/restriction-banner-detector';
-import { slugFromLinkedInPathname } from '@/shared/url';
+import {
+  extractMessagingThreadId,
+  slugFromLinkedInPathname,
+} from '@/shared/url';
 
 /**
  * Per-URL guards so SPA-style route changes don't stack watchers on the
@@ -109,9 +112,14 @@ export function startInteractionDetectorsForUrl(
   if (slug) {
     maybeStartProfileVisitDetector(slug, getSlugMap, getSettings);
   }
-  const threadMatch = pathname.match(/^\/messaging\/thread\/([^/]+)\/?$/);
-  if (threadMatch) {
-    maybeStartMessageSentDetector(threadMatch[1], getSlugMap);
+  // Phase 5.6 — covers `/messaging/thread/{id}/` (full-page + pop-out window
+  // surface) and the older `/messaging/messageRoom/{id}/` form some accounts
+  // still render. Pop-out windows are top-level browser windows that match
+  // the manifest host pattern, so the content script injects independently
+  // and this detector attaches the same as in the parent window.
+  const threadId = extractMessagingThreadId(pathname);
+  if (threadId) {
+    maybeStartMessageSentDetector(threadId, getSlugMap);
   }
   // Phase 5.6 — slide-out drawer + pop-out messaging surfaces. The drawer
   // (`<aside id="msg-overlay">`) can render multiple thread bubbles

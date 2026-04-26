@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   canonicalizeLinkedInProfileUrl,
+  extractMessagingThreadId,
   slugifyLinkedInProfileUrl,
   validateLinkedInInUrl,
 } from '@/shared/url';
@@ -70,5 +71,42 @@ describe('validateLinkedInInUrl', () => {
 describe('slugifyLinkedInProfileUrl', () => {
   it('returns slug only', () => {
     expect(slugifyLinkedInProfileUrl('https://www.linkedin.com/in/my-slug/')).toBe('my-slug');
+  });
+});
+
+describe('extractMessagingThreadId (Phase 5.6 — pop-out window coverage)', () => {
+  it('matches /messaging/thread/{id}/ with trailing slash', () => {
+    expect(
+      extractMessagingThreadId('/messaging/thread/2-MTM3MDcwOTM4XzE=/'),
+    ).toBe('2-MTM3MDcwOTM4XzE=');
+  });
+
+  it('matches /messaging/thread/{id} without trailing slash', () => {
+    expect(extractMessagingThreadId('/messaging/thread/abc-123')).toBe('abc-123');
+  });
+
+  it('matches the older /messaging/messageRoom/{id}/ surface', () => {
+    expect(extractMessagingThreadId('/messaging/messageRoom/xyz/')).toBe('xyz');
+  });
+
+  it('returns null for /messaging/compose/ (no thread id yet)', () => {
+    expect(extractMessagingThreadId('/messaging/compose/')).toBeNull();
+  });
+
+  it('returns null for nested paths (e.g. attachments)', () => {
+    expect(extractMessagingThreadId('/messaging/thread/abc/attachments/')).toBeNull();
+  });
+
+  it('returns null for non-messaging pathnames', () => {
+    expect(extractMessagingThreadId('/feed/')).toBeNull();
+    expect(extractMessagingThreadId('/in/john-doe/')).toBeNull();
+  });
+
+  it('returns null for empty thread id', () => {
+    expect(extractMessagingThreadId('/messaging/thread//')).toBeNull();
+  });
+
+  it('is case-insensitive on the route segment', () => {
+    expect(extractMessagingThreadId('/Messaging/Thread/abc/')).toBe('abc');
   });
 });
