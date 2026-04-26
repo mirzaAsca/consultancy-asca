@@ -232,12 +232,13 @@ async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
   attachUserInteractionGuards(onUserInteraction);
 
   try {
-    // Park focus on the document body so LinkedIn's keyboard-style scroll
-    // heuristics treat us like a user pressing Down. Without this, focus may
-    // sit on a link/button and our scrolls happen "outside" the user surface,
-    // which is part of why one big jump leaves the virtualized feed half-
-    // hydrated and visually broken.
-    seedDocumentFocus();
+    // Resolve the right scroll surface. LinkedIn's SDUI feed lives inside
+    // `<main id="workspace" tabindex="0">` (see example1.html line 197), and
+    // on that layout `window.scrollBy` is a no-op because <main> owns its own
+    // scroller. Falling back to documentElement keeps us working on legacy
+    // surfaces and in tests where <main> isn't present.
+    const scrollTarget = pickScrollTarget();
+    focusScrollTarget(scrollTarget);
 
     // Kick a scan so any cards already on-screen count against the baseline
     // before we start scrolling (avoids inflating the first delta).
@@ -264,7 +265,7 @@ async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
       }
 
       const step = pickScrollStep(rng);
-      await humanScroll(step, rng, () => userInteracted || opts.isCanceled());
+      scrollContainerBy(scrollTarget, step);
       scrollSteps += 1;
 
       const waitMs = pickWaitMs(rng);
@@ -353,67 +354,79 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Mimic a user holding the Down arrow / Page Down key: instead of one big
- * `scrollBy({ top: 800 })` jump (which leaves LinkedIn's virtualized feed
- * unable to hydrate the cards we flew past), step the scroll in 40–110 px
- * sub-steps with 25–95 ms gaps between them. Each sub-step is small enough
- * for the IntersectionObserver-driven card hydration to keep up, and the
- * jittered cadence avoids fixed-interval fingerprints. Total scroll distance
- * still equals the caller's `targetPx` budget.
+ * Resolve LinkedIn's actual scroll surface. The SDUI feed is rendered inside
+ * `<main id="workspace" tabindex="0">` (see example1.html line 197), and on
+ * that layout `<main>` owns the scroll container — `window.scrollBy` does not
+ * scroll the feed. Falling back to `documentElement` keeps us working on
+ * legacy pre-SDUI surfaces and in tests where `<main>` isn't mounted yet.
  */
-async function humanScroll(
-  targetPx: number,
-  rng: () => number,
-  shouldAbort: () => boolean,
-): Promise<void> {
-  const remaining = Math.max(0, Math.round(targetPx));
-  if (remaining === 0) return;
-  let scrolled = 0;
-  while (scrolled < remaining) {
-    if (shouldAbort()) return;
-    // 40–110 px per micro-step — roughly one Down-arrow press worth of pixels.
-    const stepBudget = remaining - scrolled;
-    const microStep = Math.min(
-      stepBudget,
-      40 + Math.round(rng() * 70),
-    );
-    try {
-      window.scrollBy({ top: microStep, left: 0, behavior: 'auto' });
-    } catch {
-      window.scrollBy(0, microStep);
+function pickScrollTarget(): Element {
+  const main = document.querySelector(
+    'main#workspace, main[tabindex="0"]',
+  ) as HTMLElement | null;
+  if (main) return main;
+  return document.scrollingElement ?? document.documentElement;
+}
+
+/**
+ * LinkedIn's scroll surface is keyboard-focusable (`<main tabindex="0">`).
+ * Parking focus there mirrors a user pressing into the feed, which is what
+ * the SDUI hydration relies on. Skip if the user has a composer / search
+ * input focused so we don't yank them out mid-typing.
+ */
+function focusScrollTarget(target: Element): void {
+  try {
+    const active = document.activeElement as HTMLElement | null;
+    if (active && active !== document.body && active !== document.documentElement) {
+      const tag = active.tagName.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || active.isContentEditable) {
+        return;
+      }
     }
-    scrolled += microStep;
-    if (scrolled >= remaining) break;
-    // 25–95 ms gap — fast enough to feel like a held keypress, slow enough
-    // for LinkedIn's lazy-loader to render the freshly-revealed slice.
-    await sleep(25 + Math.round(rng() * 70));
+    if (target instanceof HTMLElement) {
+      target.focus({ preventScroll: true });
+    }
+  } catch {
+    /* focus seeding is best-effort */
   }
 }
 
 /**
- * Park keyboard focus on the document so LinkedIn's scroll surface treats us
- * like a user pressing arrow keys, not a script reaching past the page chrome.
- * No-op if focus is already inside the page body.
+ * Issue a smooth scroll on the resolved container. `behavior: 'smooth'` lets
+ * the browser interpolate frames so LinkedIn's IntersectionObserver-driven
+ * card hydration keeps up with our advance — the previous instant 600–1200 px
+ * `behavior: 'auto'` jump flew past the virtualized window faster than cards
+ * could mount, leaving floating badges with no card body underneath. Falls
+ * back through three successively dumber scroll APIs in case the resolved
+ * target doesn't expose the modern signature.
  */
-function seedDocumentFocus(): void {
+function scrollContainerBy(target: Element, deltaY: number): void {
   try {
-    const active = document.activeElement;
-    if (active && active !== document.body && active !== document.documentElement) {
-      // Don't yank focus away from a composer / search input the user may have
-      // left active before clicking the crawl button.
-      const tag = active.tagName.toLowerCase();
-      if (tag === 'input' || tag === 'textarea' || (active as HTMLElement).isContentEditable) {
-        return;
-      }
-    }
-    const body = document.body;
-    if (!body) return;
-    const hadTabIndex = body.hasAttribute('tabindex');
-    if (!hadTabIndex) body.setAttribute('tabindex', '-1');
-    body.focus({ preventScroll: true });
-    if (!hadTabIndex) body.removeAttribute('tabindex');
+    target.scrollBy({ top: deltaY, left: 0, behavior: 'smooth' });
+    return;
   } catch {
-    /* focus seeding is best-effort */
+    /* fall through */
+  }
+  try {
+    target.scrollBy(0, deltaY);
+    return;
+  } catch {
+    /* fall through */
+  }
+  try {
+    if (target instanceof HTMLElement) {
+      target.scrollTop = target.scrollTop + deltaY;
+      return;
+    }
+  } catch {
+    /* fall through */
+  }
+  // Last resort — should never trigger on the LinkedIn surface but keeps the
+  // crawler functional on minimal test fixtures.
+  try {
+    window.scrollBy(0, deltaY);
+  } catch {
+    /* no-op */
   }
 }
 
