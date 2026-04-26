@@ -78,6 +78,7 @@ import {
 } from '@/shared/urn';
 import { computeAnalyticsSnapshot } from '@/shared/analytics';
 import { computeHealthSnapshot } from '@/shared/health';
+import { nextLifecycleAfterOutreachSent } from '@/shared/lifecycle';
 import {
   buildRenderContextFromProspect,
   lintTemplateAgainstCorpus,
@@ -761,6 +762,46 @@ async function handleOutreachActionRecord(
           error: error instanceof Error ? error.message : error,
         });
       }
+    }
+  }
+  // Phase 5.4 — auto-advance prospect.lifecycle_status on detector- or
+  // queue-confirmed outreach. `nextLifecycleAfterOutreachSent` is the pure
+  // source of truth for the mapping (forward-only, never overwrites
+  // do_not_contact, never regresses post-acceptance states). Acceptance
+  // (request_sent → connected) lives in scan-worker via acceptance-watcher
+  // since it triggers from a level transition, not from an outreach write.
+  if (becameSent) {
+    try {
+      const prospect = await getProspectById(action.prospect_id);
+      if (prospect) {
+        const nextStatus = nextLifecycleAfterOutreachSent({
+          currentStatus: prospect.lifecycle_status,
+          kind: action.kind,
+        });
+        if (nextStatus !== null && nextStatus !== prospect.lifecycle_status) {
+          await updateProspect(action.prospect_id, {
+            lifecycle_status: nextStatus,
+          });
+          await appendActivityLog({
+            ts: now,
+            level: 'info',
+            event: 'lifecycle_status_advanced',
+            prospect_id: action.prospect_id,
+            data: {
+              from: prospect.lifecycle_status,
+              to: nextStatus,
+              kind: action.kind,
+              action_id: action.id,
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('[investor-scout] lifecycle advance failed', {
+        prospect_id: action.prospect_id,
+        kind: action.kind,
+        error: error instanceof Error ? error.message : error,
+      });
     }
   }
   // Phase 1.2 recompute trigger: outreach action completion refreshes the
