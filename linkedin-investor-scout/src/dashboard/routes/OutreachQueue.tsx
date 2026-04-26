@@ -727,7 +727,18 @@ function QueueRow({
           <span className="truncate text-[10px] text-gray-500">{row.headline}</span>
         )}
       </button>
-      <LevelBadge level={row.level} />
+      <div className="flex items-center gap-1">
+        <LevelBadge level={row.level} />
+        {row.recent_unlock && (
+          <span
+            className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-emerald-300"
+            title="Newly unlocked: 2nd-degree within the last 7 days. Scoring engine adds +25 priority."
+          >
+            <Sparkles className="h-2.5 w-2.5" />
+            New
+          </span>
+        )}
+      </div>
       <TierChip tier={row.tier} />
       <div className="flex flex-col gap-0.5">
         <span className="font-medium text-gray-200">

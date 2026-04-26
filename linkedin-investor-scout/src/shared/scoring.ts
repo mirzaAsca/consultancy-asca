@@ -136,15 +136,28 @@ function recentUnlockScore(
   lastLevelChangeAt: number | null,
   now: number,
 ): number {
-  if (level !== '2nd') return 0;
-  // Guard against `undefined` (unsafe test casts) and NaN (arithmetic on
-  // non-finite inputs would otherwise sneak through the window check).
+  return isRecentlyUnlocked(level, lastLevelChangeAt, now)
+    ? SCORE_WEIGHTS.recent_unlock_boost
+    : 0;
+}
+
+/**
+ * Predicate mirror of `recentUnlockScore` — true when a 2nd-degree prospect's
+ * level transition lands inside `SCORE_WEIGHTS.recent_unlock_days`. UI surfaces
+ * a "Newly unlocked" badge based on this so the +25 scoring boost is visible
+ * to the user, not just hidden inside the tier bump.
+ */
+export function isRecentlyUnlocked(
+  level: Prospect['level'],
+  lastLevelChangeAt: number | null | undefined,
+  now: number,
+): boolean {
+  if (level !== '2nd') return false;
   if (lastLevelChangeAt == null || !Number.isFinite(lastLevelChangeAt)) {
-    return 0;
+    return false;
   }
   const days = (now - lastLevelChangeAt) / MS_PER_DAY;
-  if (days < 0 || days > SCORE_WEIGHTS.recent_unlock_days) return 0;
-  return SCORE_WEIGHTS.recent_unlock_boost;
+  return days >= 0 && days <= SCORE_WEIGHTS.recent_unlock_days;
 }
 
 /**

@@ -927,6 +927,13 @@ export interface OutreachQueueCandidate {
   skipped_today: boolean;
   /** Mirrors `Prospect.next_action_due_at` for UI badges (follow-up timing). */
   next_action_due_at: number | null;
+  /**
+   * True when the prospect just transitioned into 2nd-degree within the
+   * scoring engine's `recent_unlock_days` window. Surfaces the +25 unlock
+   * bonus as a visible "Newly unlocked" badge so the user knows which rows
+   * are hot off the unlock press.
+   */
+  recent_unlock: boolean;
 }
 
 /**

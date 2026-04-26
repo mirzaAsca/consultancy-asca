@@ -17,6 +17,7 @@ import {
   WARMING_VISIT_DEDUPE_MS,
   WARMING_VISIT_INVITE_DELAY_MS,
 } from './constants';
+import { isRecentlyUnlocked } from './scoring';
 import type {
   DailyUsage,
   OutreachAction,
@@ -352,6 +353,7 @@ export function buildCandidates(
       has_pending_invite: hasPendingInvite,
       skipped_today: skipped,
       next_action_due_at: p.next_action_due_at,
+      recent_unlock: isRecentlyUnlocked(p.level, p.last_level_change_at, now),
     });
   }
 

@@ -53,7 +53,7 @@ function makeProspect(over: Partial<Prospect>): Prospect {
     mutual_count: over.mutual_count ?? 3,
     next_action: null,
     next_action_due_at: null,
-    last_level_change_at: null,
+    last_level_change_at: over.last_level_change_at ?? null,
     last_outreach_at: over.last_outreach_at ?? null,
   };
 }
@@ -437,6 +437,39 @@ describe('buildCandidates', () => {
     });
     // With a live invite, recommendAction returns null — so no candidate.
     expect(result).toHaveLength(0);
+  });
+
+  it('flags 2nd-degree rows whose level transition lands inside the unlock window', () => {
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    const prospects: Prospect[] = [
+      makeProspect({
+        id: 1,
+        level: '2nd',
+        last_level_change_at: NOW - 2 * ONE_DAY,
+      }),
+      makeProspect({
+        id: 2,
+        level: '2nd',
+        last_level_change_at: NOW - 30 * ONE_DAY,
+      }),
+      makeProspect({
+        id: 3,
+        level: '3rd',
+        last_level_change_at: NOW - 1 * ONE_DAY,
+      }),
+      makeProspect({ id: 4, level: '2nd', last_level_change_at: null }),
+    ];
+    const result = buildCandidates(prospects, new Map(), {
+      filter: {},
+      skippedProspectIds: new Set(),
+      warm_visit_before_invite: false,
+      now: NOW,
+    });
+    const byId = Object.fromEntries(result.map((c) => [c.prospect_id, c]));
+    expect(byId[1].recent_unlock).toBe(true);
+    expect(byId[2].recent_unlock).toBe(false);
+    expect(byId[3].recent_unlock).toBe(false);
+    expect(byId[4].recent_unlock).toBe(false);
   });
 });
 
