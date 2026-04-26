@@ -1639,6 +1639,47 @@ async function navigateFeedTabToMode(
   }
 }
 
+async function createManualFeedCrawlTab(): Promise<
+  | { ok: true; tab: chrome.tabs.Tab; opener_url: string | null }
+  | { ok: false; error: string }
+> {
+  try {
+    const opener = await getActiveTabInFocusedWindow();
+    // Open the crawl tab in the background so the popup keeps focus and the
+    // user can observe live status. Chrome auto-closes the popup the moment
+    // a freshly-created tab steals focus, which previously made the action
+    // feel like "nothing happened."
+    const createProps: chrome.tabs.CreateProperties = {
+      url: buildModeUrl('top'),
+      active: false,
+    };
+    if (opener && typeof opener.id === 'number') {
+      createProps.openerTabId = opener.id;
+      if (typeof opener.index === 'number') {
+        createProps.index = opener.index + 1;
+      }
+    }
+    const tab = await chrome.tabs.create(createProps);
+    if (typeof tab.id !== 'number') {
+      return {
+        ok: false,
+        error: 'Chrome did not return a tab id for the crawl tab.',
+      };
+    }
+    return {
+      ok: true,
+      tab,
+      opener_url: typeof opener?.url === 'string' ? opener.url : null,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error:
+        error instanceof Error ? error.message : 'Could not open crawl tab.',
+    };
+  }
+}
+
 function emptyModeMetrics(
   mode: 'top' | 'recent',
   startedAt: number,
@@ -1823,22 +1864,6 @@ async function handleFeedCrawlSessionStart(): Promise<
     };
   }
 
-  const tab = await getActiveTabInFocusedWindow();
-  if (!tab || typeof tab.id !== 'number' || !tab.url) {
-    return {
-      ok: false,
-      error:
-        'Open the LinkedIn feed in the active tab, then start the session.',
-    };
-  }
-  if (!isLinkedInFeedTabUrl(tab.url)) {
-    return {
-      ok: false,
-      error:
-        'Active tab must be https://www.linkedin.com/feed/ for a crawl session.',
-    };
-  }
-
   const scanState = await getScanState();
   if (scanState.status === 'running') {
     return {
@@ -1848,11 +1873,17 @@ async function handleFeedCrawlSessionStart(): Promise<
     };
   }
 
+  const created = await createManualFeedCrawlTab();
+  if (!created.ok) {
+    return { ok: false, error: created.error };
+  }
+  const tab = created.tab;
+  const tabId = tab.id!;
   const sessionId = `crawl-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const startedAt = Date.now();
 
   feedCrawlState.running = true;
-  feedCrawlState.tab_id = tab.id;
+  feedCrawlState.tab_id = tabId;
   feedCrawlState.session_id = sessionId;
   feedCrawlState.started_at = startedAt;
   feedCrawlState.cancel_requested = false;
@@ -1864,12 +1895,18 @@ async function handleFeedCrawlSessionStart(): Promise<
     level: 'info',
     event: 'feed_crawl_session_start',
     prospect_id: null,
-    data: { session_id: sessionId, tab_id: tab.id, tab_url: tab.url },
+    data: {
+      session_id: sessionId,
+      tab_id: tabId,
+      tab_url: buildModeUrl('top'),
+      opener_url: created.opener_url,
+      dedicated_tab: true,
+    },
   });
 
   // Fire-and-forget the orchestrator. Background owns mode navigation so the
   // content-script response channel never has to survive a tab reload.
-  void runManualFeedCrawlSession(tab.id, sessionId, startedAt);
+  void runManualFeedCrawlSession(tabId, sessionId, startedAt);
 
   return { ok: true, data: snapshotFeedCrawlStatus() };
 }

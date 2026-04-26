@@ -22,10 +22,7 @@ import {
   Rss,
   Upload,
 } from 'lucide-react';
-import {
-  summarizeCsvFile,
-  type CsvImportSummary,
-} from '@/shared/csv';
+import { summarizeCsvFile, type CsvImportSummary } from '@/shared/csv';
 import {
   addRuntimeMessageListener,
   getExtensionUrl,
@@ -84,7 +81,8 @@ const STATUS_DOT: Record<ScanWorkerStatus, { color: string; label: string }> = {
 };
 
 const AUTO_PAUSE_COPY: Record<NonNullable<AutoPauseReason>, string> = {
-  captcha: 'LinkedIn challenge / CAPTCHA detected. Solve it in a visible tab and resume.',
+  captcha:
+    'LinkedIn challenge / CAPTCHA detected. Solve it in a visible tab and resume.',
   rate_limit: 'Rate limit detected. Wait a while before resuming.',
   auth_wall: 'LinkedIn auth wall hit. Log back in, then resume.',
   health_breach:
@@ -106,7 +104,10 @@ const FILTER_STATUS_OPTIONS: Array<{ value: ScanStatus; label: string }> = [
   { value: 'skipped', label: 'Skipped' },
 ];
 
-const FILTER_ACTIVITY_OPTIONS: Array<{ kind: keyof ActivityKind; label: string }> = [
+const FILTER_ACTIVITY_OPTIONS: Array<{
+  kind: keyof ActivityKind;
+  label: string;
+}> = [
   { kind: 'connected', label: 'Connected' },
   { kind: 'commented', label: 'Commented' },
   { kind: 'messaged', label: 'Messaged' },
@@ -128,7 +129,11 @@ function exportFilterToQuery(draft: ExportFilterDraft): ProspectQuery | null {
   const levels = Array.from(draft.levels);
   const scan_statuses = Array.from(draft.scan_statuses);
   const activity = Array.from(draft.activity);
-  if (levels.length === 0 && scan_statuses.length === 0 && activity.length === 0) {
+  if (
+    levels.length === 0 &&
+    scan_statuses.length === 0 &&
+    activity.length === 0
+  ) {
     return null;
   }
   const activityObj: ProspectQuery['activity'] = {};
@@ -190,7 +195,9 @@ export default function App() {
   const [scanState, setScanState] = useState<ScanState | null>(null);
   const [scanConfig, setScanConfig] = useState<ScanConfigSnapshot | null>(null);
   const [outreachCaps, setOutreachCaps] = useState<OutreachCaps | null>(null);
-  const [dailySnapshot, setDailySnapshot] = useState<DailySnapshot | null>(null);
+  const [dailySnapshot, setDailySnapshot] = useState<DailySnapshot | null>(
+    null,
+  );
   const [nextBest, setNextBest] = useState<OutreachQueueCandidate | null>(null);
   const [lastUploadAt, setLastUploadAt] = useState<number | null>(null);
   const [scanBusy, setScanBusy] = useState(false);
@@ -202,9 +209,8 @@ export default function App() {
   const [feedTestBusy, setFeedTestBusy] = useState(false);
   const [feedTestCleanupBusy, setFeedTestCleanupBusy] = useState(false);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const [feedCrawlStatus, setFeedCrawlStatus] = useState<FeedCrawlStatus | null>(
-    null,
-  );
+  const [feedCrawlStatus, setFeedCrawlStatus] =
+    useState<FeedCrawlStatus | null>(null);
   const [feedCrawlBusy, setFeedCrawlBusy] = useState(false);
 
   const refreshStats = useCallback(async () => {
@@ -372,7 +378,10 @@ export default function App() {
   };
 
   const openDashboard = useCallback(
-    (route: PopupDashboardRoute = 'prospects', params?: Record<string, string>) => {
+    (
+      route: PopupDashboardRoute = 'prospects',
+      params?: Record<string, string>,
+    ) => {
       const search = new URLSearchParams(params ?? {});
       const hash = `#/${route}${search.toString() ? `?${search.toString()}` : ''}`;
       const url = getExtensionUrl(`src/dashboard/index.html${hash}`);
@@ -402,7 +411,10 @@ export default function App() {
           return;
         }
         if (res.data.row_count === 0) {
-          setToast({ kind: 'error', text: 'No rows match — nothing to export.' });
+          setToast({
+            kind: 'error',
+            text: 'No rows match — nothing to export.',
+          });
           return;
         }
         downloadCsv(res.data.csv, buildExportFilename(suffix));
@@ -487,7 +499,7 @@ export default function App() {
       setFeedCrawlStatus(res.data);
       setToast({
         kind: 'success',
-        text: 'Feed Crawl Session started. Let LinkedIn render in the active tab.',
+        text: 'Feed Crawl Session running in a background LinkedIn tab. Switch to it to watch the scroll, or keep this popup open for live status.',
       });
     } finally {
       setFeedCrawlBusy(false);
@@ -519,7 +531,11 @@ export default function App() {
         kind: 'success',
         text: 'Cleared local test data. Re-import your CSV when ready.',
       });
-      await Promise.all([refreshStats(), refreshScanState(), refreshLastUpload()]);
+      await Promise.all([
+        refreshStats(),
+        refreshScanState(),
+        refreshLastUpload(),
+      ]);
     } catch (error) {
       console.error('[investor-scout] feed test cleanup failed', {
         error: error instanceof Error ? error.message : error,
@@ -538,10 +554,14 @@ export default function App() {
 
   const scanned = stats.by_scan_status.done + stats.by_scan_status.failed;
   const total = stats.total;
-  const pending = stats.by_scan_status.pending + stats.by_scan_status.in_progress;
-  const progressPct = total > 0 ? Math.min(100, Math.round((scanned / total) * 100)) : 0;
+  const pending =
+    stats.by_scan_status.pending + stats.by_scan_status.in_progress;
+  const progressPct =
+    total > 0 ? Math.min(100, Math.round((scanned / total) * 100)) : 0;
 
-  const handleScanAction = async (action: 'SCAN_START' | 'SCAN_PAUSE' | 'SCAN_RESUME') => {
+  const handleScanAction = async (
+    action: 'SCAN_START' | 'SCAN_PAUSE' | 'SCAN_RESUME',
+  ) => {
     if (scanBusy) return;
     setScanBusy(true);
     try {
@@ -560,7 +580,9 @@ export default function App() {
   const canPause = scanStatus === 'running';
   const canResume = scanStatus === 'paused' || scanStatus === 'auto_paused';
   const feedTestBlockedByRunningScan = scanStatus === 'running';
-  const lastUploadLabel = lastUploadAt ? new Date(lastUploadAt).toLocaleString() : '—';
+  const lastUploadLabel = lastUploadAt
+    ? new Date(lastUploadAt).toLocaleString()
+    : '—';
   const dayCounterLabel = scanState
     ? scanConfig
       ? `${scanState.scans_today}/${scanConfig.daily_cap} today`
@@ -570,7 +592,9 @@ export default function App() {
     if (scanStatus !== 'running' || pending <= 0 || !scanConfig) {
       return 'ETA —';
     }
-    const avgDelayMs = Math.round((scanConfig.min_delay_ms + scanConfig.max_delay_ms) / 2);
+    const avgDelayMs = Math.round(
+      (scanConfig.min_delay_ms + scanConfig.max_delay_ms) / 2,
+    );
     return `ETA ${formatEta(pending * avgDelayMs)}`;
   }, [pending, scanConfig, scanStatus]);
 
@@ -601,7 +625,10 @@ export default function App() {
               <div className="text-xl font-semibold text-gray-100">
                 {statsLoading ? '—' : stats.total.toLocaleString()}
               </div>
-              <div className="mt-1 text-[10px] text-gray-500" title={lastUploadLabel}>
+              <div
+                className="mt-1 text-[10px] text-gray-500"
+                title={lastUploadLabel}
+              >
                 Last upload: {lastUploadLabel}
               </div>
             </div>
@@ -612,7 +639,9 @@ export default function App() {
               title="Refresh"
               aria-label="Refresh stats"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${statsLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-3.5 w-3.5 ${statsLoading ? 'animate-spin' : ''}`}
+              />
             </button>
           </div>
           <button
@@ -641,7 +670,8 @@ export default function App() {
             onChange={handleFileChange}
           />
           <p className="mt-2 text-[10px] leading-snug text-gray-500">
-            Single column, no header. Up to 50,000 LinkedIn <code className="text-gray-400">/in/</code> URLs.
+            Single column, no header. Up to 50,000 LinkedIn{' '}
+            <code className="text-gray-400">/in/</code> URLs.
           </p>
         </section>
 
@@ -696,7 +726,8 @@ export default function App() {
           </div>
           <div className="mt-2 flex items-center justify-between text-[10px] text-gray-500">
             <span>
-              {pending.toLocaleString()} pending · {stats.by_scan_status.failed.toLocaleString()} failed
+              {pending.toLocaleString()} pending ·{' '}
+              {stats.by_scan_status.failed.toLocaleString()} failed
             </span>
             <span>{dayCounterLabel}</span>
           </div>
@@ -776,7 +807,10 @@ export default function App() {
             <StatusRow label="Pending" value={stats.by_scan_status.pending} />
             <StatusRow label="Done" value={stats.by_scan_status.done} />
             <StatusRow label="Failed" value={stats.by_scan_status.failed} />
-            <StatusRow label="In progress" value={stats.by_scan_status.in_progress} />
+            <StatusRow
+              label="In progress"
+              value={stats.by_scan_status.in_progress}
+            />
           </div>
         </section>
 
@@ -837,7 +871,10 @@ export default function App() {
             Testing mode replaces local prospect list.
           </p>
           <p className="mt-1 text-[10px] text-gray-500">
-            Requires an active <code className="text-gray-400">linkedin.com/feed</code> tab with at least 4 unique <code className="text-gray-400">/in/</code> profiles rendered on the page (viewport or off-screen).
+            Requires an active{' '}
+            <code className="text-gray-400">linkedin.com/feed</code> tab with at
+            least 4 unique <code className="text-gray-400">/in/</code> profiles
+            rendered on the page (viewport or off-screen).
           </p>
           <FeedCrawlSessionRow
             status={feedCrawlStatus}
@@ -941,7 +978,12 @@ function ScanButton({
       ? `${base} bg-blue-600 text-white hover:bg-blue-500`
       : `${base} border border-gray-700 bg-bg text-gray-200 hover:border-gray-500 hover:text-white`;
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={classes}>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={classes}
+    >
       {icon}
       {label}
     </button>
@@ -961,9 +1003,7 @@ function StatTile({
 }) {
   const className =
     'rounded-md border border-gray-800 bg-bg-card p-2 text-center transition ' +
-    (onClick
-      ? 'cursor-pointer hover:border-blue-500 hover:text-white'
-      : '');
+    (onClick ? 'cursor-pointer hover:border-blue-500 hover:text-white' : '');
 
   return (
     <button
@@ -990,7 +1030,9 @@ function StatusRow({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center justify-between rounded-md border border-gray-800 bg-bg-card px-2 py-1.5">
       <span className="text-gray-400">{label}</span>
-      <span className="font-medium text-gray-100">{value.toLocaleString()}</span>
+      <span className="font-medium text-gray-100">
+        {value.toLocaleString()}
+      </span>
     </div>
   );
 }
@@ -1042,17 +1084,22 @@ function DailyGlanceSection({
       </div>
       <div className="mt-2 flex items-center justify-between rounded-md border border-gray-800 bg-bg px-2 py-1 text-[10px] text-gray-400">
         <span>
-          <span className="text-emerald-300">{acceptsToday.toLocaleString()}</span>{' '}
+          <span className="text-emerald-300">
+            {acceptsToday.toLocaleString()}
+          </span>{' '}
           accepts today
         </span>
         <span>
-          <span className="text-blue-300">{pendingInvites.toLocaleString()}</span>{' '}
+          <span className="text-blue-300">
+            {pendingInvites.toLocaleString()}
+          </span>{' '}
           pending invites
         </span>
       </div>
       {anyLow && (
         <div className="mt-2 text-[10px] text-amber-300">
-          Less than 20% of a daily budget remains — slow down or pause new outreach.
+          Less than 20% of a daily budget remains — slow down or pause new
+          outreach.
         </div>
       )}
     </section>
@@ -1082,9 +1129,7 @@ function BudgetTile({
         <span className="text-gray-400">{label}</span>
         <span
           className={
-            low
-              ? 'font-medium text-amber-300'
-              : 'font-medium text-gray-100'
+            low ? 'font-medium text-amber-300' : 'font-medium text-gray-100'
           }
         >
           {used.toLocaleString()}
@@ -1206,7 +1251,7 @@ function FeedCrawlSessionRow({
     const since = status?.started_at
       ? new Date(status.started_at).toLocaleTimeString()
       : '—';
-    summary = `Session running since ${since}. Stay on the tab.`;
+    summary = `Session running since ${since} in a dedicated LinkedIn tab (opened in the background).`;
   } else if (last) {
     const top = last.modes.find((m) => m.mode === 'top');
     const recent = last.modes.find((m) => m.mode === 'recent');
@@ -1218,7 +1263,7 @@ function FeedCrawlSessionRow({
     }) · ${duration}s · ${last.stop_reason.replace(/_/g, ' ')}`;
   } else {
     summary =
-      'Walks the active LinkedIn feed in Top then Recent to harvest new events.';
+      'Opens a LinkedIn feed tab and walks Top then Recent to harvest new events.';
   }
 
   return (
@@ -1233,7 +1278,7 @@ function FeedCrawlSessionRow({
             ? 'Pause the profile scanner before running a Feed Crawl Session'
             : running
               ? 'Stop the running Feed Crawl Session'
-              : 'Run a manual crawl pass across Top and Recent feed modes'
+              : 'Open a dedicated LinkedIn tab and crawl Top and Recent'
         }
       >
         {busy ? (
@@ -1248,7 +1293,8 @@ function FeedCrawlSessionRow({
       <p className="mt-1 text-[10px] leading-snug text-gray-500">{summary}</p>
       {scanRunning && !running && (
         <p className="mt-0.5 text-[10px] text-amber-300/80">
-          Pause the profile scan first — they share the active LinkedIn tab.
+          Pause the profile scan first — only one LinkedIn worker should run at
+          a time.
         </p>
       )}
     </>
@@ -1272,9 +1318,7 @@ function InboxTile({
         </span>
         <span
           className={
-            hot
-              ? 'font-medium text-blue-300'
-              : 'font-medium text-gray-100'
+            hot ? 'font-medium text-blue-300' : 'font-medium text-gray-100'
           }
         >
           {inboxNew.toLocaleString()} new
@@ -1317,8 +1361,16 @@ function PreviewModal({
 
         <dl className="mb-3 grid grid-cols-2 gap-2 text-xs">
           <SummaryRow label="Total rows" value={summary.total} />
-          <SummaryRow label="Valid" value={summary.valid} accent="text-green-400" />
-          <SummaryRow label="Invalid" value={summary.invalid} accent={summary.invalid > 0 ? 'text-yellow-400' : undefined} />
+          <SummaryRow
+            label="Valid"
+            value={summary.valid}
+            accent="text-green-400"
+          />
+          <SummaryRow
+            label="Invalid"
+            value={summary.invalid}
+            accent={summary.invalid > 0 ? 'text-yellow-400' : undefined}
+          />
           <SummaryRow label="Duplicates" value={summary.duplicates} />
         </dl>
 
@@ -1458,7 +1510,8 @@ function ExportFilterModal({
           <h2 className="text-sm font-semibold">Export filtered CSV</h2>
         </div>
         <p className="mb-3 text-[11px] text-gray-400">
-          Pick one or more filters. Rows matching any selection in each group are included.
+          Pick one or more filters. Rows matching any selection in each group
+          are included.
         </p>
 
         <FilterGroup label="Connection level">
