@@ -652,6 +652,50 @@ export async function requeueStaleSATierProspects(
   return n;
 }
 
+/**
+ * FSM closure — flip `connection_request_sent` rows in `state='sent'` whose
+ * `sent_at` is older than `staleDays` to `state='expired'`, stamping
+ * `resolved_at` so analytics / queue builders treat them as terminal.
+ *
+ * No budget credit: unlike a withdrawal (which can free a slot the same day),
+ * an expired invite already burned its slot 180 days ago and the relevant
+ * `daily_usage` rows have rolled out of every health / cap window. Crediting
+ * here would silently inflate today's headroom.
+ *
+ * Idempotent: re-running yields zero additional flips until another row
+ * crosses the cutoff. Returns the number of rows expired.
+ */
+export async function expireStaleSentInvites(
+  staleDays: number,
+  now: number = Date.now(),
+): Promise<number> {
+  if (!Number.isFinite(staleDays) || staleDays <= 0) return 0;
+  const cutoff = now - staleDays * 24 * 60 * 60 * 1000;
+  const db = await openScoutDb();
+  const tx = db.transaction('outreach_actions', 'readwrite');
+  const index = tx.store.index('by_state');
+  let cursor = await index.openCursor(IDBKeyRange.only('sent'));
+  let n = 0;
+  while (cursor) {
+    const row = cursor.value;
+    if (
+      row.kind === 'connection_request_sent' &&
+      typeof row.sent_at === 'number' &&
+      row.sent_at < cutoff
+    ) {
+      await cursor.update({
+        ...row,
+        state: 'expired',
+        resolved_at: now,
+      });
+      n++;
+    }
+    cursor = await cursor.continue();
+  }
+  await tx.done;
+  return n;
+}
+
 /** Reset rows stuck in `in_progress` (e.g. after browser restart). */
 export async function resetStuckInProgressProspects(): Promise<number> {
   const db = await openScoutDb();

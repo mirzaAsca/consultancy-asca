@@ -1,6 +1,7 @@
 import {
   addOutreachAction,
   appendActivityLog,
+  expireStaleSentInvites,
   getActiveMessageTemplate,
   getDailyUsageRange,
   getLastHealthBreachAt,
@@ -21,6 +22,7 @@ import {
 } from '@/shared/db';
 import {
   FOLLOWUP_DRAFT_DELAY_MS,
+  INVITE_EXPIRATION_DAYS,
   STALE_SA_TIER_REQUEUE_DAYS,
 } from '@/shared/constants';
 import { buildIdempotencyKey } from '@/shared/outreach-queue';
@@ -821,6 +823,27 @@ export async function runScanLoop(): Promise<void> {
         prospect_id: null,
         data: { count: requeued, stale_days: STALE_SA_TIER_REQUEUE_DAYS },
       });
+    }
+
+    // FSM closure — flip `connection_request_sent` rows past LinkedIn's
+    // ~6-month expiration window from `sent` → `expired`. Same single-flight
+    // window as the requeue above; idempotent on subsequent loop entries.
+    try {
+      const expired = await expireStaleSentInvites(INVITE_EXPIRATION_DAYS);
+      if (expired > 0) {
+        await appendActivityLog({
+          ts: Date.now(),
+          level: 'info',
+          event: 'stale_invites_expired',
+          prospect_id: null,
+          data: {
+            count: expired,
+            expiration_days: INVITE_EXPIRATION_DAYS,
+          },
+        });
+      }
+    } catch (error) {
+      console.warn('[investor-scout] expireStaleSentInvites failed', { error });
     }
 
     while (true) {

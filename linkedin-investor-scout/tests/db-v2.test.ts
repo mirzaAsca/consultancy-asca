@@ -8,6 +8,7 @@ import {
 import {
   addMessageTemplate,
   addOutreachAction,
+  expireStaleSentInvites,
   bulkAutoTrackFeedEvents,
   bulkUpdateFeedEventTaskStatus,
   clearAllData,
@@ -751,6 +752,148 @@ describe('v2 — requeueStaleSATierProspects (MASTER §19.4)', () => {
     expect(await requeueStaleSATierProspects(0, now)).toBe(0);
     expect(await requeueStaleSATierProspects(-1, now)).toBe(0);
     expect(await requeueStaleSATierProspects(NaN, now)).toBe(0);
+  });
+});
+
+describe('FSM closure — expireStaleSentInvites', () => {
+  const day = 24 * 60 * 60 * 1000;
+
+  async function seedInvite(opts: {
+    prospect_id: number;
+    state: 'sent' | 'accepted' | 'withdrawn' | 'draft' | 'expired';
+    sent_at: number | null;
+    kind?: 'connection_request_sent' | 'profile_visit' | 'message_sent';
+    idempotency_key: string;
+  }): Promise<number> {
+    return addOutreachAction({
+      prospect_id: opts.prospect_id,
+      kind: opts.kind ?? 'connection_request_sent',
+      state: opts.state,
+      idempotency_key: opts.idempotency_key,
+      template_id: null,
+      template_version: null,
+      rendered_body: null,
+      source_feed_event_id: null,
+      created_at: opts.sent_at ?? Date.now(),
+      approved_at: null,
+      sent_at: opts.sent_at,
+      resolved_at:
+        opts.state === 'accepted' ||
+        opts.state === 'withdrawn' ||
+        opts.state === 'expired'
+          ? (opts.sent_at ?? 0) + 60_000
+          : null,
+      notes: null,
+    });
+  }
+
+  it('flips sent connection_request_sent rows past the cutoff to expired', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    await replaceAllProspects([
+      prospectInsertFromRawUrl('https://linkedin.com/in/alpha'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/beta'),
+    ]);
+    const stale = await seedInvite({
+      prospect_id: 1,
+      state: 'sent',
+      sent_at: now - 200 * day,
+      idempotency_key: 'k-stale',
+    });
+    const fresh = await seedInvite({
+      prospect_id: 2,
+      state: 'sent',
+      sent_at: now - 30 * day,
+      idempotency_key: 'k-fresh',
+    });
+
+    const flipped = await expireStaleSentInvites(180, now);
+    expect(flipped).toBe(1);
+
+    const db = await openScoutDb();
+    const staleRow = await db.get('outreach_actions', stale);
+    const freshRow = await db.get('outreach_actions', fresh);
+    expect(staleRow!.state).toBe('expired');
+    expect(staleRow!.resolved_at).toBe(now);
+    // sent_at must be preserved so analytics can still bucket the action.
+    expect(staleRow!.sent_at).toBe(now - 200 * day);
+    expect(freshRow!.state).toBe('sent');
+    expect(freshRow!.resolved_at).toBeNull();
+  });
+
+  it('skips terminal states and non-invite kinds', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    await replaceAllProspects([
+      prospectInsertFromRawUrl('https://linkedin.com/in/already-accepted'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/already-withdrawn'),
+      prospectInsertFromRawUrl('https://linkedin.com/in/old-visit'),
+    ]);
+    await seedInvite({
+      prospect_id: 1,
+      state: 'accepted',
+      sent_at: now - 365 * day,
+      idempotency_key: 'k-acc',
+    });
+    await seedInvite({
+      prospect_id: 2,
+      state: 'withdrawn',
+      sent_at: now - 365 * day,
+      idempotency_key: 'k-w',
+    });
+    // Non-invite kind in `sent` state but past cutoff — must NOT be touched.
+    await seedInvite({
+      prospect_id: 3,
+      state: 'sent',
+      sent_at: now - 365 * day,
+      kind: 'profile_visit',
+      idempotency_key: 'k-visit',
+    });
+
+    expect(await expireStaleSentInvites(180, now)).toBe(0);
+  });
+
+  it('is idempotent on repeated runs', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    await replaceAllProspects([
+      prospectInsertFromRawUrl('https://linkedin.com/in/double'),
+    ]);
+    await seedInvite({
+      prospect_id: 1,
+      state: 'sent',
+      sent_at: now - 200 * day,
+      idempotency_key: 'k-double',
+    });
+    expect(await expireStaleSentInvites(180, now)).toBe(1);
+    expect(await expireStaleSentInvites(180, now)).toBe(0);
+  });
+
+  it('returns 0 for non-positive or non-finite windows', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    await replaceAllProspects([
+      prospectInsertFromRawUrl('https://linkedin.com/in/guard'),
+    ]);
+    await seedInvite({
+      prospect_id: 1,
+      state: 'sent',
+      sent_at: now - 365 * day,
+      idempotency_key: 'k-guard',
+    });
+    expect(await expireStaleSentInvites(0, now)).toBe(0);
+    expect(await expireStaleSentInvites(-1, now)).toBe(0);
+    expect(await expireStaleSentInvites(NaN, now)).toBe(0);
+  });
+
+  it('skips sent rows with null sent_at (defensive)', async () => {
+    const now = Date.UTC(2026, 4, 1, 12, 0, 0);
+    await replaceAllProspects([
+      prospectInsertFromRawUrl('https://linkedin.com/in/null-sent'),
+    ]);
+    await seedInvite({
+      prospect_id: 1,
+      state: 'sent',
+      sent_at: null,
+      idempotency_key: 'k-null',
+    });
+    expect(await expireStaleSentInvites(180, now)).toBe(0);
   });
 });
 

@@ -102,6 +102,18 @@ export const WARMING_VISIT_INVITE_DELAY_MS = 24 * 60 * 60 * 1000;
 export const STALE_SA_TIER_REQUEUE_DAYS = 30;
 
 /**
+ * Phase 1.3 / FSM closure — LinkedIn invites that haven't been accepted within
+ * this window are auto-flipped from `sent` → `expired` at scan-loop entry.
+ * 180 days mirrors LinkedIn's documented invite-expiration window; rows past
+ * the cutoff would never accept anyway, so closing the FSM keeps the outreach
+ * queue + analytics honest. We do NOT credit the budget back: the slot was
+ * physically consumed when the invite was sent six months ago and it already
+ * counts in any `daily_usage` history that's still in scope (7d health window
+ * is well inside the cutoff). Withdrawals get budget credit; expirations don't.
+ */
+export const INVITE_EXPIRATION_DAYS = 180;
+
+/**
  * Phase 4.3 — kill-switch defaults. Values chosen to trip only on real trouble:
  *  - accept_rate_floor 15% mirrors the conservative baseline for LinkedIn
  *    outreach; below that the list is likely stale or templates are off.
