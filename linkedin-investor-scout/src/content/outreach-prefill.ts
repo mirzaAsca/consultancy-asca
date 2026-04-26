@@ -10,10 +10,7 @@
  */
 
 import type { CONNECT_NOTE_CHAR_CAP } from '@/shared/constants';
-import {
-  decideSendVerdict,
-  type DetectorEvent,
-} from '@/shared/send-detector';
+import { decideSendVerdict, type DetectorEvent } from '@/shared/send-detector';
 import type {
   OutreachActionRecordPayload,
   OutreachPrefillConnectPayload,
@@ -192,9 +189,9 @@ export async function prefillConnectModal(
   payload: OutreachPrefillConnectPayload,
   _cap: typeof CONNECT_NOTE_CHAR_CAP,
 ): Promise<
-  | { ok: true; data: OutreachPrefillResult }
-  | { ok: false; error: string }
+  { ok: true; data: OutreachPrefillResult } | { ok: false; error: string }
 > {
+  void _cap;
   const cta = findConnectCta();
   if (!cta) {
     return {
@@ -210,10 +207,7 @@ export async function prefillConnectModal(
   // Stage 1 prompt ("Add a note to your invitation?"). Wait on either.
   await waitForAndClickAddNote(2500);
 
-  const textarea = await waitForSelector<HTMLElement>(
-    findInviteTextarea,
-    6000,
-  );
+  const textarea = await waitForSelector<HTMLElement>(findInviteTextarea, 6000);
   if (!textarea) {
     return {
       ok: true,
@@ -247,7 +241,10 @@ export async function prefillConnectModal(
       rendered_body: body,
     });
   } catch (error) {
-    console.warn('[investor-scout] invite-sent watcher failed to attach', error);
+    console.warn(
+      '[investor-scout] invite-sent watcher failed to attach',
+      error,
+    );
   }
 
   return {
@@ -279,9 +276,7 @@ interface WatchForInviteSentArgs {
 }
 
 function watchForInviteSent(args: WatchForInviteSentArgs): void {
-  const dialog = document.querySelector<HTMLElement>(
-    '[role="dialog"]',
-  );
+  const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
   if (!dialog) return;
   const sendButton = dialog.querySelector<HTMLButtonElement>(
     'button[aria-label="Send invitation"]',

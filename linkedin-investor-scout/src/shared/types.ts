@@ -373,10 +373,16 @@ export type Message =
   | { type: 'PROSPECTS_LIST'; payload: ProspectQuery }
   | { type: 'PROSPECT_GET'; payload: { id: number } }
   | { type: 'PROSPECT_UPDATE'; payload: { id: number; patch: ProspectPatch } }
-  | { type: 'PROSPECTS_BULK_ACTIVITY'; payload: { ids: number[]; activity: ActivityKind } }
+  | {
+      type: 'PROSPECTS_BULK_ACTIVITY';
+      payload: { ids: number[]; activity: ActivityKind };
+    }
   | { type: 'PROSPECTS_RESCAN'; payload: { ids: number[] } }
   | { type: 'PROSPECTS_DELETE'; payload: { ids: number[] } }
-  | { type: 'PROSPECT_LOG_QUERY'; payload: { prospect_id: number; limit?: number } }
+  | {
+      type: 'PROSPECT_LOG_QUERY';
+      payload: { prospect_id: number; limit?: number };
+    }
   | { type: 'SETTINGS_QUERY' }
   | { type: 'SETTINGS_UPDATE'; payload: SettingsPatch }
   | { type: 'LOGS_QUERY'; payload: LogQuery }
@@ -443,14 +449,22 @@ export type Message =
   | { type: 'FEED_CRAWL_SESSION_STOP' }
   | { type: 'FEED_CRAWL_SESSION_STATUS' }
   // background → content (highlight) direct tab message
-  | { type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES'; payload?: { max_profiles?: number } }
+  | {
+      type: 'FEED_TEST_COLLECT_VISIBLE_PROFILES';
+      payload?: { max_profiles?: number };
+    }
   | {
       type: 'OUTREACH_PREFILL_CONNECT_IN_TAB';
       payload: OutreachPrefillConnectPayload;
     }
   | {
       type: 'FEED_CRAWL_RUN_IN_TAB';
-      payload: { session_id: string; passive?: boolean };
+      payload: {
+        session_id: string;
+        passive?: boolean;
+        modes?: Array<'top' | 'recent'>;
+        skip_navigation?: boolean;
+      };
     }
   | { type: 'FEED_CRAWL_CANCEL_IN_TAB'; payload: { session_id: string } }
   | { type: 'INTERACTION_TOKEN_OPEN'; payload: InteractionTokenOpenPayload }
@@ -495,7 +509,11 @@ export interface MessageResponseMap {
   LOGS_QUERY: LogEntry[];
   CLEAR_ALL_DATA: { cleared: true };
   EXPORT_CSV: { csv: string; row_count: number };
-  FEED_TEST_SEED_RANDOM_LEVELS: { seeded: number; collected: number; tab_id: number };
+  FEED_TEST_SEED_RANDOM_LEVELS: {
+    seeded: number;
+    collected: number;
+    tab_id: number;
+  };
   SLUGS_QUERY: SlugMap;
   FEED_EVENTS_UPSERT_BULK: { inserted: number; updated: number };
   FEED_EVENTS_QUERY: FeedEventPage;
@@ -634,6 +652,11 @@ export interface FeedCrawlModeMetrics {
   started_at: number;
   ended_at: number;
   stop_reason: FeedCrawlStopReason;
+  /**
+   * Internal telemetry returned by content scripts so the background can merge
+   * per-mode runs after tab navigations. Not written to activity_log.
+   */
+  event_fingerprints?: string[];
 }
 
 /** Aggregate result for a full two-mode crawl session. */
@@ -665,7 +688,6 @@ export interface FeedCrawlStatus {
   started_at: number | null;
   last_result: FeedCrawlSessionResult | null;
 }
-
 
 export type FeedTaskStatus = 'new' | 'queued' | 'done' | 'ignored';
 

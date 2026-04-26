@@ -58,6 +58,16 @@ export interface RunFeedCrawlOptions {
    * harvester never disrupts the user's chosen feed view.
    */
   passive?: boolean;
+  /**
+   * Optional mode subset. Background-owned manual sessions use this to run one
+   * mode per fresh page context after navigating the tab itself.
+   */
+  modes?: Array<'top' | 'recent'>;
+  /**
+   * When true, assume the background already navigated the tab to the requested
+   * mode and only wait for the feed root to hydrate.
+   */
+  skipNavigation?: boolean;
 }
 
 const MODES: Array<'top' | 'recent'> = ['top', 'recent'];
@@ -98,7 +108,9 @@ export async function runFeedCrawlSession(
   // mode, skipping any navigation. Manual sessions still walk Top → Recent.
   const modes: Array<'top' | 'recent'> = opts.passive
     ? [detectCurrentFeedMode()]
-    : MODES;
+    : opts.modes && opts.modes.length > 0
+      ? opts.modes
+      : MODES;
 
   for (const mode of modes) {
     if (opts.isCanceled()) {
@@ -111,9 +123,10 @@ export async function runFeedCrawlSession(
       // Passive harvester never navigates — it harvests whatever the user is
       // already viewing. Skip the ensureFeedMode reload to avoid clobbering
       // their tab.
-      const nav = opts.passive
-        ? { ok: true as const }
-        : await ensureFeedMode(mode);
+      const nav =
+        opts.passive || opts.skipNavigation
+          ? await waitForCurrentFeedRoot()
+          : await ensureFeedMode(mode);
       if (!nav.ok) {
         perMode.push({
           mode,
@@ -122,6 +135,7 @@ export async function runFeedCrawlSession(
           started_at: modeStart,
           ended_at: now(),
           stop_reason: 'navigation_failed',
+          event_fingerprints: [],
         });
         sessionStop = 'navigation_failed';
         opts.onProgress?.({ modes: [...perMode] });
@@ -139,6 +153,7 @@ export async function runFeedCrawlSession(
         started_at: modeStart,
         ended_at: now(),
         stop_reason: 'navigation_failed',
+        event_fingerprints: [],
       });
       sessionStop = 'navigation_failed';
       opts.onProgress?.({ modes: [...perMode] });
@@ -237,13 +252,14 @@ async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
           started_at: startedAt,
           ended_at: now(),
           stop_reason: stopReason,
+          event_fingerprints: Array.from(modeFingerprints),
         };
       }
 
       const step = pickScrollStep(rng);
       markProgrammaticScroll();
       try {
-        window.scrollBy({ top: step, left: 0, behavior: 'smooth' });
+        window.scrollBy({ top: step, left: 0, behavior: 'auto' });
       } catch {
         window.scrollBy(0, step);
       }
@@ -277,8 +293,7 @@ async function ensureFeedMode(
   mode: 'top' | 'recent',
 ): Promise<{ ok: true } | { ok: false; reason: string }> {
   if (isOnFeedMode(location.href, mode)) {
-    const ready = await waitForFeedRoot();
-    return ready ? { ok: true } : { ok: false, reason: 'feed_root_timeout' };
+    return waitForCurrentFeedRoot();
   }
 
   const targetUrl = buildModeUrl(mode);
@@ -303,6 +318,12 @@ async function ensureFeedMode(
     await sleep(150);
   }
 
+  return waitForCurrentFeedRoot();
+}
+
+async function waitForCurrentFeedRoot(): Promise<
+  { ok: true } | { ok: false; reason: string }
+> {
   const ready = await waitForFeedRoot();
   return ready ? { ok: true } : { ok: false, reason: 'feed_root_timeout' };
 }
@@ -335,7 +356,7 @@ function sleep(ms: number): Promise<void> {
 // must yield. Anything else feels hostile. We use bubble-phase listeners and
 // remove them as soon as the pass ends.
 
-const IDLE_SCROLL_WINDOW_MS = 250;
+const IDLE_SCROLL_WINDOW_MS = 1_500;
 let lastProgrammaticScrollAt = 0;
 
 function attachUserInteractionGuards(onInteract: () => void): void {
@@ -362,9 +383,8 @@ function detachUserInteractionGuards(onInteract: () => void): void {
   document.removeEventListener('mousedown', onInteract);
   document.removeEventListener('touchstart', onInteract);
   window.removeEventListener('wheel', onInteract);
-  const scrollHandler = (
-    onInteract as { __scrollHandler?: EventListener }
-  ).__scrollHandler;
+  const scrollHandler = (onInteract as { __scrollHandler?: EventListener })
+    .__scrollHandler;
   if (scrollHandler) {
     window.removeEventListener('scroll', scrollHandler, true);
   }

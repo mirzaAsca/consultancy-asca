@@ -69,13 +69,13 @@ import {
   generateCorrelationTokenId,
   pickMatchingToken,
 } from '@/shared/reconciliation';
+import { computeFeedEventFingerprint } from '@/shared/scoring';
+import { buildPostPermalink, classifyPostKindFromUrn } from '@/shared/urn';
 import {
-  computeFeedEventFingerprint,
-} from '@/shared/scoring';
-import {
-  buildPostPermalink,
-  classifyPostKindFromUrn,
-} from '@/shared/urn';
+  buildModeUrl,
+  computeOverlap,
+  isOnFeedMode,
+} from '@/shared/feed-crawler';
 import { computeAnalyticsSnapshot } from '@/shared/analytics';
 import { computeHealthSnapshot } from '@/shared/health';
 import { nextLifecycleAfterOutreachSent } from '@/shared/lifecycle';
@@ -98,8 +98,10 @@ import { broadcast, registerMessageRouter } from '@/shared/messaging';
 import type {
   CorrelationToken,
   CsvCommitPayload,
+  FeedCrawlModeMetrics,
   FeedCrawlSessionResult,
   FeedCrawlStatus,
+  FeedCrawlStopReason,
   InteractionEvent,
   InteractionEventInsert,
   InteractionListQuery,
@@ -177,7 +179,10 @@ function sendMessageToTab<M extends Message>(
       chrome.tabs.sendMessage(tabId, msg, (response) => {
         const lastError = chrome.runtime.lastError;
         if (lastError) {
-          resolve({ ok: false, error: lastError.message ?? 'tab message failed' });
+          resolve({
+            ok: false,
+            error: lastError.message ?? 'tab message failed',
+          });
           return;
         }
         if (!response) {
@@ -441,7 +446,8 @@ async function handleTemplateUpsert(
       body: payload.body,
     };
     if (typeof payload.name === 'string') patch.name = payload.name;
-    if (typeof payload.archived === 'boolean') patch.archived = payload.archived;
+    if (typeof payload.archived === 'boolean')
+      patch.archived = payload.archived;
     const next = await updateMessageTemplate(payload.id, patch);
     await appendActivityLog({
       ts: now,
@@ -500,10 +506,7 @@ async function handleTemplateLintCorpus(payload: {
   body: string;
   sample_limit?: number;
 }): Promise<import('@/shared/templates').TemplateCorpusLintResult> {
-  const sampleLimit = Math.max(
-    1,
-    Math.min(500, payload.sample_limit ?? 200),
-  );
+  const sampleLimit = Math.max(1, Math.min(500, payload.sample_limit ?? 200));
   const all = await getAllProspects();
   // Scored-in-range = the user's actionable corpus: tier assigned, not 'skip',
   // not 'do_not_contact'. These are the rows the template will actually render
@@ -550,15 +553,21 @@ async function handleOutreachQueueQuery(
 ): Promise<OutreachQueuePage> {
   const now = Date.now();
   const bucket = localDayBucket(now);
-  const [prospects, actionsByProspect, settings, usage, skipSet, weeklyInvites] =
-    await Promise.all([
-      getAllProspects(),
-      getAllOutreachActionsByProspect(),
-      getSettings(),
-      getDailyUsage(bucket),
-      getSkippedProspectIdsForDay(bucket),
-      getWeeklyInvitesUsed(bucket),
-    ]);
+  const [
+    prospects,
+    actionsByProspect,
+    settings,
+    usage,
+    skipSet,
+    weeklyInvites,
+  ] = await Promise.all([
+    getAllProspects(),
+    getAllOutreachActionsByProspect(),
+    getSettings(),
+    getDailyUsage(bucket),
+    getSkippedProspectIdsForDay(bucket),
+    getWeeklyInvitesUsed(bucket),
+  ]);
 
   const rows = buildCandidates(prospects, actionsByProspect, {
     filter,
@@ -569,7 +578,12 @@ async function handleOutreachQueueQuery(
 
   const limit = Math.max(1, filter.limit ?? 200);
   const page = rows.slice(0, limit);
-  const nextBest = pickNextBest(rows, settings.outreach.caps, usage, weeklyInvites);
+  const nextBest = pickNextBest(
+    rows,
+    settings.outreach.caps,
+    usage,
+    weeklyInvites,
+  );
 
   return {
     rows: page,
@@ -622,7 +636,8 @@ async function handleOutreachActionRecord(
   // carry the active template metadata they used to render.
   if (
     (payload.template_id === undefined || payload.template_id === null) &&
-    (payload.template_version === undefined || payload.template_version === null)
+    (payload.template_version === undefined ||
+      payload.template_version === null)
   ) {
     const tplKind = templateKindForOutreachKind(payload.kind);
     if (tplKind !== null) {
@@ -861,7 +876,10 @@ async function bumpDailyUsageForKind(
       await incrementDailyUsage(bucket, { messages_sent: 1 });
       return;
     case 'followup_message_sent':
-      await incrementDailyUsage(bucket, { followups_sent: 1, messages_sent: 1 });
+      await incrementDailyUsage(bucket, {
+        followups_sent: 1,
+        messages_sent: 1,
+      });
       return;
   }
 }
@@ -1005,7 +1023,8 @@ async function handleLinkedInRestrictionBanner(
     `${payload.kind}: ${payload.phrase}`,
   );
   const tripped =
-    state.status === 'auto_paused' && state.auto_pause_reason === 'health_breach';
+    state.status === 'auto_paused' &&
+    state.auto_pause_reason === 'health_breach';
   return { tripped };
 }
 
@@ -1142,7 +1161,9 @@ async function handleInteractionTokenOpen(
   }
   const windowMs = Math.max(
     60_000,
-    payload.window_ms ?? configuredWindowMs ?? CORRELATION_TOKEN_DEFAULT_WINDOW_MS,
+    payload.window_ms ??
+      configuredWindowMs ??
+      CORRELATION_TOKEN_DEFAULT_WINDOW_MS,
   );
   const token: CorrelationToken = {
     token: generateCorrelationTokenId(now),
@@ -1234,7 +1255,8 @@ async function handleReactionToggledDetected(
   try {
     await recordInteractionAndReconcile({
       prospect_id: payload.prospect_id,
-      interaction_type: payload.direction === 'reacted' ? 'reacted' : 'unreacted',
+      interaction_type:
+        payload.direction === 'reacted' ? 'reacted' : 'unreacted',
       activity_urn: payload.activity_urn,
       target_url: payload.page_url,
       detected_at: now,
@@ -1278,7 +1300,12 @@ async function handleReactionToggledDetected(
 
   const nextStatus = payload.direction === 'reacted' ? 'done' : 'new';
   const source = payload.direction === 'reacted' ? 'reaction' : 'unreaction';
-  const transitions = await bulkAutoTrackFeedEvents(targets, nextStatus, source, now);
+  const transitions = await bulkAutoTrackFeedEvents(
+    targets,
+    nextStatus,
+    source,
+    now,
+  );
   if (transitions.length > 0) {
     scheduleBadgeRefresh();
     // Phase 5.5 — before/after audit entry per row so a later Undo has a
@@ -1368,7 +1395,12 @@ async function handleCommentPostedDetected(
     }
   }
 
-  const transitions = await bulkAutoTrackFeedEvents(targets, 'done', 'comment', now);
+  const transitions = await bulkAutoTrackFeedEvents(
+    targets,
+    'done',
+    'comment',
+    now,
+  );
   if (transitions.length > 0) {
     scheduleBadgeRefresh();
     for (const t of transitions) {
@@ -1472,10 +1504,7 @@ function waitForTabComplete(tabId: number, timeoutMs: number): Promise<void> {
       chrome.tabs.onUpdated.removeListener(listener);
       resolve();
     }, timeoutMs);
-    const listener = (
-      updatedId: number,
-      info: chrome.tabs.TabChangeInfo,
-    ) => {
+    const listener = (updatedId: number, info: chrome.tabs.TabChangeInfo) => {
       if (updatedId !== tabId) return;
       if (info.status !== 'complete') return;
       if (settled) return;
@@ -1500,6 +1529,8 @@ interface FeedCrawlSessionState {
   session_id: string | null;
   started_at: number | null;
   last_result: FeedCrawlSessionResult | null;
+  cancel_requested: boolean;
+  current_mode: 'top' | 'recent' | null;
 }
 
 const feedCrawlState: FeedCrawlSessionState = {
@@ -1508,7 +1539,13 @@ const feedCrawlState: FeedCrawlSessionState = {
   session_id: null,
   started_at: null,
   last_result: null,
+  cancel_requested: false,
+  current_mode: null,
 };
+
+const MANUAL_FEED_CRAWL_MODES: Array<'top' | 'recent'> = ['top', 'recent'];
+const FEED_CRAWL_TAB_MESSAGE_RETRY_MS = 15_000;
+const FEED_CRAWL_TAB_MESSAGE_RETRY_STEP_MS = 250;
 
 function snapshotFeedCrawlStatus(): FeedCrawlStatus {
   return {
@@ -1525,6 +1562,255 @@ function broadcastFeedCrawlStatus(): void {
     type: 'FEED_CRAWL_SESSION_CHANGED',
     payload: snapshotFeedCrawlStatus(),
   });
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isActiveFeedCrawlSession(sessionId: string): boolean {
+  return feedCrawlState.running && feedCrawlState.session_id === sessionId;
+}
+
+function isRetriableTabMessageError(error: string): boolean {
+  const normalized = error.toLowerCase();
+  return (
+    normalized.includes('receiving end does not exist') ||
+    normalized.includes('could not establish connection') ||
+    normalized.includes('no response') ||
+    normalized.includes('message port closed')
+  );
+}
+
+async function sendMessageToTabWithRetry<M extends Message>(
+  tabId: number,
+  msg: M,
+  timeoutMs: number,
+): Promise<MessageResponse<MessageResponseMap[M['type']]>> {
+  const deadline = Date.now() + timeoutMs;
+  let lastResponse: MessageResponse<MessageResponseMap[M['type']]> = {
+    ok: false,
+    error: 'tab message failed',
+  };
+
+  while (Date.now() <= deadline) {
+    const res = await sendMessageToTab(tabId, msg);
+    if (res.ok) return res;
+    lastResponse = res;
+    if (!isRetriableTabMessageError(res.error)) return res;
+    await sleep(FEED_CRAWL_TAB_MESSAGE_RETRY_STEP_MS);
+  }
+
+  return lastResponse;
+}
+
+async function navigateFeedTabToMode(
+  tabId: number,
+  mode: 'top' | 'recent',
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    const current = await chrome.tabs.get(tabId);
+    const alreadyInMode =
+      typeof current.url === 'string' && isOnFeedMode(current.url, mode);
+
+    if (!alreadyInMode) {
+      await chrome.tabs.update(tabId, { url: buildModeUrl(mode) });
+      await waitForTabComplete(tabId, 20_000);
+    } else if (current.status !== 'complete') {
+      await waitForTabComplete(tabId, 20_000);
+    }
+
+    const refreshed = await chrome.tabs.get(tabId);
+    if (
+      typeof refreshed.url === 'string' &&
+      isOnFeedMode(refreshed.url, mode)
+    ) {
+      return { ok: true };
+    }
+    return {
+      ok: false,
+      error: `Feed tab did not reach ${mode} mode after navigation.`,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : 'feed navigation failed',
+    };
+  }
+}
+
+function emptyModeMetrics(
+  mode: 'top' | 'recent',
+  startedAt: number,
+  stopReason: FeedCrawlStopReason,
+): FeedCrawlModeMetrics {
+  return {
+    mode,
+    scroll_steps: 0,
+    events_captured: 0,
+    started_at: startedAt,
+    ended_at: Date.now(),
+    stop_reason: stopReason,
+    event_fingerprints: [],
+  };
+}
+
+function collapseModeMetrics(
+  mode: 'top' | 'recent',
+  result: FeedCrawlSessionResult,
+): FeedCrawlModeMetrics {
+  return (
+    result.modes.find((m) => m.mode === mode) ?? {
+      mode,
+      scroll_steps: 0,
+      events_captured: result.total_events_captured,
+      started_at: result.started_at,
+      ended_at: result.ended_at,
+      stop_reason: result.stop_reason,
+      event_fingerprints: [],
+    }
+  );
+}
+
+async function runManualFeedCrawlSession(
+  tabId: number,
+  sessionId: string,
+  startedAt: number,
+): Promise<void> {
+  const modeMetrics: FeedCrawlModeMetrics[] = [];
+  const fingerprintsByMode: Record<'top' | 'recent', Set<string>> = {
+    top: new Set(),
+    recent: new Set(),
+  };
+  let stopReason: FeedCrawlStopReason = 'completed';
+  let failure: string | null = null;
+
+  for (const mode of MANUAL_FEED_CRAWL_MODES) {
+    if (!isActiveFeedCrawlSession(sessionId)) return;
+    if (feedCrawlState.cancel_requested) {
+      stopReason = 'canceled';
+      break;
+    }
+
+    feedCrawlState.current_mode = mode;
+    const modeStartedAt = Date.now();
+    const nav = await navigateFeedTabToMode(tabId, mode);
+    if (!nav.ok) {
+      stopReason = 'navigation_failed';
+      modeMetrics.push(
+        emptyModeMetrics(mode, modeStartedAt, 'navigation_failed'),
+      );
+      await appendActivityLog({
+        ts: Date.now(),
+        level: 'warn',
+        event: 'feed_crawl_session_mode_navigation_failed',
+        prospect_id: null,
+        data: { session_id: sessionId, tab_id: tabId, mode, error: nav.error },
+      });
+      break;
+    }
+
+    if (feedCrawlState.cancel_requested) {
+      stopReason = 'canceled';
+      break;
+    }
+
+    const res = await sendMessageToTabWithRetry(
+      tabId,
+      {
+        type: 'FEED_CRAWL_RUN_IN_TAB',
+        payload: {
+          session_id: sessionId,
+          modes: [mode],
+          skip_navigation: true,
+        },
+      },
+      FEED_CRAWL_TAB_MESSAGE_RETRY_MS,
+    );
+
+    if (!isActiveFeedCrawlSession(sessionId)) return;
+    if (!res.ok) {
+      failure = res.error;
+      break;
+    }
+
+    const metric = collapseModeMetrics(mode, res.data);
+    modeMetrics.push(metric);
+    for (const fp of metric.event_fingerprints ?? []) {
+      fingerprintsByMode[mode].add(fp);
+    }
+
+    if (
+      metric.stop_reason === 'user_interaction' ||
+      metric.stop_reason === 'canceled' ||
+      metric.stop_reason === 'navigation_failed' ||
+      metric.stop_reason === 'error'
+    ) {
+      stopReason = metric.stop_reason;
+      break;
+    }
+  }
+
+  const endedAt = Date.now();
+  if (!isActiveFeedCrawlSession(sessionId)) return;
+
+  if (failure) {
+    feedCrawlState.last_result = null;
+    await appendActivityLog({
+      ts: endedAt,
+      level: 'warn',
+      event: 'feed_crawl_session_failed',
+      prospect_id: null,
+      data: { session_id: sessionId, tab_id: tabId, error: failure },
+    });
+  } else {
+    const result: FeedCrawlSessionResult = {
+      session_id: sessionId,
+      tab_id: tabId,
+      started_at: startedAt,
+      ended_at: endedAt,
+      duration_ms: endedAt - startedAt,
+      total_events_captured: modeMetrics.reduce(
+        (acc, m) => acc + m.events_captured,
+        0,
+      ),
+      overlap_count: computeOverlap(
+        fingerprintsByMode.top,
+        fingerprintsByMode.recent,
+      ),
+      modes: modeMetrics,
+      stop_reason: stopReason,
+    };
+    feedCrawlState.last_result = result;
+    await appendActivityLog({
+      ts: endedAt,
+      level: 'info',
+      event: 'feed_crawl_session_end',
+      prospect_id: null,
+      data: {
+        session_id: sessionId,
+        tab_id: tabId,
+        duration_ms: result.duration_ms,
+        total_events_captured: result.total_events_captured,
+        overlap_count: result.overlap_count,
+        stop_reason: result.stop_reason,
+        modes: result.modes.map((m) => ({
+          mode: m.mode,
+          scroll_steps: m.scroll_steps,
+          events_captured: m.events_captured,
+          stop_reason: m.stop_reason,
+        })),
+      },
+    });
+  }
+
+  feedCrawlState.running = false;
+  feedCrawlState.tab_id = null;
+  feedCrawlState.session_id = null;
+  feedCrawlState.started_at = null;
+  feedCrawlState.cancel_requested = false;
+  feedCrawlState.current_mode = null;
+  broadcastFeedCrawlStatus();
 }
 
 async function handleFeedCrawlSessionStart(): Promise<
@@ -1569,6 +1855,8 @@ async function handleFeedCrawlSessionStart(): Promise<
   feedCrawlState.tab_id = tab.id;
   feedCrawlState.session_id = sessionId;
   feedCrawlState.started_at = startedAt;
+  feedCrawlState.cancel_requested = false;
+  feedCrawlState.current_mode = null;
   broadcastFeedCrawlStatus();
 
   await appendActivityLog({
@@ -1579,52 +1867,9 @@ async function handleFeedCrawlSessionStart(): Promise<
     data: { session_id: sessionId, tab_id: tab.id, tab_url: tab.url },
   });
 
-  // Fire-and-forget the tab dispatch. The content script is responsible for
-  // running the full two-mode pass and calling `sendResponse` on completion.
-  void sendMessageToTab(tab.id, {
-    type: 'FEED_CRAWL_RUN_IN_TAB',
-    payload: { session_id: sessionId },
-  }).then(async (res) => {
-    const endedAt = Date.now();
-    if (res.ok) {
-      const result: FeedCrawlSessionResult = { ...res.data, tab_id: tab.id! };
-      feedCrawlState.last_result = result;
-      await appendActivityLog({
-        ts: endedAt,
-        level: 'info',
-        event: 'feed_crawl_session_end',
-        prospect_id: null,
-        data: {
-          session_id: sessionId,
-          tab_id: tab.id,
-          duration_ms: result.duration_ms,
-          total_events_captured: result.total_events_captured,
-          overlap_count: result.overlap_count,
-          stop_reason: result.stop_reason,
-          modes: result.modes.map((m) => ({
-            mode: m.mode,
-            scroll_steps: m.scroll_steps,
-            events_captured: m.events_captured,
-            stop_reason: m.stop_reason,
-          })),
-        },
-      });
-    } else {
-      feedCrawlState.last_result = null;
-      await appendActivityLog({
-        ts: endedAt,
-        level: 'warn',
-        event: 'feed_crawl_session_failed',
-        prospect_id: null,
-        data: { session_id: sessionId, tab_id: tab.id, error: res.error },
-      });
-    }
-    feedCrawlState.running = false;
-    feedCrawlState.tab_id = null;
-    feedCrawlState.session_id = null;
-    feedCrawlState.started_at = null;
-    broadcastFeedCrawlStatus();
-  });
+  // Fire-and-forget the orchestrator. Background owns mode navigation so the
+  // content-script response channel never has to survive a tab reload.
+  void runManualFeedCrawlSession(tab.id, sessionId, startedAt);
 
   return { ok: true, data: snapshotFeedCrawlStatus() };
 }
@@ -1637,17 +1882,14 @@ async function handleFeedCrawlSessionStop(): Promise<
   }
   const tabId = feedCrawlState.tab_id;
   const sessionId = feedCrawlState.session_id ?? '';
+  feedCrawlState.cancel_requested = true;
   const res = await sendMessageToTab(tabId, {
     type: 'FEED_CRAWL_CANCEL_IN_TAB',
     payload: { session_id: sessionId },
   });
   if (!res.ok) {
-    // Force-clear the local flag — the content script is probably gone (tab
-    // closed or navigated away). The activity log will still show the start.
-    feedCrawlState.running = false;
-    feedCrawlState.tab_id = null;
-    feedCrawlState.session_id = null;
-    feedCrawlState.started_at = null;
+    // The orchestrator may be between mode navigations; it will observe the
+    // cancel flag and finalize the session on its next step.
     broadcastFeedCrawlStatus();
   }
   return { ok: true, data: snapshotFeedCrawlStatus() };
@@ -1766,9 +2008,12 @@ registerMessageRouter(async (msg) => {
       if (!res.ok) {
         // Surface the cooldown on the error channel — popup / dashboard
         // read `error` directly; the cooldown object is logged for debugging.
-        console.info('[investor-scout] resume blocked by kill-switch cooldown', {
-          cooldown: res.cooldown,
-        });
+        console.info(
+          '[investor-scout] resume blocked by kill-switch cooldown',
+          {
+            cooldown: res.cooldown,
+          },
+        );
         return { ok: false, error: res.error };
       }
       if (res.state.status === 'running') startPassiveHarvester();
@@ -1807,7 +2052,11 @@ registerMessageRouter(async (msg) => {
         level: 'info',
         event: 'bulk_activity_update',
         prospect_id: null,
-        data: { ids_count: msg.payload.ids.length, activity: msg.payload.activity, updated },
+        data: {
+          ids_count: msg.payload.ids.length,
+          activity: msg.payload.activity,
+          updated,
+        },
       });
       void broadcastProspectsUpdated(msg.payload.ids);
       return { ok: true, data: { updated } };
@@ -1873,9 +2122,12 @@ registerMessageRouter(async (msg) => {
             void broadcastProspectsUpdated([]);
           }
         } catch (error) {
-          console.warn('[investor-scout] rescore after settings update failed', {
-            error: error instanceof Error ? error.message : error,
-          });
+          console.warn(
+            '[investor-scout] rescore after settings update failed',
+            {
+              error: error instanceof Error ? error.message : error,
+            },
+          );
         }
       }
       return { ok: true, data: next };
@@ -1917,6 +2169,8 @@ registerMessageRouter(async (msg) => {
         await incrementDailyUsage(localDayBucket(Date.now()), {
           feed_events_captured: result.inserted,
         });
+      }
+      if (result.inserted > 0 || result.updated > 0) {
         scheduleBadgeRefresh();
       }
       // Activity recency is a scoring input — refresh scores for the prospects
@@ -1935,22 +2189,23 @@ registerMessageRouter(async (msg) => {
             void broadcastProspectsUpdated(changed_ids);
           }
         } catch (error) {
-          console.warn(
-            '[investor-scout] rescore after feed events failed',
-            { error: error instanceof Error ? error.message : error },
-          );
+          console.warn('[investor-scout] rescore after feed events failed', {
+            error: error instanceof Error ? error.message : error,
+          });
         }
       }
       return { ok: true, data: result };
     }
     case 'DAILY_SNAPSHOT_QUERY': {
       const bucket = localDayBucket(Date.now());
-      const [usage, inboxNew, acceptsToday, pendingInvites] = await Promise.all([
-        getDailyUsage(bucket),
-        countFeedEventsByTaskStatus('new'),
-        countAcceptedActionsForDay(bucket),
-        countPendingInvites(),
-      ]);
+      const [usage, inboxNew, acceptsToday, pendingInvites] = await Promise.all(
+        [
+          getDailyUsage(bucket),
+          countFeedEventsByTaskStatus('new'),
+          countAcceptedActionsForDay(bucket),
+          countPendingInvites(),
+        ],
+      );
       return {
         ok: true,
         data: {
@@ -2070,7 +2325,9 @@ registerMessageRouter(async (msg) => {
       await appendActivityLog({
         ts: Date.now(),
         level: 'info',
-        event: msg.payload.archived ? 'template_archived' : 'template_unarchived',
+        event: msg.payload.archived
+          ? 'template_archived'
+          : 'template_unarchived',
         prospect_id: null,
         data: { id: row.id, kind: row.kind, version: row.version },
       });
@@ -2110,7 +2367,9 @@ registerMessageRouter(async (msg) => {
       return { ok: true, data };
     }
     case 'INTERACTIONS_NEEDS_REVIEW': {
-      const data = await listNeedsReviewInteractionEvents(msg.payload?.limit ?? 200);
+      const data = await listNeedsReviewInteractionEvents(
+        msg.payload?.limit ?? 200,
+      );
       return { ok: true, data };
     }
     case 'INTERACTION_REVIEW_RESOLVE': {
@@ -2171,7 +2430,10 @@ registerMessageRouter(async (msg) => {
     case 'FEED_CRAWL_SESSION_STATUS':
       return { ok: true, data: snapshotFeedCrawlStatus() };
     default:
-      return { ok: false, error: `Unhandled message: ${(msg as Message).type}` };
+      return {
+        ok: false,
+        error: `Unhandled message: ${(msg as Message).type}`,
+      };
   }
 });
 

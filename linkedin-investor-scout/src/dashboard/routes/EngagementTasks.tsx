@@ -106,10 +106,13 @@ export function EngagementTasksRoute() {
   const [kinds, setKinds] = useState<Set<FeedEventKind>>(
     () => new Set<FeedEventKind>(),
   );
-  const [selected, setSelected] = useState<Set<number>>(() => new Set<number>());
+  const [selected, setSelected] = useState<Set<number>>(
+    () => new Set<number>(),
+  );
   const [autoTrackedOnly, setAutoTrackedOnly] = useState(false);
   const [needsReview, setNeedsReview] = useState<InteractionEvent[]>([]);
   const [showNeedsReview, setShowNeedsReview] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const openProspectDrawer = useDashboardStore((s) => s.openDrawer);
   const setRoute = useDashboardStore((s) => s.setRoute);
 
@@ -131,7 +134,10 @@ export function EngagementTasksRoute() {
             limit: DEFAULT_LIMIT,
           },
         }),
-        sendMessage({ type: 'INTERACTIONS_NEEDS_REVIEW', payload: { limit: 50 } }),
+        sendMessage({
+          type: 'INTERACTIONS_NEEDS_REVIEW',
+          payload: { limit: 50 },
+        }),
       ]);
       if (eventsRes.ok) setPage(eventsRes.data);
       if (reviewRes.ok) setNeedsReview(reviewRes.data);
@@ -162,11 +168,20 @@ export function EngagementTasksRoute() {
     return () => window.clearTimeout(id);
   }, [toast]);
 
-  const allRows = page?.rows ?? [];
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const allRows = useMemo(() => page?.rows ?? [], [page?.rows]);
   const rows = useMemo(
     () =>
       autoTrackedOnly
-        ? allRows.filter((r) => typeof r.auto_tracked_at === 'number' && r.auto_tracked_at !== null)
+        ? allRows.filter(
+            (r) =>
+              typeof r.auto_tracked_at === 'number' &&
+              r.auto_tracked_at !== null,
+          )
         : allRows,
     [allRows, autoTrackedOnly],
   );
@@ -232,7 +247,9 @@ export function EngagementTasksRoute() {
         payload: { ids: selectedIds, task_status: next },
       });
       if (res.ok) {
-        setToast(`${label} ${res.data.updated} task${res.data.updated === 1 ? '' : 's'}`);
+        setToast(
+          `${label} ${res.data.updated} task${res.data.updated === 1 ? '' : 's'}`,
+        );
         clearSelection();
         await refresh();
       }
@@ -241,7 +258,11 @@ export function EngagementTasksRoute() {
     }
   };
 
-  const setRowStatus = async (id: number, next: FeedTaskStatus, label: string) => {
+  const setRowStatus = async (
+    id: number,
+    next: FeedTaskStatus,
+    label: string,
+  ) => {
     setBusy(true);
     try {
       const res = await sendMessage({
@@ -290,7 +311,6 @@ export function EngagementTasksRoute() {
   const activeFilterCount =
     (search ? 1 : 0) + statuses.size + kinds.size + (autoTrackedOnly ? 1 : 0);
 
-
   return (
     <div className="flex h-screen flex-col">
       <header className="border-b border-gray-800 bg-bg-card/60 px-6 py-4">
@@ -298,7 +318,8 @@ export function EngagementTasksRoute() {
           <div>
             <h1 className="text-lg font-semibold">Engagement tasks</h1>
             <p className="text-[11px] text-gray-500">
-              {total.toLocaleString()} matching · {newCount.toLocaleString()} new overall
+              {total.toLocaleString()} matching · {newCount.toLocaleString()}{' '}
+              new overall
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -309,7 +330,9 @@ export function EngagementTasksRoute() {
               aria-label="Refresh"
               title="Refresh"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`}
+              />
             </button>
           </div>
         </div>
@@ -337,13 +360,19 @@ export function EngagementTasksRoute() {
 
           <FilterPill
             label="Status"
-            options={STATUS_OPTIONS.map((v) => ({ value: v, label: STATUS_DISPLAY[v] }))}
+            options={STATUS_OPTIONS.map((v) => ({
+              value: v,
+              label: STATUS_DISPLAY[v],
+            }))}
             selected={Array.from(statuses)}
             onToggle={(v) => toggleStatus(v as FeedTaskStatus)}
           />
           <FilterPill
             label="Event"
-            options={KIND_OPTIONS.map((v) => ({ value: v, label: KIND_DISPLAY[v] }))}
+            options={KIND_OPTIONS.map((v) => ({
+              value: v,
+              label: KIND_DISPLAY[v],
+            }))}
             selected={Array.from(kinds)}
             onToggle={(v) => toggleKind(v as FeedEventKind)}
           />
@@ -494,13 +523,20 @@ export function EngagementTasksRoute() {
               <TaskRow
                 key={row.id}
                 row={row}
+                now={now}
                 checked={selected.has(row.id)}
                 busy={busy}
                 onToggleSelect={() => toggleRow(row.id)}
                 onOpenProspect={() => openInProspects(row.prospect_id)}
-                onMarkQueued={() => void setRowStatus(row.id, 'queued', 'Queued')}
-                onMarkDone={() => void setRowStatus(row.id, 'done', 'Marked done')}
-                onMarkIgnored={() => void setRowStatus(row.id, 'ignored', 'Ignored')}
+                onMarkQueued={() =>
+                  void setRowStatus(row.id, 'queued', 'Queued')
+                }
+                onMarkDone={() =>
+                  void setRowStatus(row.id, 'done', 'Marked done')
+                }
+                onMarkIgnored={() =>
+                  void setRowStatus(row.id, 'ignored', 'Ignored')
+                }
                 onReopen={() => void setRowStatus(row.id, 'new', 'Reopened')}
                 onUndoAutoTrack={() => void undoAutoTrack(row.id)}
               />
@@ -523,6 +559,7 @@ export function EngagementTasksRoute() {
 
 function TaskRow({
   row,
+  now,
   checked,
   busy,
   onToggleSelect,
@@ -534,6 +571,7 @@ function TaskRow({
   onUndoAutoTrack,
 }: {
   row: FeedEventRow;
+  now: number;
   checked: boolean;
   busy: boolean;
   onToggleSelect: () => void;
@@ -549,7 +587,7 @@ function TaskRow({
   const autoTrackedSource = row.auto_tracked_source ?? null;
   const canUndo =
     autoTrackedAt !== null &&
-    Date.now() - autoTrackedAt < AUTO_TRACK_UNDO_WINDOW_MS &&
+    now - autoTrackedAt < AUTO_TRACK_UNDO_WINDOW_MS &&
     autoTrackedSource !== null &&
     autoTrackedSource !== 'manual_undo';
   return (
@@ -578,7 +616,10 @@ function TaskRow({
           </span>
         </button>
         {row.prospect_headline && (
-          <div className="truncate text-[10px] text-gray-500" title={row.prospect_headline}>
+          <div
+            className="truncate text-[10px] text-gray-500"
+            title={row.prospect_headline}
+          >
             {row.prospect_headline}
           </div>
         )}
@@ -636,15 +677,17 @@ function TaskRow({
 
       <div className="flex flex-col items-start gap-0.5">
         <StatusBadge status={row.task_status} />
-        {autoTrackedAt !== null && autoTrackedSource !== null && autoTrackedSource !== 'manual_undo' && (
-          <span
-            className="inline-flex items-center gap-0.5 rounded border border-emerald-700/50 bg-emerald-900/30 px-1 py-[1px] text-[9px] font-medium text-emerald-200"
-            title={`Auto-tracked via ${AUTO_TRACK_SOURCE_LABEL[autoTrackedSource]} at ${new Date(autoTrackedAt).toLocaleString()}`}
-          >
-            <Sparkles className="h-2 w-2" />
-            Auto · {formatRelativeTime(autoTrackedAt)}
-          </span>
-        )}
+        {autoTrackedAt !== null &&
+          autoTrackedSource !== null &&
+          autoTrackedSource !== 'manual_undo' && (
+            <span
+              className="inline-flex items-center gap-0.5 rounded border border-emerald-700/50 bg-emerald-900/30 px-1 py-[1px] text-[9px] font-medium text-emerald-200"
+              title={`Auto-tracked via ${AUTO_TRACK_SOURCE_LABEL[autoTrackedSource]} at ${new Date(autoTrackedAt).toLocaleString()}`}
+            >
+              <Sparkles className="h-2 w-2" />
+              Auto · {formatRelativeTime(autoTrackedAt)}
+            </span>
+          )}
       </div>
 
       <div className="flex items-center justify-end gap-1">
@@ -690,7 +733,8 @@ function NeedsReviewPanel({
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2 font-semibold">
           <AlertTriangle className="h-3.5 w-3.5" />
-          Needs review — {rows.length} interaction{rows.length === 1 ? '' : 's'} with ambiguous match
+          Needs review — {rows.length} interaction{rows.length === 1 ? '' : 's'}{' '}
+          with ambiguous match
         </div>
         <button
           type="button"
@@ -715,8 +759,12 @@ function NeedsReviewPanel({
               <span className="font-mono text-[10px] uppercase tracking-wide text-amber-300">
                 {ev.interaction_type}
               </span>
-              <span className="text-[11px] text-amber-100">prospect #{ev.prospect_id}</span>
-              <span className="text-[10px] text-amber-400">conf: {ev.confidence}</span>
+              <span className="text-[11px] text-amber-100">
+                prospect #{ev.prospect_id}
+              </span>
+              <span className="text-[10px] text-amber-400">
+                conf: {ev.confidence}
+              </span>
               <span className="ml-auto text-[10px] text-amber-300">
                 {formatRelativeTime(ev.detected_at)}
               </span>
@@ -794,7 +842,8 @@ function RowMenu({
   useEffect(() => {
     if (!open) return;
     const listener = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     document.addEventListener('mousedown', listener);
     return () => document.removeEventListener('mousedown', listener);
@@ -819,7 +868,10 @@ function RowMenu({
         <div className="absolute right-0 top-full z-20 mt-1 w-44 rounded-md border border-gray-700 bg-bg-card p-1 shadow-xl">
           <MenuItem label="Open prospect" onClick={() => run(onOpenProspect)} />
           {status !== 'queued' && (
-            <MenuItem label="Queue outreach" onClick={() => run(onMarkQueued)} />
+            <MenuItem
+              label="Queue outreach"
+              onClick={() => run(onMarkQueued)}
+            />
           )}
           {status !== 'done' && (
             <MenuItem label="Mark done" onClick={() => run(onMarkDone)} />
@@ -889,7 +941,8 @@ function FilterPill({
   useEffect(() => {
     if (!open) return;
     const listener = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     document.addEventListener('mousedown', listener);
     return () => document.removeEventListener('mousedown', listener);
@@ -939,7 +992,9 @@ function FilterPill({
                       : 'border-gray-600')
                   }
                 >
-                  {isSelected && <span className="text-[8px] leading-none">✓</span>}
+                  {isSelected && (
+                    <span className="text-[8px] leading-none">✓</span>
+                  )}
                 </span>
                 {opt.label}
               </button>

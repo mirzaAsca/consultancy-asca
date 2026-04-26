@@ -442,9 +442,9 @@ _Landed 2026-04-23 — [`src/dashboard/routes/EngagementTasks.tsx`](./src/dashbo
 
 Acceptance criteria:
 
-- [ ] Feed browsing automatically builds a deduped task backlog.
-- [ ] Both post and comment links are stored when available.
-- [ ] Duplicate events do not inflate queue counts.
+- [x] Feed browsing automatically builds a deduped task backlog. _(2026-04-26 hardening: feed-event harvesting now runs even when visual highlighting is disabled, and background refresh/broadcast fires on both inserted and updated feed-event rows so Engagement Tasks reflects crawl passes without a manual refresh.)_
+- [x] Both post and comment links are stored when available. _(Extractor still writes `post_url` from activity URNs and `comment_url` from scoped comment URNs via `buildPostPermalink` / `buildCommentPermalink`.)_
+- [x] Duplicate events do not inflate queue counts. _(Unique `event_fingerprint` DB upsert bumps `seen_count` instead of inserting another inbox row; covered by `tests/db-v2.test.ts`.)_
 
 ---
 
@@ -462,7 +462,7 @@ _Manual Feed Crawl Session landed 2026-04-23. Passive continuous harvester (scan
   - When no user scrolling has happened in 30s and harvester is "owed" a pass (cooldown elapsed), it performs **one** gentle scroll cycle: `scrollBy(600–1200px)` with ±20% gaussian jitter, wait 2–5s, observe.
   - Per-run stop conditions: no-new-events-for-3-scrolls, max 20 scrolls, or user interaction (keyboard/scroll/click) resets cooldown and yields.
   _(Landed 2026-04-25 — pure decision logic in [`src/shared/passive-harvester.ts`](./src/shared/passive-harvester.ts) (`decidePassiveHarvest` reports the first failing gate: `scan_not_running` / `manual_session_running` / `no_linkedin_tab` / `cooldown_active` / `user_active`; 14 unit tests in [`tests/passive-harvester.test.ts`](./tests/passive-harvester.test.ts)). Background scheduler in [`src/background/passive-harvester.ts`](./src/background/passive-harvester.ts) uses a self-rearming `setTimeout` loop (no `chrome.alarms`) that wakes every `PASSIVE_HARVEST_TICK_INTERVAL_MS = 60_000`, picks the active LinkedIn feed tab via `pickActiveFeedTab()` (worker-owned tabs excluded via `getOwnedTabIds()`), and dispatches a single-mode `FEED_CRAWL_RUN_IN_TAB { passive: true }` when the gate clears. New `passive` flag on `RunFeedCrawlOptions` ([`src/content/feed-crawler.ts`](./src/content/feed-crawler.ts)) skips `ensureFeedMode` and runs ONE pass against the user's current sort (top/recent), so the harvester never navigates out from under the user. Existing user-interaction guards (keydown / mousedown / touchstart / wheel / non-programmatic scroll) yield immediately with `stop_reason='user_interaction'`, which the scheduler records as `lastUserInteractionAt` to extend the idle gate. Cooldown defaults: `PASSIVE_HARVEST_COOLDOWN_MS = 5 * 60_000`, `PASSIVE_HARVEST_USER_IDLE_MS = 30_000`. Wired in `SCAN_START` / `SCAN_RESUME` (arms scheduler when `state.status === 'running'`) and `SCAN_PAUSE` / auto-pause hook (stops scheduler) in [`src/background/index.ts`](./src/background/index.ts); also re-armed on every SW boot via `getScanState()` so MV3 worker recycles don't silence it. Telemetry: `passive_harvest_cycle_start` / `_end` / `_failed` / `_skipped` activity-log entries; skip log debounced (5 min per identical reason) so the scheduler doesn't flood the logs while the user is actively browsing.)_
-- [x] Manual `Feed Crawl Session` button in popup/dashboard — runs one pass both sorts (Top then Recent) regardless of Start/Pause state. _(Popup "Run feed crawl session" button; blocked while `scan_state.status === 'running'` so the two workers don't fight for the tab. Background owns the `FEED_CRAWL_SESSION_START / STOP / STATUS` messages and dispatches `FEED_CRAWL_RUN_IN_TAB` to the active LinkedIn feed tab via the existing `sendMessageToTab` helper.)_
+- [x] Manual `Feed Crawl Session` button in popup/dashboard — runs one pass both sorts (Top then Recent) regardless of Start/Pause state. _(Popup "Run feed crawl session" button; blocked while `scan_state.status === 'running'` so the two workers don't fight for the tab. Background owns the `FEED_CRAWL_SESSION_START / STOP / STATUS` messages and dispatches `FEED_CRAWL_RUN_IN_TAB` to the active LinkedIn feed tab via the existing `sendMessageToTab` helper. 2026-04-26 hardening: background now owns Top/Recent tab navigation and runs the content script one mode at a time, so the message channel no longer dies when LinkedIn reloads during mode switching.)_
 - [x] Session config (for both passive and manual modes):
   - [x] max scroll steps per pass _(`FEED_CRAWL_MAX_SCROLLS_PER_MODE = 20` in `src/shared/constants.ts`)_,
   - [x] pause jitter range _(`FEED_CRAWL_MIN_WAIT_MS` / `FEED_CRAWL_MAX_WAIT_MS` in ms, `FEED_CRAWL_MIN_SCROLL_PX` / `FEED_CRAWL_MAX_SCROLL_PX` in px; jitter applied by `pickScrollStep` via a Box–Muller draw, clamped to absolute bounds)_,
@@ -504,7 +504,7 @@ _Landed 2026-04-23. Level transitions + acceptance watcher ship on the scan-comp
 
 Acceptance criteria:
 
-- [ ] You can run daily crawl sessions and see net-new events/tasks by mode.
+- [x] You can run daily crawl sessions and see net-new events/tasks by mode. _(2026-04-26 hardening: background-owned per-mode navigation preserves session telemetry across Top → Recent reloads; per-mode metrics and overlap are merged from one-mode content runs. Validated with `bun run test` and `bun run build` under Node 22.19.0; live LinkedIn smoke still belongs in the release checklist.)_
 - [x] Newly unlocked 2nd-degree investors are auto-prioritized. _(recent_unlock_boost in `src/shared/scoring.ts` promotes fresh 2nd-degree rows by a flat +25 for 7 days; outreach queue sort order already reads `tier DESC, priority_score DESC` so the boost shows up in `next_best` first. UI surfacing landed 2026-04-26 — emerald "✨ New" pill rendered alongside the level badge in `OutreachQueue.tsx` driven by `OutreachQueueCandidate.recent_unlock`.)_
 
 ---

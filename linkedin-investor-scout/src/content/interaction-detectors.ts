@@ -163,7 +163,8 @@ function maybeStartProfileVisitDetector(
   visitWatcherSlug = slug;
   const settings = getSettings();
   const dwellMs =
-    settings?.outreach?.profile_visit_dwell_ms ?? DEFAULT_PROFILE_VISIT_DWELL_MS;
+    settings?.outreach?.profile_visit_dwell_ms ??
+    DEFAULT_PROFILE_VISIT_DWELL_MS;
 
   const events: ProfileVisitEvent[] = [];
   let settled = false;
@@ -411,7 +412,10 @@ function attachMessageSentWatcher(
   const listObserver = new MutationObserver((mutations) => {
     for (const m of mutations) {
       for (const n of Array.from(m.addedNodes)) {
-        if (n instanceof HTMLElement && n.matches?.('li.msg-s-event-listitem')) {
+        if (
+          n instanceof HTMLElement &&
+          n.matches?.('li.msg-s-event-listitem')
+        ) {
           events.push({ kind: 'bubble_appended', t: Date.now() });
           recompute();
           return;
@@ -521,8 +525,9 @@ function maybeStartWithdrawalDetector(getSlugMap: () => SlugMap): void {
       // Walk up to the invite row — the nearest `<li>` / `<article>` /
       // `[componentkey]` container is the row LinkedIn removes on success.
       const row =
-        anchor.closest<HTMLElement>('li, article, [componentkey], [data-testid]') ??
-        anchor.parentElement;
+        anchor.closest<HTMLElement>(
+          'li, article, [componentkey], [data-testid]',
+        ) ?? anchor.parentElement;
       if (!row) return;
       const slug = findSlugInside(row);
       if (!slug) return;
@@ -794,7 +799,10 @@ function maybeAttachReactionWatcher(
       settle();
     }
   });
-  attrObserver.observe(btn, { attributes: true, attributeFilter: ['aria-label'] });
+  attrObserver.observe(btn, {
+    attributes: true,
+    attributeFilter: ['aria-label'],
+  });
 
   const timeoutHandle = window.setTimeout(() => {
     events.push({ kind: 'timeout', t: Date.now() });
@@ -880,7 +888,9 @@ function emitWithdrawal(payload: OutreachWithdrawDetectedPayload): void {
   sendMessageToRuntime({ type: 'OUTREACH_WITHDRAW_DETECTED', payload });
 }
 
-function emitRestrictionBanner(payload: LinkedInRestrictionBannerPayload): void {
+function emitRestrictionBanner(
+  payload: LinkedInRestrictionBannerPayload,
+): void {
   sendMessageToRuntime({ type: 'LINKEDIN_RESTRICTION_BANNER', payload });
 }
 
@@ -1007,16 +1017,24 @@ function maybeAttachCommentPostedWatcher(
       });
     }
 
-    timeoutHandle = window.setTimeout(() => {
-      events.push({ kind: 'timeout', t: Date.now() });
-      settle();
-    }, Math.max(COMMENT_WATCH_TIMEOUT_MS, DEFAULT_COMMENT_POST_WINDOW_MS + 2_000));
+    timeoutHandle = window.setTimeout(
+      () => {
+        events.push({ kind: 'timeout', t: Date.now() });
+        settle();
+      },
+      Math.max(
+        COMMENT_WATCH_TIMEOUT_MS,
+        DEFAULT_COMMENT_POST_WINDOW_MS + 2_000,
+      ),
+    );
   };
 
   btn.addEventListener('click', onSubmitClick, { capture: true });
 
   function cleanup(): void {
-    btn.removeEventListener('click', onSubmitClick, { capture: true } as EventListenerOptions);
+    btn.removeEventListener('click', onSubmitClick, {
+      capture: true,
+    } as EventListenerOptions);
     listObserver?.disconnect();
     composerObserver?.disconnect();
     if (timeoutHandle !== null) window.clearTimeout(timeoutHandle);
@@ -1042,9 +1060,8 @@ function findCommentListContainer(
   // Prefer the nearest commentList ancestor/sibling so a reply composer
   // observes its own thread, not the card's top-level list.
   const nearby =
-    btn
-      .closest<HTMLElement>('div[data-testid*="commentList" i]')
-      ?? card.querySelector<HTMLElement>('div[data-testid*="commentList" i]');
+    btn.closest<HTMLElement>('div[data-testid*="commentList" i]') ??
+    card.querySelector<HTMLElement>('div[data-testid*="commentList" i]');
   if (nearby) return nearby;
   // Classical fallback.
   return (
@@ -1062,15 +1079,17 @@ function isCommentItemNode(node: Element): boolean {
   ) {
     return true;
   }
-  return node.querySelector(
-    'article.comments-comment-item, li.comments-comment-item, [aria-label^="View more options for" i]',
-  ) !== null;
+  return (
+    node.querySelector(
+      'article.comments-comment-item, li.comments-comment-item, [aria-label^="View more options for" i]',
+    ) !== null
+  );
 }
 
 function isComposerEmpty(el: HTMLElement): boolean {
   // LinkedIn's contenteditable resets to `<p><br></p>` or empty after a
   // successful post. Trim to be defensive about whitespace-only content.
-  const text = (el.textContent ?? '').replace(/​/g, '').trim();
+  const text = (el.textContent ?? '').replace(/\u200B/g, '').trim();
   if (text.length > 0) return false;
   const html = el.innerHTML.trim().toLowerCase();
   return html === '' || html === '<p><br></p>' || html === '<br>';

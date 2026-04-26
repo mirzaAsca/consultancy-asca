@@ -81,6 +81,7 @@ const crawlSeenFingerprints = new Set<string>();
 let activeCrawlSessionId: string | null = null;
 let activeCrawlCanceled = false;
 const FEED_TEST_DEFAULT_MAX_PROFILES = 200;
+const CRAWL_READY_TIMEOUT_MS = 5_000;
 /** Horizontal gap between a badge's right edge and the outer post card. */
 const BADGE_GAP_PX = 16;
 /** Vertical inset from the top of the reference container to the badge. */
@@ -151,7 +152,8 @@ function findDisplayNameInContainer(
   container: HTMLElement,
   slug: string,
 ): string | null {
-  const anchors = container.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
+  const anchors =
+    container.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
   let best: string | null = null;
   for (const a of Array.from(anchors)) {
     const href = a.getAttribute('href') || a.href;
@@ -219,7 +221,11 @@ function inferActionLabelFromText(raw: string): string | null {
   if (text.includes('loves this')) return 'reacted (love)';
   if (text.includes('is insightful')) return 'reacted (insightful)';
   if (text.includes('is curious')) return 'reacted (curious)';
-  if (text.includes('likes this') || text.includes('liked this') || text.includes('reacted')) {
+  if (
+    text.includes('likes this') ||
+    text.includes('liked this') ||
+    text.includes('reacted')
+  ) {
     return 'reacted (like)';
   }
   if (text.includes('commented')) return 'commented';
@@ -263,7 +269,9 @@ function buildBadgeMeta(
   slug: string,
 ): BadgeMeta {
   const href = anchor.getAttribute('href') || anchor.href;
-  const canonicalProfileUrl = href ? canonicalizeLinkedInProfileUrl(href) : null;
+  const canonicalProfileUrl = href
+    ? canonicalizeLinkedInProfileUrl(href)
+    : null;
   const profileUrl =
     canonicalProfileUrl ||
     `https://www.linkedin.com/in/${encodeURIComponent(slug)}/`;
@@ -280,8 +288,9 @@ function buildBadgeMeta(
   const actionLabel =
     kind === 'mentions'
       ? fallbackActionLabelForKind(kind)
-      : inferActionLabelFromText(collectNearbyActionContext(anchor, container)) ||
-        fallbackActionLabelForKind(kind);
+      : inferActionLabelFromText(
+          collectNearbyActionContext(anchor, container),
+        ) || fallbackActionLabelForKind(kind);
 
   return {
     displayName,
@@ -329,7 +338,8 @@ const DIVERSITY_KIND_ORDER: ContainerKind[] = [
 function collectVisibleFeedProfiles(maxProfiles: number): FeedVisibleProfile[] {
   const seenSlugs = new Set<string>();
   const buckets = new Map<ContainerKind, FeedVisibleProfile[]>();
-  const anchors = document.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
+  const anchors =
+    document.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
 
   for (const anchor of Array.from(anchors)) {
     if (!isElementRendered(anchor)) continue;
@@ -381,7 +391,10 @@ function isKindEnabled(kind: ContainerKind): boolean {
 // ——— CSS injection (driven by user-configurable colors) ———
 
 function buildStylesheet(): string {
-  const levelCss = buildHighlightLevelCss(CONTAINER_ATTR, settings?.highlight?.colors);
+  const levelCss = buildHighlightLevelCss(
+    CONTAINER_ATTR,
+    settings?.highlight?.colors,
+  );
   return `
     ${levelCss}
     [${CONTAINER_ATTR}] {
@@ -528,7 +541,7 @@ function clearContainer(el: HTMLElement): void {
 interface BadgePlacement {
   badge: HTMLElement;
   top: number;
-  left: number;        // value written to `style.left`
+  left: number; // value written to `style.left`
   visibleLeft: number; // rendered left edge (accounts for translateX(-100%))
   visibleRight: number;
   height: number;
@@ -622,7 +635,8 @@ function repositionAllBadges(): void {
     let resolvedTop = p.top;
     for (const q of placed) {
       // No horizontal overlap → can't collide.
-      if (p.visibleRight <= q.visibleLeft || p.visibleLeft >= q.visibleRight) continue;
+      if (p.visibleRight <= q.visibleLeft || p.visibleLeft >= q.visibleRight)
+        continue;
       const qBottom = q.top + q.height;
       if (resolvedTop < qBottom + BADGE_COLLISION_GAP_PX) {
         resolvedTop = qBottom + BADGE_COLLISION_GAP_PX;
@@ -657,7 +671,8 @@ function applyHighlight(
     previous === levelAttr &&
     container.dataset[DATA_SLUG] === slug &&
     (container.dataset[DATA_BADGE_NAME] ?? '') === badgeMeta.displayName &&
-    (container.dataset[DATA_BADGE_ACTION] ?? '') === (badgeMeta.actionLabel ?? '') &&
+    (container.dataset[DATA_BADGE_ACTION] ?? '') ===
+      (badgeMeta.actionLabel ?? '') &&
     (container.dataset[DATA_BADGE_URL] ?? '') === badgeMeta.profileUrl &&
     (container.dataset[DATA_KIND] ?? '') === kind &&
     containerBadges.has(container)
@@ -681,9 +696,15 @@ function applyHighlight(
     containerBadges.set(container, badge);
   }
 
-  let nameLink = badge.querySelector<HTMLAnchorElement>(`:scope > .${BADGE_NAME_CLASS}`);
-  let action = badge.querySelector<HTMLElement>(`:scope > .${BADGE_ACTION_CLASS}`);
-  let pill = badge.querySelector<HTMLButtonElement>(`:scope > .${BADGE_PILL_CLASS}`);
+  let nameLink = badge.querySelector<HTMLAnchorElement>(
+    `:scope > .${BADGE_NAME_CLASS}`,
+  );
+  let action = badge.querySelector<HTMLElement>(
+    `:scope > .${BADGE_ACTION_CLASS}`,
+  );
+  let pill = badge.querySelector<HTMLButtonElement>(
+    `:scope > .${BADGE_PILL_CLASS}`,
+  );
 
   if (!nameLink || !action || !pill) {
     badge.replaceChildren();
@@ -726,7 +747,12 @@ function applyHighlight(
   pill.setAttribute('data-lis-prospect-id', String(summary.id));
   pill.setAttribute('data-lis-slug', slug);
 
-  badge.title = [badgeMeta.displayName, badgeMeta.actionLabel, summary.company, summary.headline]
+  badge.title = [
+    badgeMeta.displayName,
+    badgeMeta.actionLabel,
+    summary.company,
+    summary.headline,
+  ]
     .filter(Boolean)
     .join(' · ');
 
@@ -889,7 +915,9 @@ function getMarkedContainers(root: ParentNode): HTMLElement[] {
   if (root instanceof HTMLElement && root.hasAttribute(CONTAINER_ATTR)) {
     out.push(root);
   }
-  out.push(...Array.from(root.querySelectorAll<HTMLElement>(`[${CONTAINER_ATTR}]`)));
+  out.push(
+    ...Array.from(root.querySelectorAll<HTMLElement>(`[${CONTAINER_ATTR}]`)),
+  );
   return out;
 }
 
@@ -915,14 +943,15 @@ function captureFeedEvents(root: ParentNode): void {
 
 function scanAndHighlight(root: ParentNode = document): void {
   if (!slugMapReady) return;
+
+  // Feed harvesting feeds the Engagement Tasks inbox and should continue even
+  // when the user disables visual highlighting.
+  captureFeedEvents(root);
+
   if (!settings?.highlight?.enabled) {
     removeAllHighlights();
     return;
   }
-
-  // Piggyback on the highlight pass to harvest feed events into the v2
-  // `feed_events` store. Pure DOM walk, already-warm anchors — marginal cost.
-  captureFeedEvents(root);
 
   const anchors = root.querySelectorAll<HTMLAnchorElement>('a[href*="/in/"]');
   const activeContainers = new Set<HTMLElement>();
@@ -958,7 +987,10 @@ function scanAndHighlight(root: ParentNode = document): void {
     if (kind === 'post_authors' && !isPostAuthorAnchor(anchor, container.el)) {
       kind = 'mentions';
       el = anchor;
-    } else if (kind === 'commenters' && !isCommenterAnchor(anchor, container.el)) {
+    } else if (
+      kind === 'commenters' &&
+      !isCommenterAnchor(anchor, container.el)
+    ) {
       kind = 'mentions';
       el = anchor;
     }
@@ -1003,12 +1035,17 @@ function scheduleScan(): void {
     try {
       scanAndHighlight();
     } catch (error) {
-      warn('scan_error', { error: error instanceof Error ? error.message : error });
+      warn('scan_error', {
+        error: error instanceof Error ? error.message : error,
+      });
     }
   };
   const idle = (
     window as unknown as {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      requestIdleCallback?: (
+        cb: () => void,
+        opts?: { timeout: number },
+      ) => number;
     }
   ).requestIdleCallback;
   if (typeof idle === 'function') {
@@ -1054,7 +1091,10 @@ function onRouteChanged(): void {
     scheduleScan();
     // Phase 5.3 + 5.6: re-evaluate interaction detectors on every SPA
     // navigation — a profile or messaging thread may have just mounted.
-    startInteractionDetectorsForUrl(() => slugMap, () => settings);
+    startInteractionDetectorsForUrl(
+      () => slugMap,
+      () => settings,
+    );
   }, 250);
 }
 
@@ -1091,8 +1131,21 @@ function onSettingsChanged(next: Settings): void {
   injectOrUpdateStylesheet();
   if (!next.highlight.enabled) {
     removeAllHighlights();
+    scheduleScan();
   } else {
     scheduleScan();
+  }
+}
+
+async function waitForCrawlReadiness(
+  timeoutMs = CRAWL_READY_TIMEOUT_MS,
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (!slugMapReady && Date.now() < deadline) {
+    await new Promise((resolve) => window.setTimeout(resolve, 100));
+  }
+  if (!slugMapReady) {
+    warn('feed_crawl_slug_map_not_ready');
   }
 }
 
@@ -1102,9 +1155,14 @@ addRuntimeMessageListener((msg: Message, _sender, sendResponse) => {
   if (!msg || typeof msg !== 'object') return;
   switch (msg.type) {
     case 'FEED_TEST_COLLECT_VISIBLE_PROFILES': {
-      const requested = Number(msg.payload?.max_profiles ?? FEED_TEST_DEFAULT_MAX_PROFILES);
+      const requested = Number(
+        msg.payload?.max_profiles ?? FEED_TEST_DEFAULT_MAX_PROFILES,
+      );
       const maxProfiles = Number.isFinite(requested)
-        ? Math.max(1, Math.min(FEED_TEST_DEFAULT_MAX_PROFILES, Math.trunc(requested)))
+        ? Math.max(
+            1,
+            Math.min(FEED_TEST_DEFAULT_MAX_PROFILES, Math.trunc(requested)),
+          )
         : FEED_TEST_DEFAULT_MAX_PROFILES;
       const profiles = collectVisibleFeedProfiles(maxProfiles);
       sendResponse({
@@ -1130,18 +1188,32 @@ addRuntimeMessageListener((msg: Message, _sender, sendResponse) => {
     }
     case 'FEED_CRAWL_RUN_IN_TAB': {
       const sessionId = msg.payload?.session_id ?? '';
+      const payloadModes = Array.isArray(msg.payload?.modes)
+        ? msg.payload.modes.filter(
+            (mode): mode is 'top' | 'recent' =>
+              mode === 'top' || mode === 'recent',
+          )
+        : undefined;
       activeCrawlSessionId = sessionId;
       activeCrawlCanceled = false;
-      void runFeedCrawlSession({
-        session_id: sessionId,
-        tab_id: -1,
-        fingerprints: {
-          snapshot: () => new Set(crawlSeenFingerprints),
-          scanNow: () => scanAndHighlight(document),
-        },
-        isCanceled: () => activeCrawlCanceled,
-        passive: msg.payload?.passive === true,
-      })
+      void waitForCrawlReadiness()
+        .then(() =>
+          runFeedCrawlSession({
+            session_id: sessionId,
+            tab_id: -1,
+            fingerprints: {
+              snapshot: () => new Set(crawlSeenFingerprints),
+              scanNow: () => scanAndHighlight(document),
+            },
+            isCanceled: () => activeCrawlCanceled,
+            passive: msg.payload?.passive === true,
+            modes:
+              payloadModes && payloadModes.length > 0
+                ? payloadModes
+                : undefined,
+            skipNavigation: msg.payload?.skip_navigation === true,
+          }),
+        )
         .then(async (result) => {
           // Flush any pending feed events before the background finalizes.
           try {
@@ -1216,7 +1288,10 @@ function startObservers(): void {
 
   // Badges are portaled to <body>; keep them aligned with their source
   // containers as the user scrolls, resizes, or LinkedIn reflows layout.
-  window.addEventListener('scroll', scheduleReposition, { passive: true, capture: true });
+  window.addEventListener('scroll', scheduleReposition, {
+    passive: true,
+    capture: true,
+  });
   window.addEventListener('resize', scheduleReposition, { passive: true });
 }
 
@@ -1230,7 +1305,10 @@ async function bootstrap(): Promise<void> {
     installRouteChangeHook(onRouteChanged);
     // Phase 5.3 + 5.6: kick off detectors for the initial URL. Route-change
     // handler re-invokes on every SPA nav.
-    startInteractionDetectorsForUrl(() => slugMap, () => settings);
+    startInteractionDetectorsForUrl(
+      () => slugMap,
+      () => settings,
+    );
     log('bootstrapped', {
       slugs: Object.keys(slugMap).length,
       enabled: settings?.highlight?.enabled ?? null,
