@@ -320,6 +320,28 @@ export function openScoutDb(): Promise<IDBPDatabase<ScoutDBSchema>> {
           tokens.createIndex('by_prospect_id', 'prospect_id');
         }
 
+        if (oldVersion < 4) {
+          // v4 — collapse `OUT_OF_NETWORK` into `3rd`. The legacy bucket only
+          // existed because pre-SDUI Topcard selectors couldn't read a degree
+          // badge on far profiles, so we synthesized OOO from a "Follow + no
+          // Connect" heuristic. From an outreach standpoint these are just
+          // 3rd-degree rows. Cursor-walk every prospect and flip; idempotent
+          // because subsequent passes find no OOO rows. `by_level` index is
+          // updated automatically as part of the cursor.update.
+          const prospectsStore = transaction.objectStore('prospects');
+          let cursor = await prospectsStore.openCursor();
+          let migrated = 0;
+          while (cursor) {
+            const row = cursor.value as Prospect;
+            if ((row.level as string) === 'OUT_OF_NETWORK') {
+              await cursor.update({ ...row, level: '3rd', updated_at: Date.now() });
+              migrated += 1;
+            }
+            cursor = await cursor.continue();
+          }
+          console.info('[investor-scout] v4 OOO→3rd migration', { migrated });
+        }
+
         console.info('[investor-scout] db upgraded', {
           oldVersion,
           newVersion,
@@ -908,7 +930,6 @@ const EMPTY_LEVEL_COUNTS: Record<ProspectLevel, number> = {
   '1st': 0,
   '2nd': 0,
   '3rd': 0,
-  OUT_OF_NETWORK: 0,
 };
 const EMPTY_STATUS_COUNTS: Record<ScanStatus, number> = {
   pending: 0,

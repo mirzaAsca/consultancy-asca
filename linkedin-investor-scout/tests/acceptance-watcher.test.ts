@@ -56,10 +56,10 @@ describe('detectAcceptanceOnLevelChange', () => {
     expect(out.invite_to_accept).not.toBeNull();
   });
 
-  it('OUT_OF_NETWORK → 1st with a live invite: counts', () => {
+  it('3rd → 1st with a live invite (covers former OOO bucket post-collapse): counts', () => {
     const sent = makeAction({ state: 'sent', sent_at: NOW });
     const out = detectAcceptanceOnLevelChange({
-      oldLevel: 'OUT_OF_NETWORK',
+      oldLevel: '3rd',
       newLevel: '1st',
       history: [sent],
       currentLifecycleStatus: baseLifecycle,

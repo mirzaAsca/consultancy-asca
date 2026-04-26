@@ -10,12 +10,7 @@ import {
 } from '@/shared/url';
 
 export const FEED_TEST_MAX_PROFILES = 200;
-export const FEED_TEST_LEVELS: ProspectLevel[] = [
-  '1st',
-  '2nd',
-  '3rd',
-  'OUT_OF_NETWORK',
-];
+export const FEED_TEST_LEVELS: ProspectLevel[] = ['1st', '2nd', '3rd'];
 export const FEED_TEST_MIN_PROFILES_FOR_ALL_LEVELS = FEED_TEST_LEVELS.length;
 
 function normalizeOptionalText(raw: unknown): string | null {
@@ -66,7 +61,7 @@ function shuffle<T>(items: T[], random: () => number): T[] {
 
 function pickRandomLevel(random: () => number): ProspectLevel {
   const idx = randomIndex(FEED_TEST_LEVELS.length, random);
-  return FEED_TEST_LEVELS[idx] ?? 'OUT_OF_NETWORK';
+  return FEED_TEST_LEVELS[idx] ?? '3rd';
 }
 
 function assignRandomLevels(
@@ -116,7 +111,7 @@ export function buildFeedTestRows(
   const levels = assignRandomLevels(deduped.length, random);
   return deduped.map((row, idx) => ({
     ...row,
-    level: levels[idx] ?? 'OUT_OF_NETWORK',
+    level: levels[idx] ?? '3rd',
     headline: null,
     company: null,
     location: null,

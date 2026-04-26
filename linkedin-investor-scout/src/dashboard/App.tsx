@@ -46,13 +46,7 @@ const VALID_ROUTES: DashboardRoute[] = [
   'settings',
   'logs',
 ];
-const VALID_LEVELS: ProspectLevel[] = [
-  '1st',
-  '2nd',
-  '3rd',
-  'OUT_OF_NETWORK',
-  'NONE',
-];
+const VALID_LEVELS: ProspectLevel[] = ['1st', '2nd', '3rd', 'NONE'];
 
 function parseDashboardHash(
   hash: string,

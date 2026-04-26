@@ -151,7 +151,7 @@ describe('IndexedDB data layer', () => {
     expect(rows.map((r) => r.slug)).toEqual(['first', 'second']);
   });
 
-  it('keeps 3rd and OUT_OF_NETWORK level filters separate', async () => {
+  it('3rd-level filter returns all far prospects (post OOO→3rd collapse)', async () => {
     const now = Date.now();
     await replaceAllProspects([
       {
@@ -161,8 +161,8 @@ describe('IndexedDB data layer', () => {
         last_scanned: now,
       },
       {
-        ...prospectInsertFromRawUrl('linkedin.com/in/out-of-network'),
-        level: 'OUT_OF_NETWORK',
+        ...prospectInsertFromRawUrl('linkedin.com/in/follow-only'),
+        level: '3rd',
         scan_status: 'done',
         last_scanned: now,
       },
@@ -173,14 +173,11 @@ describe('IndexedDB data layer', () => {
       page: 0,
       page_size: 20,
     });
-    const oonOnly = await queryProspects({
-      levels: ['OUT_OF_NETWORK'],
-      page: 0,
-      page_size: 20,
-    });
 
-    expect(thirdOnly.rows.map((row) => row.slug)).toEqual(['third-level']);
-    expect(oonOnly.rows.map((row) => row.slug)).toEqual(['out-of-network']);
+    expect(thirdOnly.rows.map((row) => row.slug).sort()).toEqual([
+      'follow-only',
+      'third-level',
+    ]);
   });
 
   it('getSettings returns an independent copy (no DEFAULT_SETTINGS aliasing)', async () => {

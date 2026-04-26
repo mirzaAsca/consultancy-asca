@@ -29,7 +29,7 @@ const INVITE_SEND_WATCH_TIMEOUT_MS = 120_000;
 
 /**
  * Scan the top card for the Connect CTA. Returns null when the button isn't
- * rendered (1st-degree profile, or an OOO profile where LinkedIn hides the
+ * rendered (1st-degree profile, or a far 3rd-degree profile where LinkedIn hides the
  * Connect action behind the "More" dropdown — we don't try to drill through
  * More at this time; surface a graceful failure instead).
  */

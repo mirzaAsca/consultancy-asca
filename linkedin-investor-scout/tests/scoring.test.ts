@@ -68,7 +68,6 @@ describe('scoreProspect — level component', () => {
   it.each<[ProspectLevel, number]>([
     ['2nd', SCORE_WEIGHTS.level_2nd],
     ['3rd', SCORE_WEIGHTS.level_3rd],
-    ['OUT_OF_NETWORK', SCORE_WEIGHTS.level_out_of_network],
     ['NONE', 0],
   ])('level %s → +%d', (level, expected) => {
     const result = scoreProspect(
@@ -311,13 +310,13 @@ describe('scoreProspect — combined fixture', () => {
     expect(result.skip).toBe(true);
   });
 
-  it('OUT_OF_NETWORK with no signals → low score, skip tier', () => {
+  it('3rd with no signals → score = level weight, skip tier', () => {
     const result = scoreProspect(
-      baseProspect({ level: 'OUT_OF_NETWORK' }),
+      baseProspect({ level: '3rd' }),
       baseOutreach(),
       baseContext,
     );
-    expect(result.score).toBe(SCORE_WEIGHTS.level_out_of_network);
+    expect(result.score).toBe(SCORE_WEIGHTS.level_3rd);
     expect(result.tier).toBe('skip');
   });
 });
@@ -375,17 +374,6 @@ describe('scoreProspect — recent unlock bonus (Phase 3.3)', () => {
     expect(result.breakdown.recent_unlock).toBe(0);
   });
 
-  it('OUT_OF_NETWORK inside window → no bonus', () => {
-    const result = scoreProspect(
-      baseProspect({
-        level: 'OUT_OF_NETWORK',
-        last_level_change_at: NOW - 1 * MS_PER_DAY,
-      }),
-      baseOutreach(),
-      baseContext,
-    );
-    expect(result.breakdown.recent_unlock).toBe(0);
-  });
 
   it('future timestamp (clock skew) → no bonus (no retroactive credit)', () => {
     const result = scoreProspect(

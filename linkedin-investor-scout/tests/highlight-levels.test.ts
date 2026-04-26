@@ -12,7 +12,6 @@ describe('highlight level labels', () => {
       ['1st', '1st · TARGET'],
       ['2nd', '2nd · TARGET'],
       ['3rd', '3rd · TARGET'],
-      ['OUT_OF_NETWORK', 'OUT · TARGET'],
       ['NONE', '? · TARGET'],
     ];
 
@@ -23,31 +22,29 @@ describe('highlight level labels', () => {
 });
 
 describe('highlight level color vars', () => {
-  it('keeps 3rd and out-of-network mapped to distinct CSS vars', () => {
+  it('maps 3rd to its own CSS var; NONE shares the 3rd palette as a fallback', () => {
     expect(cssVarForLevel('3rd')).toBe('var(--lis-color-3rd)');
-    expect(cssVarForLevel('OUT_OF_NETWORK')).toBe('var(--lis-color-oon)');
-    expect(cssVarForLevel('3rd')).not.toBe(cssVarForLevel('OUT_OF_NETWORK'));
+    expect(cssVarForLevel('NONE')).toBe('var(--lis-color-3rd)');
   });
 });
 
 describe('buildHighlightLevelCss', () => {
-  it('includes selectors for all level attributes', () => {
+  it('includes selectors for all surviving level attributes', () => {
     const css = buildHighlightLevelCss('data-lis-match');
     expect(css).toContain('[data-lis-match="1st"]');
     expect(css).toContain('[data-lis-match="2nd"]');
     expect(css).toContain('[data-lis-match="3rd"]');
-    expect(css).toContain('[data-lis-match="OUT_OF_NETWORK"]');
     expect(css).toContain('[data-lis-match="NONE"]');
+    expect(css).not.toContain('OUT_OF_NETWORK');
   });
 
-  it('applies provided third and out-of-network palette entries separately', () => {
+  it('applies provided third palette entry', () => {
     const css = buildHighlightLevelCss('data-lis-match', {
       first: '#111111',
       second: '#222222',
       third: '#333333',
-      out_of_network: '#444444',
     });
     expect(css).toContain('--lis-color-3rd: #333333;');
-    expect(css).toContain('--lis-color-oon: #444444;');
+    expect(css).not.toContain('--lis-color-oon');
   });
 });

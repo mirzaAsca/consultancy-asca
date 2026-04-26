@@ -825,3 +825,36 @@ Not landed in this PR; see `EXTENSION_GROWTH_TODO.md` sprint plan:
 - Phase 5.x Auto reconciliation (detectors + inbox correlation).
 
 **End of v1.1 Amendments**
+
+---
+
+## 20. v2.x Amendments — `OUT_OF_NETWORK` collapsed into `3rd`
+
+_Added 2026-04-26._
+
+### 20.1 Supersedes §6.1, §7.3, §9.3, §14.1 — Level union
+
+`ProspectLevel` is now `'NONE' | '1st' | '2nd' | '3rd'`. The `OUT_OF_NETWORK` (`OOO`) bucket was a legacy artifact: pre-SDUI Topcard selectors couldn't read a degree badge on far profiles, so `src/content/scan.ts` synthesized `OUT_OF_NETWORK` from a "Follow button + no Connect" heuristic. In production scans the legacy badge selectors (`.dist-value`, `.artdeco-entity-lockup__degree`) almost never matched modern LinkedIn DOM, which meant nearly every non-1st/2nd profile fell through to the OOO bucket regardless of actual degree. From an outreach standpoint these were always 3rd-degree rows; v2.x collapses the distinction.
+
+Behavioral changes:
+
+- **Scan fallback** ([`src/content/scan.ts`](./src/content/scan.ts)): "Follow button present, no Connect" → `'3rd'` (was `'OUT_OF_NETWORK'`). "No badge text + no Connect + no Follow" → `'3rd'` (was `'OUT_OF_NETWORK'`).
+- **Scoring** ([`src/shared/scoring.ts`](./src/shared/scoring.ts), [`src/shared/constants.ts`](./src/shared/constants.ts)): `SCORE_WEIGHTS.level_out_of_network` removed. Rows that previously scored +5 from OOO now score +20 from `level_3rd` — a conservative upgrade for rows that were silently penalized for failing to expose a badge our stale selector couldn't read.
+- **UI** ([`src/popup/App.tsx`](./src/popup/App.tsx), [`src/dashboard/App.tsx`](./src/dashboard/App.tsx), [`src/dashboard/routes/*.tsx`](./src/dashboard/routes/), [`src/dashboard/helpers.ts`](./src/dashboard/helpers.ts)): popup stats grid drops from 4 tiles to 3, dashboard level filters drop the OOO chip, settings color picker drops the 4th color, hash router rejects `level=OUT_OF_NETWORK`.
+- **Highlighter** ([`src/content/highlight-levels.ts`](./src/content/highlight-levels.ts)): the `--lis-color-oon` CSS var is gone; `NONE`-state badges share the `--lis-color-3rd` palette.
+- **Acceptance watcher** ([`src/shared/acceptance-watcher.ts`](./src/shared/acceptance-watcher.ts)): `PRE_CONNECTED_LEVELS` is now `{'2nd','3rd'}`. A `3rd → 1st` transition still credits live invites.
+- **CSV export** (§19.3): unchanged — the `level` column now emits `1st` / `2nd` / `3rd` only.
+
+### 20.2 DB v3 → v4 migration
+
+DB version bumped to 4 in [`src/shared/constants.ts`](./src/shared/constants.ts). The `oldVersion < 4` branch in [`src/shared/db.ts`](./src/shared/db.ts) cursor-walks every prospect row and flips `level === 'OUT_OF_NETWORK'` to `'3rd'`, stamping a fresh `updated_at`. Idempotent — subsequent passes find no OOO rows. The v3.0-frozen pre-migration JSON snapshot machinery in [`src/shared/backup.ts`](./src/shared/backup.ts) writes a backup before the upgrade fires, so users have a recovery path.
+
+### 20.3 Test coverage adjusted
+
+- `tests/highlight-levels.test.ts`: dropped OOO label/var assertions; pinned `NONE` falls back to the 3rd palette, asserts `OUT_OF_NETWORK` no longer appears in the generated CSS.
+- `tests/scoring.test.ts`: dropped the OOO row from the level-weight table; replaced "OOO with no signals → low score" with "3rd with no signals → score = level weight, skip tier".
+- `tests/db.test.ts`: replaced the "keeps 3rd and OOO separate" filter test with a "3rd-level filter returns all far prospects" assertion.
+- `tests/selectors.contract.test.ts`: the `oon` fixture is unchanged but the expected level is now `'3rd'`, matching the collapsed heuristic.
+- `tests/acceptance-watcher.test.ts`: the OOO → 1st acceptance test was renamed to "3rd → 1st with a live invite" with a comment noting it covers the former OOO bucket.
+
+**End of v2.x Amendments**

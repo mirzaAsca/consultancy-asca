@@ -140,7 +140,7 @@ export function recommendAction(
   if (prospect.lifecycle_status === 'do_not_contact') return null;
   if (prospect.level === 'NONE') return null;
 
-  if (prospect.level === '2nd' || prospect.level === '3rd' || prospect.level === 'OUT_OF_NETWORK') {
+  if (prospect.level === '2nd' || prospect.level === '3rd') {
     if (hasLive('connection_request_sent')) return null; // waiting on acceptance
 
     if (opts.warm_visit_before_invite) {
@@ -268,7 +268,7 @@ export interface FilterOptions {
 }
 
 /** Default levels surfaced when no explicit filter is provided. */
-const DEFAULT_LEVELS: ReadonlyArray<ProspectLevel> = ['2nd', '3rd', 'OUT_OF_NETWORK'];
+const DEFAULT_LEVELS: ReadonlyArray<ProspectLevel> = ['2nd', '3rd'];
 
 /** Default tiers surfaced when no explicit filter is provided. */
 const DEFAULT_TIERS: ReadonlyArray<ProspectTier> = ['S', 'A', 'B', 'C'];

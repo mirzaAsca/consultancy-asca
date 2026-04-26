@@ -205,13 +205,6 @@ export function SettingsRoute() {
                 value={hi.colors.third}
                 onChange={(v) => void save({ highlight: { colors: { third: v } } })}
               />
-              <ColorRow
-                label="Out of network"
-                value={hi.colors.out_of_network}
-                onChange={(v) =>
-                  void save({ highlight: { colors: { out_of_network: v } } })
-                }
-              />
             </div>
           </div>
 

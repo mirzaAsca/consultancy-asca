@@ -12,7 +12,7 @@ Captured live with the user; load-bearing decisions baked into the sections belo
 - **Send automation ceiling:** **Mode A only** (prefill Connect modal, user clicks Send). Mode B (batch-approve) and Mode C (headless) are **out of scope for v2**. Rollout gates collapse accordingly.
 - **Operating model:** No `chrome.alarms` scheduler, no working-hours window, no background harvest tab. Everything — scan, harvester, outreach surfacing — runs continuously while `scan_state.status === 'running'` and a LinkedIn tab is active. Start/Pause in popup is the single switch. Manual "Feed Crawl Session" button still exists for ad-hoc pushes.
 - **Integration:** Local-only. No Sheets / CRM / cross-app sync.
-- **Top scoring driver:** Connection level. Level weights 2nd=100, 3rd=20, OOO=5, 1st=skip (already connected).
+- **Top scoring driver:** Connection level. Level weights 2nd=100, 3rd=20, 1st=skip (already connected). _(v2.x: legacy OOO bucket collapsed into 3rd — see MASTER §20.)_
 - **Templates:** Single connect-note template, single first-message, single follow-up. No A/B infrastructure in v2.0 — add in v2.1 if needed.
 - **Metrics review cadence:** Daily quick-glance in popup, weekly deep-dive in Dashboard Analytics.
 - **Warming:** Pre-invite profile-visit default ON, toggleable.
@@ -283,7 +283,7 @@ _Scoring helper landed 2026-04-22 in [`src/shared/scoring.ts`](./src/shared/scor
   |---|---|---|
   | `level === '2nd'` | +100 | Dominant driver — reachability is the ballgame. |
   | `level === '3rd'` | +20 | Viable only when other signals strong. |
-  | `level === 'OUT_OF_NETWORK'` | +5 | Rarely scored high; surfaces only with firm/keyword hits. |
+  <!-- `OUT_OF_NETWORK` row removed in v2.x (MASTER §20): the bucket was a legacy fallback that lumped every far profile into +5. Those rows are now `3rd` and pick up the +20 weight above. -->
   | `level === '1st'` | **skip** | Already connected — excluded from outreach queue entirely. |
   | Headline keyword match | +0…40 | User-maintained keyword list (seed from `linkedin_private.csv`). Weighted by keyword tier (strong match: Partner / Investor / Principal / Angel / Scout = +40; soft match: Director / Head of = +15). |
   | Firm tier match | +0…40 | User-maintained firm whitelist with per-firm weight. Top-tier VC = +40; mid = +25; boutique / solo = +15. |

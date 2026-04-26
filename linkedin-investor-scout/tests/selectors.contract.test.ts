@@ -35,7 +35,9 @@ describe('scan selector fixture contract', () => {
     ['1st', '1st'],
     ['2nd', '2nd'],
     ['3rd', '3rd'],
-    ['oon', 'OUT_OF_NETWORK'],
+    // Former OOO bucket — fixture has no badge text + Follow-only, which the
+    // collapsed v2.x heuristic now resolves to 3rd (see scan.ts).
+    ['oon', '3rd'],
   ] as const)('maps %s fixture to %s level', async (fixture, expected) => {
     const res = await scanFixture(fixture);
     expect(res.ok).toBe(true);

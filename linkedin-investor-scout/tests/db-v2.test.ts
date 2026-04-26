@@ -96,7 +96,6 @@ describe('v2 — schema bump + new stores', () => {
           first: '#22c55e',
           second: '#3b82f6',
           third: '#a855f7',
-          out_of_network: '#6b7280',
         },
         show_on: {
           post_authors: true,

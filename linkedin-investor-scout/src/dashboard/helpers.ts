@@ -4,7 +4,6 @@ export const LEVEL_COLORS: Record<ProspectLevel, string> = {
   '1st': '#22c55e',
   '2nd': '#3b82f6',
   '3rd': '#a855f7',
-  OUT_OF_NETWORK: '#6b7280',
   NONE: '#4b5563',
 };
 
@@ -12,7 +11,6 @@ export const LEVEL_LABEL: Record<ProspectLevel, string> = {
   '1st': '1st',
   '2nd': '2nd',
   '3rd': '3rd',
-  OUT_OF_NETWORK: 'OOO',
   NONE: '—',
 };
 

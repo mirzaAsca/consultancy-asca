@@ -402,7 +402,7 @@ function buildStylesheet(): string {
     }
 
     .${BADGE_ACTION_CLASS} {
-      color: var(--lis-badge-bg, var(--lis-color-oon));
+      color: var(--lis-badge-bg, var(--lis-color-3rd));
       font-size: 11px;
       font-weight: 600;
       opacity: .9;
@@ -419,7 +419,7 @@ function buildStylesheet(): string {
       font-weight: 700;
       letter-spacing: .02em;
       color: #ffffff;
-      background: var(--lis-badge-bg, var(--lis-color-oon));
+      background: var(--lis-badge-bg, var(--lis-color-3rd));
       text-decoration: none;
       max-width: 180px;
       white-space: nowrap;
@@ -439,7 +439,7 @@ function buildStylesheet(): string {
       font-weight: 600;
       letter-spacing: .02em;
       color: #ffffff;
-      background: var(--lis-badge-bg, var(--lis-color-oon));
+      background: var(--lis-badge-bg, var(--lis-color-3rd));
       cursor: pointer;
       box-shadow: 0 1px 2px rgba(0,0,0,.2);
     }

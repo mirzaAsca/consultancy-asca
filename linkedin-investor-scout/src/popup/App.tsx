@@ -61,7 +61,7 @@ type ToastState =
 
 const EMPTY_STATS: ProspectStats = {
   total: 0,
-  by_level: { NONE: 0, '1st': 0, '2nd': 0, '3rd': 0, OUT_OF_NETWORK: 0 },
+  by_level: { NONE: 0, '1st': 0, '2nd': 0, '3rd': 0 },
   by_scan_status: {
     pending: 0,
     in_progress: 0,
@@ -86,13 +86,10 @@ const AUTO_PAUSE_COPY: Record<NonNullable<AutoPauseReason>, string> = {
     'Kill switch tripped — health thresholds breached. Review the Health tab; resume is blocked until the cooldown elapses.',
 };
 
-const OUT_OF_NETWORK_LABEL = 'OOO (Out of network)';
-
 const FILTER_LEVEL_OPTIONS: Array<{ value: ProspectLevel; label: string }> = [
   { value: '1st', label: '1st' },
   { value: '2nd', label: '2nd' },
   { value: '3rd', label: '3rd' },
-  { value: 'OUT_OF_NETWORK', label: OUT_OF_NETWORK_LABEL },
   { value: 'NONE', label: 'Unscanned' },
 ];
 
@@ -738,7 +735,7 @@ export default function App() {
           <div className="mb-1.5 text-[10px] uppercase tracking-wide text-gray-500">
             By connection level
           </div>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <StatTile
               label="1st"
               value={stats.by_level['1st']}
@@ -756,12 +753,6 @@ export default function App() {
               value={stats.by_level['3rd']}
               color="bg-level-third"
               onClick={() => openDashboard('prospects', { level: '3rd' })}
-            />
-            <StatTile
-              label={OUT_OF_NETWORK_LABEL}
-              value={stats.by_level.OUT_OF_NETWORK}
-              color="bg-level-oon"
-              onClick={() => openDashboard('prospects', { level: 'OUT_OF_NETWORK' })}
             />
           </div>
         </section>

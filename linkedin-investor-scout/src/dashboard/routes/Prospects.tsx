@@ -33,13 +33,7 @@ import {
 import { ProspectDrawer } from '../components/ProspectDrawer';
 import { formatRelativeTime, triggerCsvDownload } from '../helpers';
 
-const LEVEL_OPTIONS: ProspectLevel[] = [
-  '1st',
-  '2nd',
-  '3rd',
-  'OUT_OF_NETWORK',
-  'NONE',
-];
+const LEVEL_OPTIONS: ProspectLevel[] = ['1st', '2nd', '3rd', 'NONE'];
 
 const STATUS_OPTIONS: ScanStatus[] = [
   'pending',
@@ -59,7 +53,6 @@ const LEVEL_DISPLAY: Record<ProspectLevel, string> = {
   '1st': '1st',
   '2nd': '2nd',
   '3rd': '3rd',
-  OUT_OF_NETWORK: 'OOO',
   NONE: 'Unscanned',
 };
 

@@ -1,7 +1,8 @@
 # LinkedIn Investor Scout
 
-Chrome MV3 extension that scans LinkedIn profile URLs to detect connection level (`1st` / `2nd` / `3rd` / `OUT_OF_NETWORK`) and highlights matched prospects in-feed with a level-coded border and badge. Personal-use tool — **no outreach automation**. See [`MASTER.md`](./MASTER.md) for the full spec.
-`3rd` and `OUT_OF_NETWORK` (shown in UI as `OOO`) are separate levels and stay independently countable/filterable.
+Chrome MV3 extension that scans LinkedIn profile URLs to detect connection level (`1st` / `2nd` / `3rd`) and highlights matched prospects in-feed with a level-coded border and badge. Personal-use tool — **no outreach automation**. See [`MASTER.md`](./MASTER.md) for the full spec.
+
+> **v2.x note:** Earlier builds had a separate `OUT_OF_NETWORK` (`OOO`) bucket. It was a legacy fiction — pre-SDUI Topcard selectors couldn't read a degree badge on far profiles, so we synthesized OOO from a "Follow + no Connect" heuristic. From an outreach standpoint these are just 3rd-degree rows. The DB v3→v4 upgrade flips every existing OOO row to `3rd` and the UI now renders 3 level buckets, not 4.
 
 Current status: **v1.0 feature-complete**. All core milestones (scaffold → data layer → CSV upload → scan worker → dashboard → feed highlighter → export → polish) land. Remaining release step is the manual smoke test in [`MASTER.md`](./MASTER.md) §14.3.
 
@@ -96,7 +97,7 @@ bun run icons      # regenerate icons/16.png, 48.png, 128.png via Pillow
 bun run test
 ```
 
-Covers URL canonicalization (all variant forms collapse to the canonical `/in/{slug}/` shape), CSV parsing edge cases (BOM, CRLF, quoted cells, duplicates), IndexedDB CRUD against `fake-indexeddb`, local day-bucket rollover, jitter bounds, selector fixture contracts (scan parser against `tests/selectors.fixtures.html`), feed-test random-level coverage guarantees, and highlight level/color mapping (`3rd` vs `OOO`). The end-to-end manual smoke test (§14.3) is still run by hand before releases — see `MASTER.md`.
+Covers URL canonicalization (all variant forms collapse to the canonical `/in/{slug}/` shape), CSV parsing edge cases (BOM, CRLF, quoted cells, duplicates), IndexedDB CRUD against `fake-indexeddb`, local day-bucket rollover, jitter bounds, selector fixture contracts (scan parser against `tests/selectors.fixtures.html`), feed-test random-level coverage guarantees, and highlight level/color mapping (1st / 2nd / 3rd). The end-to-end manual smoke test (§14.3) is still run by hand before releases — see `MASTER.md`.
 
 ---
 

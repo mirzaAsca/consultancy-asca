@@ -312,7 +312,7 @@ export function computeAnalyticsSnapshot(
   }
 
   const cohort_by_level: AnalyticsCohortRow<ProspectLevel>[] = (
-    ['1st', '2nd', '3rd', 'OUT_OF_NETWORK', 'NONE'] as ProspectLevel[]
+    ['1st', '2nd', '3rd', 'NONE'] as ProspectLevel[]
   )
     .map((k) => cohortRow(k, levelStats.get(k)))
     .filter((r) => r.invites_sent > 0);

@@ -39,7 +39,7 @@ const ACTION_LABEL: Record<OutreachActionKind, string> = {
 };
 
 const TIER_OPTIONS: ProspectTier[] = ['S', 'A', 'B', 'C'];
-const LEVEL_OPTIONS: ProspectLevel[] = ['2nd', '3rd', 'OUT_OF_NETWORK'];
+const LEVEL_OPTIONS: ProspectLevel[] = ['2nd', '3rd'];
 const ACTION_OPTIONS: OutreachActionKind[] = [
   'profile_visit',
   'connection_request_sent',
@@ -410,10 +410,7 @@ export function OutreachQueueRoute() {
           />
           <FilterPill
             label="Level"
-            options={LEVEL_OPTIONS.map((v) => ({
-              value: v,
-              label: v === 'OUT_OF_NETWORK' ? 'OOO' : v,
-            }))}
+            options={LEVEL_OPTIONS.map((v) => ({ value: v, label: v }))}
             selected={Array.from(levels)}
             onToggle={(v) => toggle(setLevels)(v as ProspectLevel)}
           />

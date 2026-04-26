@@ -16,7 +16,6 @@ const LEVEL_LABEL: Record<ProspectLevel, string> = {
   '1st': '1st',
   '2nd': '2nd',
   '3rd': '3rd',
-  OUT_OF_NETWORK: 'OOO',
   NONE: 'Unscanned',
 };
 

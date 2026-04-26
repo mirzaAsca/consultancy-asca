@@ -53,8 +53,6 @@ function levelScore(level: Prospect['level']): number {
       return SCORE_WEIGHTS.level_2nd;
     case '3rd':
       return SCORE_WEIGHTS.level_3rd;
-    case 'OUT_OF_NETWORK':
-      return SCORE_WEIGHTS.level_out_of_network;
     // '1st' is excluded before we reach this helper; 'NONE' scores 0 (not yet scanned).
     case '1st':
     case 'NONE':

@@ -2,7 +2,7 @@
  * Phase 3.3 — acceptance watcher (pure helpers).
  *
  * When a scan detects a prospect's level transitioning from a pre-connected
- * state (2nd / 3rd / OUT_OF_NETWORK) to `1st`, we infer they accepted an
+ * state (2nd / 3rd) to `1st`, we infer they accepted an
  * invite we previously sent. This module is the single source of truth for
  * that inference — the scan worker calls {@link detectAcceptanceOnLevelChange}
  * with the raw history and applies the returned patches.
@@ -21,7 +21,6 @@ import { isActionLive } from './outreach-queue';
 const PRE_CONNECTED_LEVELS: ReadonlySet<ProspectLevel> = new Set([
   '2nd',
   '3rd',
-  'OUT_OF_NETWORK',
 ]);
 
 export interface AcceptanceOutcome {

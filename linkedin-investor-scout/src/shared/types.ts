@@ -1,5 +1,10 @@
 /** Connection degree from scan (NONE = not yet scanned). */
-export type ProspectLevel = 'NONE' | '1st' | '2nd' | '3rd' | 'OUT_OF_NETWORK';
+// LinkedIn renders only 1st / 2nd / 3rd as actionable degrees. The legacy
+// `OUT_OF_NETWORK` bucket existed because our pre-SDUI Topcard selectors
+// failed to read a degree badge on far profiles, so we synthesized OOO from a
+// "Follow button + no Connect" heuristic. In practice every such profile is a
+// 3rd-degree match; collapsed in v2.x (DB upgrade flips existing rows).
+export type ProspectLevel = 'NONE' | '1st' | '2nd' | '3rd';
 
 export type ScanStatus =
   | 'pending'
@@ -169,7 +174,6 @@ export interface Settings {
       first: string;
       second: string;
       third: string;
-      out_of_network: string;
     };
     show_on: {
       post_authors: boolean;
@@ -945,7 +949,7 @@ export type OutreachDueFilter = 'all' | 'due_today' | 'overdue';
 export interface OutreachQueueFilter {
   /** Restrict to one or more tiers. Empty → all tiers. */
   tiers?: ProspectTier[];
-  /** Restrict to one or more connection levels. Empty → 2nd/3rd/OUT_OF_NETWORK. */
+  /** Restrict to one or more connection levels. Empty → 2nd/3rd. */
   levels?: ProspectLevel[];
   /** Restrict to one or more recommended action kinds. Empty → all. */
   actions?: OutreachActionKind[];

@@ -14,7 +14,7 @@ export const DB_NAME = 'linkedin-investor-scout';
  * → v3 (Phase 5 reconciliation: interaction_events + correlation_tokens).
  * See `db.ts` upgrade() hook and `MASTER.md` §19 v1.1 amendment block.
  */
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 export const ACTIVITY_LOG_MAX_ENTRIES = 2000;
 
 // ——— v2 outreach defaults (Phase 0 / MASTER v1.1 §19) ———
@@ -42,7 +42,6 @@ export const DEFAULT_TIER_THRESHOLDS: Readonly<TierThresholds> = Object.freeze({
 export const SCORE_WEIGHTS = Object.freeze({
   level_2nd: 100,
   level_3rd: 20,
-  level_out_of_network: 5,
   mutuals_cap: 15,
   recency_max: 20,
   recency_half_life_days: 30,
@@ -213,7 +212,6 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
       first: '#22c55e',
       second: '#3b82f6',
       third: '#a855f7',
-      out_of_network: '#6b7280',
     }),
     show_on: Object.freeze({
       post_authors: true,

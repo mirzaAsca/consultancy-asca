@@ -14,7 +14,6 @@ export default {
           first: '#22c55e',
           second: '#3b82f6',
           third: '#a855f7',
-          oon: '#6b7280',
         },
       },
       fontFamily: {
