@@ -579,6 +579,32 @@ function OutreachCapsSection({
             Auto-queue a profile visit 24–72h before a connect request.
           </span>
         </div>
+        <div className="mt-2 grid grid-cols-2 gap-3 text-xs">
+          <NumberField
+            label="Profile visit dwell (ms)"
+            value={settings.outreach.profile_visit_dwell_ms}
+            min={1000}
+            max={60000}
+            onChange={(v) =>
+              void save({ outreach: { profile_visit_dwell_ms: v } })
+            }
+            help="Min time on a /in/ tab before a profile_visit interaction counts. Default 8000."
+          />
+          <NumberField
+            label="Correlation token window (min)"
+            value={Math.round(
+              settings.outreach.correlation_token_window_ms / 60_000,
+            )}
+            min={1}
+            max={240}
+            onChange={(v) =>
+              void save({
+                outreach: { correlation_token_window_ms: v * 60_000 },
+              })
+            }
+            help="How long an inbox click stays correlated to detected actions. Default 45 min."
+          />
+        </div>
       </div>
     </section>
   );

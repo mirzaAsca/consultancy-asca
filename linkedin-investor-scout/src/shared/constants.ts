@@ -227,6 +227,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
     tier_thresholds: DEFAULT_TIER_THRESHOLDS,
     warm_visit_before_invite: true,
     profile_visit_dwell_ms: DEFAULT_PROFILE_VISIT_DWELL_MS,
+    correlation_token_window_ms: CORRELATION_TOKEN_DEFAULT_WINDOW_MS,
     health_cooldown_hours: DEFAULT_HEALTH_COOLDOWN_HOURS,
     kill_switch_thresholds: DEFAULT_KILL_SWITCH_THRESHOLDS,
     keywords: Object.freeze([]) as unknown as OutreachSettings['keywords'],
@@ -254,6 +255,8 @@ export function createDefaultSettings(updatedAt: number = Date.now()): Settings 
       tier_thresholds: { ...DEFAULT_SETTINGS.outreach.tier_thresholds },
       warm_visit_before_invite: DEFAULT_SETTINGS.outreach.warm_visit_before_invite,
       profile_visit_dwell_ms: DEFAULT_SETTINGS.outreach.profile_visit_dwell_ms,
+      correlation_token_window_ms:
+        DEFAULT_SETTINGS.outreach.correlation_token_window_ms,
       health_cooldown_hours: DEFAULT_SETTINGS.outreach.health_cooldown_hours,
       kill_switch_thresholds: {
         ...DEFAULT_SETTINGS.outreach.kill_switch_thresholds,

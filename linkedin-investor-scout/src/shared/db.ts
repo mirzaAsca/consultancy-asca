@@ -811,6 +811,9 @@ export async function putSettings(patch: SettingsPatch): Promise<Settings> {
           patch.outreach.warm_visit_before_invite ?? current.outreach.warm_visit_before_invite,
         profile_visit_dwell_ms:
           patch.outreach.profile_visit_dwell_ms ?? current.outreach.profile_visit_dwell_ms,
+        correlation_token_window_ms:
+          patch.outreach.correlation_token_window_ms ??
+          current.outreach.correlation_token_window_ms,
         health_cooldown_hours:
           patch.outreach.health_cooldown_hours ?? current.outreach.health_cooldown_hours,
       } : {}),

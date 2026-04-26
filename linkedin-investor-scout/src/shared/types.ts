@@ -149,6 +149,11 @@ export interface OutreachSettings {
   warm_visit_before_invite: boolean;
   /** Min dwell on a profile tab before a `profile_visited` interaction counts. */
   profile_visit_dwell_ms: number;
+  /**
+   * Phase 5.2 — how long an `INTERACTION_TOKEN_OPEN` correlation token stays
+   * eligible for matching by detectors. Tokens older than this are GC'd.
+   */
+  correlation_token_window_ms: number;
   /** Health-breach kill switch cooldown before manual resume is allowed. */
   health_cooldown_hours: number;
   /** Phase 4.3 — kill-switch thresholds (editable at runtime via Settings). */
@@ -239,6 +244,7 @@ export interface SettingsPatch {
     tier_thresholds?: Partial<TierThresholds>;
     warm_visit_before_invite?: boolean;
     profile_visit_dwell_ms?: number;
+    correlation_token_window_ms?: number;
     health_cooldown_hours?: number;
     kill_switch_thresholds?: Partial<KillSwitchThresholds>;
     /** Full replace — caller owns the list. */

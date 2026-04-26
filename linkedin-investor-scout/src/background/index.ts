@@ -1130,9 +1130,19 @@ async function handleInteractionTokenOpen(
 ): Promise<{ token: string; expires_at: number }> {
   const now = Date.now();
   void gcExpiredCorrelationTokens(now);
+  let configuredWindowMs: number | null = null;
+  if (payload.window_ms == null) {
+    try {
+      const settings = await getSettings();
+      configuredWindowMs = settings.outreach.correlation_token_window_ms;
+    } catch {
+      // Settings unreadable (rare — DB still booting). Fall through to the
+      // module-level default rather than failing the inbox-open path.
+    }
+  }
   const windowMs = Math.max(
     60_000,
-    payload.window_ms ?? CORRELATION_TOKEN_DEFAULT_WINDOW_MS,
+    payload.window_ms ?? configuredWindowMs ?? CORRELATION_TOKEN_DEFAULT_WINDOW_MS,
   );
   const token: CorrelationToken = {
     token: generateCorrelationTokenId(now),
