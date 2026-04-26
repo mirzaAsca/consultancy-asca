@@ -560,7 +560,7 @@ Acceptance criteria:
 
 - [ ] Daily glance takes <5s in the popup.
 - [ ] Weekly review can be done fully in dashboard Analytics.
-- [ ] Health breach → auto-pause → 24h cooldown → typed-confirm resume is demonstrable end-to-end.
+- [x] Health breach → auto-pause → 24h cooldown → typed-confirm resume is demonstrable end-to-end. _(Landed 2026-04-26 — when `snapshot.breach !== null` AND `cooldown === null` the Resume scan section in [`src/dashboard/routes/Health.tsx`](./src/dashboard/routes/Health.tsx) renders an amber typed-confirm panel that requires the user to type `RESUME` before the Resume button enables. Gate is scoped to kill-switch breaches only — `snapshot.breach` is exclusively populated for `health_breach` pauses, so CAPTCHA / rate_limit / auth_wall auto-pauses keep their one-click resume per MASTER §19.5. `confirmText` resets on successful resume so a subsequent breach starts the gate fresh.)_
 
 ---
 

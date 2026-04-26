@@ -36,6 +36,7 @@ export function HealthRoute() {
   const [resuming, setResuming] = useState(false);
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [resumeSuccess, setResumeSuccess] = useState<string | null>(null);
+  const [confirmText, setConfirmText] = useState('');
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -75,6 +76,7 @@ export function HealthRoute() {
       const res = await sendMessage({ type: 'SCAN_RESUME' });
       if (res.ok) {
         setResumeSuccess('Scan resumed.');
+        setConfirmText('');
         await refresh();
       } else {
         setResumeError(res.error);
@@ -115,6 +117,15 @@ export function HealthRoute() {
   const acceptTone: Tone = acceptTileTone(snapshot);
   const safetyTone: Tone = safetyTileTone(snapshot);
   const cooldownTone: Tone = cooldown ? 'red' : 'green';
+
+  // Typed-confirm gate: only required when a kill-switch breach is live
+  // (snapshot.breach is set exclusively for the `health_breach` pause path)
+  // AND the cooldown has elapsed. CAPTCHA / rate_limit / auth_wall pauses
+  // don't appear in `breach`, so they keep resuming one-click per MASTER
+  // §19.5 — the user can clear a LinkedIn challenge without friction.
+  const requiresTypedConfirm = breach !== null && cooldown === null;
+  const confirmSatisfied = !requiresTypedConfirm || confirmText.trim() === 'RESUME';
+  const resumeDisabled = cooldown !== null || resuming || !confirmSatisfied;
 
   return (
     <div className="mx-auto max-w-4xl px-8 py-6">
@@ -250,11 +261,33 @@ export function HealthRoute() {
           Manual resume is disabled while the cooldown is active. Adjust
           thresholds in Settings if the kill switch is too sensitive.
         </p>
+        {requiresTypedConfirm && (
+          <div className="mb-3 rounded-md border border-amber-700/60 bg-amber-900/20 px-3 py-2 text-[11px] text-amber-200">
+            <div className="mb-1 font-semibold text-amber-100">
+              Cooldown elapsed — typed confirmation required.
+            </div>
+            <p className="mb-2 text-amber-200/80">
+              Resuming after a kill-switch breach acknowledges that you've
+              reviewed the safety triggers and accept-rate trend above. Type
+              <code className="mx-1 rounded bg-black/30 px-1 text-amber-100">RESUME</code>
+              to enable the button.
+            </p>
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="Type RESUME"
+              autoComplete="off"
+              spellCheck={false}
+              className="w-40 rounded border border-amber-700/60 bg-black/30 px-2 py-1 text-xs text-amber-100 placeholder:text-amber-200/40 focus:border-amber-400 focus:outline-none"
+            />
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => void resumeScan()}
-            disabled={cooldown !== null || resuming}
+            disabled={resumeDisabled}
             className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {resuming ? (
