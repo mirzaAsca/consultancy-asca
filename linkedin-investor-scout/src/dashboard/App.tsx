@@ -9,7 +9,11 @@ import {
   Send,
   Settings as SettingsIcon,
 } from 'lucide-react';
-import { sendMessage } from '@/shared/messaging';
+import {
+  addRuntimeMessageListener,
+  getExtensionVersion,
+  sendMessage,
+} from '@/shared/messaging';
 import type { ProspectLevel } from '@/shared/types';
 import { useDashboardStore, type DashboardRoute } from './store';
 import { ProspectsRoute } from './routes/Prospects';
@@ -103,10 +107,10 @@ export default function App() {
         }
       }
     };
-    chrome.runtime.onMessage.addListener(listener);
+    const removeListener = addRuntimeMessageListener(listener);
     return () => {
       cancelled = true;
-      chrome.runtime.onMessage.removeListener(listener);
+      removeListener();
     };
   }, []);
 
@@ -175,7 +179,7 @@ export default function App() {
           );
         })}
         <div className="mt-auto px-1 text-[10px] text-gray-600">
-          v{chrome.runtime?.getManifest?.().version ?? '1.0.0'}
+          v{getExtensionVersion()}
         </div>
       </aside>
       <main className="min-h-screen md:ml-56">

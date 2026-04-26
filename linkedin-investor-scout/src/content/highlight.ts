@@ -9,7 +9,11 @@
  * No network I/O, no LinkedIn automation — read-only DOM decoration only.
  */
 
-import { sendMessage } from '@/shared/messaging';
+import {
+  addRuntimeMessageListener,
+  getExtensionUrl,
+  sendMessage,
+} from '@/shared/messaging';
 import type {
   FeedVisibleProfile,
   Message,
@@ -799,9 +803,16 @@ function openActionMenu(
       kind: 'dashboard',
       label: 'Open in dashboard',
       run: () => {
-        const dashboardUrl = chrome.runtime.getURL(
+        const dashboardUrl = getExtensionUrl(
           `src/dashboard/index.html#/prospects?id=${prospectId}`,
         );
+        if (!dashboardUrl) {
+          warn('dashboard_open_failed', {
+            prospectId,
+            error: 'extension context unavailable',
+          });
+          return;
+        }
         window.open(dashboardUrl, '_blank', 'noopener,noreferrer');
       },
     },
@@ -1087,7 +1098,7 @@ function onSettingsChanged(next: Settings): void {
 
 // ——— Broadcast listener ———
 
-chrome.runtime.onMessage.addListener((msg: Message, _sender, sendResponse) => {
+addRuntimeMessageListener((msg: Message, _sender, sendResponse) => {
   if (!msg || typeof msg !== 'object') return;
   switch (msg.type) {
     case 'FEED_TEST_COLLECT_VISIBLE_PROFILES': {

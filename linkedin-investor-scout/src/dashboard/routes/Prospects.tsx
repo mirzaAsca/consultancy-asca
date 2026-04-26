@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { sendMessage } from '@/shared/messaging';
+import { addRuntimeMessageListener, sendMessage } from '@/shared/messaging';
 import type {
   ActivityKind,
   Prospect,
@@ -120,8 +120,7 @@ export function ProspectsRoute() {
         void refresh();
       }
     };
-    chrome.runtime.onMessage.addListener(listener);
-    return () => chrome.runtime.onMessage.removeListener(listener);
+    return addRuntimeMessageListener(listener);
   }, [refresh]);
 
   useEffect(() => {

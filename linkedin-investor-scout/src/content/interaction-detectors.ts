@@ -61,6 +61,7 @@ import {
   extractMessagingThreadId,
   slugFromLinkedInPathname,
 } from '@/shared/url';
+import { sendMessageToRuntime } from '@/shared/messaging';
 
 /**
  * Per-URL guards so SPA-style route changes don't stack watchers on the
@@ -866,69 +867,21 @@ function slugFromHref(href: string): string | null {
 }
 
 function emitReactionToggled(payload: ReactionToggledDetectedPayload): void {
-  try {
-    chrome.runtime.sendMessage(
-      { type: 'REACTION_TOGGLED_DETECTED', payload },
-      () => {
-        void chrome.runtime.lastError;
-      },
-    );
-  } catch (error) {
-    console.warn('[investor-scout] reaction emit failed', {
-      prospect_id: payload.prospect_id,
-      error: error instanceof Error ? error.message : error,
-    });
-  }
+  sendMessageToRuntime({ type: 'REACTION_TOGGLED_DETECTED', payload });
 }
 
 // ——— Shared emitter ———
 
 function emit(payload: OutreachActionRecordPayload): void {
-  try {
-    chrome.runtime.sendMessage(
-      { type: 'OUTREACH_ACTION_RECORD', payload },
-      () => {
-        void chrome.runtime.lastError;
-      },
-    );
-  } catch (error) {
-    console.warn('[investor-scout] detector emit failed', {
-      kind: payload.kind,
-      error: error instanceof Error ? error.message : error,
-    });
-  }
+  sendMessageToRuntime({ type: 'OUTREACH_ACTION_RECORD', payload });
 }
 
 function emitWithdrawal(payload: OutreachWithdrawDetectedPayload): void {
-  try {
-    chrome.runtime.sendMessage(
-      { type: 'OUTREACH_WITHDRAW_DETECTED', payload },
-      () => {
-        void chrome.runtime.lastError;
-      },
-    );
-  } catch (error) {
-    console.warn('[investor-scout] withdrawal emit failed', {
-      prospect_id: payload.prospect_id,
-      error: error instanceof Error ? error.message : error,
-    });
-  }
+  sendMessageToRuntime({ type: 'OUTREACH_WITHDRAW_DETECTED', payload });
 }
 
 function emitRestrictionBanner(payload: LinkedInRestrictionBannerPayload): void {
-  try {
-    chrome.runtime.sendMessage(
-      { type: 'LINKEDIN_RESTRICTION_BANNER', payload },
-      () => {
-        void chrome.runtime.lastError;
-      },
-    );
-  } catch (error) {
-    console.warn('[investor-scout] restriction-banner emit failed', {
-      kind: payload.kind,
-      error: error instanceof Error ? error.message : error,
-    });
-  }
+  sendMessageToRuntime({ type: 'LINKEDIN_RESTRICTION_BANNER', payload });
 }
 
 // ——— Comment-posted detector (Phase 5.3) ———
@@ -1124,19 +1077,7 @@ function isComposerEmpty(el: HTMLElement): boolean {
 }
 
 function emitCommentPosted(payload: CommentPostedDetectedPayload): void {
-  try {
-    chrome.runtime.sendMessage(
-      { type: 'COMMENT_POSTED_DETECTED', payload },
-      () => {
-        void chrome.runtime.lastError;
-      },
-    );
-  } catch (error) {
-    console.warn('[investor-scout] comment emit failed', {
-      prospect_id: payload.prospect_id,
-      error: error instanceof Error ? error.message : error,
-    });
-  }
+  sendMessageToRuntime({ type: 'COMMENT_POSTED_DETECTED', payload });
 }
 
 /** Test hook: reset module-level guards so the detectors re-bootstrap. */

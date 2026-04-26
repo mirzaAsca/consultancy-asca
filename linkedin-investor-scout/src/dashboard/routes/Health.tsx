@@ -7,7 +7,7 @@ import {
   RefreshCw,
   ShieldAlert,
 } from 'lucide-react';
-import { sendMessage } from '@/shared/messaging';
+import { addRuntimeMessageListener, sendMessage } from '@/shared/messaging';
 import type { HealthBreachReason, HealthSnapshot } from '@/shared/types';
 
 type Tone = 'green' | 'yellow' | 'red';
@@ -58,8 +58,7 @@ export function HealthRoute() {
         void refresh();
       }
     };
-    chrome.runtime.onMessage.addListener(listener);
-    return () => chrome.runtime.onMessage.removeListener(listener);
+    return addRuntimeMessageListener(listener);
   }, [refresh]);
 
   useEffect(() => {

@@ -26,7 +26,12 @@ import {
   summarizeCsvFile,
   type CsvImportSummary,
 } from '@/shared/csv';
-import { sendMessage } from '@/shared/messaging';
+import {
+  addRuntimeMessageListener,
+  getExtensionUrl,
+  getExtensionVersion,
+  sendMessage,
+} from '@/shared/messaging';
 import type {
   ActivityKind,
   AutoPauseReason,
@@ -288,8 +293,7 @@ export default function App() {
         void refreshDailySnapshot();
       }
     };
-    chrome.runtime.onMessage.addListener(listener);
-    return () => chrome.runtime.onMessage.removeListener(listener);
+    return addRuntimeMessageListener(listener);
   }, [
     refreshDailySnapshot,
     refreshFeedCrawlStatus,
@@ -371,7 +375,14 @@ export default function App() {
     (route: PopupDashboardRoute = 'prospects', params?: Record<string, string>) => {
       const search = new URLSearchParams(params ?? {});
       const hash = `#/${route}${search.toString() ? `?${search.toString()}` : ''}`;
-      const url = chrome.runtime.getURL(`src/dashboard/index.html${hash}`);
+      const url = getExtensionUrl(`src/dashboard/index.html${hash}`);
+      if (!url) {
+        setToast({
+          kind: 'error',
+          text: 'Extension context unavailable. Reload the popup and try again.',
+        });
+        return;
+      }
       window.open(url, '_blank', 'noopener,noreferrer');
     },
     [],
@@ -871,7 +882,7 @@ export default function App() {
       </main>
 
       <footer className="border-t border-gray-800 px-4 py-2 text-[10px] text-gray-500">
-        v{chrome.runtime?.getManifest?.().version ?? '1.0.0'}
+        v{getExtensionVersion()}
       </footer>
 
       {toast.kind !== 'idle' && (

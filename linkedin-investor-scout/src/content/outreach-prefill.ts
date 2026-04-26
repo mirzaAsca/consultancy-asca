@@ -19,6 +19,7 @@ import type {
   OutreachPrefillConnectPayload,
   OutreachPrefillResult,
 } from '@/shared/types';
+import { sendMessageToRuntime } from '@/shared/messaging';
 
 /**
  * How long to watch the dialog after prefill before giving up on the user
@@ -348,18 +349,7 @@ function emitOutreachSent(args: WatchForInviteSentArgs): void {
     template_version: args.template_version,
     rendered_body: args.rendered_body,
   };
-  try {
-    chrome.runtime.sendMessage(
-      { type: 'OUTREACH_ACTION_RECORD', payload },
-      () => {
-        // Swallow lastError — the background returns a response we don't
-        // need to read; if the channel closed we've done our best.
-        void chrome.runtime.lastError;
-      },
-    );
-  } catch (error) {
-    console.warn('[investor-scout] failed to emit invite-sent event', error);
-  }
+  sendMessageToRuntime({ type: 'OUTREACH_ACTION_RECORD', payload });
 }
 
 async function waitForAndClickAddNote(timeoutMs: number): Promise<boolean> {

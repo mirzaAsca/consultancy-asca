@@ -14,7 +14,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react';
-import { sendMessage } from '@/shared/messaging';
+import { addRuntimeMessageListener, sendMessage } from '@/shared/messaging';
 import type {
   FeedAutoTrackSource,
   FeedEventKind,
@@ -153,8 +153,7 @@ export function EngagementTasksRoute() {
         void refresh();
       }
     };
-    chrome.runtime.onMessage.addListener(listener);
-    return () => chrome.runtime.onMessage.removeListener(listener);
+    return addRuntimeMessageListener(listener);
   }, [refresh]);
 
   useEffect(() => {
