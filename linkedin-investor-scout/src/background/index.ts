@@ -62,7 +62,10 @@ import {
   upsertFeedEvent,
   upsertFeedEventsBulk,
 } from '@/shared/db';
-import { CORRELATION_TOKEN_DEFAULT_WINDOW_MS } from '@/shared/constants';
+import {
+  CORRELATION_TOKEN_DEFAULT_WINDOW_MS,
+  FEED_CRAWL_FEED_URL,
+} from '@/shared/constants';
 import {
   buildInteractionFingerprint,
   computeReconciliationStatus,
@@ -71,11 +74,6 @@ import {
 } from '@/shared/reconciliation';
 import { computeFeedEventFingerprint } from '@/shared/scoring';
 import { buildPostPermalink, classifyPostKindFromUrn } from '@/shared/urn';
-import {
-  buildModeUrl,
-  computeOverlap,
-  isOnFeedMode,
-} from '@/shared/feed-crawler';
 import { computeAnalyticsSnapshot } from '@/shared/analytics';
 import { computeHealthSnapshot } from '@/shared/health';
 import { nextLifecycleAfterOutreachSent } from '@/shared/lifecycle';
@@ -98,10 +96,8 @@ import { broadcast, registerMessageRouter } from '@/shared/messaging';
 import type {
   CorrelationToken,
   CsvCommitPayload,
-  FeedCrawlModeMetrics,
   FeedCrawlSessionResult,
   FeedCrawlStatus,
-  FeedCrawlStopReason,
   InteractionEvent,
   InteractionEventInsert,
   InteractionListQuery,
@@ -1544,8 +1540,10 @@ const feedCrawlState: FeedCrawlSessionState = {
 };
 
 const MANUAL_FEED_CRAWL_MODES: Array<'top' | 'recent'> = ['top', 'recent'];
-const FEED_CRAWL_TAB_MESSAGE_RETRY_MS = 15_000;
+const FEED_CRAWL_TAB_MESSAGE_TIMEOUT_MS = 10 * 60_000;
 const FEED_CRAWL_TAB_MESSAGE_RETRY_STEP_MS = 250;
+/** How long we wait for the freshly-opened crawl tab's content script to come up. */
+const FEED_CRAWL_TAB_READY_TIMEOUT_MS = 30_000;
 
 function snapshotFeedCrawlStatus(): FeedCrawlStatus {
   return {
@@ -1604,41 +1602,6 @@ async function sendMessageToTabWithRetry<M extends Message>(
   return lastResponse;
 }
 
-async function navigateFeedTabToMode(
-  tabId: number,
-  mode: 'top' | 'recent',
-): Promise<{ ok: true } | { ok: false; error: string }> {
-  try {
-    const current = await chrome.tabs.get(tabId);
-    const alreadyInMode =
-      typeof current.url === 'string' && isOnFeedMode(current.url, mode);
-
-    if (!alreadyInMode) {
-      await chrome.tabs.update(tabId, { url: buildModeUrl(mode) });
-      await waitForTabComplete(tabId, 20_000);
-    } else if (current.status !== 'complete') {
-      await waitForTabComplete(tabId, 20_000);
-    }
-
-    const refreshed = await chrome.tabs.get(tabId);
-    if (
-      typeof refreshed.url === 'string' &&
-      isOnFeedMode(refreshed.url, mode)
-    ) {
-      return { ok: true };
-    }
-    return {
-      ok: false,
-      error: `Feed tab did not reach ${mode} mode after navigation.`,
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      error: error instanceof Error ? error.message : 'feed navigation failed',
-    };
-  }
-}
-
 async function createManualFeedCrawlTab(): Promise<
   | { ok: true; tab: chrome.tabs.Tab; opener_url: string | null }
   | { ok: false; error: string }
@@ -1650,7 +1613,7 @@ async function createManualFeedCrawlTab(): Promise<
     // a freshly-created tab steals focus, which previously made the action
     // feel like "nothing happened."
     const createProps: chrome.tabs.CreateProperties = {
-      url: buildModeUrl('top'),
+      url: FEED_CRAWL_FEED_URL,
       active: false,
     };
     if (opener && typeof opener.id === 'number') {
@@ -1680,148 +1643,69 @@ async function createManualFeedCrawlTab(): Promise<
   }
 }
 
-function emptyModeMetrics(
-  mode: 'top' | 'recent',
-  startedAt: number,
-  stopReason: FeedCrawlStopReason,
-): FeedCrawlModeMetrics {
-  return {
-    mode,
-    scroll_steps: 0,
-    events_captured: 0,
-    started_at: startedAt,
-    ended_at: Date.now(),
-    stop_reason: stopReason,
-    event_fingerprints: [],
-  };
-}
-
-function collapseModeMetrics(
-  mode: 'top' | 'recent',
-  result: FeedCrawlSessionResult,
-): FeedCrawlModeMetrics {
-  return (
-    result.modes.find((m) => m.mode === mode) ?? {
-      mode,
-      scroll_steps: 0,
-      events_captured: result.total_events_captured,
-      started_at: result.started_at,
-      ended_at: result.ended_at,
-      stop_reason: result.stop_reason,
-      event_fingerprints: [],
-    }
-  );
-}
-
 async function runManualFeedCrawlSession(
   tabId: number,
   sessionId: string,
-  startedAt: number,
 ): Promise<void> {
-  const modeMetrics: FeedCrawlModeMetrics[] = [];
-  const fingerprintsByMode: Record<'top' | 'recent', Set<string>> = {
-    top: new Set(),
-    recent: new Set(),
-  };
-  let stopReason: FeedCrawlStopReason = 'completed';
+  let result: FeedCrawlSessionResult | null = null;
   let failure: string | null = null;
 
-  for (const mode of MANUAL_FEED_CRAWL_MODES) {
+  // Mode switching now lives in the content script (it clicks LinkedIn's
+  // sort dropdown — `?sortBy=…` is a no-op on the SDUI feed). Background
+  // just opens a /feed/ tab, waits for the page + content-script to come
+  // up, and dispatches one multi-mode RUN. The content script returns the
+  // full per-mode FeedCrawlSessionResult.
+  try {
+    await waitForTabComplete(tabId, FEED_CRAWL_TAB_READY_TIMEOUT_MS);
+  } catch (error) {
+    failure =
+      error instanceof Error
+        ? error.message
+        : 'crawl tab failed to finish loading';
+  }
+
+  if (!failure) {
     if (!isActiveFeedCrawlSession(sessionId)) return;
     if (feedCrawlState.cancel_requested) {
-      stopReason = 'canceled';
-      break;
+      failure = 'canceled before run';
     }
+  }
 
-    feedCrawlState.current_mode = mode;
-    const modeStartedAt = Date.now();
-    const nav = await navigateFeedTabToMode(tabId, mode);
-    if (!nav.ok) {
-      stopReason = 'navigation_failed';
-      modeMetrics.push(
-        emptyModeMetrics(mode, modeStartedAt, 'navigation_failed'),
-      );
-      await appendActivityLog({
-        ts: Date.now(),
-        level: 'warn',
-        event: 'feed_crawl_session_mode_navigation_failed',
-        prospect_id: null,
-        data: { session_id: sessionId, tab_id: tabId, mode, error: nav.error },
-      });
-      break;
-    }
-
-    if (feedCrawlState.cancel_requested) {
-      stopReason = 'canceled';
-      break;
-    }
-
+  if (!failure) {
     const res = await sendMessageToTabWithRetry(
       tabId,
       {
         type: 'FEED_CRAWL_RUN_IN_TAB',
-        payload: {
-          session_id: sessionId,
-          modes: [mode],
-          skip_navigation: true,
-        },
+        payload: { session_id: sessionId, modes: MANUAL_FEED_CRAWL_MODES },
       },
-      FEED_CRAWL_TAB_MESSAGE_RETRY_MS,
+      FEED_CRAWL_TAB_MESSAGE_TIMEOUT_MS,
     );
 
     if (!isActiveFeedCrawlSession(sessionId)) return;
-    if (!res.ok) {
+    if (res.ok) {
+      result = res.data;
+    } else {
       failure = res.error;
-      break;
-    }
-
-    const metric = collapseModeMetrics(mode, res.data);
-    modeMetrics.push(metric);
-    for (const fp of metric.event_fingerprints ?? []) {
-      fingerprintsByMode[mode].add(fp);
-    }
-
-    if (
-      metric.stop_reason === 'user_interaction' ||
-      metric.stop_reason === 'canceled' ||
-      metric.stop_reason === 'navigation_failed' ||
-      metric.stop_reason === 'error'
-    ) {
-      stopReason = metric.stop_reason;
-      break;
     }
   }
 
   const endedAt = Date.now();
   if (!isActiveFeedCrawlSession(sessionId)) return;
 
-  if (failure) {
+  if (failure || !result) {
     feedCrawlState.last_result = null;
     await appendActivityLog({
       ts: endedAt,
       level: 'warn',
       event: 'feed_crawl_session_failed',
       prospect_id: null,
-      data: { session_id: sessionId, tab_id: tabId, error: failure },
+      data: {
+        session_id: sessionId,
+        tab_id: tabId,
+        error: failure ?? 'no result',
+      },
     });
   } else {
-    const result: FeedCrawlSessionResult = {
-      session_id: sessionId,
-      tab_id: tabId,
-      started_at: startedAt,
-      ended_at: endedAt,
-      duration_ms: endedAt - startedAt,
-      total_events_captured: modeMetrics.reduce(
-        (acc, m) => acc + m.events_captured,
-        0,
-      ),
-      overlap_count: computeOverlap(
-        fingerprintsByMode.top,
-        fingerprintsByMode.recent,
-      ),
-      modes: modeMetrics,
-      stop_reason: stopReason,
-    };
     feedCrawlState.last_result = result;
     await appendActivityLog({
       ts: endedAt,
@@ -1898,7 +1782,7 @@ async function handleFeedCrawlSessionStart(): Promise<
     data: {
       session_id: sessionId,
       tab_id: tabId,
-      tab_url: buildModeUrl('top'),
+      tab_url: FEED_CRAWL_FEED_URL,
       opener_url: created.opener_url,
       dedicated_tab: true,
     },
@@ -1906,7 +1790,7 @@ async function handleFeedCrawlSessionStart(): Promise<
 
   // Fire-and-forget the orchestrator. Background owns mode navigation so the
   // content-script response channel never has to survive a tab reload.
-  void runManualFeedCrawlSession(tabId, sessionId, startedAt);
+  void runManualFeedCrawlSession(tabId, sessionId);
 
   return { ok: true, data: snapshotFeedCrawlStatus() };
 }

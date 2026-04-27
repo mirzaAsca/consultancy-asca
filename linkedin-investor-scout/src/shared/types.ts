@@ -463,7 +463,6 @@ export type Message =
         session_id: string;
         passive?: boolean;
         modes?: Array<'top' | 'recent'>;
-        skip_navigation?: boolean;
       };
     }
   | { type: 'FEED_CRAWL_CANCEL_IN_TAB'; payload: { session_id: string } }

@@ -1211,7 +1211,6 @@ addRuntimeMessageListener((msg: Message, _sender, sendResponse) => {
               payloadModes && payloadModes.length > 0
                 ? payloadModes
                 : undefined,
-            skipNavigation: msg.payload?.skip_navigation === true,
           }),
         )
         .then(async (result) => {

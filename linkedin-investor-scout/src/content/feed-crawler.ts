@@ -1,22 +1,27 @@
 /**
- * Phase 3.1 / 3.2 — manual Feed Crawl Session runner.
+ * Manual Feed Crawl Session runner — runs inside the LinkedIn /feed/ tab.
  *
- * Runs inside the active `linkedin.com/feed` tab. Drives a two-mode pass
- * (Top → Recent) that: switches feed mode, waits for cards to hydrate,
- * scrolls with gentle jittered steps, yields to user interaction, and
- * returns the same `FeedCrawlSessionResult` the background relays to the
- * popup for telemetry. Feed events are captured by the existing highlight
- * scan pass (MutationObserver sees the new cards LinkedIn lazy-loads), so
- * we just need to track the *delta* of unique fingerprints per mode.
+ * Drives a Top → Recent pass that:
+ *   1. Reads the current sort by inspecting the on-page "Sort by: …" button
+ *      (LinkedIn does NOT honor `?sortBy=LAST_MODIFIED` in the URL — switching
+ *      is a DOM-only action).
+ *   2. If we're not on the requested mode, clicks the sort dropdown and the
+ *      target menu item, then waits for the feed root to re-hydrate.
+ *   3. Performs FEED_CRAWL_MAX_SCROLLS_PER_MODE (=10) full-auto scrolls on
+ *      LinkedIn's `<main id="workspace">` scroll container, each with a
+ *      randomized step and a randomized wait between steps.
+ *   4. Yields to user interaction (keydown / mousedown / touchstart / wheel)
+ *      and to background-driven cancel.
+ *
+ * Feed events are captured by the existing highlight scan pass — we just
+ * track the *delta* of unique fingerprints per mode for telemetry.
  */
 import {
   FEED_CRAWL_FEED_READY_TIMEOUT_MS,
   FEED_CRAWL_MAX_SCROLLS_PER_MODE,
 } from '@/shared/constants';
 import {
-  buildModeUrl,
   computeOverlap,
-  isOnFeedMode,
   pickScrollStep,
   pickWaitMs,
   shouldStopCrawl,
@@ -27,10 +32,6 @@ import type {
   FeedCrawlStopReason,
 } from '@/shared/types';
 
-/**
- * Surface given by the highlight bootstrap so the crawler can read the
- * current set of captured fingerprints without tight coupling to the module.
- */
 export interface FeedCrawlFingerprintSource {
   /** Set of event fingerprints seen so far in this tab session. */
   snapshot(): Set<string>;
@@ -42,52 +43,23 @@ export interface RunFeedCrawlOptions {
   session_id: string;
   tab_id: number;
   fingerprints: FeedCrawlFingerprintSource;
-  /** Optional override — primarily for tests / future remote dispatch. */
   now?: () => number;
-  /**
-   * Called whenever an interim per-mode pass finishes so background can
-   * update its in-memory status snapshot.
-   */
   onProgress?: (partial: Partial<FeedCrawlSessionResult>) => void;
-  /** Signal set by a `FEED_CRAWL_CANCEL_IN_TAB` message from background. */
   isCanceled: () => boolean;
   /**
-   * Phase 3.1 — passive mode (continuous harvester). When true, runs ONE
-   * mode pass against the tab's current URL without navigation, never
-   * switches to the other sort. Used by the background scheduler so the
-   * harvester never disrupts the user's chosen feed view.
+   * Passive mode (continuous harvester). Runs ONE pass against whatever mode
+   * the user is currently viewing — never clicks the sort dropdown so we
+   * don't disrupt their feed.
    */
   passive?: boolean;
   /**
-   * Optional mode subset. Background-owned manual sessions use this to run one
-   * mode per fresh page context after navigating the tab itself.
+   * Optional mode subset for manual sessions. Defaults to `['top', 'recent']`.
+   * Passive mode ignores this and uses the current on-page mode.
    */
   modes?: Array<'top' | 'recent'>;
-  /**
-   * When true, assume the background already navigated the tab to the requested
-   * mode and only wait for the feed root to hydrate.
-   */
-  skipNavigation?: boolean;
 }
 
-const MODES: Array<'top' | 'recent'> = ['top', 'recent'];
-
-/**
- * Detect the current feed mode from `location.href`. Falls back to `top` when
- * the URL doesn't carry a `?sortBy` we recognize — the manual session always
- * normalizes via navigation, but the passive harvester needs to honor whatever
- * surface the user is already looking at.
- */
-function detectCurrentFeedMode(): 'top' | 'recent' {
-  try {
-    const url = new URL(location.href);
-    const sort = (url.searchParams.get('sortBy') ?? '').toUpperCase();
-    if (sort === 'LAST_MODIFIED' || sort === 'RECENT') return 'recent';
-    return 'top';
-  } catch {
-    return 'top';
-  }
-}
+const DEFAULT_MODES: Array<'top' | 'recent'> = ['top', 'recent'];
 
 export async function runFeedCrawlSession(
   opts: RunFeedCrawlOptions,
@@ -104,13 +76,37 @@ export async function runFeedCrawlSession(
 
   const baselineFingerprints = new Set(opts.fingerprints.snapshot());
 
-  // Phase 3.1 — passive mode runs a single pass against the tab's current
-  // mode, skipping any navigation. Manual sessions still walk Top → Recent.
+  // Wait for the feed root to be present at least once before any pass.
+  const rootReady = await waitForFeedRoot();
+  if (!rootReady) {
+    return {
+      session_id: opts.session_id,
+      tab_id: opts.tab_id,
+      started_at: sessionStart,
+      ended_at: now(),
+      duration_ms: now() - sessionStart,
+      total_events_captured: 0,
+      overlap_count: 0,
+      modes: [
+        {
+          mode: 'top',
+          scroll_steps: 0,
+          events_captured: 0,
+          started_at: sessionStart,
+          ended_at: now(),
+          stop_reason: 'navigation_failed',
+          event_fingerprints: [],
+        },
+      ],
+      stop_reason: 'navigation_failed',
+    };
+  }
+
   const modes: Array<'top' | 'recent'> = opts.passive
-    ? [detectCurrentFeedMode()]
+    ? [readCurrentMode() ?? 'top']
     : opts.modes && opts.modes.length > 0
       ? opts.modes
-      : MODES;
+      : DEFAULT_MODES;
 
   for (const mode of modes) {
     if (opts.isCanceled()) {
@@ -119,15 +115,10 @@ export async function runFeedCrawlSession(
     }
 
     const modeStart = now();
-    try {
-      // Passive harvester never navigates — it harvests whatever the user is
-      // already viewing. Skip the ensureFeedMode reload to avoid clobbering
-      // their tab.
-      const nav =
-        opts.passive || opts.skipNavigation
-          ? await waitForCurrentFeedRoot()
-          : await ensureFeedMode(mode);
-      if (!nav.ok) {
+
+    if (!opts.passive) {
+      const switched = await switchFeedMode(mode);
+      if (!switched) {
         perMode.push({
           mode,
           scroll_steps: 0,
@@ -141,23 +132,6 @@ export async function runFeedCrawlSession(
         opts.onProgress?.({ modes: [...perMode] });
         break;
       }
-    } catch (error) {
-      logWarn('feed_crawl_navigation_error', {
-        mode,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      perMode.push({
-        mode,
-        scroll_steps: 0,
-        events_captured: 0,
-        started_at: modeStart,
-        ended_at: now(),
-        stop_reason: 'navigation_failed',
-        event_fingerprints: [],
-      });
-      sessionStop = 'navigation_failed';
-      opts.onProgress?.({ modes: [...perMode] });
-      break;
     }
 
     const modeMetrics = await crawlMode({
@@ -170,9 +144,8 @@ export async function runFeedCrawlSession(
     });
     perMode.push(modeMetrics);
 
-    // Merge this mode's new fingerprints into the baseline so the next mode
-    // only counts *its* deltas — otherwise top-mode hits would also count
-    // against the recent pass.
+    // Merge this mode's fingerprints into baseline so the next mode only
+    // counts *its* deltas.
     for (const fp of fingerprintsByMode[mode]) baselineFingerprints.add(fp);
 
     opts.onProgress?.({ modes: [...perMode] });
@@ -222,7 +195,6 @@ interface CrawlModeArgs {
 async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
   const { mode, baseline, modeFingerprints, startedAt, opts, now } = args;
   let scrollSteps = 0;
-  let consecutiveEmpty = 0;
   let userInteracted = false;
   const rng = Math.random;
 
@@ -232,23 +204,17 @@ async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
   attachUserInteractionGuards(onUserInteraction);
 
   try {
-    // Resolve the right scroll surface. LinkedIn's SDUI feed lives inside
-    // `<main id="workspace" tabindex="0">` (see example1.html line 197), and
-    // on that layout `window.scrollBy` is a no-op because <main> owns its own
-    // scroller. Falling back to documentElement keeps us working on legacy
-    // surfaces and in tests where <main> isn't present.
     const scrollTarget = pickScrollTarget();
     focusScrollTarget(scrollTarget);
 
-    // Kick a scan so any cards already on-screen count against the baseline
-    // before we start scrolling (avoids inflating the first delta).
+    // Count cards already on-screen against the baseline so the first delta
+    // doesn't lump in everything that was already mounted.
     opts.fingerprints.scanNow();
     for (const fp of opts.fingerprints.snapshot()) baseline.add(fp);
 
     while (true) {
       const stopReason = shouldStopCrawl({
         scroll_steps: scrollSteps,
-        consecutive_empty: consecutiveEmpty,
         user_interacted: userInteracted,
         canceled: opts.isCanceled(),
       });
@@ -268,67 +234,103 @@ async function crawlMode(args: CrawlModeArgs): Promise<FeedCrawlModeMetrics> {
       scrollContainerBy(scrollTarget, step);
       scrollSteps += 1;
 
-      const waitMs = pickWaitMs(rng);
-      await sleep(waitMs);
+      await sleep(pickWaitMs(rng));
 
       opts.fingerprints.scanNow();
       const snapshot = opts.fingerprints.snapshot();
-      let added = 0;
       for (const fp of snapshot) {
         if (baseline.has(fp)) continue;
         if (modeFingerprints.has(fp)) continue;
         modeFingerprints.add(fp);
-        added += 1;
       }
-      consecutiveEmpty = added === 0 ? consecutiveEmpty + 1 : 0;
     }
   } finally {
     detachUserInteractionGuards(onUserInteraction);
   }
 }
 
+// ——— DOM-driven mode switching ———
+
 /**
- * Navigate the current tab to the canonical URL for `mode` and wait for the
- * main feed list to appear (so the highlighter has cards to scan). No-ops
- * when we're already in the target mode.
+ * Find LinkedIn's "Sort by: Top|Recent" button. The componentkey is a per-
+ * render UUID and class names are hashed, so we match by `role="button"` +
+ * visible text. Stable across SDUI builds.
  */
-async function ensureFeedMode(
-  mode: 'top' | 'recent',
-): Promise<{ ok: true } | { ok: false; reason: string }> {
-  if (isOnFeedMode(location.href, mode)) {
-    return waitForCurrentFeedRoot();
-  }
-
-  const targetUrl = buildModeUrl(mode);
-
-  // In-page nav that triggers LinkedIn's SPA router. `location.assign` keeps
-  // the tab history clean and forces a full reload for the mode switch.
-  const preNavPath = location.pathname + location.search;
-  try {
-    location.assign(targetUrl);
-  } catch (error) {
-    logWarn('feed_crawl_nav_assign_error', {
-      error: error instanceof Error ? error.message : String(error),
-      mode,
-    });
-    return { ok: false, reason: 'nav_assign_threw' };
-  }
-
-  // Poll for the URL change; `location.assign` is async from our POV.
-  const navDeadline = Date.now() + 10_000;
-  while (Date.now() < navDeadline) {
-    if (location.pathname + location.search !== preNavPath) break;
-    await sleep(150);
-  }
-
-  return waitForCurrentFeedRoot();
+function findSortButton(): HTMLElement | null {
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLElement>('div[role="button"]'),
+  );
+  return (
+    buttons.find((el) => /sort by/i.test(el.textContent || '')) ?? null
+  );
 }
 
-async function waitForCurrentFeedRoot(): Promise<
-  { ok: true } | { ok: false; reason: string }
-> {
-  const ready = await waitForFeedRoot();
-  return ready ? { ok: true } : { ok: false, reason: 'feed_root_timeout' };
+/**
+ * Read the current feed sort by inspecting the sort button's text. Returns
+ * `null` when the button isn't mounted yet — caller should treat that as
+ * "feed not ready" and retry.
+ */
+function readCurrentMode(): 'top' | 'recent' | null {
+  const btn = findSortButton();
+  if (!btn) return null;
+  const text = (btn.textContent || '').trim().toLowerCase();
+  if (text.endsWith('top')) return 'top';
+  if (text.endsWith('recent')) return 'recent';
+  return null;
+}
+
+/**
+ * Click LinkedIn's sort dropdown to switch feed mode. No-op (returns true)
+ * when we're already on the target mode. Returns false on any failure —
+ * caller treats that as `navigation_failed` for the mode metric.
+ */
+async function switchFeedMode(target: 'top' | 'recent'): Promise<boolean> {
+  if (readCurrentMode() === target) {
+    return true;
+  }
+
+  const btn = findSortButton();
+  if (!btn) {
+    logWarn('feed_crawl_sort_button_missing', { target });
+    return false;
+  }
+  btn.click();
+
+  const targetLabel = target === 'top' ? 'Top' : 'Recent';
+  const itemDeadline = Date.now() + 2_000;
+  let item: HTMLElement | undefined;
+  while (Date.now() < itemDeadline) {
+    item = Array.from(
+      document.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    ).find((el) => (el.textContent || '').trim() === targetLabel);
+    if (item) break;
+    await sleep(50);
+  }
+  if (!item) {
+    logWarn('feed_crawl_sort_menu_item_missing', { target });
+    // Best-effort close the menu by clicking the button again.
+    try {
+      btn.click();
+    } catch {
+      /* no-op */
+    }
+    return false;
+  }
+  item.click();
+
+  // Confirm the sort label flipped — this is our proof the switch took.
+  const switchDeadline = Date.now() + 5_000;
+  while (Date.now() < switchDeadline) {
+    if (readCurrentMode() === target) {
+      // Feed re-hydrates after the switch — wait for cards to mount before
+      // letting the scroll loop run, otherwise the first deltas land empty.
+      const ready = await waitForFeedRoot();
+      return ready;
+    }
+    await sleep(100);
+  }
+  logWarn('feed_crawl_sort_switch_unconfirmed', { target });
+  return false;
 }
 
 /**
@@ -354,11 +356,10 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
- * Resolve LinkedIn's actual scroll surface. The SDUI feed is rendered inside
- * `<main id="workspace" tabindex="0">` (see example1.html line 197), and on
- * that layout `<main>` owns the scroll container — `window.scrollBy` does not
- * scroll the feed. Falling back to `documentElement` keeps us working on
- * legacy pre-SDUI surfaces and in tests where `<main>` isn't mounted yet.
+ * LinkedIn's SDUI feed renders inside `<main id="workspace" tabindex="0">`,
+ * and on that layout `<main>` owns its own scroll container — `window.scrollBy`
+ * is a no-op for the feed. Falls back to `documentElement` for legacy / test
+ * surfaces.
  */
 function pickScrollTarget(): Element {
   const main = document.querySelector(
@@ -369,10 +370,8 @@ function pickScrollTarget(): Element {
 }
 
 /**
- * LinkedIn's scroll surface is keyboard-focusable (`<main tabindex="0">`).
- * Parking focus there mirrors a user pressing into the feed, which is what
- * the SDUI hydration relies on. Skip if the user has a composer / search
- * input focused so we don't yank them out mid-typing.
+ * Park keyboard focus on the scroll container so SDUI hydration treats us
+ * like a user. Skip if the user has a composer / search input focused.
  */
 function focusScrollTarget(target: Element): void {
   try {
@@ -392,13 +391,10 @@ function focusScrollTarget(target: Element): void {
 }
 
 /**
- * Issue a smooth scroll on the resolved container. `behavior: 'smooth'` lets
- * the browser interpolate frames so LinkedIn's IntersectionObserver-driven
- * card hydration keeps up with our advance — the previous instant 600–1200 px
- * `behavior: 'auto'` jump flew past the virtualized window faster than cards
- * could mount, leaving floating badges with no card body underneath. Falls
- * back through three successively dumber scroll APIs in case the resolved
- * target doesn't expose the modern signature.
+ * Smooth scroll on the resolved container. Browsers explicitly ignore
+ * synthesized KeyboardEvents for native scroll, so `dispatchEvent(new
+ * KeyboardEvent(...))` would be a no-op — `scrollBy` is the closest thing to
+ * "press Down arrow" we actually have. Three fallbacks for minimal fixtures.
  */
 function scrollContainerBy(target: Element, deltaY: number): void {
   try {
@@ -421,8 +417,6 @@ function scrollContainerBy(target: Element, deltaY: number): void {
   } catch {
     /* fall through */
   }
-  // Last resort — should never trigger on the LinkedIn surface but keeps the
-  // crawler functional on minimal test fixtures.
   try {
     window.scrollBy(0, deltaY);
   } catch {
@@ -431,10 +425,6 @@ function scrollContainerBy(target: Element, deltaY: number): void {
 }
 
 // ——— User-interaction guards ———
-//
-// The moment the user wheels, taps, clicks, or types while a crawl is running,
-// we must yield. Raw `scroll` is intentionally not observed: LinkedIn layout
-// shifts and our own scrollBy calls can emit it after the programmatic scroll.
 
 function attachUserInteractionGuards(onInteract: () => void): void {
   document.addEventListener('keydown', onInteract, { passive: true });
@@ -458,7 +448,4 @@ function logWarn(event: string, data: Record<string, unknown>): void {
   }
 }
 
-// Ensure the unused cap import is referenced so TS doesn't flag it — it's
-// kept here because future session summaries might echo the cap back to the
-// popup.
 void FEED_CRAWL_MAX_SCROLLS_PER_MODE;

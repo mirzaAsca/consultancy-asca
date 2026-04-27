@@ -148,16 +148,12 @@ export const CORRELATION_TOKEN_DEFAULT_WINDOW_MS = 45 * 60 * 1000;
 // ——— v2 Phase 3.1 / 3.2 — Manual Feed Crawl Session ———
 
 /**
- * Max scroll steps per mode pass. LinkedIn's feed lazy-loads ~6 cards per
- * viewport; 20 is enough to walk a few hundred cards without hammering.
+ * Hard cap of full-auto scrolls per mode pass. The crawler does exactly this
+ * many scrolls before yielding (or stops earlier on user interaction / cancel).
+ * No "no new events" early-stop — we always walk the full budget so mode
+ * comparisons are apples-to-apples.
  */
-export const FEED_CRAWL_MAX_SCROLLS_PER_MODE = 20;
-
-/**
- * Stop the pass once this many *consecutive* scroll cycles yield zero new
- * events — the feed has clearly run out of fresh prospect-authored cards.
- */
-export const FEED_CRAWL_NO_NEW_EVENTS_STOP = 3;
+export const FEED_CRAWL_MAX_SCROLLS_PER_MODE = 10;
 
 /** Gentle scroll step bounds (px). Applied with ±20 % gaussian jitter. */
 export const FEED_CRAWL_MIN_SCROLL_PX = 600;
@@ -168,17 +164,13 @@ export const FEED_CRAWL_MIN_WAIT_MS = 2000;
 export const FEED_CRAWL_MAX_WAIT_MS = 5000;
 
 /**
- * Max time we'll wait for the feed root to render after a mode-switch nav
+ * Max time we'll wait for the feed root to render after a mode switch
  * before aborting the pass. Covers slow starts / offline states.
  */
 export const FEED_CRAWL_FEED_READY_TIMEOUT_MS = 15_000;
 
-/** Canonical URL per feed mode (§7.2 mode detection uses `?sortBy`). */
-export const FEED_CRAWL_MODE_URL: Readonly<Record<'top' | 'recent', string>> =
-  Object.freeze({
-    top: 'https://www.linkedin.com/feed/',
-    recent: 'https://www.linkedin.com/feed/?sortBy=LAST_MODIFIED',
-  });
+/** Canonical /feed/ URL we open the manual crawl tab against. */
+export const FEED_CRAWL_FEED_URL = 'https://www.linkedin.com/feed/';
 
 /**
  * Phase 3.1 — passive continuous harvester. Background-side scheduler that
