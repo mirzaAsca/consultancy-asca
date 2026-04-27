@@ -74,6 +74,8 @@ function makeAction(over: Partial<OutreachAction>): OutreachAction {
     sent_at: over.sent_at ?? null,
     resolved_at: over.resolved_at ?? null,
     notes: null,
+    auto_tracked_at: over.auto_tracked_at ?? null,
+    auto_tracked_source: over.auto_tracked_source ?? null,
   };
 }
 
@@ -470,6 +472,96 @@ describe('buildCandidates', () => {
     expect(byId[2].recent_unlock).toBe(false);
     expect(byId[3].recent_unlock).toBe(false);
     expect(byId[4].recent_unlock).toBe(false);
+  });
+
+  it('surfaces auto_tracked_today for detector-confirmed sent actions in today bucket', () => {
+    // 2nd-degree prospect with a fresh auto-tracked profile_visit; the
+    // recommender still surfaces them for the next step (connection_request_sent)
+    // so the badge is visible alongside the active recommendation.
+    const prospects = [makeProspect({ id: 1, level: '2nd' })];
+    const actions = new Map<number, OutreachAction[]>([
+      [
+        1,
+        [
+          makeAction({
+            id: 10,
+            prospect_id: 1,
+            kind: 'profile_visit',
+            state: 'sent',
+            sent_at: NOW - 60_000,
+            created_at: NOW - 60_000,
+            auto_tracked_at: NOW - 60_000,
+            auto_tracked_source: 'profile_visit_detector',
+          }),
+        ],
+      ],
+    ]);
+    const result = buildCandidates(prospects, actions, {
+      filter: {},
+      skippedProspectIds: new Set(),
+      warm_visit_before_invite: false,
+      now: NOW,
+    });
+    expect(result[0].auto_tracked_today).toEqual({
+      source: 'profile_visit_detector',
+      at: NOW - 60_000,
+      kind: 'profile_visit',
+    });
+  });
+
+  it('omits auto_tracked_today when the auto-tracked action lands outside today', () => {
+    const yesterday = NOW - 36 * 60 * 60 * 1000; // 36h ago — guaranteed prior local day
+    const prospects = [makeProspect({ id: 1, level: '2nd' })];
+    const actions = new Map<number, OutreachAction[]>([
+      [
+        1,
+        [
+          makeAction({
+            id: 10,
+            prospect_id: 1,
+            kind: 'profile_visit',
+            state: 'sent',
+            sent_at: yesterday,
+            created_at: yesterday,
+            auto_tracked_at: yesterday,
+            auto_tracked_source: 'profile_visit_detector',
+          }),
+        ],
+      ],
+    ]);
+    const result = buildCandidates(prospects, actions, {
+      filter: {},
+      skippedProspectIds: new Set(),
+      warm_visit_before_invite: false,
+      now: NOW,
+    });
+    expect(result[0].auto_tracked_today).toBeNull();
+  });
+
+  it('omits auto_tracked_today when sent action has no detector source (manual confirm)', () => {
+    const prospects = [makeProspect({ id: 1, level: '2nd' })];
+    const actions = new Map<number, OutreachAction[]>([
+      [
+        1,
+        [
+          makeAction({
+            id: 10,
+            prospect_id: 1,
+            kind: 'profile_visit',
+            state: 'sent',
+            sent_at: NOW - 60_000,
+            created_at: NOW - 60_000,
+          }),
+        ],
+      ],
+    ]);
+    const result = buildCandidates(prospects, actions, {
+      filter: {},
+      skippedProspectIds: new Set(),
+      warm_visit_before_invite: false,
+      now: NOW,
+    });
+    expect(result[0].auto_tracked_today).toBeNull();
   });
 });
 

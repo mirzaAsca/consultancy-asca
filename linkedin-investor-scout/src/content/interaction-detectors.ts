@@ -181,6 +181,7 @@ function maybeStartProfileVisitDetector(
         kind: 'profile_visit',
         state: 'sent',
         notes: 'auto-detected via dwell watcher',
+        auto_tracked_source: 'profile_visit_detector',
       });
     }
   };
@@ -391,6 +392,7 @@ function attachMessageSentWatcher(
             scope === document
               ? 'auto-detected via messaging-thread watcher'
               : 'auto-detected via messaging-drawer watcher',
+          auto_tracked_source: 'message_detector',
         });
       }
     }

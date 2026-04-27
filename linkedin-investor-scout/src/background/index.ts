@@ -681,6 +681,12 @@ async function handleOutreachActionRecord(
       becameSent = true;
       await bumpDailyUsageForKind(bucket, action.kind);
       await stampProspectLastOutreachAt(action.prospect_id, now);
+      if (payload.auto_tracked_source) {
+        action = await updateOutreachAction(action.id, {
+          auto_tracked_at: now,
+          auto_tracked_source: payload.auto_tracked_source,
+        });
+      }
     }
   } else {
     const id = await addOutreachAction({
@@ -704,6 +710,12 @@ async function handleOutreachActionRecord(
           ? now
           : null,
       notes: payload.notes ?? null,
+      auto_tracked_at:
+        payload.state === 'sent' && payload.auto_tracked_source ? now : null,
+      auto_tracked_source:
+        payload.state === 'sent' && payload.auto_tracked_source
+          ? payload.auto_tracked_source
+          : null,
     });
     action = {
       id,
@@ -721,6 +733,12 @@ async function handleOutreachActionRecord(
       sent_at: payload.state === 'sent' ? now : null,
       resolved_at: null,
       notes: payload.notes ?? null,
+      auto_tracked_at:
+        payload.state === 'sent' && payload.auto_tracked_source ? now : null,
+      auto_tracked_source:
+        payload.state === 'sent' && payload.auto_tracked_source
+          ? payload.auto_tracked_source
+          : null,
     };
     if (action.state === 'sent') {
       becameSent = true;

@@ -605,7 +605,27 @@ export interface OutreachAction {
   sent_at: number | null;
   resolved_at: number | null;
   notes: string | null;
+  /**
+   * Phase 5.1 — when set, this row was written by an in-tab detector (send /
+   * message-sent / profile-visit watcher) rather than the user clicking
+   * "Mark sent" in the queue. Mirrors the FeedEvent.auto_tracked_* pattern so
+   * the OutreachQueue can surface an "Auto" pill without scanning
+   * `interaction_events` on every render. `null` for queue-originated and
+   * draft / approved rows.
+   */
+  auto_tracked_at?: number | null;
+  auto_tracked_source?: OutreachAutoTrackSource | null;
 }
+
+/**
+ * Phase 5.1 — which content-script detector authored an auto-tracked row.
+ * Kept narrow on purpose: every value maps to exactly one watcher so the
+ * audit trail can be reconstructed without consulting interaction_events.
+ */
+export type OutreachAutoTrackSource =
+  | 'send_detector'
+  | 'message_detector'
+  | 'profile_visit_detector';
 
 export type OutreachActionInsert = Omit<OutreachAction, 'id'>;
 
@@ -965,6 +985,19 @@ export interface OutreachQueueCandidate {
    * are hot off the unlock press.
    */
   recent_unlock: boolean;
+  /**
+   * Phase 5.1 — populated when the most recent `sent` outreach action against
+   * this prospect inside today's day-bucket was authored by a detector. UI
+   * surfaces an "Auto" pill so the user can tell detector-confirmed rows from
+   * manually-confirmed ones at a glance. `null` when today's actions (if any)
+   * came from the queue button, or when the prospect has no `sent` actions
+   * today.
+   */
+  auto_tracked_today: {
+    source: OutreachAutoTrackSource;
+    at: number;
+    kind: OutreachActionKind;
+  } | null;
 }
 
 /**
@@ -1030,6 +1063,13 @@ export interface OutreachActionRecordPayload {
   notes?: string | null;
   /** Optional override — defaults to `prospect:kind:yyyy-mm-dd`. */
   idempotency_key?: string;
+  /**
+   * Phase 5.1 — when set, the background stamps `auto_tracked_at` +
+   * `auto_tracked_source` on the row at the same write that flips it to
+   * `sent`. Detector callsites pass this; the manual queue-button path
+   * leaves it undefined.
+   */
+  auto_tracked_source?: OutreachAutoTrackSource;
 }
 
 /**

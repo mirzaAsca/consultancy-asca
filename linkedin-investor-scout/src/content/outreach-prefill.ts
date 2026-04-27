@@ -343,6 +343,7 @@ function emitOutreachSent(args: WatchForInviteSentArgs): void {
     template_id: args.template_id,
     template_version: args.template_version,
     rendered_body: args.rendered_body,
+    auto_tracked_source: 'send_detector',
   };
   sendMessageToRuntime({ type: 'OUTREACH_ACTION_RECORD', payload });
 }

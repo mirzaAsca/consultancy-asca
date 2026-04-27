@@ -44,6 +44,37 @@ function tierRank(tier: ProspectTier | null): number {
   return tier === null ? 0 : (TIER_RANK[tier] ?? 0);
 }
 
+/**
+ * Phase 5.1 — most-recent auto-tracked `sent` action for this prospect that
+ * lands inside today's local-day bucket. Pure: takes `now` so callers can
+ * test day boundaries deterministically. Returns `null` if today's actions
+ * (if any) all came from the manual queue button.
+ */
+function pickAutoTrackedToday(
+  history: readonly OutreachAction[],
+  now: number,
+): OutreachQueueCandidate['auto_tracked_today'] {
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+  const dayStart = startOfDay.getTime();
+  const dayEnd = dayStart + 24 * 60 * 60 * 1000;
+  let best: OutreachAction | null = null;
+  for (const a of history) {
+    if (a.state !== 'sent') continue;
+    if (!a.auto_tracked_source || !a.auto_tracked_at) continue;
+    if (a.auto_tracked_at < dayStart || a.auto_tracked_at >= dayEnd) continue;
+    if (!best || a.auto_tracked_at > (best.auto_tracked_at ?? 0)) {
+      best = a;
+    }
+  }
+  if (!best || !best.auto_tracked_source || !best.auto_tracked_at) return null;
+  return {
+    source: best.auto_tracked_source,
+    at: best.auto_tracked_at,
+    kind: best.kind,
+  };
+}
+
 /** Outreach-queue rank: tier DESC, priority_score DESC, last_outreach_at ASC NULLS FIRST. */
 export function compareQueueOrder(
   a: Pick<Prospect, 'tier' | 'priority_score' | 'last_outreach_at' | 'id'>,
@@ -354,6 +385,7 @@ export function buildCandidates(
       skipped_today: skipped,
       next_action_due_at: p.next_action_due_at,
       recent_unlock: isRecentlyUnlocked(p.level, p.last_level_change_at, now),
+      auto_tracked_today: pickAutoTrackedToday(history, now),
     });
   }
 

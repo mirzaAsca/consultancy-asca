@@ -15,6 +15,7 @@ import {
 import { addRuntimeMessageListener, sendMessage } from '@/shared/messaging';
 import type {
   OutreachActionKind,
+  OutreachAutoTrackSource,
   OutreachDueFilter,
   OutreachQueueCandidate,
   OutreachQueuePage,
@@ -36,6 +37,12 @@ const ACTION_LABEL: Record<OutreachActionKind, string> = {
   connection_request_sent: 'Send invite',
   message_sent: 'Send DM',
   followup_message_sent: 'Follow up',
+};
+
+const AUTO_TRACK_SOURCE_LABEL: Record<OutreachAutoTrackSource, string> = {
+  send_detector: 'invite-send watcher',
+  message_detector: 'message-send watcher',
+  profile_visit_detector: 'dwell watcher',
 };
 
 const TIER_OPTIONS: ProspectTier[] = ['S', 'A', 'B', 'C'];
@@ -745,6 +752,19 @@ function QueueRow({
         </span>
         {row.has_pending_invite && (
           <span className="text-[10px] text-amber-300">Invite pending</span>
+        )}
+        {row.auto_tracked_today && (
+          <span
+            className="inline-flex items-center gap-1 self-start rounded-full bg-sky-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-sky-300"
+            title={`Auto-confirmed at ${new Date(
+              row.auto_tracked_today.at,
+            ).toLocaleTimeString()} via ${
+              AUTO_TRACK_SOURCE_LABEL[row.auto_tracked_today.source]
+            }. No "Mark sent" click needed — the detector caught your action and recorded it.`}
+          >
+            <Sparkles className="h-2.5 w-2.5" />
+            Auto · {formatRelativeTime(row.auto_tracked_today.at)}
+          </span>
         )}
       </div>
       <div className="text-[11px] text-gray-400">
