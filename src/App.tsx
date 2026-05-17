@@ -237,7 +237,7 @@ const faqItems = [
   },
   {
     q: "How is this different from a big consultancy?",
-    a: "They charge $50-100K for a strategy deck. I charge $20-55K for a working implementation. They give you a plan. I give you a system your team actually uses.",
+    a: "They charge $50-100K for a strategy plan. I give you a system your team actually uses.",
   },
   {
     q: "You're fully booked. Why should I join the waitlist?",
@@ -410,7 +410,7 @@ export default function App() {
           <div className="flex h-full flex-col lg:col-span-7 lg:pr-6">
             <div>
               <p className={sectionLabelClass}>
-                AI IMPLEMENTATION FOR ECOMMERCE TEAMS (20-80 PEOPLE)
+                AI DEPLOYMENT FOR ECOMMERCE
               </p>
               <h1 className="mt-6 max-w-[22ch] text-4xl font-semibold leading-[1.01] tracking-[-0.04em] [text-wrap:balance] sm:text-5xl lg:text-[4rem]">
                 I remove #1 workflow bottleneck in 10 weeks{" "}
@@ -418,20 +418,9 @@ export default function App() {
                   without hiring more people
                 </span>
               </h1>
-              <p className="mt-6 max-w-[58ch] text-sm font-medium leading-relaxed text-slate-500">
-                56% of CEOs report no revenue or cost benefit from AI.{" "}
-                <a
-                  href="https://www.pwc.com/gx/en/issues/c-suite-insights/ceo-survey.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-slate-300 underline-offset-2 hover:text-slate-700 hover:decoration-slate-500"
-                >
-                  PwC 2026
-                </a>
-              </p>
+             
               <p className="mt-4 max-w-[58ch] text-base leading-relaxed text-slate-700">
-                If one process is eating 20+ hours a week — or forcing your next
-                ops hire — I map it, fix it with your team, and measure the
+                One process is eating 20+ hours a week? Forcing you to hire more people? I map it, fix it with your team, and measure the
                 before-and-after numbers.
               </p>
             </div>
@@ -489,7 +478,7 @@ export default function App() {
                 {PRIMARY_CTA}
               </a>
               <p className="mt-3 text-center text-sm leading-relaxed text-slate-500">
-                We're not taking new companies right now.
+                I'm not taking new companies right now.
               </p>
             </div>
           </aside>
@@ -815,7 +804,7 @@ export default function App() {
         <section id="plans" className={stackedSectionClass}>
           <p className={sectionLabelClass}>PLANS</p>
           <h2 className={sectionHeadingClass}>
-            Two ways to save time & money.
+            Two ways to save time & grow.
           </h2>
           <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-700">
             If one workflow is wasting hours every week, start with the sprint.
@@ -1064,7 +1053,7 @@ export default function App() {
                         {PRIMARY_CTA}
                       </a>
                       <p className="mt-3 text-center text-sm leading-relaxed text-slate-500">
-                        We're not taking new companies right now.
+                        I'm not taking new companies right now.
                       </p>
                     </>
                   ) : (

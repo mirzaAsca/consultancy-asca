@@ -8,7 +8,7 @@ const LINKEDIN_PROFILE = "https://www.linkedin.com/in/mirzaasceric/";
 const PROOF_LINK =
   "https://www.linkedin.com/posts/alenm_50-billion-tokens-later-honored-to-finally-activity-7399454409547657216-LEUi";
 const FLYRANK_URL = "https://www.flyrank.com";
-const FLYRANK_CASE_STUDIES = "https://www.flyrank.com/blogs/case-studies";
+const FLYRANK_CASE_STUDIES = "https://flyrank.ai/results";
 const TENX_URL = "https://10x.ai";
 
 const inlineLinkClass =
@@ -170,17 +170,9 @@ export default function AboutApp() {
                 >
                   FlyRank AI
                 </a>
-                , we are doing the unimaginable — creating the first AI content
-                ecosystem infrastructure. Currently, it is the most advanced
-                platform for content management. It's not like using ChatGPT to
-                create an article; we own the full architecture. In short, it
-                works.
+                , we help ecommerce brands reach their audience at scale. We do agentic SEO. In short, it works.
               </p>
-              <p className="mt-5 border-t border-dashed border-[var(--line)] pt-5 text-base leading-relaxed text-slate-800">
-                If a Guinness record existed for the fastest organic growth of a
-                website in record time, we would hold the title (I'm not even
-                exaggerating, I swear). And we keep beating it all the time.{" "}
-                <a
+              <a
                   href={FLYRANK_CASE_STUDIES}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -188,6 +180,8 @@ export default function AboutApp() {
                 >
                   See the case studies →
                 </a>
+              <p className="mt-5 border-t border-dashed border-[var(--line)] pt-5 text-base leading-relaxed text-slate-800">
+                AI became a strategic part of our business. 
               </p>
             </div>
           </div>
@@ -238,7 +232,7 @@ export default function AboutApp() {
                 We even have our own lab (20+ domains) as a playground to test
                 every single concept, live — at scale. We spend a fortune on
                 destroying and stress-testing apps and websites, just to check
-                efficiency and use it the right way. We spend the money, so you
+                efficiency and use it the right way. We paid the price, so you
                 don't have to.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
@@ -267,16 +261,13 @@ export default function AboutApp() {
             </div>
 
             <p className="mx-auto mt-8 max-w-[30ch] text-3xl font-semibold leading-[1.15] tracking-[-0.03em] [text-wrap:balance] sm:text-4xl">
-              I spotted a gap.
+              We do it right way.
             </p>
 
             <div className="mt-8 space-y-5 text-left">
               <p className="text-base leading-relaxed text-slate-700">
-                The distance between knowledge and stuff called "knowledge" in
-                the AI industry has never been wider. It's pretty obvious now.
-                Most of the noise would completely disappear if the only voices
-                heard around AI came from people who actually did the work for
-                at least 50+ hours.
+                It become too loud out there.
+                AI is writing about AI on social media, every week is AI revolution, and the world best tool just came out. But reality? Almost nobody makes money with AI. Everything is just a talk, led either by fear or hype, or even just for fun. 
               </p>
               <p className="text-base font-semibold leading-relaxed text-slate-950">
                 I want to change it.{" "}
@@ -317,9 +308,7 @@ export default function AboutApp() {
                 we're good.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
-                Extremely useful knowledge has been online and free for a while.
-                I am here to clear the noise. You can finally stop chasing new
-                AI tools and start growing your company.
+                My mission is to show you what is possible with AI for your business.
               </p>
             </div>
           </div>
