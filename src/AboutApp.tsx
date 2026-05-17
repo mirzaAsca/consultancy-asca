@@ -232,7 +232,7 @@ export default function AboutApp() {
                 We even have our own lab (20+ domains) as a playground to test
                 every single concept, live — at scale. We spend a fortune on
                 destroying and stress-testing apps and websites, just to check
-                efficiency and use it the right way. We paid the price, so you
+                efficiency and use it the right way. We pay the price, so you
                 don't have to.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
