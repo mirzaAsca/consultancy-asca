@@ -304,7 +304,7 @@ export default function AboutApp() {
               <p className="text-base leading-relaxed text-slate-700">
                 And I will help you for free. Seriously. Nothing in my pocket is
                 being held back once you qualify for our strategy call. You can
-                do the stuff I explain in-house, or even with some agency —
+                do the stuff I teach in-house, or even with some agency —
                 we're good.
               </p>
               <p className="text-base leading-relaxed text-slate-700">
